@@ -692,10 +692,10 @@
         const r = document.getElementById('q2-result');
         if (v === '×' || v === 'x' || v === 'X') {
           r.className = 'result-msg correct';
-          r.textContent = '✅ 正解！HTML5では / と > の間に空白を入れることはできません。正しくは &lt;br/&gt; です。';
+          r.textContent = '✅ 正解！HTML5では / と > の間に空白を入れることはできません。正しくは <br/> です。';
         } else if (v === '○' || v === 'o' || v === 'O') {
           r.className = 'result-msg wrong';
-          r.textContent = '❌ 不正解。HTML5では &lt;br /&gt; は不正です。/ と > の間に空白は入れられません。';
+          r.textContent = '❌ 不正解。HTML5では <br /> は不正です。/ と > の間に空白は入れられません。';
         } else {
           r.className = 'result-msg info';
           r.textContent = '⚠️ ○ または × で入力してください。';
@@ -800,14 +800,14 @@
         const r = document.getElementById('q5-result');
         if (v === 'a') {
           r.className = 'result-msg correct';
-          r.textContent = '✅ 正解！HTML5のDOCTYPEはシンプルに &lt;!DOCTYPE html&gt; と書きます。';
+          r.textContent = '✅ 正解！HTML5のDOCTYPEはシンプルに <!DOCTYPE html> と書きます。';
         } else if (v === '') {
           r.className = 'result-msg info';
           r.textContent = '⚠️ 選択肢を選んでください。';
         } else {
           r.className = 'result-msg wrong';
           r.innerHTML =
-            '❌ 不正解。正解は <code>&lt;!DOCTYPE html&gt;</code> です。<br>' +
+            '❌ 不正解。正解は <code><!DOCTYPE html></code> です。<br>' +
             '・DOCTYPE は大文字小文字を区別しません（html / HTML どちらでもOK）<br>' +
             '・HTML5 という文字列は含みません<br>' +
             '・! を忘れずに';
@@ -867,14 +867,14 @@
         r.className = 'result-msg info';
         r.innerHTML =
           '📝 模範解答：<br><br>' +
-          '<strong>&lt;p&gt; 要素：</strong><br>' +
-          '終了タグ（&lt;/p&gt;）のみ省略可能です。' +
-          '次の &lt;p&gt; タグや &lt;/div&gt; などが来たとき、自動的に閉じられます。' +
+          '<strong><p> 要素：</strong><br>' +
+          '終了タグ（</p>）のみ省略可能です。' +
+          '次の <p&> タグや </div> などが来たとき、自動的に閉じられます。' +
           '開始タグは省略できません。<br><br>' +
-          '<strong>&lt;html&gt; 要素との違い：</strong><br>' +
-          '&lt;html&gt; 要素は開始タグと終了タグの<strong>両方</strong>を省略できます。' +
+          '<strong><html> 要素との違い：</strong><br>' +
+          '<html> 要素は開始タグと終了タグの<strong>両方</strong>を省略できます。' +
           '両方省略できる要素は html / head / body / colgroup / tbody の5つのみです。' +
-          '&lt;p&gt; は終了タグのみ省略可能という点で異なります。';
+          '<p> は終了タグのみ省略可能という点で異なります。';
       }
     </script>
   </div>
