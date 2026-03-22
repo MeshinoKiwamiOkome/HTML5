@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML5 全体構造・メタ情報 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #4299e1; padding-bottom: 10px; }
+    h2 { color: #2b6cb0; margin-top: 48px; border-left: 5px solid #4299e1; padding-left: 12px; }
+    h3 { color: #276749; margin-top: 24px; }
+
+    code {
+      background: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment { color: #68d391; }
+    pre .tag     { color: #90cdf4; }
+    pre .attr    { color: #fbd38d; }
+    pre .value   { color: #fc8181; }
+    pre .doctype { color: #d6bcfa; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #90cdf4;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #2b6cb0; }
+
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+
+    .demo-box {
+      background: #fff;
+      border: 1px solid #bee3f8;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    table.ref-table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      margin: 14px 0;
+    }
+    table.ref-table th, table.ref-table td {
+      border: 1px solid #bee3f8;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.93em;
+    }
+    table.ref-table thead tr { background: #2b6cb0; color: #fff; }
+    table.ref-table tbody tr:nth-child(even) { background: #ebf8ff; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 { margin-top: 0; color: #c05621; border-left-color: #f6ad55; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #fbd38d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #fbd38d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-blue { background: #4299e1; color: #fff; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #bee3f8; color: #2b6cb0; display: block; }
+
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #bee3f8;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.93em;
+    }
+    table.summary thead tr { background: #2b6cb0; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #ebf8ff; }
+  </style>
+</head>
+<body>
+
+<h1>🏗️ HTML5 全体構造・メタ情報 学習サンプル</h1>
+<p>html / head / body / title / meta / link / base 要素の役割と使い方を学びましょう。</p>
+
+
+<!-- 1. html要素 -->
+<h2>① html要素</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;html&gt;</code> はHTML文書全体を包む<strong>ルート（根）要素</strong>です。<br>
+  ・すべての要素はこの要素の子孫になります。<br>
+  ・<code>lang</code> 属性で文書の言語を指定します（アクセシビリティ・SEOに重要）。<br>
+  ・開始タグ・終了タグともに省略可能ですが、明示的に書くことが推奨されます。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- lang属性で言語を指定 --&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="value">"ja"</span><span class="tag">&gt;</span>          <span class="comment">&lt;!-- 日本語 --&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="value">"en"</span><span class="tag">&gt;</span>          <span class="comment">&lt;!-- 英語 --&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="value">"zh-CN"</span><span class="tag">&gt;</span>       <span class="comment">&lt;!-- 中国語（簡体字） --&gt;</span>
+
+<span class="comment">&lt;!-- XHTMLの場合はxmlns属性も必要だった（HTML5では不要） --&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">xmlns</span>=<span class="value">"http://www.w3.org/1999/xhtml"</span> <span class="attr">lang</span>=<span class="value">"ja"</span><span class="tag">&gt;</span>
+</pre>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>属性</th><th>説明</th><th>例</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>lang</code></td>
+        <td>文書の言語を指定（BCP 47言語タグ）</td>
+        <td><code>ja</code>, <code>en</code>, <code>fr</code></td>
+      </tr>
+      <tr>
+        <td><code>dir</code></td>
+        <td>テキストの方向（ltr: 左→右 / rtl: 右→左）</td>
+        <td><code>ltr</code>, <code>rtl</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warn">
+    <strong>⚠️ lang属性を省略すると…</strong><br>
+    スクリーンリーダーが誤った言語で読み上げる場合があります。<br>
+    SEOにも影響するため、必ず指定しましょう。
+  </div>
+</div>
+
+
+<!-- 2. head要素 -->
+<h2>② head要素</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;head&gt;</code> はブラウザ向けの<strong>メタ情報</strong>を格納するセクションです。<br>
+  ・ページには<strong>表示されません</strong>（タブタイトル・スタイル・スクリプトなど）。<br>
+  ・開始タグ・終了タグともに省略可能ですが、明示的に書くことが推奨されます。<br>
+  ・直下に置ける要素：<code>title</code> / <code>meta</code> / <code>link</code> / <code>style</code> / <code>script</code> / <code>base</code> など
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="value">"UTF-8"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="value">"viewport"</span> <span class="attr">content</span>=<span class="value">"width=device-width, initial-scale=1.0"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;title&gt;</span>ページタイトル<span class="tag">&lt;/title&gt;</span>
+  <span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="value">"stylesheet"</span> <span class="attr">href</span>=<span class="value">"style.css"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="value">"app.js"</span> <span class="attr">defer</span><span class="tag">&gt;&lt;/script&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+</pre>
+</div>
+
+
+<!-- 3. body要素 -->
+<h2>③ body要素</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;body&gt;</code> はブラウザに<strong>実際に表示されるコンテンツ</strong>を格納します。<br>
+  ・1つのHTML文書に<strong>body要素は1つだけ</strong>です。<br>
+  ・開始タグ・終了タグともに省略可能ですが、明示的に書くことが推奨されます。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;header&gt;</span>ヘッダー<span class="tag">&lt;/header&gt;</span>
+  <span class="tag">&lt;main&gt;</span>
+    <span class="tag">&lt;h1&gt;</span>メインコンテンツ<span class="tag">&lt;/h1&gt;</span>
+    <span class="tag">&lt;p&gt;</span>本文テキスト<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/main&gt;</span>
+  <span class="tag">&lt;footer&gt;</span>フッター<span class="tag">&lt;/footer&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+</pre>
+</div>
+
+
+<!-- 4. title要素 -->
+<h2>④ title要素</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;title&gt;</code> はブラウザのタブや検索結果に表示される<strong>文書タイトル</strong>を定義します。<br>
+  ・<code>&lt;head&gt;</code> 内に記述します。<br>
+  ・タグや文字参照以外のテキストのみを含めることができます（子要素は持てません）。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="tag">&lt;title&gt;</span>HTML5 学習サンプル | MeshinoKiwamiOkome<span class="tag">&lt;/title&gt;</span>
+
+<span class="comment">&lt;!-- ❌ タグは含められない --&gt;</span>
+<span class="tag">&lt;title&gt;</span>&lt;strong&gt;太字タイトル&lt;/strong&gt;<span class="tag">&lt;/title&gt;</span>  <span class="comment">&lt;!-- 不正 --&gt;</span>
+</pre>
+
+  <div class="warn">
+    <strong>⚠️ 試験重要ポイント：title要素の省略</strong><br><br>
+    <strong>HTML5よりも前（HTML4 / XHTML）：</strong><br>
+    　head要素内に title要素を<strong>必ず1つ</strong>記述する必要があった。<br><br>
+    <strong>HTML5以降：</strong><br>
+    　以下の条件を満たす場合に限り、title要素を<strong>省略できる</strong>。<br><br>
+    　✅ より上位のプロトコルがタイトル情報を提供している場合<br>
+    　　（例：メールのSubjectヘッダーがHTMLメールのタイトルを提供する場合）<br><br>
+    　❌ 通常のWebページでは省略すべきではない<br>
+    　（SEO・アクセシビリティ・ユーザビリティの観点から必須）
+  </div>
+
+  <div class="good">
+    ✅ <strong>titleのベストプラクティス</strong><br>
+    ・ページの内容を端的に表すタイトルにする<br>
+    ・「ページ名 | サイト名」の形式が一般的<br>
+    ・全角30〜35文字程度が検索結果で表示される目安
+  </div>
+</div>
+
+
+<!-- 5. meta要素 -->
+<h2>⑤ meta要素</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;meta&gt;</code> はページに関する<strong>メタデータ</strong>を定義する空要素です。<br>
+  ・<code>&lt;head&gt;</code> 内に記述します。<br>
+  ・用途によって使う属性の組み合わせが変わります。
+</div>
+
+<div class="demo-box">
+
+  <h3>charset属性（文字コード指定）</h3>
+  <div class="warn">
+    <strong>⚠️ 試験重要ポイント：charset属性に指定できる値</strong><br><br>
+    HTML5では <code>charset</code> 属性に指定できる値は
+    <strong><code>UTF-8</code> のみ</strong>です。<br><br>
+    ✅ <code>&lt;meta charset="UTF-8"&gt;</code>　← 正しい<br>
+    ❌ <code>&lt;meta charset="Shift_JIS"&gt;</code>　← HTML5では不正<br>
+    ❌ <code>&lt;meta charset="EUC-JP"&gt;</code>　← HTML5では不正<br><br>
+    ※ HTML5以前では Shift_JIS や EUC-JP も使われていましたが、<br>
+    　HTML5仕様では UTF-8 のみが適合する文字エンコーディングとして定義されています。<br><br>
+    また、<code>charset</code> 属性を持つ <code>meta</code> 要素は
+    文書内に<strong>1つだけ</strong>しか置けません。
+  </div>
+
+<pre>
+<span class="comment">&lt;!-- 文字コード指定（必ずhead内の先頭付近に記述） --&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="value">"UTF-8"</span><span class="tag">&gt;</span>
+</pre>
+
+  <h3>name / content属性（メタデータ指定）</h3>
+<pre>
+<span class="comment">&lt;!-- ページの説明（検索結果のスニペットに使われる） --&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="value">"description"</span>
+      <span class="attr">content</span>=<span class="value">"HTML5プロフェッショナル認定試験レベル1の学習サンプルです。"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- キーワード（現在は検索エンジンにほぼ無視される） --&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="value">"keywords"</span> <span class="attr">content</span>=<span class="value">"HTML5, 学習, 試験対策"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- 作者情報 --&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="value">"author"</span> <span class="attr">content</span>=<span class="value">"MeshinoKiwamiOkome"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- レスポンシブデザイン用ビューポート設定 --&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="value">"viewport"</span>
+      <span class="attr">content</span>=<span class="value">"width=device-width, initial-scale=1.0"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- 検索エンジンへの指示 --&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="value">"robots"</span> <span class="attr">content</span>=<span class="value">"noindex, nofollow"</span><span class="tag">&gt;</span>
+</pre>
+
+  <h3>http-equiv属性（HTTPヘッダー相当の指定）</h3>
+<pre>
+<span class="comment">&lt;!-- ページの自動リダイレクト（5秒後にURLへ移動） --&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">http-equiv</span>=<span class="value">"refresh"</span> <span class="attr">content</span>=<span class="value">"5; url=https://example.com"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- IEの互換モード指定（レガシー対応） --&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">http-equiv</span>=<span class="value">"X-UA-Compatible"</span> <span class="attr">content</span>=<span class="value">"IE=edge"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- コンテンツセキュリティポリシー --&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">http-equiv</span>=<span class="value">"Content-Security-Policy"</span>
+      <span class="attr">content</span>=<span class="value">"default-src 'self'"</span><span class="tag">&gt;</span>
+</pre>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>属性の組み合わせ</th><th>用途</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>charset</code></td>
+        <td>文字エンコーディング指定（UTF-8のみ）</td>
+      </tr>
+      <tr>
+        <td><code>name</code> + <code>content</code></td>
+        <td>ページのメタデータ（description / keywords / viewport など）</td>
+      </tr>
+      <tr>
+        <td><code>http-equiv</code> + <code>content</code></td>
+        <td>HTTPヘッダー相当の指示（refresh / X-UA-Compatible など）</td>
+      </tr>
+      <tr>
+        <td><code>property</code> + <code>content</code></td>
+        <td>OGP（Open Graph Protocol）などの拡張メタデータ</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 6. link要素 -->
+<h2>⑥ link要素</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;link&gt;</code> は外部リソースとの<strong>関係を定義</strong>する空要素です。<br>
+  ・主にCSSファイルの読み込みやファビコン指定に使います。<br>
+  ・<code>rel</code> 属性（関係の種類）と <code>href</code> 属性（URL）が基本セットです。
+</div>
+
+<div class="demo-box">
+
+  <div class="warn">
+    <strong>⚠️ 試験重要ポイント：type属性のデフォルト値</strong><br><br>
+    <code>rel="stylesheet"</code> でスタイルシートを読み込む際、<br>
+    <code>type</code> 属性のデフォルト値は <strong><code>text/css</code></strong> です。<br><br>
+    そのため、CSSファイルを読み込む場合は <code>type</code> 属性を<strong>省略できます</strong>。<br><br>
+    ✅ <code>&lt;link rel="stylesheet" href="style.css"&gt;</code>　← 省略OK（推奨）<br>
+    ✅ <code>&lt;link rel="stylesheet" type="text/css" href="style.css"&gt;</code>　← 明示もOK<br>
+    ❌ <code>&lt;link rel="stylesheet" type="text/javascript" href="style.css"&gt;</code>　← 誤り
+  </div>
+
+<pre>
+<span class="comment">&lt;!-- CSSファイルの読み込み（type属性省略・推奨） --&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="value">"stylesheet"</span> <span class="attr">href</span>=<span class="value">"style.css"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- type属性を明示する場合 --&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="value">"stylesheet"</span> <span class="attr">type</span>=<span class="value">"text/css"</span> <span class="attr">href</span>=<span class="value">"style.css"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- ファビコン（ブラウザタブのアイコン） --&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="value">"icon"</span> <span class="attr">href</span>=<span class="value">"favicon.ico"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="value">"icon"</span> <span class="attr">type</span>=<span class="value">"image/png"</span> <span class="attr">href</span>=<span class="value">"favicon.png"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- 正規URL（SEO対策：重複コンテンツの統一） --&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="value">"canonical"</span> <span class="attr">href</span>=<span class="value">"https://example.com/page"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- フォントの先読み（パフォーマンス最適化） --&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="value">"preload"</span> <span class="attr">href</span>=<span class="value">"font.woff2"</span> <span class="attr">as</span>=<span class="value">"font"</span> <span class="attr">crossorigin</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- 代替スタイルシート --&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="value">"alternate stylesheet"</span> <span class="attr">href</span>=<span class="value">"dark.css"</span> <span class="attr">title</span>=<span class="value">"ダークモード"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- メディアクエリと組み合わせ（印刷用CSS） --&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="value">"stylesheet"</span> <span class="attr">href</span>=<span class="value">"print.css"</span> <span class="attr">media</span>=<span class="value">"print"</span><span class="tag">&gt;</span>
+</pre>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>rel属性の値</th><th>用途</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>stylesheet</code></td><td>外部CSSファイルの読み込み</td></tr>
+      <tr><td><code>icon</code></td><td>ファビコン（タブアイコン）の指定</td></tr>
+      <tr><td><code>canonical</code></td><td>正規URLの指定（SEO）</td></tr>
+      <tr><td><code>preload</code></td><td>リソースの先読み（パフォーマンス）</td></tr>
+      <tr><td><code>alternate</code></td><td>代替ページ（別言語版・RSSフィードなど）</td></tr>
+      <tr><td><code>author</code></td><td>作者情報ページへのリンク</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 7. base要素 -->
+<h2>⑦ base要素</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;base&gt;</code> は文書内のすべての<strong>相対URLの基準となるURL</strong>を指定する空要素です。<br>
+  ・<code>&lt;head&gt;</code> 内に記述し、文書内に<strong>1つだけ</strong>しか置けません。<br>
+  ・<code>href</code> 属性（基準URL）と <code>target</code> 属性（リンクのデフォルト開き方）を指定できます。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- base要素の基本 --&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;base</span> <span class="attr">href</span>=<span class="value">"https://example.com/docs/"</span> <span class="attr">target</span>=<span class="value">"_blank"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+
+<span class="tag">&lt;body&gt;</span>
+  <span class="comment">&lt;!-- 相対URLは base href を基準に解決される --&gt;</span>
+  <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"guide.html"</span><span class="tag">&gt;</span>ガイド<span class="tag">&lt;/a&gt;</span>
+  <span class="comment">&lt;!-- 実際のURL: https://example.com/docs/guide.html --&gt;</span>
+
+  <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"images/logo.png"</span> <span class="attr">alt</span>=<span class="value">"ロゴ"</span><span class="tag">&gt;</span>
+  <span class="comment">&lt;!-- 実際のURL: https://example.com/docs/images/logo.png --&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+</pre>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>属性</th><th>説明</th><th>値の例</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>href</code></td>
+        <td>相対URLの基準となるURL</td>
+        <td><code>https://example.com/docs/</code></td>
+      </tr>
+      <tr>
+        <td><code>target</code></td>
+        <td>リンクのデフォルトの開き方</td>
+        <td><code>_blank</code>, <code>_self</code>, <code>_parent</code>, <code>_top</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warn">
+    <strong>⚠️ base要素の注意点</strong><br>
+    ・文書内に<strong>1つだけ</strong>しか置けません（2つ目以降は無視される）<br>
+    ・<code>href</code> または <code>target</code> の<strong>少なくとも一方</strong>を指定する必要があります<br>
+    ・ページ内リンク（<code>href="#section"</code>）も base href を基準に解決されるため、<br>
+    　base要素を使うと<strong>ページ内リンクが意図通りに動作しなくなる</strong>場合があります
+  </div>
+</div>
+
+
+<!-- 演習問題 -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      HTML5では、<code>&lt;meta charset="Shift_JIS"&gt;</code> は
+      正しい文字コード指定である。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn btn-blue" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 正解！HTML5のcharset属性に指定できるのはUTF-8のみです。Shift_JISやEUC-JPは不正となります。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent = '❌ 不正解。HTML5ではcharset属性にはUTF-8しか指定できません。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>
+      <code>&lt;link rel="stylesheet" href="style.css"&gt;</code> において、<br>
+      省略されている <code>type</code> 属性のデフォルト値は何ですか？
+    </p>
+    <label>type属性のデフォルト値：</label>
+    <input type="text" id="q2" placeholder="例）text/xxx">
+    <br>
+    <button class="btn btn-blue" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const v = document.getElementById('q2').value.trim().toLowerCase();
+        const r = document.getElementById('q2-result');
+        if (v === 'text/css') {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 正解！rel="stylesheet" のときのtype属性のデフォルト値は text/css です。そのためCSSファイルの読み込み時はtype属性を省略できます。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.textContent = '❌ 不正解。ヒント：text/ で始まるMIMEタイプです。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>HTML5において、<code>title</code> 要素を省略できる条件として正しいものはどれですか？</p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">文書内にh1要素があれば省略できる</option>
+      <option value="b">より上位のプロトコルがタイトル情報を提供している場合に省略できる</option>
+      <option value="c">meta要素でdescriptionを指定していれば省略できる</option>
+      <option value="d">HTML5ではtitle要素は常に省略できる</option>
+    </select>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'より上位のプロトコル（例：メールのSubjectヘッダーなど）がタイトル情報を提供している場合に限り、title要素を省略できます。<br>' +
+            '通常のWebページではSEO・アクセシビリティの観点から必ず記述すべきです。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            'h1要素の有無・meta descriptionの有無はtitle省略の条件ではありません。<br>' +
+            'HTML5でも無条件に省略できるわけではありません。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 組み合わせ問題（入力）</h3>
+    <p>以下の説明に合う要素名または属性値を入力してください。</p>
+
+    <label>① 文書内のすべての相対URLの基準となるURLを指定する要素：</label>
+    <input type="text" id="q4a" placeholder="要素名">
+
+    <label>② meta要素でページの説明文を指定するときの name属性の値：</label>
+    <input type="text" id="q4b" placeholder="属性値">
+
+    <label>③ link要素でファビコンを指定するときの rel属性の値：</label>
+    <input type="text" id="q4c" placeholder="属性値">
+
+    <label>④ meta要素でHTTPヘッダー相当の指示を出すときに使う属性名：</label>
+    <input type="text" id="q4d" placeholder="属性名">
+
+    <br>
+    <button class="btn btn-blue" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const a = document.getElementById('q4a').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const b = document.getElementById('q4b').value.trim().toLowerCase();
+        const c = document.getElementById('q4c').value.trim().toLowerCase();
+        const d = document.getElementById('q4d').value.trim().toLowerCase().replace(/-/g,'');
+        const r = document.getElementById('q4-result');
+        const ca = a === 'base';
+        const cb = b === 'description';
+        const cc = c === 'icon';
+        const cd = d === 'httpequiv' || d === 'http-equiv' || document.getElementById('q4d').value.trim().toLowerCase() === 'http-equiv';
+        const count = [ca, cb, cc, cd].filter(Boolean).length;
+        if (count === 4) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！完璧です！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/4 問正解。<br>` +
+            `① ${ca ? '✅' : '❌ base'}　` +
+            `② ${cb ? '✅' : '❌ description'}　` +
+            `③ ${cc ? '✅' : '❌ icon'}　` +
+            `④ ${cd ? '✅' : '❌ http-equiv'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label><input type="checkbox" id="q5a"> ① <code>&lt;base&gt;</code> 要素は1つのHTML文書に複数置くことができる</label>
+    <label><input type="checkbox" id="q5b"> ② <code>&lt;link rel="stylesheet"&gt;</code> の type属性のデフォルト値は <code>text/css</code> である</label>
+    <label><input type="checkbox" id="q5c"> ③ HTML5では <code>meta charset</code> に指定できる値は <code>UTF-8</code> のみである</label>
+    <label><input type="checkbox" id="q5d"> ④ <code>&lt;title&gt;</code> 要素はHTML5以前から条件なしに省略可能だった</label>
+    <label><input type="checkbox" id="q5e"> ⑤ <code>&lt;html&gt;</code> 要素の <code>lang</code> 属性はアクセシビリティやSEOに影響する</label>
+    <label><input type="checkbox" id="q5f"> ⑥ <code>&lt;meta&gt;</code> 要素は空要素であり終了タグを持たない</label>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const r = document.getElementById('q5-result');
+        const checks = {
+          a: document.getElementById('q5a').checked,
+          b: document.getElementById('q5b').checked,
+          c: document.getElementById('q5c').checked,
+          d: document.getElementById('q5d').checked,
+          e: document.getElementById('q5e').checked,
+          f: document.getElementById('q5f').checked,
+        };
+        // 正解：②③⑤⑥（b, c, e, f）が正しい
+        // ①は誤り（base要素は1つだけ）
+        // ④は誤り（HTML5以前はtitle必須）
+        const correct = { a:false, b:true, c:true, d:false, e:true, f:true };
+        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
+        const allCorrect = results.every(Boolean);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・② ✅ text/css がデフォルト値<br>' +
+            '・③ ✅ UTF-8のみ指定可能<br>' +
+            '・⑤ ✅ lang属性はアクセシビリティ・SEOに重要<br>' +
+            '・⑥ ✅ meta要素は空要素';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・② type属性のデフォルト値は text/css<br>' +
+            '・③ charset属性はUTF-8のみ<br>' +
+            '・⑤ lang属性はアクセシビリティ・SEOに影響<br>' +
+            '・⑥ meta要素は空要素<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・① base要素は文書内に1つだけ<br>' +
+            '・④ HTML5以前はtitle要素は必須だった（HTML5以降は条件付きで省略可）';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. コード穴埋め問題</h3>
+    <p>以下のコードの <code>__A__</code> 〜 <code>__D__</code> に適切な属性名または値を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.92em; line-height:1.8;">
+&lt;!DOCTYPE html&gt;
+&lt;html __A__="ja"&gt;
+&lt;head&gt;
+  &lt;meta __B__="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;サンプルページ&lt;/title&gt;
+  &lt;link __C__="stylesheet" href="style.css"&gt;
+  &lt;base href="https://example.com/" __D__="_blank"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;p&gt;コンテンツ&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+    <label>A（html要素の言語指定属性）：</label>
+    <input type="text" id="q6a" placeholder="属性名">
+    <label>B（meta要素の文字コード指定属性）：</label>
+    <input type="text" id="q6b" placeholder="属性名">
+    <label>C（link要素の関係指定属性）：</label>
+    <input type="text" id="q6c" placeholder="属性名">
+    <label>D（base要素のリンクの開き方属性）：</label>
+    <input type="text" id="q6d" placeholder="属性名">
+    <br>
+    <button class="btn btn-blue" onclick="checkQ6()">答え合わせ</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const a = document.getElementById('q6a').value.trim().toLowerCase();
+        const b = document.getElementById('q6b').value.trim().toLowerCase();
+        const c = document.getElementById('q6c').value.trim().toLowerCase();
+        const d = document.getElementById('q6d').value.trim().toLowerCase();
+        const r = document.getElementById('q6-result');
+        const ca = a === 'lang';
+        const cb = b === 'charset';
+        const cc = c === 'rel';
+        const cd = d === 'target';
+        const count = [ca, cb, cc, cd].filter(Boolean).length;
+        if (count === 4) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！各要素の属性をしっかり理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/4 問正解。<br>` +
+            `A: ${ca ? '✅' : '❌ lang'}　` +
+            `B: ${cb ? '✅' : '❌ charset'}　` +
+            `C: ${cc ? '✅' : '❌ rel'}　` +
+            `D: ${cd ? '✅' : '❌ target'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q7 -->
+  <div class="quiz-block">
+    <h3>Q7. 記述問題</h3>
+    <p>
+      <code>&lt;base&gt;</code> 要素を使用する際の注意点を2つ以上挙げてください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q7" rows="4" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ7()">模範解答を見る</button>
+    <div class="result-msg" id="q7-result"></div>
+    <script>
+      function checkQ7() {
+        const r = document.getElementById('q7-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '① <strong>1つだけしか置けない</strong><br>' +
+          '　文書内に base要素は1つだけです。2つ目以降は無視されます。<br><br>' +
+          '② <strong>href または target の少なくとも一方が必要</strong><br>' +
+          '　どちらの属性も省略した base要素は無効です。<br><br>' +
+          '③ <strong>ページ内リンクへの影響</strong><br>' +
+          '　<code>href="#section"</code> のようなページ内リンクも base href を基準に解決されるため、<br>' +
+          '　base要素を使うとページ内リンクが意図通りに動作しなくなる場合があります。';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 要素まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>要素</th><th>役割</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>html</code></td>
+      <td>文書全体のルート要素</td>
+      <td>lang属性でSEO・アクセシビリティ向上。両タグ省略可能</td>
+    </tr>
+    <tr>
+      <td><code>head</code></td>
+      <td>メタ情報セクション（非表示）</td>
+      <td>title / meta / link / style / script / base を格納。両タグ省略可能</td>
+    </tr>
+    <tr>
+      <td><code>body</code></td>
+      <td>表示コンテンツセクション</td>
+      <td>文書内に1つだけ。両タグ省略可能</td>
+    </tr>
+    <tr>
+      <td><code>title</code></td>
+      <td>文書タイトル（タブ・検索結果に表示）</td>
+      <td>HTML5以前は必須。HTML5以降は上位プロトコルがタイトルを提供する場合のみ省略可</td>
+    </tr>
+    <tr>
+      <td><code>meta</code></td>
+      <td>メタデータ定義（空要素）</td>
+      <td>charset属性はUTF-8のみ指定可。charset指定のmetaは文書内に1つだけ</td>
+    </tr>
+    <tr>
+      <td><code>link</code></td>
+      <td>外部リソースとの関係定義（空要素）</td>
+      <td>rel="stylesheet"のtype属性デフォルト値はtext/css（省略可）</td>
+    </tr>
+    <tr>
+      <td><code>base</code></td>
+      <td>相対URLの基準指定（空要素）</td>
+      <td>文書内に1つだけ。href/targetの少なくとも一方が必要。ページ内リンクに影響</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
