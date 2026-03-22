@@ -102,10 +102,7 @@
       transform: translateY(-4px);
       box-shadow: 0 8px 24px rgba(66,153,225,0.18);
     }
-    .card-icon {
-      font-size: 2em;
-      line-height: 1;
-    }
+    .card-icon { font-size: 2em; line-height: 1; }
     .card-title {
       font-size: 1.08em;
       font-weight: bold;
@@ -310,6 +307,7 @@
   <h1>HTML5 学習ノート</h1>
   <p>試験合格を目指して作成した、要素別・テーマ別の学習用サンプル集です。</p>
   <div class="header-meta">
+
   </div>
 </header>
 
@@ -333,10 +331,10 @@
   <div class="progress-section">
     <h2>📊 学習進捗（公開済みページ数）</h2>
     <div class="progress-bar-wrap">
-      <!-- 公開済み4 / 想定合計10ページ = 40% -->
-      <div class="progress-bar" style="width: 40%;"></div>
+      <!-- 公開済み5 / 想定合計10ページ = 50% -->
+      <div class="progress-bar" style="width: 50%;"></div>
     </div>
-    <div class="progress-label">4 / 10 ページ公開済み（順次追加中）</div>
+    <div class="progress-label">5 / 10 ページ公開済み（順次追加中）</div>
   </div>
 
   <!-- 公開済みページ -->
@@ -399,7 +397,7 @@
       <div class="card-footer">📁 meta_structure.html</div>
     </a>
 
-    <!-- section_structure.html（新規追加） -->
+    <!-- section_structure.html -->
     <a class="card" href="section_structure.html">
       <div class="card-icon">🏛️</div>
       <div class="card-title">セクション・基本構造</div>
@@ -416,6 +414,25 @@
         <span class="tag">main</span>
       </div>
       <div class="card-footer">📁 section_structure.html</div>
+    </a>
+
+    <!-- media.html（新規追加） -->
+    <a class="card" href="media.html">
+      <div class="card-icon">🖼️</div>
+      <div class="card-title">画像・動画・音声</div>
+      <div class="card-desc">
+        img・picture・source・video・audio・track・embed・map・area・object
+        の役割と使い方を学びます。alt属性の省略条件・source要素の必須属性の違いなど試験頻出ポイントを網羅。
+      </div>
+      <div class="card-tags">
+        <span class="tag">img</span>
+        <span class="tag">picture</span>
+        <span class="tag">video</span>
+        <span class="tag">audio</span>
+        <span class="tag">track</span>
+        <span class="tag">map</span>
+      </div>
+      <div class="card-footer">📁 media.html</div>
     </a>
 
   </div><!-- /card-grid -->
@@ -462,12 +479,12 @@
 
     <div class="card-coming">
       <div class="card-icon">🔗</div>
-      <div class="card-title">リンク・メディア要素</div>
-      <div class="card-desc">a・img・audio・video・figure・source・track など</div>
+      <div class="card-title">リンク・アンカー要素</div>
+      <div class="card-desc">a要素の詳細・href属性・target属性・download属性など</div>
       <div class="card-tags">
         <span class="tag">a</span>
-        <span class="tag">img</span>
-        <span class="tag">video</span>
+        <span class="tag">href</span>
+        <span class="tag">target</span>
       </div>
       <span class="coming-badge">🚧 準備中</span>
     </div>
@@ -501,6 +518,9 @@
 </main>
 
 <footer>
+  <p>
+    HTML5 学習ノート
+  </p>
   <p style="margin-top:6px;">
     参考：
     <a href="https://html5exam.jp/" target="_blank">HTML5プロフェッショナル認定試験 公式サイト</a>
