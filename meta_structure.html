@@ -179,30 +179,73 @@
     }
     table.summary thead tr { background: #2b6cb0; color: #fff; }
     table.summary tbody tr:nth-child(even) { background: #ebf8ff; }
-    /* ===== レスポンシブ ===== */
+/* ===== レスポンシブ ===== */
 
 /* スマホ縦向き（〜600px） */
 @media (max-width: 600px) {
-  header { padding: 36px 16px 28px; }
-  header h1 { font-size: 1.4em; }
-  header p { font-size: 0.92em; }
-  main { padding: 28px 16px 48px; }
-  .card-grid { grid-template-columns: 1fr; }
-  .info-banner { flex-direction: column; gap: 10px; }
-  .progress-section { padding: 16px 16px; }
+  /* 全体フォントサイズを縮小 */
+  body { font-size: 0.82em; }
+
+  header { padding: 28px 14px 22px; }
+  header h1 { font-size: 1.3em; }
+  header p { font-size: 0.88em; }
+  header .badge { font-size: 0.72em; padding: 3px 12px; }
+  .header-meta { font-size: 0.78em; margin-top: 14px; }
+
+  main { padding: 20px 12px 40px; }
+
+  .info-banner {
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px 14px;
+  }
+  .info-banner .icon { font-size: 1.5em; }
+  .info-banner h2 { font-size: 0.9em; }
+  .info-banner p { font-size: 0.8em; }
+
+  .progress-section { padding: 14px 14px; }
+  .progress-section h2 { font-size: 0.88em; }
+  .progress-label { font-size: 0.78em; }
+
+  .section-title { font-size: 0.92em; margin: 28px 0 14px; }
+
+  .card-grid { grid-template-columns: 1fr; gap: 14px; }
+
+  .card, .card-coming { padding: 16px 14px; gap: 7px; }
+  .card-icon { font-size: 1.5em; }
+  .card-title { font-size: 0.92em; }
+  .card-desc { font-size: 0.78em; }
+  .tag { font-size: 0.68em; padding: 1px 8px; }
+  .card-footer { font-size: 0.72em; }
+  .coming-badge { font-size: 0.7em; }
+
+  footer { padding: 20px 14px; font-size: 0.78em; }
 }
 
 /* スマホ横向き（landscape・高さが500px以下） */
 @media (max-height: 500px) and (orientation: landscape) {
-  header { padding: 20px 24px 16px; }
-  header h1 { font-size: 1.3em; margin-bottom: 6px; }
-  header p { font-size: 0.88em; }
-  .card-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
-  main { padding: 20px 24px 40px; }
+  body { font-size: 0.8em; }
+
+  header { padding: 14px 20px 12px; }
+  header h1 { font-size: 1.1em; margin-bottom: 4px; }
+  header p { font-size: 0.82em; }
+  header .badge { font-size: 0.7em; margin-bottom: 8px; }
+
+  main { padding: 16px 20px 32px; }
+
+  .card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .card, .card-coming { padding: 12px 12px; }
+  .card-title { font-size: 0.88em; }
+  .card-desc { font-size: 0.76em; }
+  .tag { font-size: 0.66em; }
 }
 
 /* タブレット縦向き（601px〜768px） */
 @media (min-width: 601px) and (max-width: 768px) {
+  body { font-size: 0.9em; }
   .card-grid { grid-template-columns: repeat(2, 1fr); }
   header h1 { font-size: 1.8em; }
   main { padding: 36px 20px 56px; }
