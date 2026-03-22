@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML5 セマンティック・インタラクティブ要素 学習サンプル</title>
+  <style>
+    /* ===== 基本レイアウト ===== */
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.7;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #4299e1; padding-bottom: 10px; }
+    h2 { color: #2b6cb0; margin-top: 48px; border-left: 5px solid #4299e1; padding-left: 12px; }
+    h3 { color: #276749; margin-top: 24px; }
+    a  { color: #3182ce; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #90cdf4;
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 0.92em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #2b6cb0; }
+    code {
+      background: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+    }
+    .demo-box {
+      background: #fff;
+      border: 1px solid #bee3f8;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    details.code-toggle {
+      margin-top: 10px;
+      background: #f7fafc;
+      border: 1px solid #bee3f8;
+      border-radius: 6px;
+      padding: 10px 14px;
+    }
+    details.code-toggle summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: #3182ce;
+    }
+    pre { margin: 8px 0 0; overflow-x: auto; font-size: 0.88em; }
+
+    /* ===== figure / figcaption ===== */
+    figure {
+      margin: 0;
+      text-align: center;
+    }
+    figcaption {
+      font-size: 0.88em;
+      color: #718096;
+      margin-top: 6px;
+    }
+    .fig-box {
+      width: 100%;
+      max-width: 320px;
+      height: 180px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.1em;
+    }
+
+    /* ===== details / summary ===== */
+    details.sample {
+      border: 1px solid #c3dafe;
+      border-radius: 6px;
+      padding: 10px 14px;
+      background: #ebf8ff;
+      margin-bottom: 10px;
+    }
+    details.sample summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: #2b6cb0;
+    }
+    details.sample[open] summary { color: #744210; }
+
+    /* ===== menu ===== */
+    menu.sample-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    menu.sample-menu li button {
+      background: #4299e1;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 18px;
+      cursor: pointer;
+      font-size: 0.95em;
+      transition: background 0.2s;
+    }
+    menu.sample-menu li button:hover { background: #2b6cb0; }
+
+    /* ===== iframe ===== */
+    iframe.sample {
+      width: 100%;
+      height: 200px;
+      border: 2px solid #bee3f8;
+      border-radius: 6px;
+    }
+
+    /* ===== hr ===== */
+    hr.sample1 { border: none; border-top: 3px solid #4299e1; margin: 16px 0; }
+    hr.sample2 { border: none; border-top: 2px dashed #f6ad55; margin: 16px 0; }
+    hr.sample3 { border: none; border-top: 4px double #68d391; margin: 16px 0; }
+
+    /* ===== canvas ===== */
+    canvas { border: 2px solid #bee3f8; border-radius: 6px; display: block; }
+
+    /* ===== dialog ===== */
+    dialog {
+      border: none;
+      border-radius: 12px;
+      padding: 28px 32px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      max-width: 400px;
+      width: 90%;
+    }
+    dialog h3 { margin-top: 0; color: #2b6cb0; }
+    dialog::backdrop { background: rgba(0,0,0,0.45); }
+    .btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-blue  { background: #4299e1; color: #fff; }
+    .btn-green { background: #48bb78; color: #fff; }
+    .btn-red   { background: #fc8181; color: #fff; }
+    .btn-gray  { background: #a0aec0; color: #fff; }
+
+    /* ===== template / slot ===== */
+    .card-container { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; }
+    .info-card {
+      background: #fff;
+      border: 1px solid #bee3f8;
+      border-radius: 10px;
+      padding: 16px 20px;
+      min-width: 160px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+    }
+    .info-card .card-title { font-weight: bold; color: #2b6cb0; margin-bottom: 4px; }
+    .info-card .card-body  { font-size: 0.9em; color: #4a5568; }
+
+    /* ===== 演習問題エリア ===== */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section h2 { margin-top: 0; color: #c05621; border-left-color: #f6ad55; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #fbd38d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #fbd38d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 400px;
+      margin: 6px 0;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 6px 0 2px; font-weight: bold; color: #4a5568; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #bee3f8; color: #2b6cb0; display: block; }
+
+    /* ===== まとめ表 ===== */
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #bee3f8;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.93em;
+    }
+    table.summary thead tr { background: #2b6cb0; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #ebf8ff; }
+  </style>
+</head>
+<body>
+
+<h1>📚 HTML5 セマンティック・インタラクティブ要素 学習サンプル</h1>
+<p>各要素の役割・使い方を実際の表示で確認しましょう。</p>
+
+
+<!-- ============================================================
+     1. figure / figcaption
+     ============================================================ -->
+<h2>① figure / figcaption</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;figure&gt;</code> ― 画像・図・コードなど、本文から参照される独立したコンテンツを包む<br>
+  ・<code>&lt;figcaption&gt;</code> ― figure のキャプション（説明文）。figure の最初か最後の子要素として記述<br>
+  ・figure を削除しても本文の意味が成立するような補足的コンテンツに使う
+</div>
+<div class="demo-box">
+  <figure>
+    <div class="fig-box">🖼️ サンプル画像エリア</div>
+    <figcaption>図1：グラデーションを使ったサンプル画像（figcaption による説明）</figcaption>
+  </figure>
+</div>
+<details class="code-toggle">
+  <summary>▶ コードを見る</summary>
+  <pre><code>&lt;figure&gt;
+  &lt;img src="sample.jpg" alt="サンプル画像"&gt;
+  &lt;figcaption&gt;図1：サンプル画像の説明&lt;/figcaption&gt;
+&lt;/figure&gt;</code></pre>
+</details>
+
+
+<!-- ============================================================
+     2. details / summary
+     ============================================================ -->
+<h2>② details / summary</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;details&gt;</code> ― クリックで開閉できる折りたたみコンテンツを作る<br>
+  ・<code>&lt;summary&gt;</code> ― details の見出し部分（クリック対象）。省略すると「詳細」と表示される<br>
+  ・<code>open</code> 属性を付けると初期状態で展開される
+</div>
+<div class="demo-box">
+  <details class="sample">
+    <summary>▶ HTML5 とは何ですか？（クリックして開く）</summary>
+    <p>HTML5 は HyperText Markup Language のバージョン5です。<br>
+    セマンティックな要素・マルチメディア対応・APIの充実が特徴です。</p>
+  </details>
+  <details class="sample" open>
+    <summary>▶ open属性あり（最初から開いている）</summary>
+    <p>このように <code>open</code> 属性を付けると、ページ読み込み時から展開された状態になります。</p>
+  </details>
+</div>
+<details class="code-toggle">
+  <summary>▶ コードを見る</summary>
+  <pre><code>&lt;details&gt;
+  &lt;summary&gt;クリックして開く&lt;/summary&gt;
+  &lt;p&gt;ここに詳細コンテンツ&lt;/p&gt;
+&lt;/details&gt;
+
+&lt;!-- open属性で最初から展開 --&gt;
+&lt;details open&gt;
+  &lt;summary&gt;最初から開いている&lt;/summary&gt;
+  &lt;p&gt;コンテンツ&lt;/p&gt;
+&lt;/details&gt;</code></pre>
+</details>
+
+
+<!-- ============================================================
+     3. menu
+     ============================================================ -->
+<h2>③ menu</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;menu&gt;</code> ― コマンドやボタンのリストを表すセマンティックな要素<br>
+  ・<code>&lt;ul&gt;</code> と同じブロックレベルのリストだが、<strong>インタラクティブなコマンド群</strong>に使う意味的な違いがある<br>
+  ・ツールバーやアクションボタン群のマークアップに適している
+</div>
+<div class="demo-box">
+  <p>ドキュメント操作メニュー：</p>
+  <menu class="sample-menu">
+    <li><button onclick="alert('新規作成')">📄 新規作成</button></li>
+    <li><button onclick="alert('保存しました')">💾 保存</button></li>
+    <li><button onclick="alert('印刷ダイアログを開く')">🖨️ 印刷</button></li>
+    <li><button onclick="alert('共有リンクをコピー')">🔗 共有</button></li>
+  </menu>
+</div>
+<details class="code-toggle">
+  <summary>▶ コードを見る</summary>
+  <pre><code>&lt;menu&gt;
+  &lt;li&gt;&lt;button&gt;新規作成&lt;/button&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;button&gt;保存&lt;/button&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;button&gt;印刷&lt;/button&gt;&lt;/li&gt;
+&lt;/menu&gt;</code></pre>
+</details>
+
+
+<!-- ============================================================
+     4. iframe
+     ============================================================ -->
+<h2>④ iframe</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;iframe&gt;</code> ― 別のHTMLページや外部コンテンツをページ内に埋め込む（インラインフレーム）<br>
+  ・<code>src</code> 属性で読み込むURLを指定<br>
+  ・<code>title</code> 属性はアクセシビリティのために必須<br>
+  ・<code>sandbox</code> 属性でセキュリティ制限をかけられる<br>
+  ・<code>loading="lazy"</code> で遅延読み込みが可能
+</div>
+<div class="demo-box">
+  <p>外部ページの埋め込み例：</p>
+  <iframe
+    class="sample"
+    src="https://example.com"
+    title="サンプル：example.com の埋め込み"
+    loading="lazy"
+    sandbox="allow-same-origin">
+  </iframe>
+  <p style="font-size:0.88em; color:#718096;">※ セキュリティポリシーにより表示されない場合があります</p>
+</div>
+<details class="code-toggle">
+  <summary>▶ コードを見る</summary>
+  <pre><code>&lt;iframe
+  src="https://example.com"
+  title="example.com の埋め込み"
+  width="100%"
+  height="200"
+  loading="lazy"
+  sandbox="allow-scripts allow-same-origin"&gt;
+&lt;/iframe&gt;</code></pre>
+</details>
+
+
+<!-- ============================================================
+     5. hr
+     ============================================================ -->
+<h2>⑤ hr</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;hr&gt;</code> ― 段落レベルの<strong>テーマの区切り</strong>を表す（空要素）<br>
+  ・HTML5では「水平線」ではなく<strong>意味的な区切り</strong>として定義されている<br>
+  ・見た目はCSSで自由にカスタマイズ可能
+</div>
+<div class="demo-box">
+  <p>第1章：HTMLの基礎</p>
+  <hr class="sample1">
+  <p>第2章：CSSの基礎（破線区切り）</p>
+  <hr class="sample2">
+  <p>第3章：JavaScriptの基礎（二重線区切り）</p>
+  <hr class="sample3">
+  <p>第4章：まとめ</p>
+</div>
+<details class="code-toggle">
+  <summary>▶ コードを見る</summary>
+  <pre><code>&lt;p&gt;第1章&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;第2章&lt;/p&gt;
+
+/* CSSでスタイル変更 */
+hr {
+  border: none;
+  border-top: 3px solid #4299e1;
+}</code></pre>
+</details>
+
+
+<!-- ============================================================
+     6. script / noscript
+     ============================================================ -->
+<h2>⑥ script / noscript</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;script&gt;</code> ― JavaScriptを埋め込む・外部JSファイルを読み込む<br>
+  ・<code>defer</code> 属性：HTML解析完了後にJS実行（DOMの準備後）<br>
+  ・<code>async</code> 属性：HTML解析と並行してJS取得・完了次第実行<br>
+  ・<code>&lt;noscript&gt;</code> ― JSが無効な環境向けの代替コンテンツを提供する
+</div>
+<div class="demo-box">
+  <p id="script-demo">⏳ JavaScriptで書き換えられます...</p>
+  <noscript>
+    <p style="color:red;">⚠️ JavaScriptが無効です。このコンテンツを表示するにはJSを有効にしてください。</p>
+  </noscript>
+  <script>
+    document.getElementById('script-demo').textContent
+      = '✅ JavaScriptが有効です！script要素が正常に動作しています。';
+  </script>
+  <hr style="margin:16px 0;">
+  <p style="font-size:0.9em; color:#4a5568;">
+    <strong>defer と async の違い：</strong><br>
+    ・<code>defer</code>  → HTML解析が終わってから実行（順序保証あり）<br>
+    ・<code>async</code>  → ダウンロード完了次第すぐ実行（順序保証なし）<br>
+    ・どちらもなし → HTMLの解析をブロックして即実行
+  </p>
+</div>
+<details class="code-toggle">
+  <summary>▶ コードを見る</summary>
+  <pre><code>&lt;!-- インラインスクリプト --&gt;
+&lt;script&gt;
+  console.log('Hello HTML5');
+&lt;/script&gt;
+
+&lt;!-- 外部ファイル読み込み --&gt;
+&lt;script src="app.js" defer&gt;&lt;/script&gt;
+&lt;script src="lib.js" async&gt;&lt;/script&gt;
+
+&lt;!-- JS無効時の代替 --&gt;
+&lt;noscript&gt;
+  &lt;p&gt;JavaScriptを有効にしてください。&lt;/p&gt;
+&lt;/noscript&gt;</code></pre>
+</details>
+
+
+<!-- ============================================================
+     7. dialog
+     ============================================================ -->
+<h2>⑦ dialog</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;dialog&gt;</code> ― モーダルダイアログ・ポップアップを表すネイティブHTML要素<br>
+  ・<code>open</code> 属性があると表示される<br>
+  ・JS の <code>.show()</code> で通常表示、<code>.showModal()</code> でモーダル表示<br>
+  ・<code>.close()</code> で閉じる。<code>::backdrop</code> 疑似要素で背景をスタイリングできる
+</div>
+<div class="demo-box">
+  <button class="btn btn-blue" onclick="document.getElementById('myDialog').showModal()">
+    🗨️ ダイアログを開く
+  </button>
+
+  <dialog id="myDialog">
+    <h3>📢 お知らせ</h3>
+    <p>これは <code>&lt;dialog&gt;</code> 要素を使ったネイティブモーダルです。<br>
+    JavaScriptの <code>showModal()</code> で呼び出しています。</p>
+    <div style="margin-top:16px; display:flex; gap:10px;">
+      <button class="btn btn-green" onclick="document.getElementById('myDialog').close()">✅ 確認</button>
+      <button class="btn btn-gray"  onclick="document.getElementById('myDialog').close()">✖ 閉じる</button>
+    </div>
+  </dialog>
+</div>
+<details class="code-toggle">
+  <summary>▶ コードを見る</summary>
+  <pre><code>&lt;button onclick="document.getElementById('myDialog').showModal()"&gt;
+  ダイアログを開く
+&lt;/button&gt;
+
+&lt;dialog id="myDialog"&gt;
+  &lt;h3&gt;お知らせ&lt;/h3&gt;
+  &lt;p&gt;ダイアログの内容&lt;/p&gt;
+  &lt;button onclick="document.getElementById('myDialog').close()"&gt;
+    閉じる
+  &lt;/button&gt;
+&lt;/dialog&gt;</code></pre>
+</details>
+
+
+<!-- ============================================================
+     8. template / slot
+     ============================================================ -->
+<h2>⑧ template / slot</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;template&gt;</code> ― ページ読み込み時には<strong>レンダリングされない</strong>HTMLの雛形。JSで複製して使う<br>
+  ・<code>content</code> プロパティで中身の DocumentFragment を取得できる<br>
+  ・<code>&lt;slot&gt;</code> ― Web Components（Shadow DOM）で使う<strong>コンテンツ挿入口</strong><br>
+  ・<code>name</code> 属性で名前付きスロットを定義できる
+</div>
+<div class="demo-box">
+  <!-- template定義（画面には表示されない） -->
+  <template id="cardTemplate">
+    <div class="info-card">
+      <div class="card-title"></div>
+      <div class="card-body"></div>
+    </div>
+  </template>
+
+  <p>⬇️ template要素からJSで動的に生成されたカード：</p>
+  <div class="card-container" id="cardContainer"></div>
+
+  <script>
+    const data = [
+      { title: 'figure',   body: '図・画像のラッパー' },
+      { title: 'details',  body: '折りたたみコンテンツ' },
+      { title: 'dialog',   body: 'モーダルダイアログ' },
+      { title: 'template', body: 'HTML雛形（非表示）' },
+    ];
+    const tmpl = document.getElementById('cardTemplate');
+    const container = document.getElementById('cardContainer');
+    data.forEach(item => {
+      const clone = tmpl.content.cloneNode(true);
+      clone.querySelector('.card-title').textContent = '<' + item.title + '>';
+      clone.querySelector('.card-body').textContent  = item.body;
+      container.appendChild(clone);
+    });
+  </script>
+
+  <hr style="margin:16px 0;">
+  <p style="font-size:0.9em; color:#4a5568;">
+    <strong>slot の使用例（Web Components）：</strong>
+  </p>
+  <pre style="background:#edf2f7; padding:12px; border-radius:6px; font-size:0.85em;"><code>&lt;!-- Web Component定義内（Shadow DOM） --&gt;
+&lt;template id="myComponent"&gt;
+  &lt;div&gt;
+    &lt;slot name="title"&gt;デフォルトタイトル&lt;/slot&gt;
+    &lt;slot name="body"&gt;デフォルト本文&lt;/slot&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;!-- 使用側 --&gt;
+&lt;my-component&gt;
+  &lt;span slot="title"&gt;カスタムタイトル&lt;/span&gt;
+  &lt;p slot="body"&gt;カスタム本文&lt;/p&gt;
+&lt;/my-component&gt;</code></pre>
+</div>
+<details class="code-toggle">
+  <summary>▶ template の基本コードを見る</summary>
+  <pre><code>&lt;template id="myTemplate"&gt;
+  &lt;div class="card"&gt;
+    &lt;h3 class="title"&gt;&lt;/h3&gt;
+    &lt;p class="body"&gt;&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+  const tmpl = document.getElementById('myTemplate');
+  const clone = tmpl.content.cloneNode(true);
+  clone.querySelector('.title').textContent = 'タイトル';
+  document.body.appendChild(clone);
+&lt;/script&gt;</code></pre>
+</details>
+
+
+<!-- ============================================================
+     9. canvas
+     ============================================================ -->
+<h2>⑨ canvas</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;canvas&gt;</code> ― JSで2D/3Dグラフィックを描画するための領域<br>
+  ・<code>width</code> / <code>height</code> 属性で描画解像度を指定（CSSサイズとは別）<br>
+  ・<code>getContext('2d')</code> で2D描画コンテキストを取得<br>
+  ・canvas自体はピクセルベース（SVGはベクターベース）<br>
+  ・JS非対応環境向けにタグ内に代替テキストを書ける
+</div>
+<div class="demo-box">
+  <canvas id="myCanvas" width="500" height="160">
+    ※ お使いのブラウザはcanvasに対応していません
+  </canvas>
+  <script>
+    const ctx = document.getElementById('myCanvas').getContext('2d');
+    // 背景
+    ctx.fillStyle = '#ebf8ff';
+    ctx.fillRect(0, 0, 500, 160);
+    // 四角形
+    ctx.fillStyle = '#4299e1';
+    ctx.fillRect(20, 40, 80, 80);
+    // 円
+    ctx.beginPath();
+    ctx.arc(200, 80, 45, 0, Math.PI * 2);
+    ctx.fillStyle = '#f6ad55';
+    ctx.fill();
+    // 三角形
+    ctx.beginPath();
+    ctx.moveTo(320, 30);
+    ctx.lineTo(380, 130);
+    ctx.lineTo(260, 130);
+    ctx.closePath();
+    ctx.fillStyle = '#68d391';
+    ctx.fill();
+    // テキスト
+    ctx.fillStyle = '#2d3748';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText('canvas で描画！', 400, 80);
+  </script>
+  <p style="font-size:0.88em; color:#718096; margin-top:8px;">
+    ⬆️ JavaScriptで四角・円・三角・テキストを描画しています
+  </p>
+</div>
+<details class="code-toggle">
+  <summary>▶ コードを見る</summary>
+  <pre><code>&lt;canvas id="myCanvas" width="500" height="160"&gt;
+  ※ canvasに対応していません（代替テキスト）
+&lt;/canvas&gt;
+
+&lt;script&gt;
+  const ctx = document.getElementById('myCanvas').getContext('2d');
+
+  // 四角形を描く
+  ctx.fillStyle = '#4299e1';
+  ctx.fillRect(20, 40, 80, 80);
+
+  // 円を描く
+  ctx.beginPath();
+  ctx.arc(200, 80, 45, 0, Math.PI * 2);
+  ctx.fillStyle = '#f6ad55';
+  ctx.fill();
+
+  // テキストを描く
+  ctx.fillStyle = '#2d3748';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('Hello Canvas!', 300, 80);
+&lt;/script&gt;</code></pre>
+</details>
+
+
+<!-- ============================================================
+     演習問題
+     ============================================================ -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 空欄穴埋め（要素名を入力）</h3>
+    <p>
+      画像や図に説明文を付けるとき、画像全体を包む要素は
+      <code>&lt;__①__&gt;</code> で、説明文には <code>&lt;__②__&gt;</code> を使う。
+    </p>
+    <label>① 要素名：</label>
+    <input type="text" id="q1a" placeholder="例）table">
+    <label>② 要素名：</label>
+    <input type="text" id="q1b" placeholder="例）table">
+    <br><br>
+    <button class="btn btn-blue" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const a = document.getElementById('q1a').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const b = document.getElementById('q1b').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const r = document.getElementById('q1-result');
+        if (a === 'figure' && b === 'figcaption') {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 正解！ figure でコンテンツを包み、figcaption でキャプションを付けます。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.textContent = '❌ 不正解。ヒント：① figure　② figcaption';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 選択問題</h3>
+    <p><code>&lt;details&gt;</code> 要素を最初から展開した状態にするには、どの属性を付けますか？</p>
+    <label>属性名を選択：</label>
+    <select id="q2">
+      <option value="">-- 選択してください --</option>
+      <option value="open">open</option>
+      <option value="expanded">expanded</option>
+      <option value="visible">visible</option>
+      <option value="active">active</option>
+    </select>
+    <br><br>
+    <button class="btn btn-blue" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const v = document.getElementById('q2').value;
+        const r = document.getElementById('q2-result');
+        if (v === 'open') {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 正解！ open 属性を付けると初期状態で展開されます。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.textContent = '❌ 不正解。正解は open 属性です。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 正誤問題（○か×を入力）</h3>
+    <p>
+      <code>&lt;hr&gt;</code> 要素は HTML5 において「水平線を引く」という
+      <strong>見た目上の意味</strong>で定義されている。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q3" placeholder="○ または ×" style="max-width:120px;">
+    <br><br>
+    <button class="btn btn-blue" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value.trim();
+        const r = document.getElementById('q3-result');
+        if (v === '×' || v === 'x' || v === 'X' || v === 'バツ') {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 正解！ HTML5 の hr は「テーマの区切り」という意味的な要素です。見た目ではなくセマンティクスが重要です。';
+        } else if (v === '○' || v === 'o' || v === 'O' || v === '丸') {
+          r.className = 'result-msg wrong';
+          r.textContent = '❌ 不正解。HTML5 の hr は見た目ではなく「段落レベルのテーマの区切り」を意味します。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 空欄穴埋め（属性名を入力）</h3>
+    <p>
+      <code>&lt;script&gt;</code> 要素の属性のうち、
+      「HTML解析完了後にスクリプトを実行し、複数ある場合は記述順に実行される」
+      ことを保証する属性は何か？
+    </p>
+    <label>属性名：</label>
+    <input type="text" id="q4" placeholder="属性名を入力">
+    <br><br>
+    <button class="btn btn-blue" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const v = document.getElementById('q4').value.trim().toLowerCase();
+        const r = document.getElementById('q4-result');
+        if (v === 'defer') {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 正解！ defer 属性はHTML解析後に順序を保って実行されます。async は順序保証なしです。';
+        } else if (v === 'async') {
+          r.className = 'result-msg wrong';
+          r.textContent = '❌ 惜しい！ async はダウンロード完了次第すぐ実行（順序保証なし）です。順序保証があるのは defer です。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.textContent = '❌ 不正解。ヒント：d から始まる属性名です。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. 記述問題</h3>
+    <p>
+      <code>&lt;template&gt;</code> 要素の特徴を説明してください。<br>
+      （キーワード：レンダリング・JS・cloneNode）
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q5" rows="4" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ5()">模範解答を見る</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const r = document.getElementById('q5-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br>' +
+          '<code>&lt;template&gt;</code> 要素はページ読み込み時に<strong>レンダリングされない</strong>HTMLの雛形です。' +
+          'ブラウザはDOMに追加せず、スクリプトも実行しません。' +
+          'JavaScriptで <code>template.content.cloneNode(true)</code> を使って複製し、' +
+          'DOMに追加することで動的にコンテンツを生成できます。' +
+          '繰り返し使うカードやリストアイテムの雛形に適しています。';
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. 組み合わせ問題</h3>
+    <p>以下の説明に合う要素名を入力してください。</p>
+    <label>① JSで2D/3Dグラフィックを描画するための領域：</label>
+    <input type="text" id="q6a" placeholder="要素名">
+    <label>② ネイティブのモーダルダイアログを表す要素：</label>
+    <input type="text" id="q6b" placeholder="要素名">
+    <label>③ JSが無効な環境向けの代替コンテンツを提供する要素：</label>
+    <input type="text" id="q6c" placeholder="要素名">
+    <label>④ 別のHTMLページをページ内に埋め込む要素：</label>
+    <input type="text" id="q6d" placeholder="要素名">
+    <br><br>
+    <button class="btn btn-blue" onclick="checkQ6()">答え合わせ</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const a = document.getElementById('q6a').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const b = document.getElementById('q6b').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const c = document.getElementById('q6c').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const d = document.getElementById('q6d').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const r = document.getElementById('q6-result');
+        const correct = { a:'canvas', b:'dialog', c:'noscript', d:'iframe' };
+        const score = [a===correct.a, b===correct.b, c===correct.c, d===correct.d];
+        const count = score.filter(Boolean).length;
+        if (count === 4) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！完璧です！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/4 問正解。<br>` +
+            `① ${score[0]?'✅':'❌ canvas'}　` +
+            `② ${score[1]?'✅':'❌ dialog'}　` +
+            `③ ${score[2]?'✅':'❌ noscript'}　` +
+            `④ ${score[3]?'✅':'❌ iframe'}`;
+        }
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- ============================================================
+     まとめ表
+     ============================================================ -->
+<h2>📌 要素まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr>
+      <th>要素</th>
+      <th>カテゴリ</th>
+      <th>役割・特徴</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>figure</code></td><td>セマンティック</td><td>画像・図・コードなど独立コンテンツのラッパー</td></tr>
+    <tr><td><code>figcaption</code></td><td>セマンティック</td><td>figure のキャプション（最初か最後の子要素）</td></tr>
+    <tr><td><code>details</code></td><td>インタラクティブ</td><td>クリックで開閉する折りたたみコンテンツ</td></tr>
+    <tr><td><code>summary</code></td><td>インタラクティブ</td><td>details の見出し・クリック対象部分</td></tr>
+    <tr><td><code>menu</code></td><td>セマンティック</td><td>コマンド・ボタンのリスト（ツールバー等）</td></tr>
+    <tr><td><code>iframe</code></td><td>埋め込み</td><td>外部HTMLページをインラインで埋め込む</td></tr>
+    <tr><td><code>hr</code></td><td>セマンティック</td><td>テーマの区切り（空要素・意味的区切り）</td></tr>
+    <tr><td><code>script</code></td><td>メタデータ</td><td>JS埋め込み・外部JS読み込み。defer/async属性</td></tr>
+    <tr><td><code>noscript</code></td><td>メタデータ</td><td>JS無効環境向けの代替コンテンツ</td></tr>
+    <tr><td><code>dialog</code></td><td>インタラクティブ</td><td>ネイティブモーダル。show()/showModal()/close()</td></tr>
+    <tr><td><code>template</code></td><td>スクリプティング</td><td>非レンダリングのHTML雛形。JS で複製して使用</td></tr>
+    <tr><td><code>slot</code></td><td>スクリプティング</td><td>Web Components のコンテンツ挿入口</td></tr>
+    <tr><td><code>canvas</code></td><td>埋め込み</td><td>JS で2D/3Dグラフィックを描画する領域</td></tr>
+  </tbody>
+</table>
+
+</body>
+</html>
