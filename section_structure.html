@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML5 セクション・基本構造 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #4299e1; padding-bottom: 10px; }
+    h2 { color: #2b6cb0; margin-top: 48px; border-left: 5px solid #4299e1; padding-left: 12px; }
+    h3 { color: #276749; margin-top: 24px; }
+
+    code {
+      background: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment { color: #68d391; }
+    pre .tag     { color: #90cdf4; }
+    pre .attr    { color: #fbd38d; }
+    pre .value   { color: #fc8181; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #90cdf4;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #2b6cb0; }
+
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+
+    .demo-box {
+      background: #fff;
+      border: 1px solid #bee3f8;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* ページ構造ビジュアル図 */
+    .layout-diagram {
+      display: grid;
+      gap: 6px;
+      font-size: 0.82em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .ld-block {
+      border-radius: 6px;
+      padding: 8px 14px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .ld-html    { background: #d6bcfa; color: #44337a; border: 2px solid #9f7aea; }
+    .ld-head    { background: #bee3f8; color: #2b6cb0; border: 2px solid #4299e1; }
+    .ld-body    { background: #c6f6d5; color: #276749; border: 2px solid #48bb78; }
+    .ld-header  { background: #fbd38d; color: #744210; border: 2px solid #f6ad55; }
+    .ld-nav     { background: #fed7d7; color: #9b2335; border: 2px solid #fc8181; }
+    .ld-main    { background: #e9d8fd; color: #553c9a; border: 2px solid #9f7aea; }
+    .ld-article { background: #bee3f8; color: #2b6cb0; border: 2px dashed #4299e1; }
+    .ld-section { background: #c6f6d5; color: #276749; border: 2px dashed #48bb78; }
+    .ld-aside   { background: #fefcbf; color: #744210; border: 2px solid #ecc94b; }
+    .ld-footer  { background: #e2e8f0; color: #4a5568; border: 2px solid #a0aec0; }
+    .ld-address { background: #fed7d7; color: #9b2335; border: 2px dashed #fc8181; }
+    .ld-inner {
+      display: grid;
+      grid-template-columns: 1fr 220px;
+      gap: 6px;
+    }
+    .ld-inner-left { display: grid; gap: 6px; }
+
+    /* セクション要素比較表 */
+    table.ref-table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      margin: 14px 0;
+    }
+    table.ref-table th, table.ref-table td {
+      border: 1px solid #bee3f8;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.93em;
+    }
+    table.ref-table thead tr { background: #2b6cb0; color: #fff; }
+    table.ref-table tbody tr:nth-child(even) { background: #ebf8ff; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 { margin-top: 0; color: #c05621; border-left-color: #f6ad55; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #fbd38d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #fbd38d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-blue { background: #4299e1; color: #fff; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #bee3f8; color: #2b6cb0; display: block; }
+
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #bee3f8;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.93em;
+    }
+    table.summary thead tr { background: #2b6cb0; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #ebf8ff; }
+
+    /* レスポンシブ */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      .ld-inner { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>🏛️ HTML5 セクション・基本構造 学習サンプル</h1>
+<p>セクション要素・見出し・ページ構造を形成する要素の役割と使い方を学びましょう。</p>
+
+
+<!-- 1. セクションと見出しの関係 -->
+<h2>① セクションと見出しの関係</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  HTMLの「セクション」とは<strong>テーマでまとまったコンテンツのかたまり</strong>です。<br>
+  見出し（h1〜h6）はそのセクションの題名を表します。
+</div>
+
+<div class="demo-box">
+  <div class="warn">
+    <strong>⚠️ 試験重要ポイント：アウトラインアルゴリズムの廃止</strong><br><br>
+    HTML5では当初、<code>section</code> や <code>article</code> などのセクショニング要素を使うことで
+    「アウトラインアルゴリズム」によって文書構造が自動的に決まる仕様がありました。<br><br>
+    しかし、<strong>2022年7月にこの仕様は削除されました。</strong><br><br>
+    ✅ 現在の考え方：<br>
+    ・見出しレベル（h1〜h6）は<strong>文書全体を通じた階層</strong>で管理する<br>
+    ・セクション要素の中で h1 を使い回せばよい、という考え方は<strong>現在は推奨されない</strong><br>
+    ・<strong>h1は文書内に1つ</strong>、以降は h2・h3… と階層的に使うのが現在のベストプラクティス
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ 試験重要ポイント：セクションを表す要素は4つだけ</strong><br><br>
+    HTML5でセクションを表す要素は以下の<strong>4つのみ</strong>です。<br><br>
+    <code>section</code>　<code>article</code>　<code>aside</code>　<code>nav</code><br><br>
+    ❌ <code>header</code> / <code>footer</code> / <code>main</code> / <code>div</code> はセクション要素ではありません。
+  </div>
+
+<pre>
+<span class="comment">&lt;!-- 見出しの階層構造の例 --&gt;</span>
+<span class="tag">&lt;h1&gt;</span>HTML5 学習ガイド<span class="tag">&lt;/h1&gt;</span>          <span class="comment">&lt;!-- 文書全体のタイトル --&gt;</span>
+
+  <span class="tag">&lt;h2&gt;</span>第1章：基本構文<span class="tag">&lt;/h2&gt;</span>           <span class="comment">&lt;!-- 章の見出し --&gt;</span>
+    <span class="tag">&lt;h3&gt;</span>1-1 タグの書き方<span class="tag">&lt;/h3&gt;</span>        <span class="comment">&lt;!-- 節の見出し --&gt;</span>
+    <span class="tag">&lt;h3&gt;</span>1-2 属性の書き方<span class="tag">&lt;/h3&gt;</span>        <span class="comment">&lt;!-- 節の見出し --&gt;</span>
+
+  <span class="tag">&lt;h2&gt;</span>第2章：セクション要素<span class="tag">&lt;/h2&gt;</span>       <span class="comment">&lt;!-- 章の見出し --&gt;</span>
+    <span class="tag">&lt;h3&gt;</span>2-1 article要素<span class="tag">&lt;/h3&gt;</span>         <span class="comment">&lt;!-- 節の見出し --&gt;</span>
+</pre>
+</div>
+
+
+<!-- 2. h1〜h6要素 -->
+<h2>② h1〜h6要素</h2>
+
+<div class="note">
+  <strong>ポイント①：h1〜h6要素は「セクションの見出し」を表す</strong><br>
+  ・数字が小さいほど重要度・階層が高い（h1が最上位）<br>
+  ・<strong>見た目のサイズ調整のために使うのは誤り</strong>（CSSで調整すること）<br>
+  ・見出しレベルを飛ばすのは避ける（h1の次にh3など）
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="tag">&lt;h1&gt;</span>レベル1：文書全体のタイトル（通常1つだけ）<span class="tag">&lt;/h1&gt;</span>
+<span class="tag">&lt;h2&gt;</span>レベル2：章・大セクションの見出し<span class="tag">&lt;/h2&gt;</span>
+<span class="tag">&lt;h3&gt;</span>レベル3：節の見出し<span class="tag">&lt;/h3&gt;</span>
+<span class="tag">&lt;h4&gt;</span>レベル4：小節の見出し<span class="tag">&lt;/h4&gt;</span>
+<span class="tag">&lt;h5&gt;</span>レベル5：細目の見出し<span class="tag">&lt;/h5&gt;</span>
+<span class="tag">&lt;h6&gt;</span>レベル6：最小単位の見出し<span class="tag">&lt;/h6&gt;</span>
+</pre>
+
+  <div class="demo-box" style="margin-top:14px;">
+    <p><strong>▼ 実際の表示</strong></p>
+    <h1 style="font-size:1.8em; margin:4px 0;">h1：文書タイトル</h1>
+    <h2 style="font-size:1.4em; margin:4px 0; border:none; padding:0; color:#2d3748;">h2：章の見出し</h2>
+    <h3 style="font-size:1.15em; margin:4px 0; color:#2d3748;">h3：節の見出し</h3>
+    <h4 style="font-size:1.0em; margin:4px 0;">h4：小節の見出し</h4>
+    <h5 style="font-size:0.9em; margin:4px 0;">h5：細目の見出し</h5>
+    <h6 style="font-size:0.82em; margin:4px 0;">h6：最小単位の見出し</h6>
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ よくある誤用</strong><br>
+    ❌ 文字を大きくしたいから h1 を使う → CSSの <code>font-size</code> で対応<br>
+    ❌ 太字にしたいから h2 を使う → <code>&lt;strong&gt;</code> や CSS で対応<br>
+    ❌ h1 → h3 と見出しレベルを飛ばす → アクセシビリティ・SEOに悪影響
+  </div>
+</div>
+
+
+<!-- 3. hgroup要素 -->
+<h2>③ hgroup要素</h2>
+
+<div class="note">
+  <strong>ポイント③：hgroup要素は見出しとサブタイトル・副題をグループ化する</strong><br>
+  ・<code>&lt;hgroup&gt;</code> は <strong>h1〜h6要素</strong>（見出し）と
+  <strong>p要素</strong>（サブタイトル・副題）をまとめる要素です。<br>
+  ・アウトライン上は hgroup 内の最初の見出し要素が見出しとして扱われます。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- hgroupの基本的な使い方 --&gt;</span>
+<span class="tag">&lt;hgroup&gt;</span>
+  <span class="tag">&lt;h1&gt;</span>HTML5 プロフェッショナル認定試験<span class="tag">&lt;/h1&gt;</span>
+  <span class="tag">&lt;p&gt;</span>レベル1 完全攻略ガイド<span class="tag">&lt;/p&gt;</span>   <span class="comment">&lt;!-- サブタイトル --&gt;</span>
+<span class="tag">&lt;/hgroup&gt;</span>
+
+<span class="comment">&lt;!-- 章タイトルとサブタイトルの例 --&gt;</span>
+<span class="tag">&lt;hgroup&gt;</span>
+  <span class="tag">&lt;h2&gt;</span>第3章：セクション要素<span class="tag">&lt;/h2&gt;</span>
+  <span class="tag">&lt;p&gt;</span>article・section・aside・nav の使い分け<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;/hgroup&gt;</span>
+</pre>
+
+  <div class="demo-box" style="margin-top:14px;">
+    <p><strong>▼ 実際の表示</strong></p>
+    <hgroup>
+      <h3 style="margin:0; font-size:1.2em; color:#2b6cb0;">HTML5 プロフェッショナル認定試験</h3>
+      <p style="margin:2px 0 0; color:#718096; font-size:0.9em;">レベル1 完全攻略ガイド</p>
+    </hgroup>
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ hgroupの注意点</strong><br>
+    ・hgroup 内に含められるのは <strong>h1〜h6 と p 要素のみ</strong>です<br>
+    ・サブタイトル用の p 要素は hgroup の外に書くと、
+    アウトライン上は別のコンテンツとして扱われます<br>
+    ・見出しが1つだけで副題もない場合は hgroup を使う必要はありません
+  </div>
+</div>
+
+
+<!-- 4. article要素 -->
+<h2>④ article要素</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;article&gt;</code> は<strong>それ単体で完結する独立したコンテンツ</strong>を表すセクション要素です。<br>
+  ・ページから切り離してRSSフィードや他のサイトに配信しても意味が成立するコンテンツに使います。<br>
+  ・article 要素は<strong>ネスト（入れ子）可能</strong>です（記事内のコメントなど）。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- ブログ記事 --&gt;</span>
+<span class="tag">&lt;article&gt;</span>
+  <span class="tag">&lt;h2&gt;</span>HTML5の新機能まとめ<span class="tag">&lt;/h2&gt;</span>
+  <span class="tag">&lt;p&gt;</span>投稿日：2025年3月22日<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;p&gt;</span>HTML5では多くの新要素が追加されました…<span class="tag">&lt;/p&gt;</span>
+
+  <span class="comment">&lt;!-- article のネスト（コメント欄） --&gt;</span>
+  <span class="tag">&lt;article&gt;</span>
+    <span class="tag">&lt;h3&gt;</span>コメント：山田太郎<span class="tag">&lt;/h3&gt;</span>
+    <span class="tag">&lt;p&gt;</span>とても参考になりました！<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/article&gt;</span>
+<span class="tag">&lt;/article&gt;</span>
+</pre>
+
+  <table class="ref-table">
+    <thead><tr><th>適切な用途</th><th>不適切な用途</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>ブログ記事・ニュース記事</td>
+        <td>単なるレイアウト用の区画</td>
+      </tr>
+      <tr>
+        <td>フォーラムの投稿・コメント</td>
+        <td>ページの一部でしかない補足情報</td>
+      </tr>
+      <tr>
+        <td>製品カード・プロフィールカード</td>
+        <td>ナビゲーションメニュー</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 5. section要素 -->
+<h2>⑤ section要素</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;section&gt;</code> は<strong>テーマでまとまった汎用的なセクション</strong>を表します。<br>
+  ・article と違い、単体では完結しない・ページの一部として機能するコンテンツに使います。<br>
+  ・<strong>見出し（h2〜h6）を必ず持つ</strong>ことが推奨されます。<br>
+  ・単なるスタイル適用目的には <code>&lt;div&gt;</code> を使うべきです。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="tag">&lt;section&gt;</span>
+  <span class="tag">&lt;h2&gt;</span>サービス紹介<span class="tag">&lt;/h2&gt;</span>
+  <span class="tag">&lt;p&gt;</span>私たちは以下のサービスを提供しています。<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;ul&gt;</span>
+    <span class="tag">&lt;li&gt;</span>Webデザイン<span class="tag">&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;</span>システム開発<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;/ul&gt;</span>
+<span class="tag">&lt;/section&gt;</span>
+
+<span class="tag">&lt;section&gt;</span>
+  <span class="tag">&lt;h2&gt;</span>会社概要<span class="tag">&lt;/h2&gt;</span>
+  <span class="tag">&lt;p&gt;</span>設立：2020年4月<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;/section&gt;</span>
+</pre>
+
+  <div class="warn">
+    <strong>⚠️ article と section の使い分け</strong><br>
+    ・<strong>article</strong>：それ単体で意味が完結する（RSSで配信できるレベル）<br>
+    ・<strong>section</strong>：ページの一部として機能する、テーマでまとまった区画<br>
+    ・迷ったときは「このコンテンツだけ別サイトに貼っても意味が通じるか？」で判断<br>
+    　→ 通じる → <code>article</code>　通じない → <code>section</code>
+  </div>
+</div>
+
+
+<!-- 6. aside要素 -->
+<h2>⑥ aside要素</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;aside&gt;</code> は<strong>主コンテンツと間接的にしか関連しない補足コンテンツ</strong>を表すセクション要素です。<br>
+  ・サイドバー・広告・関連リンク・補足説明などに使います。<br>
+  ・aside を取り除いても主コンテンツの意味が損なわれないものに使います。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="tag">&lt;main&gt;</span>
+  <span class="tag">&lt;article&gt;</span>
+    <span class="tag">&lt;h2&gt;</span>HTML5の歴史<span class="tag">&lt;/h2&gt;</span>
+    <span class="tag">&lt;p&gt;</span>HTML5は2014年にW3Cで勧告されました…<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/article&gt;</span>
+
+  <span class="comment">&lt;!-- 主コンテンツに関連する補足情報 --&gt;</span>
+  <span class="tag">&lt;aside&gt;</span>
+    <span class="tag">&lt;h3&gt;</span>関連リンク<span class="tag">&lt;/h3&gt;</span>
+    <span class="tag">&lt;ul&gt;</span>
+      <span class="tag">&lt;li&gt;</span><span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"#"</span><span class="tag">&gt;</span>W3C公式サイト<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+      <span class="tag">&lt;li&gt;</span><span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"#"</span><span class="tag">&gt;</span>MDN Web Docs<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;/ul&gt;</span>
+  <span class="tag">&lt;/aside&gt;</span>
+<span class="tag">&lt;/main&gt;</span>
+</pre>
+</div>
+
+
+<!-- 7. nav要素 -->
+<h2>⑦ nav要素</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;nav&gt;</code> は<strong>主要なナビゲーションリンクのまとまり</strong>を表すセクション要素です。<br>
+  ・すべてのリンクを nav に入れる必要はありません。<strong>主要なナビゲーション</strong>のみに使います。<br>
+  ・1ページに複数の nav を置くことができます（グローバルナビ・パンくずリストなど）。<br>
+  ・スクリーンリーダーは nav 要素を認識してナビゲーション領域としてアナウンスします。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- グローバルナビゲーション --&gt;</span>
+<span class="tag">&lt;nav</span> <span class="attr">aria-label</span>=<span class="value">"グローバルナビゲーション"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;ul&gt;</span>
+    <span class="tag">&lt;li&gt;</span><span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"/"</span><span class="tag">&gt;</span>ホーム<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;</span><span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"/about"</span><span class="tag">&gt;</span>会社概要<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;</span><span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"/contact"</span><span class="tag">&gt;</span>お問い合わせ<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+  <span class="tag">&lt;/ul&gt;</span>
+<span class="tag">&lt;/nav&gt;</span>
+
+<span class="comment">&lt;!-- パンくずリスト --&gt;</span>
+<span class="tag">&lt;nav</span> <span class="attr">aria-label</span>=<span class="value">"パンくずリスト"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;ol&gt;</span>
+    <span class="tag">&lt;li&gt;</span><span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"/"</span><span class="tag">&gt;</span>ホーム<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;</span><span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"/blog"</span><span class="tag">&gt;</span>ブログ<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;</span>記事タイトル<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;/ol&gt;</span>
+<span class="tag">&lt;/nav&gt;</span>
+</pre>
+</div>
+
+
+<!-- 8. header要素 -->
+<h2>⑧ header要素</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;header&gt;</code> はページまたはセクションの<strong>ヘッダー（導入部・見出し部分）</strong>を表します。<br>
+  ・<strong>セクション要素ではありません</strong>（article / section / aside / nav のみがセクション要素）。<br>
+  ・1ページに複数置くことができます（ページ全体のヘッダー・記事ごとのヘッダーなど）。<br>
+  ・通常、ロゴ・サイトタイトル・ナビゲーション・検索フォームなどを含みます。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- ページ全体のヘッダー --&gt;</span>
+<span class="tag">&lt;header&gt;</span>
+  <span class="tag">&lt;h1&gt;</span>サイトタイトル<span class="tag">&lt;/h1&gt;</span>
+  <span class="tag">&lt;nav&gt;</span>
+    <span class="tag">&lt;ul&gt;</span>
+      <span class="tag">&lt;li&gt;</span><span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"/"</span><span class="tag">&gt;</span>ホーム<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;/ul&gt;</span>
+  <span class="tag">&lt;/nav&gt;</span>
+<span class="tag">&lt;/header&gt;</span>
+
+<span class="comment">&lt;!-- 記事のヘッダー --&gt;</span>
+<span class="tag">&lt;article&gt;</span>
+  <span class="tag">&lt;header&gt;</span>
+    <span class="tag">&lt;h2&gt;</span>記事タイトル<span class="tag">&lt;/h2&gt;</span>
+    <span class="tag">&lt;p&gt;</span>投稿日：2025年3月22日 | 著者：山田太郎<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/header&gt;</span>
+  <span class="tag">&lt;p&gt;</span>記事本文…<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;/article&gt;</span>
+</pre>
+</div>
+
+
+<!-- 9. footer要素 -->
+<h2>⑨ footer要素</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;footer&gt;</code> はページまたはセクションの<strong>フッター（末尾情報）</strong>を表します。<br>
+  ・<strong>セクション要素ではありません。</strong><br>
+  ・1ページに複数置くことができます（ページ全体のフッター・記事ごとのフッターなど）。<br>
+  ・著作権情報・関連リンク・著者情報・更新日などを含みます。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- ページ全体のフッター --&gt;</span>
+<span class="tag">&lt;footer&gt;</span>
+  <span class="tag">&lt;p&gt;</span>&amp;copy; 2025 MeshinoKiwamiOkome. All rights reserved.<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;nav&gt;</span>
+    <span class="tag">&lt;ul&gt;</span>
+      <span class="tag">&lt;li&gt;</span><span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"/privacy"</span><span class="tag">&gt;</span>プライバシーポリシー<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;/ul&gt;</span>
+  <span class="tag">&lt;/nav&gt;</span>
+<span class="tag">&lt;/footer&gt;</span>
+
+<span class="comment">&lt;!-- 記事のフッター --&gt;</span>
+<span class="tag">&lt;article&gt;</span>
+  <span class="tag">&lt;p&gt;</span>記事本文…<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;footer&gt;</span>
+    <span class="tag">&lt;p&gt;</span>タグ：<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"#"</span><span class="tag">&gt;</span>HTML5<span class="tag">&lt;/a&gt;</span>　最終更新：2025年3月<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/footer&gt;</span>
+<span class="tag">&lt;/article&gt;</span>
+</pre>
+</div>
+
+
+<!-- 10. main要素 -->
+<h2>⑩ main要素</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;main&gt;</code> はページの<strong>主要コンテンツ</strong>を表します。<br>
+  ・<strong>セクション要素ではありません。</strong><br>
+  ・1ページに<strong>1つだけ</strong>しか置けません（hidden属性で非表示の場合を除く）。<br>
+  ・<code>&lt;header&gt;</code> / <code>&lt;footer&gt;</code> / <code>&lt;nav&gt;</code> / <code>&lt;aside&gt;</code> の子孫にはなれません。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;header&gt;</span>サイトヘッダー<span class="tag">&lt;/header&gt;</span>
+  <span class="tag">&lt;nav&gt;</span>グローバルナビ<span class="tag">&lt;/nav&gt;</span>
+
+  <span class="tag">&lt;main&gt;</span>                        <span class="comment">&lt;!-- ページに1つだけ --&gt;</span>
+    <span class="tag">&lt;h1&gt;</span>ページタイトル<span class="tag">&lt;/h1&gt;</span>
+    <span class="tag">&lt;article&gt;</span>メインコンテンツ<span class="tag">&lt;/article&gt;</span>
+    <span class="tag">&lt;aside&gt;</span>サイドバー<span class="tag">&lt;/aside&gt;</span>
+  <span class="tag">&lt;/main&gt;</span>
+
+  <span class="tag">&lt;footer&gt;</span>サイトフッター<span class="tag">&lt;/footer&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+</pre>
+</div>
+
+
+<!-- 11. address要素 -->
+<h2>⑪ address要素</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;address&gt;</code> は<strong>最も近い article または body 要素の連絡先情報</strong>を表します。<br>
+  ・物理的な住所だけでなく、メールアドレス・電話番号・SNSリンクなども含められます。<br>
+  ・<strong>任意の住所を表すためだけに使うのは誤り</strong>です（文書・記事の連絡先に限定）。<br>
+  ・address 内に見出し・section・article・header・footer・address は置けません。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- 記事の著者連絡先 --&gt;</span>
+<span class="tag">&lt;article&gt;</span>
+  <span class="tag">&lt;h2&gt;</span>HTML5入門<span class="tag">&lt;/h2&gt;</span>
+  <span class="tag">&lt;p&gt;</span>本文…<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;address&gt;</span>
+    著者：<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"mailto:author@example.com"</span><span class="tag">&gt;</span>山田太郎<span class="tag">&lt;/a&gt;</span>
+  <span class="tag">&lt;/address&gt;</span>
+<span class="tag">&lt;/article&gt;</span>
+
+<span class="comment">&lt;!-- サイト全体の連絡先（body直下のaddress） --&gt;</span>
+<span class="tag">&lt;footer&gt;</span>
+  <span class="tag">&lt;address&gt;</span>
+    <span class="tag">&lt;p&gt;</span>〒700-0000 岡山県総社市○○1-2-3<span class="tag">&lt;/p&gt;</span>
+    <span class="tag">&lt;p&gt;</span>TEL: 000-000-0000<span class="tag">&lt;/p&gt;</span>
+    <span class="tag">&lt;p&gt;</span><span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"mailto:info@example.com"</span><span class="tag">&gt;</span>info@example.com<span class="tag">&lt;/a&gt;&lt;/p&gt;</span>
+  <span class="tag">&lt;/address&gt;</span>
+<span class="tag">&lt;/footer&gt;</span>
+</pre>
+</div>
+
+
+<!-- 12. div / span要素 -->
+<h2>⑫ div要素 / span要素</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>&lt;div&gt;</code> は<strong>意味を持たないブロックレベルの汎用コンテナ</strong>です。<br>
+  ・<code>&lt;span&gt;</code> は<strong>意味を持たないインラインの汎用コンテナ</strong>です。<br>
+  ・セマンティックな要素が使えない場合の<strong>最終手段</strong>として使います。<br>
+  ・CSSのスタイル適用・JavaScriptの操作対象として使うのが主な用途です。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- div：ブロックレベルの汎用コンテナ --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="value">"card-wrapper"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="value">"card"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;h3&gt;</span>カードタイトル<span class="tag">&lt;/h3&gt;</span>
+    <span class="tag">&lt;p&gt;</span>カードの内容<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="comment">&lt;!-- span：インラインの汎用コンテナ --&gt;</span>
+<span class="tag">&lt;p&gt;</span>
+  価格：<span class="tag">&lt;span</span> <span class="attr">class</span>=<span class="value">"price"</span><span class="tag">&gt;</span>1,000円<span class="tag">&lt;/span&gt;</span>（税込）
+<span class="tag">&lt;/p&gt;</span>
+</pre>
+
+  <div class="warn">
+    <strong>⚠️ div / span の使いすぎに注意（Divitis）</strong><br>
+    セマンティックな要素が使える場面で div / span を使うのは避けましょう。<br><br>
+    ❌ <code>&lt;div id="nav"&gt;</code> → ✅ <code>&lt;nav&gt;</code><br>
+    ❌ <code>&lt;div id="header"&gt;</code> → ✅ <code>&lt;header&gt;</code><br>
+    ❌ <code>&lt;div id="footer"&gt;</code> → ✅ <code>&lt;footer&gt;</code><br>
+    ❌ <code>&lt;div class="article"&gt;</code> → ✅ <code>&lt;article&gt;</code>
+  </div>
+</div>
+
+
+<!-- ページ構造ビジュアル -->
+<h2>⑬ ページ全体構造のビジュアル図</h2>
+
+<div class="demo-box">
+  <p>▼ 典型的なHTMLページの構造</p>
+  <div class="layout-diagram">
+    <div class="ld-block ld-html">&lt;html&gt;</div>
+    <div class="ld-block ld-head">&lt;head&gt; … メタ情報（非表示）</div>
+    <div class="ld-block ld-body">&lt;body&gt;
+      <div style="margin:6px 0 0 0; display:grid; gap:6px;">
+        <div class="ld-block ld-header">&lt;header&gt; ロゴ・サイトタイトル・グローバルナビ</div>
+        <div class="ld-block ld-nav">&lt;nav&gt; 主要ナビゲーション ※セクション要素</div>
+        <div class="ld-inner">
+          <div class="ld-inner-left">
+            <div class="ld-block ld-main">&lt;main&gt; 主要コンテンツ（1つだけ）
+              <div style="margin:6px 0 0 0; display:grid; gap:6px;">
+                <div class="ld-block ld-article">&lt;article&gt; 独立した記事 ※セクション要素</div>
+                <div class="ld-block ld-section">&lt;section&gt; テーマ別セクション ※セクション要素</div>
+              </div>
+            </div>
+          </div>
+          <div class="ld-block ld-aside">&lt;aside&gt;<br>サイドバー<br>補足情報<br>※セクション要素</div>
+        </div>
+        <div class="ld-block ld-address">&lt;address&gt; 連絡先情報</div>
+        <div class="ld-block ld-footer">&lt;footer&gt; 著作権・フッターナビ</div>
+      </div>
+    </div>
+  </div>
+
+  <br>
+  <table class="ref-table">
+    <thead>
+      <tr>
+        <th>要素</th>
+        <th>セクション要素？</th>
+        <th>複数配置</th>
+        <th>主な用途</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><code>article</code></td><td>✅ セクション要素</td><td>✅ 可</td><td>独立した記事・投稿・コメント</td></tr>
+      <tr><td><code>section</code></td><td>✅ セクション要素</td><td>✅ 可</td><td>テーマでまとまった汎用セクション</td></tr>
+      <tr><td><code>aside</code></td><td>✅ セクション要素</td><td>✅ 可</td><td>補足情報・サイドバー・広告</td></tr>
+      <tr><td><code>nav</code></td><td>✅ セクション要素</td><td>✅ 可</td><td>主要ナビゲーション</td></tr>
+      <tr><td><code>header</code></td><td>❌ 非セクション</td><td>✅ 可</td><td>ページ・セクションのヘッダー</td></tr>
+      <tr><td><code>footer</code></td><td>❌ 非セクション</td><td>✅ 可</td><td>ページ・セクションのフッター</td></tr>
+      <tr><td><code>main</code></td><td>❌ 非セクション</td><td>❌ 1つだけ</td><td>ページの主要コンテンツ</td></tr>
+      <tr><td><code>address</code></td><td>❌ 非セクション</td><td>✅ 可</td><td>文書・記事の連絡先情報</td></tr>
+      <tr><td><code>div</code></td><td>❌ 非セクション</td><td>✅ 可</td><td>意味なし・汎用ブロックコンテナ</td></tr>
+      <tr><td><code>span</code></td><td>❌ 非セクション</td><td>✅ 可</td><td>意味なし・汎用インラインコンテナ</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 演習問題 -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      HTML5でセクションを表す要素は、
+      <code>section</code> / <code>article</code> / <code>aside</code> / <code>nav</code> / <code>header</code>
+      の5つである。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn btn-blue" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 正解！セクション要素は section / article / aside / nav の4つだけです。header はセクション要素ではありません。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent = '❌ 不正解。header はセクション要素ではありません。セクション要素は section / article / aside / nav の4つのみです。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>
+      hgroup要素は、見出し（h1〜h6要素）と
+      サブタイトルや副題を表す <code>__①__</code> 要素をグループ化する要素である。
+    </p>
+    <label>① 要素名：</label>
+    <input type="text" id="q2" placeholder="要素名を入力">
+    <br>
+    <button class="btn btn-blue" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const v = document.getElementById('q2').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const r = document.getElementById('q2-result');
+        if (v === 'p') {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 正解！hgroup要素はh1〜h6要素とp要素（サブタイトル・副題）をグループ化します。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.textContent = '❌ 不正解。ヒント：段落を表す1文字の要素名です。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>アウトラインアルゴリズムに関する記述として正しいものはどれですか？</p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">アウトラインアルゴリズムはHTML5の中核仕様として現在も有効である</option>
+      <option value="b">アウトラインアルゴリズムとその関連仕様は2022年7月に仕様から削除された</option>
+      <option value="c">アウトラインアルゴリズムはHTML6で導入される予定である</option>
+      <option value="d">アウトラインアルゴリズムはsection要素を使わない場合にのみ適用される</option>
+    </select>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'アウトラインアルゴリズムとその関連仕様は2022年7月に仕様から削除されました。<br>' +
+            '現在は h1〜h6 要素で文書全体を通じた階層を管理するのがベストプラクティスです。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.textContent = '❌ 不正解。アウトラインアルゴリズムは2022年7月に仕様から削除されています。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 要素の使い分け（選択）</h3>
+    <p>以下の各状況に最も適切な要素を選んでください。</p>
+
+    <label>① ブログの個別記事（単体で意味が完結する）：</label>
+    <select id="q4a">
+      <option value="">-- 選択 --</option>
+      <option value="article">article</option>
+      <option value="section">section</option>
+      <option value="div">div</option>
+      <option value="main">main</option>
+    </select>
+
+    <label>② サービス紹介ページの「料金プラン」セクション（ページの一部）：</label>
+    <select id="q4b">
+      <option value="">-- 選択 --</option>
+      <option value="article">article</option>
+      <option value="section">section</option>
+      <option value="div">div</option>
+      <option value="aside">aside</option>
+    </select>
+
+    <label>③ 記事に関連する「おすすめリンク」（補足情報）：</label>
+    <select id="q4c">
+      <option value="">-- 選択 --</option>
+      <option value="aside">aside</option>
+      <option value="section">section</option>
+      <option value="footer">footer</option>
+      <option value="nav">nav</option>
+    </select>
+
+    <label>④ サイト全体のメニューリンク：</label>
+    <select id="q4d">
+      <option value="">-- 選択 --</option>
+      <option value="nav">nav</option>
+      <option value="header">header</option>
+      <option value="ul">ul</option>
+      <option value="div">div</option>
+    </select>
+
+    <br>
+    <button class="btn btn-blue" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const a = document.getElementById('q4a').value;
+        const b = document.getElementById('q4b').value;
+        const c = document.getElementById('q4c').value;
+        const d = document.getElementById('q4d').value;
+        const r = document.getElementById('q4-result');
+        const ca = a === 'article';
+        const cb = b === 'section';
+        const cc = c === 'aside';
+        const cd = d === 'nav';
+        const count = [ca, cb, cc, cd].filter(Boolean).length;
+        if (count === 4) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！要素の使い分けを完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/4 問正解。<br>` +
+            `① ${ca ? '✅' : '❌ article（単体で完結 → article）'}　` +
+            `② ${cb ? '✅' : '❌ section（ページの一部 → section）'}　` +
+            `③ ${cc ? '✅' : '❌ aside（補足情報 → aside）'}　` +
+            `④ ${cd ? '✅' : '❌ nav（主要ナビ → nav）'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label"><input type="checkbox" id="q5a"> ① <code>main</code> 要素は1ページに複数置くことができる</label>
+    <label class="checkbox-label"><input type="checkbox" id="q5b"> ② <code>header</code> 要素はセクション要素ではない</label>
+    <label class="checkbox-label"><input type="checkbox" id="q5c"> ③ <code>address</code> 要素は任意の住所を表すために使う</label>
+    <label class="checkbox-label"><input type="checkbox" id="q5d"> ④ <code>article</code> 要素はネスト（入れ子）することができる</label>
+    <label class="checkbox-label"><input type="checkbox" id="q5e"> ⑤ <code>h1</code> 要素は文書内に1つだけ使うのが現在のベストプラクティスである</label>
+    <label class="checkbox-label"><input type="checkbox" id="q5f"> ⑥ <code>div</code> 要素はセマンティックな意味を持つ</label>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const r = document.getElementById('q5-result');
+        const checks = {
+          a: document.getElementById('q5a').checked,
+          b: document.getElementById('q5b').checked,
+          c: document.getElementById('q5c').checked,
+          d: document.getElementById('q5d').checked,
+          e: document.getElementById('q5e').checked,
+          f: document.getElementById('q5f').checked,
+        };
+        // 正解：②④⑤（b, d, e）
+        // ①main複数不可 ③addressは文書・記事の連絡先のみ ⑥divは意味なし
+        const correct = { a:false, b:true, c:false, d:true, e:true, f:false };
+        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
+        const allCorrect = results.every(Boolean);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・② header はセクション要素ではない ✅<br>' +
+            '・④ article はネスト可能（コメント欄など）✅<br>' +
+            '・⑤ h1 は文書内に1つがベストプラクティス ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・② header / footer / main / div はセクション要素ではない<br>' +
+            '・④ article はネスト可能（記事内のコメントなど）<br>' +
+            '・⑤ アウトラインアルゴリズム廃止後は h1 は1つがベストプラクティス<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・① main 要素は1ページに1つだけ<br>' +
+            '・③ address は文書・記事の連絡先情報に限定（任意の住所ではない）<br>' +
+            '・⑥ div は意味を持たない汎用コンテナ';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. コード穴埋め問題</h3>
+    <p>以下のコードの <code>__A__</code> 〜 <code>__E__</code> に適切な要素名を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.88em; line-height:1.8;">
+&lt;body&gt;
+  &lt;__A__&gt;                        &lt;!-- サイトタイトル・グローバルナビ --&gt;
+    &lt;h1&gt;サイトタイトル&lt;/h1&gt;
+    &lt;nav&gt;...&lt;/nav&gt;
+  &lt;/__A__&gt;
+
+  &lt;__B__&gt;                        &lt;!-- ページの主要コンテンツ（1つだけ） --&gt;
+    &lt;__C__&gt;                      &lt;!-- 独立した記事コンテンツ --&gt;
+      &lt;h2&gt;記事タイトル&lt;/h2&gt;
+      &lt;p&gt;本文...&lt;/p&gt;
+    &lt;/__C__&gt;
+    &lt;__D__&gt;                      &lt;!-- 補足情報・サイドバー --&gt;
+      &lt;h3&gt;関連リンク&lt;/h3&gt;
+    &lt;/__D__&gt;
+  &lt;/__B__&gt;
+
+  &lt;__E__&gt;                        &lt;!-- 著作権・フッター情報 --&gt;
+    &lt;p&gt;&amp;copy; 2025 Example&lt;/p&gt;
+  &lt;/__E__&gt;
+&lt;/body&gt;</pre>
+
+    <label>A（サイトタイトル・ナビを含む導入部）：</label>
+    <input type="text" id="q6a" placeholder="要素名">
+    <label>B（ページの主要コンテンツ・1つだけ）：</label>
+    <input type="text" id="q6b" placeholder="要素名">
+    <label>C（単体で完結する独立した記事）：</label>
+    <input type="text" id="q6c" placeholder="要素名">
+    <label>D（補足情報・サイドバー）：</label>
+    <input type="text" id="q6d" placeholder="要素名">
+    <label>E（著作権・フッター情報）：</label>
+    <input type="text" id="q6e" placeholder="要素名">
+    <br>
+    <button class="btn btn-blue" onclick="checkQ6()">答え合わせ</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const a = document.getElementById('q6a').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const b = document.getElementById('q6b').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const c = document.getElementById('q6c').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const d = document.getElementById('q6d').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const e = document.getElementById('q6e').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const r = document.getElementById('q6-result');
+        const ca = a === 'header';
+        const cb = b === 'main';
+        const cc = c === 'article';
+        const cd = d === 'aside';
+        const ce = e === 'footer';
+        const count = [ca, cb, cc, cd, ce].filter(Boolean).length;
+        if (count === 5) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！ページ構造を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/5 問正解。<br>` +
+            `A: ${ca ? '✅' : '❌ header'}　` +
+            `B: ${cb ? '✅' : '❌ main'}　` +
+            `C: ${cc ? '✅' : '❌ article'}　` +
+            `D: ${cd ? '✅' : '❌ aside'}　` +
+            `E: ${ce ? '✅' : '❌ footer'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q7 -->
+  <div class="quiz-block">
+    <h3>Q7. 記述問題</h3>
+    <p>
+      <code>article</code> 要素と <code>section</code> 要素の違いを、
+      具体例を挙げながら説明してください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q7" rows="4" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ7()">模範解答を見る</button>
+    <div class="result-msg" id="q7-result"></div>
+    <script>
+      function checkQ7() {
+        const r = document.getElementById('q7-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<strong>article 要素：</strong><br>' +
+          'それ単体で意味が完結する独立したコンテンツに使います。<br>' +
+          'RSSフィードや他のサイトに配信しても意味が通じるレベルのコンテンツが目安です。<br>' +
+          '例：ブログ記事・ニュース記事・フォーラムの投稿・商品カード<br><br>' +
+          '<strong>section 要素：</strong><br>' +
+          'ページの一部として機能する、テーマでまとまった汎用的なセクションに使います。<br>' +
+          'ページから切り離すと意味が成立しないコンテンツに使います。<br>' +
+          '例：サービス紹介ページの「料金プラン」「会社概要」「アクセス」の各セクション<br><br>' +
+          '<strong>判断の目安：</strong><br>' +
+          '「このコンテンツだけ別サイトに貼っても意味が通じるか？」<br>' +
+          '→ 通じる → article　通じない → section';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 重要ポイント まとめ</h2>
+<table class="summary">
+  <thead>
+    <tr><th>項目</th><th>ルール・ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>セクション要素（4つ）</strong></td>
+      <td>section / article / aside / nav のみ。header・footer・main はセクション要素ではない</td>
+    </tr>
+    <tr>
+      <td><strong>h1〜h6</strong></td>
+      <td>セクションの見出し。見た目のためではなく意味・階層で使う。h1は文書内に1つが推奨</td>
+    </tr>
+    <tr>
+      <td><strong>hgroup</strong></td>
+      <td>h1〜h6（見出し）と p（サブタイトル・副題）をグループ化する</td>
+    </tr>
+    <tr>
+      <td><strong>アウトラインアルゴリズム</strong></td>
+      <td>2022年7月に仕様から削除。現在は h1〜h6 で文書全体の階層を管理する</td>
+    </tr>
+    <tr>
+      <td><strong>article vs section</strong></td>
+      <td>単体で完結 → article　ページの一部 → section</td>
+    </tr>
+    <tr>
+      <td><strong>main</strong></td>
+      <td>ページの主要コンテンツ。1ページに1つだけ。header・footer・nav・aside の子孫不可</td>
+    </tr>
+    <tr>
+      <td><strong>address</strong></td>
+      <td>最も近い article または body の連絡先情報。任意の住所には使わない</td>
+    </tr>
+    <tr>
+      <td><strong>div / span</strong></td>
+      <td>意味なし汎用コンテナ（div：ブロック / span：インライン）。セマンティック要素が使えない場合の最終手段</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
