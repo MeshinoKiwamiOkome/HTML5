@@ -1,0 +1,1759 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>HTML5 Pro 学習ノート | MeshinoKiwamiOkome</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    /* ===== 基本レイアウト ===== */
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.7;
+    }
+
+    /* ===== ヘッダー ===== */
+    header {
+      background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 60%, #4299e1 100%);
+      color: #fff;
+      padding: 56px 24px 48px;
+      text-align: center;
+    }
+    header .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.35);
+      border-radius: 20px;
+      padding: 4px 16px;
+      font-size: 0.82em;
+      letter-spacing: 0.08em;
+      margin-bottom: 18px;
+    }
+    header h1 {
+      margin: 0 0 12px;
+      font-size: 2.2em;
+      letter-spacing: 0.03em;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    header p {
+      margin: 0 auto;
+      max-width: 560px;
+      font-size: 1.02em;
+      color: rgba(255,255,255,0.88);
+    }
+    .header-meta {
+      margin-top: 24px;
+      font-size: 0.85em;
+      color: rgba(255,255,255,0.7);
+    }
+    .header-meta a {
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.4);
+      transition: color 0.2s;
+    }
+    .header-meta a:hover { color: #fff; }
+
+    /* ===== メインコンテンツ ===== */
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 48px 24px 64px;
+    }
+
+    /* ===== セクション見出し ===== */
+    .section-title {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #2b6cb0;
+      border-left: 4px solid #4299e1;
+      padding-left: 12px;
+      margin: 40px 0 20px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ===== カードグリッド ===== */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 22px;
+    }
+
+    /* ===== カード（公開済み） ===== */
+    .card {
+      background: #fff;
+      border: 1px solid #bee3f8;
+      border-radius: 12px;
+      padding: 24px 22px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      transition: transform 0.18s, box-shadow 0.18s;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(66,153,225,0.18);
+    }
+    .card-icon { font-size: 2em; line-height: 1; }
+    .card-title {
+      font-size: 1.08em;
+      font-weight: bold;
+      color: #2b6cb0;
+    }
+    .card-desc {
+      font-size: 0.9em;
+      color: #4a5568;
+      flex: 1;
+    }
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .tag {
+      background: #ebf8ff;
+      color: #2b6cb0;
+      border: 1px solid #bee3f8;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 0.78em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .card-footer {
+      font-size: 0.8em;
+      color: #a0aec0;
+      border-top: 1px solid #ebf8ff;
+      padding-top: 10px;
+      margin-top: 4px;
+    }
+
+    /* ===== カード（準備中） ===== */
+    .card-coming {
+      background: #f7fafc;
+      border: 1px dashed #cbd5e0;
+      border-radius: 12px;
+      padding: 24px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      opacity: 0.75;
+    }
+    .card-coming .card-title { color: #718096; }
+    .card-coming .tag {
+      background: #edf2f7;
+      color: #718096;
+      border-color: #e2e8f0;
+    }
+    .coming-badge {
+      display: inline-block;
+      background: #edf2f7;
+      color: #718096;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 0.78em;
+      font-weight: bold;
+      width: fit-content;
+    }
+
+    /* ===== 進捗バー ===== */
+    .progress-section {
+      background: #fff;
+      border: 1px solid #bee3f8;
+      border-radius: 12px;
+      padding: 22px 24px;
+      margin-bottom: 36px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .progress-section h2 {
+      margin: 0 0 16px;
+      font-size: 1em;
+      color: #2b6cb0;
+    }
+    .progress-bar-wrap {
+      background: #ebf8ff;
+      border-radius: 99px;
+      height: 14px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .progress-bar {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #4299e1, #48bb78);
+      transition: width 1s ease;
+    }
+    .progress-label {
+      font-size: 0.85em;
+      color: #718096;
+      text-align: right;
+    }
+
+    /* ===== 試験情報バナー ===== */
+    .info-banner {
+      background: linear-gradient(135deg, #ebf8ff, #e6fffa);
+      border: 1px solid #bee3f8;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 36px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .info-banner .icon { font-size: 2em; flex-shrink: 0; }
+    .info-banner h2 { margin: 0 0 6px; font-size: 1em; color: #2b6cb0; }
+    .info-banner p  { margin: 0; font-size: 0.88em; color: #4a5568; }
+    .info-banner a  { color: #3182ce; }
+
+    /* ===== フッター ===== */
+    footer {
+      background: #1a365d;
+      color: rgba(255,255,255,0.7);
+      text-align: center;
+      padding: 28px 24px;
+      font-size: 0.85em;
+    }
+    footer a {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+    }
+    footer a:hover { color: #fff; }
+
+    /* ===== レスポンシブ ===== */
+
+    /* スマホ縦向き（〜600px） */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+
+      header { padding: 28px 14px 22px; }
+      header h1 { font-size: 1.3em; }
+      header p { font-size: 0.88em; }
+      header .badge { font-size: 0.72em; padding: 3px 12px; }
+      .header-meta { font-size: 0.78em; margin-top: 14px; }
+
+      main { padding: 20px 12px 40px; }
+
+      .info-banner {
+        flex-direction: column;
+        gap: 8px;
+        padding: 14px 14px;
+      }
+      .info-banner .icon { font-size: 1.5em; }
+      .info-banner h2 { font-size: 0.9em; }
+      .info-banner p { font-size: 0.8em; }
+
+      .progress-section { padding: 14px 14px; }
+      .progress-section h2 { font-size: 0.88em; }
+      .progress-label { font-size: 0.78em; }
+
+      .section-title { font-size: 0.92em; margin: 28px 0 14px; }
+
+      .card-grid { grid-template-columns: 1fr; gap: 14px; }
+
+      .card, .card-coming { padding: 16px 14px; gap: 7px; }
+      .card-icon { font-size: 1.5em; }
+      .card-title { font-size: 0.92em; }
+      .card-desc { font-size: 0.78em; }
+      .tag { font-size: 0.68em; padding: 1px 8px; }
+      .card-footer { font-size: 0.72em; }
+      .coming-badge { font-size: 0.7em; }
+
+      footer { padding: 20px 14px; font-size: 0.78em; }
+    }
+
+    /* スマホ横向き（landscape・高さが500px以下） */
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+
+      header { padding: 14px 20px 12px; }
+      header h1 { font-size: 1.1em; margin-bottom: 4px; }
+      header p { font-size: 0.82em; }
+      header .badge { font-size: 0.7em; margin-bottom: 8px; }
+
+      main { padding: 16px 20px 32px; }
+
+      .card-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 12px;
+      }
+      .card, .card-coming { padding: 12px 12px; }
+      .card-title { font-size: 0.88em; }
+      .card-desc { font-size: 0.76em; }
+      .tag { font-size: 0.66em; }
+    }
+
+    /* タブレット縦向き（601px〜768px） */
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+      .card-grid { grid-template-columns: repeat(2, 1fr); }
+      header h1 { font-size: 1.8em; }
+      main { padding: 36px 20px 56px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">📝 HTML5 プロフェッショナル認定試験 レベル1 対策</div>
+  <h1>HTML5 学習ノート</h1>
+  <p>試験合格を目指して作成した、要素別・テーマ別の学習用サンプル集です。</p>
+  <div class="header-meta">
+    <a href="https://github.com/MeshinoKiwamiOkome/main" target="_blank">
+      📁 GitHub: MeshinoKiwamiOkome/main
+    </a>
+  </div>
+</header>
+
+<main>
+
+  <!-- 試験情報バナー -->
+  <div class="info-banner">
+    <div class="icon">🎯</div>
+    <div>
+      <h2>目標：HTML5プロフェッショナル認定試験 レベル1 合格</h2>
+      <p>
+        各ページは「要素の意味・使い方・注意点」を実際に動くサンプルと演習問題で学べる構成です。<br>
+        詳細は
+        <a href="https://html5exam.jp/" target="_blank">HTML5プロフェッショナル認定試験 公式サイト</a>
+        を参照してください。
+      </p>
+    </div>
+  </div>
+
+  <!-- 進捗バー -->
+  <div class="progress-section">
+    <h2>📊 学習進捗（公開済みページ数）</h2>
+    <div class="progress-bar-wrap">
+      <!-- 公開済み5 / 想定合計10ページ = 50% -->
+      <div class="progress-bar" style="width: 50%;"></div>
+    </div>
+    <div class="progress-label">5 / 10 ページ公開済み（順次追加中）</div>
+  </div>
+
+  <!-- 公開済みページ -->
+  <div class="section-title">✅ 公開済み</div>
+  <div class="card-grid">
+
+    <!-- basics.html -->
+    <a class="card" href="basics.html">
+      <div class="card-icon">📄</div>
+      <div class="card-title">基本構文・文書構造</div>
+      <div class="card-desc">
+        HTMLの書き方の基本ルールと文書全体の構造を学びます。
+        DOCTYPE宣言・文字参照・コメントも網羅。
+      </div>
+      <div class="card-tags">
+        <span class="tag">DOCTYPE</span>
+        <span class="tag">&amp;lt; 文字参照</span>
+        <span class="tag">&lt;!-- コメント --&gt;</span>
+        <span class="tag">タグ省略</span>
+        <span class="tag">空要素</span>
+      </div>
+      <div class="card-footer">📁 basics.html</div>
+    </a>
+
+    <!-- semantic.html -->
+    <a class="card" href="semantic.html">
+      <div class="card-icon">🧩</div>
+      <div class="card-title">セマンティック・インタラクティブ要素</div>
+      <div class="card-desc">
+        figure・details・dialog・canvas など、
+        HTML5で追加・強化されたインタラクティブ要素を実際に動かして学びます。
+      </div>
+      <div class="card-tags">
+        <span class="tag">figure</span>
+        <span class="tag">details</span>
+        <span class="tag">dialog</span>
+        <span class="tag">canvas</span>
+        <span class="tag">template</span>
+        <span class="tag">iframe</span>
+      </div>
+      <div class="card-footer">📁 semantic.html</div>
+    </a>
+
+    <!-- meta_structure.html -->
+    <a class="card" href="meta_structure.html">
+      <div class="card-icon">⚙️</div>
+      <div class="card-title">全体構造・メタ情報</div>
+      <div class="card-desc">
+        html・head・body・title・meta・link・base 要素の役割と使い方を学びます。
+        charset属性・link要素のtype属性デフォルト値・title省略条件など試験頻出ポイントを網羅。
+      </div>
+      <div class="card-tags">
+        <span class="tag">html</span>
+        <span class="tag">head</span>
+        <span class="tag">meta</span>
+        <span class="tag">link</span>
+        <span class="tag">base</span>
+        <span class="tag">title</span>
+      </div>
+      <div class="card-footer">📁 meta_structure.html</div>
+    </a>
+
+    <!-- section_structure.html -->
+    <a class="card" href="section_structure.html">
+      <div class="card-icon">🏛️</div>
+      <div class="card-title">セクション・基本構造</div>
+      <div class="card-desc">
+        h1〜h6・hgroup・article・section・aside・nav・header・footer・main・address・div・span
+        の役割と使い分けを学びます。アウトラインアルゴリズム廃止など試験頻出ポイントも網羅。
+      </div>
+      <div class="card-tags">
+        <span class="tag">article</span>
+        <span class="tag">section</span>
+        <span class="tag">aside</span>
+        <span class="tag">nav</span>
+        <span class="tag">hgroup</span>
+        <span class="tag">main</span>
+      </div>
+      <div class="card-footer">📁 section_structure.html</div>
+    </a>
+
+    <!-- media.html（新規追加） -->
+    <a class="card" href="media.html">
+      <div class="card-icon">🖼️</div>
+      <div class="card-title">画像・動画・音声</div>
+      <div class="card-desc">
+        img・picture・source・video・audio・track・embed・map・area・object
+        の役割と使い方を学びます。alt属性の省略条件・source要素の必須属性の違いなど試験頻出ポイントを網羅。
+      </div>
+      <div class="card-tags">
+        <span class="tag">img</span>
+        <span class="tag">picture</span>
+        <span class="tag">video</span>
+        <span class="tag">audio</span>
+        <span class="tag">track</span>
+        <span class="tag">map</span>
+      </div>
+      <div class="card-footer">📁 media.html</div>
+    </a>
+
+  </div><!-- /card-grid -->
+
+  <!-- 準備中ページ -->
+  <div class="section-title">🚧 準備中（順次追加予定）</div>
+  <div class="card-grid">
+
+    <div class="card-coming">
+      <div class="card-icon">📋</div>
+      <div class="card-title">テーブル</div>
+      <div class="card-desc">table・tr・th・td・thead・tbody・tfoot・caption・colgroup・col</div>
+      <div class="card-tags">
+        <span class="tag">table</span>
+        <span class="tag">thead</span>
+        <span class="tag">colgroup</span>
+      </div>
+      <span class="coming-badge">🚧 準備中</span>
+    </div>
+
+    <div class="card-coming">
+      <div class="card-icon">📝</div>
+      <div class="card-title">フォーム</div>
+      <div class="card-desc">form・input・select・textarea・button・label・fieldset など</div>
+      <div class="card-tags">
+        <span class="tag">form</span>
+        <span class="tag">input</span>
+        <span class="tag">label</span>
+      </div>
+      <span class="coming-badge">🚧 準備中</span>
+    </div>
+
+    <div class="card-coming">
+      <div class="card-icon">🔤</div>
+      <div class="card-title">テキスト・インライン要素</div>
+      <div class="card-desc">p・h1〜h6・strong・em・span・blockquote・code など</div>
+      <div class="card-tags">
+        <span class="tag">strong</span>
+        <span class="tag">em</span>
+        <span class="tag">code</span>
+      </div>
+      <span class="coming-badge">🚧 準備中</span>
+    </div>
+
+    <div class="card-coming">
+      <div class="card-icon">🔗</div>
+      <div class="card-title">リンク・アンカー要素</div>
+      <div class="card-desc">a要素の詳細・href属性・target属性・download属性など</div>
+      <div class="card-tags">
+        <span class="tag">a</span>
+        <span class="tag">href</span>
+        <span class="tag">target</span>
+      </div>
+      <span class="coming-badge">🚧 準備中</span>
+    </div>
+
+    <div class="card-coming">
+      <div class="card-icon">📋</div>
+      <div class="card-title">リスト要素</div>
+      <div class="card-desc">ul・ol・li・dl・dt・dd</div>
+      <div class="card-tags">
+        <span class="tag">ul</span>
+        <span class="tag">ol</span>
+        <span class="tag">dl</span>
+      </div>
+      <span class="coming-badge">🚧 準備中</span>
+    </div>
+
+    <div class="card-coming">
+      <div class="card-icon">♿</div>
+      <div class="card-title">アクセシビリティ・WAI-ARIA</div>
+      <div class="card-desc">role属性・aria-*属性・スクリーンリーダー対応の基礎</div>
+      <div class="card-tags">
+        <span class="tag">role</span>
+        <span class="tag">aria-label</span>
+        <span class="tag">alt</span>
+      </div>
+      <span class="coming-badge">🚧 準備中</span>
+    </div>
+
+  </div><!-- /card-grid -->
+
+</main>
+
+<footer>
+  <p>
+    HTML5 学習ノート ―
+    <a href="https://github.com/MeshinoKiwamiOkome/main" target="_blank">
+      GitHub: MeshinoKiwamiOkome/main
+    </a>
+  </p>
+  <p style="margin-top:6px;">
+    参考：
+    <a href="https://html5exam.jp/" target="_blank">HTML5プロフェッショナル認定試験 公式サイト</a>
+    &nbsp;|&nbsp;
+    <a href="https://developer.mozilla.org/ja/docs/Web/HTML" target="_blank">MDN Web Docs</a>
+  </p>
+</footer>
+
+</body>
+</html>
+📋 変更内容まとめ
+変更箇所	内容
+進捗バー	40% → 50%、4 / 10 → 5 / 10 に更新
+公開済みカード	media.html のカードを新規追加
+準備中カード	「リンク・メディア要素」を「リンク・アンカー要素」に整理（メディア系はmedia.htmlで公開済みのため）
+折り返し地点到達ですね！🎉 次のテーマもお気軽にどうぞ😊💪
+
+
+音声
+
+
+コピー
+
+
+次の内容（グローバル属性）についてこれまでと同様に、
+以下の【内容】を網羅した学習用html（実際に入力できる回答解説付き演習問題が最後にあるのが望ましい）を生成してください。
+【内容】
+・重要ポイント
+１　class属性の値には、種類や分類を示す名前を指定する
+２　id属性の値には、ほかの要素と重複しない固有の名前を指定する
+３　HTML5以降では、data-〇〇〇の書式で独自の属性を追加できる
+
+・重要事項
+属性と要素の違いをおさらい
+
+・学習内容（要素）
+グローバル属性とは
+class属性
+id属性
+lang属性
+title属性
+dir属性
+tabindex属性
+カスタムデータ(data-*)属性
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>HTML5 グローバル属性 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #4299e1; padding-bottom: 10px; }
+    h2 { color: #2b6cb0; margin-top: 48px; border-left: 5px solid #4299e1; padding-left: 12px; }
+    h3 { color: #276749; margin-top: 24px; }
+
+    code {
+      background: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment { color: #68d391; }
+    pre .tag     { color: #90cdf4; }
+    pre .attr    { color: #fbd38d; }
+    pre .value   { color: #fc8181; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #90cdf4;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #2b6cb0; }
+
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+
+    .demo-box {
+      background: #fff;
+      border: 1px solid #bee3f8;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* 属性vs要素 比較図 */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 14px 0;
+    }
+    .compare-box {
+      background: #f7fafc;
+      border: 1px solid #bee3f8;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 0.9em;
+    }
+    .compare-box h4 {
+      margin: 0 0 10px;
+      color: #2b6cb0;
+      font-size: 1em;
+    }
+
+    /* グローバル属性一覧カード */
+    .attr-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .attr-card {
+      background: #ebf8ff;
+      border: 1px solid #bee3f8;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 0.88em;
+    }
+    .attr-card .attr-name {
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-weight: bold;
+      color: #2b6cb0;
+      font-size: 1em;
+      margin-bottom: 4px;
+    }
+    .attr-card .attr-desc {
+      color: #4a5568;
+      font-size: 0.9em;
+    }
+
+    /* tabindexデモ */
+    .tabindex-demo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 14px 0;
+    }
+    .tabindex-demo .tab-item {
+      padding: 8px 16px;
+      border: 2px solid #4299e1;
+      border-radius: 6px;
+      background: #ebf8ff;
+      color: #2b6cb0;
+      font-weight: bold;
+      font-size: 0.9em;
+      cursor: pointer;
+      outline: none;
+      transition: background 0.15s, box-shadow 0.15s;
+    }
+    .tabindex-demo .tab-item:focus {
+      background: #4299e1;
+      color: #fff;
+      box-shadow: 0 0 0 3px rgba(66,153,225,0.4);
+    }
+
+    /* data-*デモ */
+    .data-demo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 14px 0;
+    }
+    .data-demo button {
+      padding: 8px 18px;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .data-demo button:hover { opacity: 0.85; }
+    #data-output {
+      margin-top: 12px;
+      padding: 12px 16px;
+      background: #1a202c;
+      color: #68d391;
+      border-radius: 6px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.9em;
+      min-height: 48px;
+    }
+
+    table.ref-table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      margin: 14px 0;
+    }
+    table.ref-table th, table.ref-table td {
+      border: 1px solid #bee3f8;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.93em;
+    }
+    table.ref-table thead tr { background: #2b6cb0; color: #fff; }
+    table.ref-table tbody tr:nth-child(even) { background: #ebf8ff; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 { margin-top: 0; color: #c05621; border-left-color: #f6ad55; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #fbd38d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #fbd38d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-blue { background: #4299e1; color: #fff; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #bee3f8; color: #2b6cb0; display: block; }
+
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #bee3f8;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.93em;
+    }
+    table.summary thead tr { background: #2b6cb0; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #ebf8ff; }
+
+    /* ===== レスポンシブ ===== */
+
+    /* スマホ縦向き（〜600px） */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px 14px; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .attr-grid { grid-template-columns: 1fr 1fr; }
+      .tabindex-demo { gap: 8px; }
+      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.85em; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.85em; }
+      .quiz-section { padding: 16px 16px; }
+      .quiz-block { padding: 14px 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+
+    /* スマホ横向き（landscape・高さが500px以下） */
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+      .compare-grid { grid-template-columns: 1fr 1fr; }
+      .attr-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    }
+
+    /* タブレット縦向き（601px〜768px） */
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>🏷️ HTML5 グローバル属性 学習サンプル</h1>
+<p>すべてのHTML要素に共通して使えるグローバル属性の役割と使い方を学びましょう。</p>
+
+
+<!-- 0. 属性と要素のおさらい -->
+<h2>① 属性と要素のおさらい</h2>
+
+<div class="note">
+  <strong>重要事項：属性と要素の違い</strong><br>
+  グローバル属性を学ぶ前に、「要素」と「属性」の違いをしっかり確認しましょう。
+</div>
+
+<div class="demo-box">
+  <div class="compare-grid">
+    <div class="compare-box">
+      <h4>🧱 要素（Element）</h4>
+      ・開始タグ〜終了タグ全体のこと<br>
+      ・コンテンツに<strong>意味・構造</strong>を与える<br>
+      ・例：<code>&lt;p&gt;</code>、<code>&lt;h1&gt;</code>、<code>&lt;a&gt;</code><br><br>
+      <code style="font-size:0.85em;">&lt;p&gt;本文テキスト&lt;/p&gt;</code><br>
+      <span style="font-size:0.85em; color:#718096;">↑ これ全体が「p要素」</span>
+    </div>
+    <div class="compare-box">
+      <h4>🔧 属性（Attribute）</h4>
+      ・開始タグ内に記述する追加情報<br>
+      ・要素に<strong>性質・設定</strong>を付け加える<br>
+      ・例：<code>class</code>、<code>id</code>、<code>href</code><br><br>
+      <code style="font-size:0.85em;">&lt;a <strong>href="url"</strong>&gt;リンク&lt;/a&gt;</code><br>
+      <span style="font-size:0.85em; color:#718096;">↑ href="url" が「属性」</span>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">&lt;!-- 要素・属性・属性値の関係 --&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"https://example.com"</span>
+   <span class="attr">class</span>=<span class="value">"btn-primary"</span>
+   <span class="attr">id</span>=<span class="value">"top-link"</span>
+   <span class="attr">target</span>=<span class="value">"_blank"</span><span class="tag">&gt;</span>
+  リンクテキスト
+<span class="tag">&lt;/a&gt;</span>
+
+<span class="comment">&lt;!-- ↑ a要素に4つの属性が指定されている --&gt;</span>
+<span class="comment">&lt;!-- href / class / id / target はすべて「属性」 --&gt;</span>
+<span class="comment">&lt;!-- "https://..." / "btn-primary" などは「属性値」 --&gt;</span>
+</pre>
+
+  <div class="warn">
+    <strong>⚠️ 属性の書き方ルール</strong><br>
+    ・属性は<strong>開始タグ内</strong>にのみ記述できます（終了タグには書けません）<br>
+    ・属性値は<strong>ダブルクォート</strong>（<code>"</code>）で囲むのが推奨です<br>
+    ・同じ属性を同じ要素に<strong>2回以上指定することはできません</strong><br>
+    ・値を持たない<strong>論理属性</strong>（<code>disabled</code>、<code>checked</code> など）は
+    値を省略して属性名だけ書けます
+  </div>
+</div>
+
+
+<!-- 1. グローバル属性とは -->
+<h2>② グローバル属性とは</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<strong>グローバル属性</strong>とは、<strong>すべてのHTML要素に共通して指定できる属性</strong>のことです。<br>
+  ・要素固有の属性（<code>href</code> は <code>a</code> 要素専用など）とは異なります。<br>
+  ・代表的なグローバル属性を以下に示します。
+</div>
+
+<div class="demo-box">
+  <div class="attr-grid">
+    <div class="attr-card">
+      <div class="attr-name">class</div>
+      <div class="attr-desc">種類・分類を示す名前</div>
+    </div>
+    <div class="attr-card">
+      <div class="attr-name">id</div>
+      <div class="attr-desc">固有の識別名</div>
+    </div>
+    <div class="attr-card">
+      <div class="attr-name">lang</div>
+      <div class="attr-desc">言語コード</div>
+    </div>
+    <div class="attr-card">
+      <div class="attr-name">title</div>
+      <div class="attr-desc">補足情報・ツールチップ</div>
+    </div>
+    <div class="attr-card">
+      <div class="attr-name">dir</div>
+      <div class="attr-desc">テキスト方向</div>
+    </div>
+    <div class="attr-card">
+      <div class="attr-name">tabindex</div>
+      <div class="attr-desc">タブ順序</div>
+    </div>
+    <div class="attr-card">
+      <div class="attr-name">style</div>
+      <div class="attr-desc">インラインCSS</div>
+    </div>
+    <div class="attr-card">
+      <div class="attr-name">hidden</div>
+      <div class="attr-desc">要素を非表示にする</div>
+    </div>
+    <div class="attr-card">
+      <div class="attr-name">data-*</div>
+      <div class="attr-desc">カスタムデータ属性</div>
+    </div>
+    <div class="attr-card">
+      <div class="attr-name">contenteditable</div>
+      <div class="attr-desc">編集可能にする</div>
+    </div>
+    <div class="attr-card">
+      <div class="attr-name">draggable</div>
+      <div class="attr-desc">ドラッグ可否</div>
+    </div>
+    <div class="attr-card">
+      <div class="attr-name">accesskey</div>
+      <div class="attr-desc">キーボードショートカット</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- 2. class属性 -->
+<h2>③ class属性</h2>
+
+<div class="note">
+  <strong>ポイント①：class属性の値には「種類や分類を示す名前」を指定する</strong><br>
+  ・<code>class</code> 属性はCSSのスタイル適用やJavaScriptの操作対象を指定するために使います。<br>
+  ・<strong>複数の要素に同じclass名を指定できます</strong>（id属性との大きな違い）。<br>
+  ・1つの要素に<strong>複数のclass名をスペース区切りで指定できます</strong>。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- 基本的な使い方 --&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="value">"highlight"</span><span class="tag">&gt;</span>強調テキスト<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="value">"highlight"</span><span class="tag">&gt;</span>同じclassを複数要素に指定できる<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- 複数のclass名をスペース区切りで指定 --&gt;</span>
+<span class="tag">&lt;button</span> <span class="attr">class</span>=<span class="value">"btn btn-primary btn-large"</span><span class="tag">&gt;</span>
+  送信する
+<span class="tag">&lt;/button&gt;</span>
+
+<span class="comment">&lt;!-- CSSでの参照（.クラス名） --&gt;</span>
+<span class="comment">&lt;!-- .highlight { background: yellow; } --&gt;</span>
+<span class="comment">&lt;!-- .btn-primary { background: #4299e1; color: #fff; } --&gt;</span>
+
+<span class="comment">&lt;!-- JavaScriptでの参照 --&gt;</span>
+<span class="comment">&lt;!-- document.querySelectorAll('.highlight') --&gt;</span>
+</pre>
+
+  <div class="warn">
+    <strong>⚠️ class属性の命名ルール</strong><br>
+    ・<strong>見た目</strong>ではなく<strong>役割・種類・分類</strong>を示す名前にする<br>
+    ❌ <code>class="red-text"</code>　← 見た目（色）を表す名前（避けるべき）<br>
+    ✅ <code>class="error-message"</code>　← 役割を表す名前（推奨）<br><br>
+    ・数字で始めることはできません（<code>class="1st"</code> は不正）<br>
+    ・スペースは区切り文字として使われるため、class名にスペースは含められません
+  </div>
+
+  <div class="good">
+    ✅ <strong>class属性の主な用途</strong><br>
+    ・CSSでスタイルを適用する（最も一般的）<br>
+    ・JavaScriptで複数要素をまとめて操作する<br>
+    ・コンポーネントの種類・状態を表す（<code>is-active</code>、<code>is-hidden</code> など）
+  </div>
+</div>
+
+
+<!-- 3. id属性 -->
+<h2>④ id属性</h2>
+
+<div class="note">
+  <strong>ポイント②：id属性の値には「ほかの要素と重複しない固有の名前」を指定する</strong><br>
+  ・<code>id</code> 属性は<strong>文書内で一意（ユニーク）な識別子</strong>を指定します。<br>
+  ・同じid値を複数の要素に指定することは<strong>できません</strong>。<br>
+  ・ページ内リンク（アンカーリンク）のターゲットとして使えます。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- 基本的な使い方 --&gt;</span>
+<span class="tag">&lt;h2</span> <span class="attr">id</span>=<span class="value">"section-intro"</span><span class="tag">&gt;</span>はじめに<span class="tag">&lt;/h2&gt;</span>
+
+<span class="comment">&lt;!-- ページ内リンク（アンカーリンク）のターゲット --&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"#section-intro"</span><span class="tag">&gt;</span>「はじめに」へ移動<span class="tag">&lt;/a&gt;</span>
+
+<span class="comment">&lt;!-- CSSでの参照（#id名） --&gt;</span>
+<span class="comment">&lt;!-- #section-intro { color: #2b6cb0; } --&gt;</span>
+
+<span class="comment">&lt;!-- JavaScriptでの参照 --&gt;</span>
+<span class="comment">&lt;!-- document.getElementById('section-intro') --&gt;</span>
+
+<span class="comment">&lt;!-- ❌ 同じid値を複数の要素に指定してはいけない --&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">id</span>=<span class="value">"intro"</span><span class="tag">&gt;</span>段落1<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">id</span>=<span class="value">"intro"</span><span class="tag">&gt;</span>段落2<span class="tag">&lt;/p&gt;</span>  <span class="comment">&lt;!-- 不正：id重複 --&gt;</span>
+</pre>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>比較項目</th><th>class属性</th><th>id属性</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>文書内での重複</td>
+        <td>✅ 複数要素に同じ値を指定可</td>
+        <td>❌ 文書内で一意（重複不可）</td>
+      </tr>
+      <tr>
+        <td>1要素への複数指定</td>
+        <td>✅ スペース区切りで複数指定可</td>
+        <td>❌ 1つの値のみ</td>
+      </tr>
+      <tr>
+        <td>CSSセレクタ</td>
+        <td><code>.クラス名</code></td>
+        <td><code>#id名</code></td>
+      </tr>
+      <tr>
+        <td>ページ内リンク</td>
+        <td>❌ 使用不可</td>
+        <td>✅ <code>href="#id名"</code> で参照可</td>
+      </tr>
+      <tr>
+        <td>主な用途</td>
+        <td>スタイル・グループ操作</td>
+        <td>一意識別・アンカー・JS操作</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 4. lang属性 -->
+<h2>⑤ lang属性</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>lang</code> 属性は要素内のコンテンツの<strong>言語</strong>を指定します。<br>
+  ・<code>&lt;html&gt;</code> 要素に指定すると文書全体の言語になります。<br>
+  ・スクリーンリーダーの読み上げ言語・検索エンジンの言語判定に影響します。<br>
+  ・値は <strong>BCP 47言語タグ</strong>（ISO 639-1言語コード）を使います。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- 文書全体の言語指定 --&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="value">"ja"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- 部分的に異なる言語を指定 --&gt;</span>
+<span class="tag">&lt;p&gt;</span>日本語のテキストの中に
+  <span class="tag">&lt;span</span> <span class="attr">lang</span>=<span class="value">"en"</span><span class="tag">&gt;</span>English text<span class="tag">&lt;/span&gt;</span>
+が含まれる場合。
+<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- 引用文の言語指定 --&gt;</span>
+<span class="tag">&lt;blockquote</span> <span class="attr">lang</span>=<span class="value">"fr"</span><span class="tag">&gt;</span>
+  Je pense, donc je suis.
+<span class="tag">&lt;/blockquote&gt;</span>
+</pre>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>言語コード</th><th>言語</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>ja</code></td><td>日本語</td></tr>
+      <tr><td><code>en</code></td><td>英語</td></tr>
+      <tr><td><code>zh-CN</code></td><td>中国語（簡体字）</td></tr>
+      <tr><td><code>zh-TW</code></td><td>中国語（繁体字）</td></tr>
+      <tr><td><code>ko</code></td><td>韓国語</td></tr>
+      <tr><td><code>fr</code></td><td>フランス語</td></tr>
+      <tr><td><code>de</code></td><td>ドイツ語</td></tr>
+      <tr><td><code>ar</code></td><td>アラビア語</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 5. title属性 -->
+<h2>⑥ title属性</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>title</code> 属性は要素に関する<strong>補足情報</strong>を指定します。<br>
+  ・多くのブラウザではマウスオーバー時に<strong>ツールチップ</strong>として表示されます。<br>
+  ・<code>&lt;abbr&gt;</code> 要素と組み合わせて略語の正式名称を示すのが代表的な用途です。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- ツールチップとして表示 --&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">title</span>=<span class="value">"クリックして詳細を表示"</span><span class="tag">&gt;</span>
+  この段落にマウスを乗せてください。
+<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- abbr要素と組み合わせた略語の説明 --&gt;</span>
+<span class="tag">&lt;p&gt;</span>
+  <span class="tag">&lt;abbr</span> <span class="attr">title</span>=<span class="value">"HyperText Markup Language"</span><span class="tag">&gt;</span>HTML<span class="tag">&lt;/abbr&gt;</span>
+  は文書構造を定義するマークアップ言語です。
+<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- リンクの補足説明 --&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"https://html5exam.jp/"</span>
+   <span class="attr">title</span>=<span class="value">"HTML5プロフェッショナル認定試験の公式サイトへ"</span><span class="tag">&gt;</span>
+  試験公式サイト
+<span class="tag">&lt;/a&gt;</span>
+</pre>
+
+  <div class="demo-box" style="margin-top:14px;">
+    <p><strong>▼ 実際の表示（マウスを乗せるとツールチップが表示されます）</strong></p>
+    <p>
+      <abbr title="HyperText Markup Language" style="border-bottom:1px dashed #4299e1; cursor:help;">HTML</abbr>
+      は文書構造を定義するマークアップ言語です。
+    </p>
+    <p title="これはtitle属性のツールチップです" style="cursor:help; color:#2b6cb0; text-decoration:underline dotted;">
+      この文にマウスを乗せてみてください（スマホでは表示されません）
+    </p>
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ title属性の注意点</strong><br>
+    ・スマートフォンではツールチップが表示されません<br>
+    ・スクリーンリーダーによっては読み上げない場合があります<br>
+    ・重要な情報はtitle属性だけに頼らず、本文にも記載しましょう
+  </div>
+</div>
+
+
+<!-- 6. dir属性 -->
+<h2>⑦ dir属性</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>dir</code> 属性はテキストの<strong>書字方向（左→右 / 右→左）</strong>を指定します。<br>
+  ・アラビア語・ヘブライ語など右から左に書く言語に対応するために使います。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- 左から右（デフォルト） --&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">dir</span>=<span class="value">"ltr"</span><span class="tag">&gt;</span>Left to Right: Hello, World!<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- 右から左（アラビア語・ヘブライ語など） --&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">dir</span>=<span class="value">"rtl"</span><span class="tag">&gt;</span>Right to Left: مرحبا بالعالم<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- 自動判定 --&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">dir</span>=<span class="value">"auto"</span><span class="tag">&gt;</span>ブラウザが自動で方向を判定します<span class="tag">&lt;/p&gt;</span>
+</pre>
+
+  <div class="demo-box" style="margin-top:14px;">
+    <p><strong>▼ 実際の表示</strong></p>
+    <p dir="ltr" style="background:#ebf8ff; padding:8px 12px; border-radius:6px;">
+      ltr（左→右）: Hello, World! HTML5学習中
+    </p>
+    <p dir="rtl" style="background:#fef3c7; padding:8px 12px; border-radius:6px;">
+      rtl（右→左）: Hello, World! HTML5学習中
+    </p>
+  </div>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>値</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>ltr</code></td><td>Left to Right（左から右）。日本語・英語など</td></tr>
+      <tr><td><code>rtl</code></td><td>Right to Left（右から左）。アラビア語・ヘブライ語など</td></tr>
+      <tr><td><code>auto</code></td><td>コンテンツに基づいてブラウザが自動判定</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 7. tabindex属性 -->
+<h2>⑧ tabindex属性</h2>
+
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>tabindex</code> 属性はキーボードの <kbd>Tab</kbd> キーによる<strong>フォーカス順序</strong>を制御します。<br>
+  ・通常フォーカスできない要素（<code>div</code>、<code>span</code> など）にもフォーカス可能にできます。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- tabindex="0"：通常のタブ順序に追加 --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">tabindex</span>=<span class="value">"0"</span><span class="tag">&gt;</span>Tabキーでフォーカス可能なdiv<span class="tag">&lt;/div&gt;</span>
+
+<span class="comment">&lt;!-- tabindex="-1"：Tabキーでは到達しないがJSでフォーカス可能 --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">tabindex</span>=<span class="value">"-1"</span> <span class="attr">id</span>=<span class="value">"modal"</span><span class="tag">&gt;</span>モーダルダイアログ<span class="tag">&lt;/div&gt;</span>
+
+<span class="comment">&lt;!-- tabindex="1以上"：明示的な順序指定（非推奨） --&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">tabindex</span>=<span class="value">"3"</span> <span class="attr">type</span>=<span class="value">"text"</span><span class="tag">&gt;</span>  <span class="comment">&lt;!-- 3番目にフォーカス --&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">tabindex</span>=<span class="value">"1"</span> <span class="attr">type</span>=<span class="value">"text"</span><span class="tag">&gt;</span>  <span class="comment">&lt;!-- 1番目にフォーカス --&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">tabindex</span>=<span class="value">"2"</span> <span class="attr">type</span>=<span class="value">"text"</span><span class="tag">&gt;</span>  <span class="comment">&lt;!-- 2番目にフォーカス --&gt;</span>
+</pre>
+
+  <p><strong>▼ Tabキーでフォーカスを移動してみてください</strong></p>
+  <div class="tabindex-demo">
+    <div class="tab-item" tabindex="0">Tab順①</div>
+    <div class="tab-item" tabindex="0">Tab順②</div>
+    <div class="tab-item" tabindex="0">Tab順③</div>
+    <div class="tab-item" tabindex="0">Tab順④</div>
+  </div>
+
+  <table class="ref-table" style="margin-top:16px;">
+    <thead>
+      <tr><th>値</th><th>動作</th><th>用途</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>0</code></td>
+        <td>通常のタブ順序に追加</td>
+        <td>div・spanなどをフォーカス可能にする</td>
+      </tr>
+      <tr>
+        <td><code>-1</code></td>
+        <td>Tabキーでは到達しない</td>
+        <td>JavaScriptで動的にフォーカスするモーダルなど</td>
+      </tr>
+      <tr>
+        <td><code>1以上</code></td>
+        <td>指定した数値順にフォーカス</td>
+        <td>非推奨（DOM順序での管理が推奨）</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warn">
+    <strong>⚠️ tabindexの注意点</strong><br>
+    ・<code>tabindex="1"</code> 以上の正の値は<strong>非推奨</strong>です<br>
+    　（DOM順序と異なるタブ順序はアクセシビリティを損なう場合があります）<br>
+    ・<code>tabindex="0"</code> を使い、DOM順序でタブ順を管理するのが推奨です
+  </div>
+</div>
+
+
+<!-- 8. カスタムデータ属性 -->
+<h2>⑨ カスタムデータ（data-*）属性</h2>
+
+<div class="note">
+  <strong>ポイント③：HTML5以降では data-〇〇〇 の書式で独自の属性を追加できる</strong><br>
+  ・<code>data-*</code> 属性は<strong>HTML要素に独自のデータを埋め込む</strong>ための仕組みです。<br>
+  ・<code>data-</code> の後に任意の名前を付けて使います。<br>
+  ・JavaScriptから <code>dataset</code> プロパティで簡単にアクセスできます。<br>
+  ・HTMLの標準属性を汚染せずに独自データを持てます。
+</div>
+
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- data-*属性の基本 --&gt;</span>
+<span class="tag">&lt;button</span> <span class="attr">data-user-id</span>=<span class="value">"12345"</span>
+        <span class="attr">data-action</span>=<span class="value">"delete"</span>
+        <span class="attr">data-confirm-msg</span>=<span class="value">"本当に削除しますか？"</span><span class="tag">&gt;</span>
+  削除する
+<span class="tag">&lt;/button&gt;</span>
+
+<span class="comment">&lt;!-- 商品カードへの適用例 --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="value">"product-card"</span>
+     <span class="attr">data-product-id</span>=<span class="value">"P-001"</span>
+     <span class="attr">data-category</span>=<span class="value">"electronics"</span>
+     <span class="attr">data-price</span>=<span class="value">"29800"</span>
+     <span class="attr">data-in-stock</span>=<span class="value">"true"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;h3&gt;</span>商品名<span class="tag">&lt;/h3&gt;</span>
+  <span class="tag">&lt;p&gt;</span>29,800円<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="comment">&lt;!-- JavaScriptからのアクセス --&gt;</span>
+<span class="comment">&lt;!-- const card = document.querySelector('.product-card'); --&gt;</span>
+<span class="comment">&lt;!-- card.dataset.productId  → "P-001" --&gt;</span>
+<span class="comment">&lt;!-- card.dataset.category   → "electronics" --&gt;</span>
+<span class="comment">&lt;!-- card.dataset.price      → "29800" --&gt;</span>
+<span class="comment">&lt;!-- card.dataset.inStock    → "true" --&gt;</span>
+<span class="comment">&lt;!-- ※ ハイフンはキャメルケースに変換される --&gt;</span>
+<span class="comment">&lt;!-- data-product-id → dataset.productId --&gt;</span>
+</pre>
+
+  <p><strong>▼ data-*属性のデモ（ボタンをクリックしてください）</strong></p>
+  <div class="data-demo">
+    <button style="background:#4299e1; color:#fff;"
+            data-product-id="P-001"
+            data-name="ノートPC"
+            data-price="89800"
+            onclick="showData(this)">
+      ノートPC
+    </button>
+    <button style="background:#48bb78; color:#fff;"
+            data-product-id="P-002"
+            data-name="スマートフォン"
+            data-price="59800"
+            onclick="showData(this)">
+      スマートフォン
+    </button>
+    <button style="background:#ed8936; color:#fff;"
+            data-product-id="P-003"
+            data-name="タブレット"
+            data-price="44800"
+            onclick="showData(this)">
+      タブレット
+    </button>
+  </div>
+  <div id="data-output">← ボタンをクリックするとdata-*属性の値を表示します</div>
+  <script>
+    function showData(btn) {
+      const d = btn.dataset;
+      document.getElementById('data-output').textContent =
+        `dataset.productId = "${d.productId}"\n` +
+        `dataset.name      = "${d.name}"\n` +
+        `dataset.price     = "${d.price}"`;
+    }
+  </script>
+
+  <div class="warn">
+    <strong>⚠️ data-*属性の命名ルール</strong><br>
+    ・必ず <code>data-</code> で始める<br>
+    ・<code>data-</code> の後に<strong>少なくとも1文字以上</strong>の名前が必要<br>
+    ・名前に<strong>大文字は使えません</strong>（<code>data-userId</code> は不正）<br>
+    ・ハイフン区切りを使います（<code>data-user-id</code> ✅）<br>
+    ・JavaScriptの <code>dataset</code> ではハイフンがキャメルケースに変換されます<br>
+    　（<code>data-user-id</code> → <code>dataset.userId</code>）
+  </div>
+</div>
+
+
+<!-- 演習問題 -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      <code>id</code> 属性の値は、同じ文書内の複数の要素に
+      同じ値を指定することができる。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn btn-blue" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 正解！id属性の値は文書内で一意（ユニーク）でなければなりません。同じid値を複数の要素に指定することはできません。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent = '❌ 不正解。id属性の値は文書内で重複できません。複数要素に同じ値を指定できるのはclass属性です。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合う属性名を入力してください。</p>
+
+    <label>① 種類や分類を示す名前を指定し、複数要素に同じ値を使える属性：</label>
+    <input type="text" id="q2a" placeholder="属性名">
+
+    <label>② ほかの要素と重複しない固有の名前を指定する属性：</label>
+    <input type="text" id="q2b" placeholder="属性名">
+
+    <label>③ HTML5以降で独自データを埋め込む属性の書式（〇〇〇-*）：</label>
+    <input type="text" id="q2c" placeholder="data-* の前半部分">
+
+    <label>④ テキストの書字方向（左右）を指定するグローバル属性：</label>
+    <input type="text" id="q2d" placeholder="属性名">
+
+    <br>
+    <button class="btn btn-blue" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value.trim().toLowerCase();
+        const b = document.getElementById('q2b').value.trim().toLowerCase();
+        const c = document.getElementById('q2c').value.trim().toLowerCase();
+        const d = document.getElementById('q2d').value.trim().toLowerCase();
+        const r = document.getElementById('q2-result');
+        const ca = a === 'class';
+        const cb = b === 'id';
+        const cc = c === 'data' || c === 'data-';
+        const cd = d === 'dir';
+        const count = [ca, cb, cc, cd].filter(Boolean).length;
+        if (count === 4) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！グローバル属性をしっかり理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/4 問正解。<br>` +
+            `① ${ca ? '✅' : '❌ class'}　` +
+            `② ${cb ? '✅' : '❌ id'}　` +
+            `③ ${cc ? '✅' : '❌ data'}　` +
+            `④ ${cd ? '✅' : '❌ dir'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>
+      <code>tabindex="-1"</code> を指定した要素について、
+      正しい説明はどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">Tabキーで最初にフォーカスされる</option>
+      <option value="b">Tabキーでのフォーカス対象から除外されるが、JavaScriptでフォーカスできる</option>
+      <option value="c">要素が完全に無効化され、クリックもできなくなる</option>
+      <option value="d">Tabキーで最後にフォーカスされる</option>
+    </select>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'tabindex="-1" はTabキーによるフォーカス対象から除外されますが、<br>' +
+            'JavaScriptの focus() メソッドでプログラム的にフォーカスできます。<br>' +
+            'モーダルダイアログなど、動的に表示される要素に使われます。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.textContent = '❌ 不正解。tabindex="-1" はTabキーでは到達しませんが、要素自体は有効です。JavaScriptでフォーカスできます。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4a">
+      ① <code>class</code> 属性には、スペース区切りで複数の値を指定できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4b">
+      ② <code>data-userName</code> のように大文字を含むカスタムデータ属性名は正しい
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4c">
+      ③ <code>title</code> 属性の内容はスマートフォンでもツールチップとして表示される
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4d">
+      ④ グローバル属性はすべてのHTML要素に指定できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4e">
+      ⑤ <code>data-product-id</code> はJavaScriptの <code>dataset</code> では <code>productId</code> としてアクセスできる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4f">
+      ⑥ <code>id</code> 属性の値はページ内リンクの <code>href="#id名"</code> で参照できる
+    </label>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const r = document.getElementById('q4-result');
+        const checks = {
+          a: document.getElementById('q4a').checked,
+          b: document.getElementById('q4b').checked,
+          c: document.getElementById('q4c').checked,
+          d: document.getElementById('q4d').checked,
+          e: document.getElementById('q4e').checked,
+          f: document.getElementById('q4f').checked,
+        };
+        // 正解：①④⑤⑥（a, d, e, f）
+        // ②data-*に大文字不可 ③スマホではツールチップ表示されない
+        const correct = { a:true, b:false, c:false, d:true, e:true, f:true };
+        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
+        const allCorrect = results.every(Boolean);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① class属性はスペース区切りで複数値指定可 ✅<br>' +
+            '・④ グローバル属性はすべての要素に指定可 ✅<br>' +
+            '・⑤ data-product-id → dataset.productId（キャメルケース変換）✅<br>' +
+            '・⑥ id属性はページ内リンクで参照可 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① class属性はスペース区切りで複数値指定可<br>' +
+            '・④ グローバル属性はすべての要素に指定可<br>' +
+            '・⑤ data-product-id → dataset.productId（ハイフンはキャメルケースに変換）<br>' +
+            '・⑥ id属性はページ内リンクで参照可<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② data-*属性名に大文字は使えない（data-user-name が正しい）<br>' +
+            '・③ title属性のツールチップはスマートフォンでは表示されない';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. コード穴埋め問題</h3>
+    <p>以下のコードの <code>__A__</code> 〜 <code>__E__</code> に適切な属性名を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+&lt;nav __A__="global-nav"&gt;          &lt;!-- 固有の識別子 --&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href="/" __B__="ja"&gt;ホーム&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="/en" __B__="en"&gt;Home&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;
+
+&lt;button __C__="btn btn-primary"    &lt;!-- 種類・分類を示す名前 --&gt;
+        __D__="0"                  &lt;!-- タブ順序に追加 --&gt;
+        __E__-product-id="P-001"  &lt;!-- 独自データ属性 --&gt;
+        title="商品を購入する"&gt;
+  購入する
+&lt;/button&gt;</pre>
+
+    <label>A（固有の識別子を指定する属性）：</label>
+    <input type="text" id="q5a" placeholder="属性名">
+    <label>B（言語コードを指定する属性）：</label>
+    <input type="text" id="q5b" placeholder="属性名">
+    <label>C（種類・分類を示す名前を指定する属性）：</label>
+    <input type="text" id="q5c" placeholder="属性名">
+    <label>D（タブ順序を制御する属性）：</label>
+    <input type="text" id="q5d" placeholder="属性名">
+    <label>E（独自データ属性のプレフィックス）：</label>
+    <input type="text" id="q5e" placeholder="data-* の前半部分">
+    <br>
+    <button class="btn btn-blue" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const a = document.getElementById('q5a').value.trim().toLowerCase();
+        const b = document.getElementById('q5b').value.trim().toLowerCase();
+        const c = document.getElementById('q5c').value.trim().toLowerCase();
+        const d = document.getElementById('q5d').value.trim().toLowerCase();
+        const e = document.getElementById('q5e').value.trim().toLowerCase();
+        const r = document.getElementById('q5-result');
+        const ca = a === 'id';
+        const cb = b === 'lang';
+        const cc = c === 'class';
+        const cd = d === 'tabindex';
+        const ce = e === 'data' || e === 'data-';
+        const count = [ca, cb, cc, cd, ce].filter(Boolean).length;
+        if (count === 5) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！グローバル属性を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/5 問正解。<br>` +
+            `A: ${ca ? '✅' : '❌ id'}　` +
+            `B: ${cb ? '✅' : '❌ lang'}　` +
+            `C: ${cc ? '✅' : '❌ class'}　` +
+            `D: ${cd ? '✅' : '❌ tabindex'}　` +
+            `E: ${ce ? '✅' : '❌ data'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. 記述問題</h3>
+    <p>
+      <code>class</code> 属性と <code>id</code> 属性の違いを、
+      「重複の可否」「複数指定の可否」「主な用途」の観点から説明してください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q6" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ6()">模範解答を見る</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const r = document.getElementById('q6-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<strong>重複の可否：</strong><br>' +
+          '・class：同じ値を複数の要素に指定できる（重複OK）<br>' +
+          '・id：文書内で一意でなければならない（重複NG）<br><br>' +
+          '<strong>複数指定の可否：</strong><br>' +
+          '・class：1つの要素にスペース区切りで複数の値を指定できる<br>' +
+          '・id：1つの要素に1つの値のみ指定できる<br><br>' +
+          '<strong>主な用途：</strong><br>' +
+          '・class：CSSでスタイルを適用する・JavaScriptで複数要素をまとめて操作する<br>' +
+          '　　　　要素の種類・役割・状態を表す名前を指定する<br>' +
+          '・id：特定の要素を一意に識別する・ページ内リンクのターゲット・<br>' +
+          '　　　JavaScriptで特定の要素を取得する（getElementById）';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 グローバル属性 まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>属性</th><th>役割</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>class</code></td>
+      <td>種類・分類を示す名前</td>
+      <td>複数要素に同じ値OK。スペース区切りで複数値指定可。CSSは .クラス名</td>
+    </tr>
+    <tr>
+      <td><code>id</code></td>
+      <td>固有の識別名</td>
+      <td>文書内で一意（重複不可）。ページ内リンクのターゲットに使用可。CSSは #id名</td>
+    </tr>
+    <tr>
+      <td><code>lang</code></td>
+      <td>言語コードの指定</td>
+      <td>BCP 47言語タグ（ja / en / zh-CN など）。スクリーンリーダー・SEOに影響</td>
+    </tr>
+    <tr>
+      <td><code>title</code></td>
+      <td>補足情報・ツールチップ</td>
+      <td>マウスオーバーでツールチップ表示。スマホでは表示されない</td>
+    </tr>
+    <tr>
+      <td><code>dir</code></td>
+      <td>テキストの書字方向</td>
+      <td>ltr（左→右）/ rtl（右→左）/ auto（自動判定）</td>
+    </tr>
+    <tr>
+      <td><code>tabindex</code></td>
+      <td>タブキーのフォーカス順序</td>
+      <td>0：通常順序に追加 / -1：TabキーNG・JSでフォーカス可 / 正の値：非推奨</td>
+    </tr>
+    <tr>
+      <td><code>data-*</code></td>
+      <td>カスタムデータ属性</td>
+      <td>HTML5以降。data-で始まる任意名。大文字不可。datasetでJSアクセス可</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
