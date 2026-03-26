@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>HTML5 リスト要素 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #4299e1; padding-bottom: 10px; }
+    h2 { color: #2b6cb0; margin-top: 48px; border-left: 5px solid #4299e1; padding-left: 12px; }
+    h3 { color: #276749; margin-top: 24px; }
+
+    code {
+      background: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment { color: #68d391; }
+    pre .tag     { color: #90cdf4; }
+    pre .attr    { color: #fbd38d; }
+    pre .value   { color: #fc8181; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #90cdf4;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #2b6cb0; }
+
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+
+    .demo-box {
+      background: #fff;
+      border: 1px solid #bee3f8;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    .live-demo {
+      background: #f7fafc;
+      border: 1px solid #bee3f8;
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin: 12px 0;
+      font-size: 0.95em;
+    }
+
+    /* 比較グリッド */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin: 14px 0;
+    }
+    .compare-box {
+      background: #f7fafc;
+      border: 1px solid #bee3f8;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 0.88em;
+    }
+    .compare-box h4 {
+      margin: 0 0 8px;
+      color: #2b6cb0;
+      font-size: 1em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    table.ref-table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      margin: 14px 0;
+    }
+    table.ref-table th, table.ref-table td {
+      border: 1px solid #bee3f8;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.93em;
+    }
+    table.ref-table thead tr { background: #2b6cb0; color: #fff; }
+    table.ref-table tbody tr:nth-child(even) { background: #ebf8ff; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 { margin-top: 0; color: #c05621; border-left-color: #f6ad55; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #fbd38d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #fbd38d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-blue { background: #4299e1; color: #fff; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #bee3f8; color: #2b6cb0; display: block; }
+
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #bee3f8;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.93em;
+    }
+    table.summary thead tr { background: #2b6cb0; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #ebf8ff; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px 14px; }
+      .compare-grid { grid-template-columns: 1fr; }
+      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.85em; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.85em; }
+      .quiz-section { padding: 16px 16px; }
+      .quiz-block { padding: 14px 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+      .compare-grid { grid-template-columns: 1fr 1fr 1fr; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+      .compare-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>📋 HTML5 リスト要素 学習サンプル</h1>
+<p>ul・ol・li・dl・dt・dd の役割と使い方を学びましょう。</p>
+
+
+<!-- 1. リスト要素の全体像 -->
+<h2>① リスト要素の全体像</h2>
+<div class="demo-box">
+  <div class="compare-grid">
+    <div class="compare-box">
+      <h4>ul（順不同リスト）</h4>
+      ・順序に意味がないリスト<br>
+      ・箇条書き（●）で表示<br>
+      ・子要素は <code>li</code> のみ<br>
+      ・<strong>内容は空でもOK</strong>
+    </div>
+    <div class="compare-box">
+      <h4>ol（順序付きリスト）</h4>
+      ・順序に意味があるリスト<br>
+      ・番号付き（1.2.3.）で表示<br>
+      ・子要素は <code>li</code> のみ<br>
+      ・<strong>内容は空でもOK</strong>
+    </div>
+    <div class="compare-box">
+      <h4>dl（説明リスト）</h4>
+      ・用語と説明のペア<br>
+      ・<code>dt</code>（用語）+ <code>dd</code>（説明）<br>
+      ・用語定義には <code>dfn</code> も使う<br>
+      ・<strong>内容は空でもOK</strong>
+    </div>
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ 試験重要ポイント①：ul・ol・dl の内容は空でもOK</strong><br>
+    HTMLの仕様上、<code>ul</code> / <code>ol</code> / <code>dl</code> 要素は
+    <strong>子要素が0個（空）でも文法的に正しい</strong>です。<br>
+    JavaScriptで動的にリストを生成する場合などに空のリスト要素を使うことがあります。<br><br>
+    ✅ <code>&lt;ul&gt;&lt;/ul&gt;</code>　← 文法的に正しい<br>
+    ✅ <code>&lt;ol&gt;&lt;/ol&gt;</code>　← 文法的に正しい<br>
+    ✅ <code>&lt;dl&gt;&lt;/dl&gt;</code>　← 文法的に正しい
+  </div>
+</div>
+
+
+<!-- 2. ul要素 -->
+<h2>② ul要素（順不同リスト）</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>ul</code>（Unordered List）は<strong>順序に意味がない</strong>箇条書きリストです。<br>
+  ・直接の子要素は <code>li</code> 要素のみです（<code>div</code> や <code>p</code> は直接置けません）。<br>
+  ・ナビゲーションメニュー・機能一覧・タグ一覧などに使います。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- 基本的な使い方 --&gt;</span>
+<span class="tag">&lt;ul&gt;</span>
+  <span class="tag">&lt;li&gt;</span>HTML<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;li&gt;</span>CSS<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;li&gt;</span>JavaScript<span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ul&gt;</span>
+
+<span class="comment">&lt;!-- ネスト（入れ子）--&gt;</span>
+<span class="tag">&lt;ul&gt;</span>
+  <span class="tag">&lt;li&gt;</span>フロントエンド
+    <span class="tag">&lt;ul&gt;</span>
+      <span class="tag">&lt;li&gt;</span>HTML<span class="tag">&lt;/li&gt;</span>
+      <span class="tag">&lt;li&gt;</span>CSS<span class="tag">&lt;/li&gt;</span>
+    <span class="tag">&lt;/ul&gt;</span>
+  <span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;li&gt;</span>バックエンド
+    <span class="tag">&lt;ul&gt;</span>
+      <span class="tag">&lt;li&gt;</span>PHP<span class="tag">&lt;/li&gt;</span>
+      <span class="tag">&lt;li&gt;</span>Python<span class="tag">&lt;/li&gt;</span>
+    <span class="tag">&lt;/ul&gt;</span>
+  <span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ul&gt;</span>
+
+<span class="comment">&lt;!-- 空のulも文法的に正しい --&gt;</span>
+<span class="tag">&lt;ul</span> <span class="attr">id</span>=<span class="value">"dynamic-list"</span><span class="tag">&gt;&lt;/ul&gt;</span>
+<span class="comment">&lt;!-- JavaScriptで後からliを追加する場合など --&gt;</span>
+</pre>
+  <div class="live-demo">
+    <p><strong>▼ 基本表示</strong></p>
+    <ul>
+      <li>HTML</li>
+      <li>CSS</li>
+      <li>JavaScript</li>
+    </ul>
+    <p><strong>▼ ネスト表示</strong></p>
+    <ul>
+      <li>フロントエンド
+        <ul>
+          <li>HTML</li>
+          <li>CSS</li>
+        </ul>
+      </li>
+      <li>バックエンド
+        <ul>
+          <li>PHP</li>
+          <li>Python</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="warn">
+    <strong>⚠️ ul要素の注意点</strong><br>
+    ・<code>ul</code> の直接の子要素は <code>li</code> のみです<br>
+    ❌ <code>&lt;ul&gt;&lt;p&gt;テキスト&lt;/p&gt;&lt;/ul&gt;</code>　← 不正<br>
+    ✅ <code>&lt;ul&gt;&lt;li&gt;テキスト&lt;/li&gt;&lt;/ul&gt;</code>　← 正しい<br><br>
+    ・ナビゲーションメニューは <code>nav</code> 要素と組み合わせて使います
+  </div>
+</div>
+
+
+<!-- 3. ol要素 -->
+<h2>③ ol要素（順序付きリスト）</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>ol</code>（Ordered List）は<strong>順序に意味がある</strong>番号付きリストです。<br>
+  ・手順・ランキング・レシピの工程など、順番が重要なコンテンツに使います。<br>
+  ・<code>start</code> 属性で開始番号、<code>reversed</code> 属性で逆順を指定できます。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- 基本的な使い方 --&gt;</span>
+<span class="tag">&lt;ol&gt;</span>
+  <span class="tag">&lt;li&gt;</span>HTMLを学ぶ<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;li&gt;</span>CSSを学ぶ<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;li&gt;</span>JavaScriptを学ぶ<span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ol&gt;</span>
+
+<span class="comment">&lt;!-- start属性：開始番号を指定 --&gt;</span>
+<span class="tag">&lt;ol</span> <span class="attr">start</span>=<span class="value">"3"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;li&gt;</span>3番目から始まる<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;li&gt;</span>4番目<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;li&gt;</span>5番目<span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ol&gt;</span>
+
+<span class="comment">&lt;!-- reversed属性：逆順（論理属性） --&gt;</span>
+<span class="tag">&lt;ol</span> <span class="attr">reversed</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;li&gt;</span>3位：山田太郎<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;li&gt;</span>2位：鈴木花子<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;li&gt;</span>1位：田中一郎<span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ol&gt;</span>
+
+<span class="comment">&lt;!-- type属性：番号の種類 --&gt;</span>
+<span class="tag">&lt;ol</span> <span class="attr">type</span>=<span class="value">"A"</span><span class="tag">&gt;</span>  <span class="comment">&lt;!-- A, B, C... --&gt;</span>
+  <span class="tag">&lt;li&gt;</span>選択肢A<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;li&gt;</span>選択肢B<span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ol&gt;</span>
+
+<span class="comment">&lt;!-- li要素のvalue属性：個別の番号を指定 --&gt;</span>
+<span class="tag">&lt;ol&gt;</span>
+  <span class="tag">&lt;li</span> <span class="attr">value</span>=<span class="value">"1"</span><span class="tag">&gt;</span>第1章<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;li</span> <span class="attr">value</span>=<span class="value">"5"</span><span class="tag">&gt;</span>第5章（2〜4を飛ばす）<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;li&gt;</span>第6章（自動で続く）<span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ol&gt;</span>
+</pre>
+
+  <div class="live-demo">
+    <p><strong>▼ 基本表示</strong></p>
+    <ol>
+      <li>HTMLを学ぶ</li>
+      <li>CSSを学ぶ</li>
+      <li>JavaScriptを学ぶ</li>
+    </ol>
+    <p><strong>▼ reversed属性（逆順）</strong></p>
+    <ol reversed>
+      <li>3位：山田太郎</li>
+      <li>2位：鈴木花子</li>
+      <li>1位：田中一郎</li>
+    </ol>
+    <p><strong>▼ start="3"（3から開始）</strong></p>
+    <ol start="3">
+      <li>3番目から始まる</li>
+      <li>4番目</li>
+      <li>5番目</li>
+    </ol>
+    <p><strong>▼ type="A"（アルファベット）</strong></p>
+    <ol type="A">
+      <li>選択肢A</li>
+      <li>選択肢B</li>
+      <li>選択肢C</li>
+    </ol>
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ 試験重要ポイント②：reversed属性</strong><br>
+    ・<code>reversed</code> 属性は<strong>論理属性</strong>（値なしで指定）です<br>
+    ・リストアイテムの<strong>表示順序は変わりません</strong>（HTMLに書いた順のまま）<br>
+    ・変わるのは<strong>番号の付き方</strong>だけです（大きい番号から小さい番号へ）<br><br>
+    例：3つのliがある場合 → 3, 2, 1 の順に番号が付く
+  </div>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>属性</th><th>対象</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>reversed</code></td><td>ol</td><td>番号を逆順にする（論理属性）</td></tr>
+      <tr><td><code>start</code></td><td>ol</td><td>開始番号を整数で指定</td></tr>
+      <tr><td><code>type</code></td><td>ol</td><td>番号の種類（1 / a / A / i / I）</td></tr>
+      <tr><td><code>value</code></td><td>li</td><td>そのli要素の番号を個別に指定</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 4. li要素 -->
+<h2>④ li要素（リストアイテム）</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>li</code>（List Item）は <code>ul</code> または <code>ol</code> の子要素です。<br>
+  ・<code>li</code> 要素の中にはブロック要素・インライン要素を含めることができます。<br>
+  ・<code>li</code> 要素は <code>ul</code> / <code>ol</code> の外に単独で置くことはできません。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- liの中にブロック要素を含める --&gt;</span>
+<span class="tag">&lt;ul&gt;</span>
+  <span class="tag">&lt;li&gt;</span>
+    <span class="tag">&lt;h3&gt;</span>HTML5の特徴<span class="tag">&lt;/h3&gt;</span>
+    <span class="tag">&lt;p&gt;</span>セマンティックな要素が追加されました。<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;li&gt;</span>
+    <span class="tag">&lt;h3&gt;</span>CSS3の特徴<span class="tag">&lt;/h3&gt;</span>
+    <span class="tag">&lt;p&gt;</span>アニメーションやグラデーションが使えます。<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ul&gt;</span>
+
+<span class="comment">&lt;!-- ナビゲーションメニューでの使用例 --&gt;</span>
+<span class="tag">&lt;nav&gt;</span>
+  <span class="tag">&lt;ul&gt;</span>
+    <span class="tag">&lt;li&gt;</span><span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"/"</span><span class="tag">&gt;</span>ホーム<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;</span><span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"/about"</span><span class="tag">&gt;</span>会社概要<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;</span><span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"/contact"</span><span class="tag">&gt;</span>お問い合わせ<span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+  <span class="tag">&lt;/ul&gt;</span>
+<span class="tag">&lt;/nav&gt;</span>
+</pre>
+  <div class="warn">
+    <strong>⚠️ li要素の注意点</strong><br>
+    ・<code>li</code> は必ず <code>ul</code> または <code>ol</code> の子要素として使います<br>
+    ❌ <code>&lt;div&gt;&lt;li&gt;項目&lt;/li&gt;&lt;/div&gt;</code>　← 不正（ulもolも親にない）<br>
+    ✅ <code>&lt;ul&gt;&lt;li&gt;項目&lt;/li&gt;&lt;/ul&gt;</code>　← 正しい
+  </div>
+</div>
+
+
+<!-- 5. dl / dt / dd要素 -->
+<h2>⑤ dl要素 / dt要素 / dd要素（説明リスト）</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>dl</code>（Description List）は<strong>用語と説明のペア</strong>を表すリストです。<br>
+  ・<code>dt</code>（Description Term）：用語・名前・質問など<br>
+  ・<code>dd</code>（Description Details）：用語の説明・定義・回答など<br>
+  ・1つの <code>dt</code> に複数の <code>dd</code> を対応させることができます。<br>
+  ・複数の <code>dt</code> を1つの <code>dd</code> に対応させることもできます。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- 基本的な使い方 --&gt;</span>
+<span class="tag">&lt;dl&gt;</span>
+  <span class="tag">&lt;dt&gt;</span>HTML<span class="tag">&lt;/dt&gt;</span>
+  <span class="tag">&lt;dd&gt;</span>HyperText Markup Language の略。ウェブページの構造を定義する言語。<span class="tag">&lt;/dd&gt;</span>
+
+  <span class="tag">&lt;dt&gt;</span>CSS<span class="tag">&lt;/dt&gt;</span>
+  <span class="tag">&lt;dd&gt;</span>Cascading Style Sheets の略。ウェブページの見た目を定義する言語。<span class="tag">&lt;/dd&gt;</span>
+<span class="tag">&lt;/dl&gt;</span>
+
+<span class="comment">&lt;!-- 1つのdtに複数のdd --&gt;</span>
+<span class="tag">&lt;dl&gt;</span>
+  <span class="tag">&lt;dt&gt;</span>プログラミング言語<span class="tag">&lt;/dt&gt;</span>
+  <span class="tag">&lt;dd&gt;</span>JavaScript<span class="tag">&lt;/dd&gt;</span>
+  <span class="tag">&lt;dd&gt;</span>Python<span class="tag">&lt;/dd&gt;</span>
+  <span class="tag">&lt;dd&gt;</span>PHP<span class="tag">&lt;/dd&gt;</span>
+<span class="tag">&lt;/dl&gt;</span>
+
+<span class="comment">&lt;!-- 複数のdtに1つのdd --&gt;</span>
+<span class="tag">&lt;dl&gt;</span>
+  <span class="tag">&lt;dt&gt;</span>HTML<span class="tag">&lt;/dt&gt;</span>
+  <span class="tag">&lt;dt&gt;</span>HyperText Markup Language<span class="tag">&lt;/dt&gt;</span>
+  <span class="tag">&lt;dd&gt;</span>ウェブページの構造を定義するマークアップ言語。<span class="tag">&lt;/dd&gt;</span>
+<span class="tag">&lt;/dl&gt;</span>
+
+<span class="comment">&lt;!-- FAQへの応用 --&gt;</span>
+<span class="tag">&lt;dl&gt;</span>
+  <span class="tag">&lt;dt&gt;</span>試験の難易度はどのくらいですか？<span class="tag">&lt;/dt&gt;</span>
+  <span class="tag">&lt;dd&gt;</span>HTML・CSSの基礎知識があれば挑戦できるレベルです。<span class="tag">&lt;/dd&gt;</span>
+
+  <span class="tag">&lt;dt&gt;</span>受験資格はありますか？<span class="tag">&lt;/dt&gt;</span>
+  <span class="tag">&lt;dd&gt;</span>年齢・学歴・職歴などの制限はありません。<span class="tag">&lt;/dd&gt;</span>
+<span class="tag">&lt;/dl&gt;</span>
+</pre>
+
+  <div class="live-demo">
+    <p><strong>▼ 基本表示</strong></p>
+    <dl>
+      <dt><strong>HTML</strong></dt>
+      <dd>HyperText Markup Language の略。ウェブページの構造を定義する言語。</dd>
+      <dt><strong>CSS</strong></dt>
+      <dd>Cascading Style Sheets の略。ウェブページの見た目を定義する言語。</dd>
+    </dl>
+    <p><strong>▼ 1つのdtに複数のdd</strong></p>
+    <dl>
+      <dt><strong>プログラミング言語</strong></dt>
+      <dd>JavaScript</dd>
+      <dd>Python</dd>
+      <dd>PHP</dd>
+    </dl>
+  </div>
+</div>
+
+
+<!-- 6. dl + dfn -->
+<h2>⑥ dl要素 と dfn要素の組み合わせ</h2>
+<div class="note">
+  <strong>ポイント③：dl要素で用語の定義をする場合、dfn要素も必要になる</strong><br>
+  ・<code>dl</code> 要素で<strong>用語の定義</strong>を行う場合は、
+  <code>dt</code> 要素内に <code>dfn</code> 要素を使って定義語を明示します。<br>
+  ・<code>dfn</code> 要素はその文書内での<strong>用語の定義箇所</strong>を示します。<br>
+  ・単なる用語と説明のペア（FAQなど）には <code>dfn</code> は不要です。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- 用語の定義にdlを使う場合はdfnも使う --&gt;</span>
+<span class="tag">&lt;dl&gt;</span>
+  <span class="tag">&lt;dt&gt;</span>
+    <span class="tag">&lt;dfn&gt;</span>セマンティクス<span class="tag">&lt;/dfn&gt;</span>
+  <span class="tag">&lt;/dt&gt;</span>
+  <span class="tag">&lt;dd&gt;</span>
+    HTMLタグに意味を持たせることで、
+    文書構造を人間とコンピュータの両方に
+    わかりやすくする考え方。
+  <span class="tag">&lt;/dd&gt;</span>
+
+  <span class="tag">&lt;dt&gt;</span>
+    <span class="tag">&lt;dfn&gt;&lt;abbr</span> <span class="attr">title</span>=<span class="value">"HyperText Markup Language"</span><span class="tag">&gt;</span>HTML<span class="tag">&lt;/abbr&gt;&lt;/dfn&gt;</span>
+  <span class="tag">&lt;/dt&gt;</span>
+  <span class="tag">&lt;dd&gt;</span>
+    ウェブページの構造を定義するマークアップ言語。
+    W3CとWHATWGが仕様を策定している。
+  <span class="tag">&lt;/dd&gt;</span>
+<span class="tag">&lt;/dl&gt;</span>
+
+<span class="comment">&lt;!-- FAQなど「定義」でない場合はdfn不要 --&gt;</span>
+<span class="tag">&lt;dl&gt;</span>
+  <span class="tag">&lt;dt&gt;</span>営業時間は何時ですか？<span class="tag">&lt;/dt&gt;</span>  <span class="comment">&lt;!-- 定義ではないのでdfn不要 --&gt;</span>
+  <span class="tag">&lt;dd&gt;</span>平日9時〜18時です。<span class="tag">&lt;/dd&gt;</span>
+<span class="tag">&lt;/dl&gt;</span>
+</pre>
+
+  <div class="live-demo">
+    <p><strong>▼ dfnを使った用語定義の表示</strong></p>
+    <dl>
+      <dt><dfn>セマンティクス</dfn></dt>
+      <dd>HTMLタグに意味を持たせることで、文書構造を人間とコンピュータの両方にわかりやすくする考え方。</dd>
+      <dt><dfn><abbr title="HyperText Markup Language">HTML</abbr></dfn></dt>
+      <dd>ウェブページの構造を定義するマークアップ言語。W3CとWHATWGが仕様を策定している。</dd>
+    </dl>
+  </div>
+
+  <div class="good">
+    ✅ <strong>dlの使い分けまとめ</strong><br>
+    ・<strong>用語の定義</strong>（glossary）→ <code>dl</code> + <code>dt</code>（<code>dfn</code>あり）+ <code>dd</code><br>
+    ・<strong>FAQ・Q&amp;A</strong> → <code>dl</code> + <code>dt</code>（<code>dfn</code>なし）+ <code>dd</code><br>
+    ・<strong>メタデータのペア</strong>（著者・公開日など）→ <code>dl</code> + <code>dt</code> + <code>dd</code>
+  </div>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>用途</th><th>dfnの要否</th><th>例</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>用語の定義（glossary）</td>
+        <td>✅ 必要</td>
+        <td>技術用語集・辞書</td>
+      </tr>
+      <tr>
+        <td>FAQ・Q&amp;A</td>
+        <td>❌ 不要</td>
+        <td>よくある質問ページ</td>
+      </tr>
+      <tr>
+        <td>メタデータのペア</td>
+        <td>❌ 不要</td>
+        <td>著者名・公開日・カテゴリ</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 7. リストの使い分け -->
+<h2>⑦ ul / ol / dl の使い分け</h2>
+<div class="demo-box">
+  <table class="ref-table">
+    <thead>
+      <tr><th>要素</th><th>使う場面</th><th>具体例</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>ul</code></td>
+        <td>順序に意味がないリスト</td>
+        <td>ナビメニュー・機能一覧・タグ一覧・買い物リスト</td>
+      </tr>
+      <tr>
+        <td><code>ol</code></td>
+        <td>順序に意味があるリスト</td>
+        <td>手順・ランキング・レシピ・目次</td>
+      </tr>
+      <tr>
+        <td><code>dl</code></td>
+        <td>用語と説明のペア</td>
+        <td>用語集・FAQ・メタデータ（著者・日付など）</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warn">
+    <strong>⚠️ よくある誤用</strong><br>
+    ❌ インデント（字下げ）目的で <code>ul</code> を使う → CSSの <code>padding / margin</code> で対応<br>
+    ❌ 番号を付けたいだけで <code>ol</code> を使う（順序に意味がない場合）→ <code>ul</code> + CSS<br>
+    ❌ 見た目のリスト表示のために <code>dl</code> を使う → 用語と説明のペアでない場合は不適切
+  </div>
+</div>
+
+
+<!-- 演習問題 -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      <code>ul</code> 要素・<code>ol</code> 要素・<code>dl</code> 要素は、
+      子要素が1つもない（空の）状態では文法エラーになる。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn btn-blue" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.textContent =
+            '✅ 正解！ul・ol・dl要素は内容が空でも文法的に正しいです。' +
+            'JavaScriptで動的にリストを生成する場合などに空のリスト要素を使うことがあります。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。ul・ol・dl要素は内容が空でも文法的に正しいです。' +
+            '子要素が0個でもエラーにはなりません。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合う要素名または属性名を入力してください。</p>
+
+    <label>① ol要素のリストを逆順（大きい番号から小さい番号）にする属性名：</label>
+    <input type="text" id="q2a" placeholder="属性名">
+
+    <label>② dl要素で用語の定義を行う場合にdt要素内で使う要素名：</label>
+    <input type="text" id="q2b" placeholder="要素名">
+
+    <label>③ ol要素の開始番号を指定する属性名：</label>
+    <input type="text" id="q2c" placeholder="属性名">
+
+    <label>④ dl要素内で用語（名前・質問）を表す要素名：</label>
+    <input type="text" id="q2d" placeholder="要素名">
+
+    <label>⑤ dl要素内で説明（定義・回答）を表す要素名：</label>
+    <input type="text" id="q2e" placeholder="要素名">
+
+    <br>
+    <button class="btn btn-blue" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const b = document.getElementById('q2b').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const c = document.getElementById('q2c').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const d = document.getElementById('q2d').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const e = document.getElementById('q2e').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const r = document.getElementById('q2-result');
+        const ca = a === 'reversed';
+        const cb = b === 'dfn';
+        const cc = c === 'start';
+        const cd = d === 'dt';
+        const ce = e === 'dd';
+        const count = [ca, cb, cc, cd, ce].filter(Boolean).length;
+        if (count === 5) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！リスト要素を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/5 問正解。<br>` +
+            `① ${ca ? '✅' : '❌ reversed'}　` +
+            `② ${cb ? '✅' : '❌ dfn'}　` +
+            `③ ${cc ? '✅' : '❌ start'}　` +
+            `④ ${cd ? '✅' : '❌ dt'}　` +
+            `⑤ ${ce ? '✅' : '❌ dd'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>
+      <code>ol</code> 要素に <code>reversed</code> 属性を指定した場合の
+      正しい説明はどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">リストアイテムの表示順序が逆になり、最後のliが最初に表示される</option>
+      <option value="b">番号の付き方が逆順になるが、liの表示順序はHTMLに書いた順のまま</option>
+      <option value="c">リスト全体が非表示になる</option>
+      <option value="d">リストアイテムの番号がすべて0になる</option>
+    </select>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'reversed属性はliの<strong>表示順序を変えるのではなく</strong>、' +
+            '<strong>番号の付き方を逆順にする</strong>属性です。<br>' +
+            '例：3つのliがある場合 → 3, 2, 1 の番号が付く（表示順序はそのまま）';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。reversed属性はliの表示順序を変えません。' +
+            '番号の付き方が逆順（大→小）になるだけです。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4a">
+      ① <code>ul</code> 要素の直接の子要素は <code>li</code> 要素のみである
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4b">
+      ② <code>ol</code> 要素の <code>reversed</code> 属性は値を指定する必要がある（例：<code>reversed="true"</code>）
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4c">
+      ③ <code>dl</code> 要素では、1つの <code>dt</code> に複数の <code>dd</code> を対応させることができる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4d">
+      ④ <code>dl</code> 要素で用語の定義をする場合は <code>dfn</code> 要素も必要になる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4e">
+      ⑤ <code>li</code> 要素は <code>ul</code> や <code>ol</code> の外に単独で置くことができる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4f">
+      ⑥ <code>ol</code> 要素の <code>start</code> 属性で開始番号を指定できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4g">
+      ⑦ インデント（字下げ）を目的として <code>ul</code> 要素を使うことは適切である
+    </label>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const r = document.getElementById('q4-result');
+        const checks = {
+          a: document.getElementById('q4a').checked,
+          b: document.getElementById('q4b').checked,
+          c: document.getElementById('q4c').checked,
+          d: document.getElementById('q4d').checked,
+          e: document.getElementById('q4e').checked,
+          f: document.getElementById('q4f').checked,
+          g: document.getElementById('q4g').checked,
+        };
+        // 正解：①③④⑥（a, c, d, f）
+        // ②reversedは論理属性（値不要）
+        // ⑤liは単独不可
+        // ⑦インデント目的はCSS
+        const correct = { a:true, b:false, c:true, d:true, e:false, f:true, g:false };
+        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
+        const allCorrect = results.every(Boolean);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① ul直接の子はliのみ ✅<br>' +
+            '・③ 1つのdtに複数のddが対応可 ✅<br>' +
+            '・④ 用語定義にはdfnも必要 ✅<br>' +
+            '・⑥ start属性で開始番号を指定可 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① ul直接の子はliのみ<br>' +
+            '・③ 1つのdtに複数のddが対応可<br>' +
+            '・④ 用語定義にはdfnも必要<br>' +
+            '・⑥ start属性で開始番号を指定可<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② reversedは論理属性のため値の指定は不要（reversedとだけ書く）<br>' +
+            '・⑤ li要素はul/olの子要素としてのみ使用可（単独不可）<br>' +
+            '・⑦ インデント目的のulは不適切（CSSで対応する）';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. コード穴埋め問題</h3>
+    <p>以下のコードの <code>__A__</code> 〜 <code>__F__</code> に
+    適切な要素名または属性名を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+&lt;!-- ランキング（逆順番号）--&gt;
+&lt;__A__ __B__&gt;
+  &lt;li&gt;3位：山田太郎&lt;/li&gt;
+  &lt;li&gt;2位：鈴木花子&lt;/li&gt;
+  &lt;li&gt;1位：田中一郎&lt;/li&gt;
+&lt;/__A__&gt;
+
+&lt;!-- 用語定義リスト --&gt;
+&lt;__C__&gt;
+  &lt;__D__&gt;
+    &lt;__E__&gt;セマンティクス&lt;/__E__&gt;
+  &lt;/__D__&gt;
+  &lt;__F__&gt;
+    HTMLタグに意味を持たせる考え方。
+  &lt;/__F__&gt;
+&lt;/__C__&gt;</pre>
+
+    <label>A（順序付きリスト要素）：</label>
+    <input type="text" id="q5a" placeholder="要素名">
+    <label>B（逆順にする属性）：</label>
+    <input type="text" id="q5b" placeholder="属性名">
+    <label>C（説明リスト要素）：</label>
+    <input type="text" id="q5c" placeholder="要素名">
+    <label>D（用語を表す要素）：</label>
+    <input type="text" id="q5d" placeholder="要素名">
+    <label>E（定義語を明示する要素）：</label>
+    <input type="text" id="q5e" placeholder="要素名">
+    <label>F（説明・定義を表す要素）：</label>
+    <input type="text" id="q5f" placeholder="要素名">
+    <br>
+    <button class="btn btn-blue" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const a = document.getElementById('q5a').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const b = document.getElementById('q5b').value.trim().toLowerCase();
+        const c = document.getElementById('q5c').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const d = document.getElementById('q5d').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const e = document.getElementById('q5e').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const f = document.getElementById('q5f').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const r = document.getElementById('q5-result');
+        const ca = a === 'ol';
+        const cb = b === 'reversed';
+        const cc = c === 'dl';
+        const cd = d === 'dt';
+        const ce = e === 'dfn';
+        const cf = f === 'dd';
+        const count = [ca, cb, cc, cd, ce, cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！リスト要素の構造を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca ? '✅' : '❌ ol'}　` +
+            `B: ${cb ? '✅' : '❌ reversed'}　` +
+            `C: ${cc ? '✅' : '❌ dl'}　` +
+            `D: ${cd ? '✅' : '❌ dt'}　` +
+            `E: ${ce ? '✅' : '❌ dfn'}　` +
+            `F: ${cf ? '✅' : '❌ dd'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. 記述問題</h3>
+    <p>
+      <code>ul</code> 要素・<code>ol</code> 要素・<code>dl</code> 要素の
+      それぞれの使い分けを、具体的な使用例を挙げながら説明してください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q6" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ6()">模範解答を見る</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const r = document.getElementById('q6-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<strong>ul（順不同リスト）：</strong><br>' +
+          '順序に意味がない箇条書きに使います。<br>' +
+          '例：ナビゲーションメニュー・機能一覧・買い物リスト・タグ一覧<br><br>' +
+          '<strong>ol（順序付きリスト）：</strong><br>' +
+          '順序に意味がある番号付きリストに使います。<br>' +
+          '例：手順・ランキング・レシピの工程・目次<br>' +
+          'reversed属性で逆順、start属性で開始番号を指定できます。<br><br>' +
+          '<strong>dl（説明リスト）：</strong><br>' +
+          '用語（dt）と説明（dd）のペアを表すリストに使います。<br>' +
+          '例：用語集・FAQ・メタデータ（著者名・公開日など）<br>' +
+          '用語の定義を行う場合はdt内にdfn要素も使います。<br><br>' +
+          '<strong>共通の注意点：</strong><br>' +
+          'ul・ol・dlはすべて内容が空でも文法的に正しいです。<br>' +
+          'インデント目的のリスト使用は不適切で、CSSで対応します。';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 リスト要素 まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>要素</th><th>役割</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ul</code></td>
+      <td>順不同リスト</td>
+      <td>順序に意味がない箇条書き。直接の子はliのみ。空でもOK</td>
+    </tr>
+    <tr>
+      <td><code>ol</code></td>
+      <td>順序付きリスト</td>
+      <td>順序に意味がある番号付き。reversed / start / type属性あり。空でもOK</td>
+    </tr>
+    <tr>
+      <td><code>li</code></td>
+      <td>リストアイテム</td>
+      <td>ul / ol の子要素。単独使用不可。value属性で番号を個別指定可（ol内）</td>
+    </tr>
+    <tr>
+      <td><code>dl</code></td>
+      <td>説明リスト</td>
+      <td>用語と説明のペア。FAQ・用語集・メタデータに使用。空でもOK</td>
+    </tr>
+    <tr>
+      <td><code>dt</code></td>
+      <td>説明リストの用語</td>
+      <td>dl内で使用。用語定義の場合はdfn要素を含める</td>
+    </tr>
+    <tr>
+      <td><code>dd</code></td>
+      <td>説明リストの説明</td>
+      <td>dl内で使用。1つのdtに複数のddを対応させることができる</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
