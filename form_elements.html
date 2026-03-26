@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>HTML5 フォーム要素 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #4299e1; padding-bottom: 10px; }
+    h2 { color: #2b6cb0; margin-top: 48px; border-left: 5px solid #4299e1; padding-left: 12px; }
+    h3 { color: #276749; margin-top: 24px; }
+
+    code {
+      background: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment { color: #68d391; }
+    pre .tag     { color: #90cdf4; }
+    pre .attr    { color: #fbd38d; }
+    pre .value   { color: #fc8181; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #90cdf4;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #2b6cb0; }
+
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+
+    .demo-box {
+      background: #fff;
+      border: 1px solid #bee3f8;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    .live-demo {
+      background: #f7fafc;
+      border: 1px solid #bee3f8;
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin: 12px 0;
+      font-size: 0.95em;
+    }
+    .live-demo label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 4px;
+      color: #2b6cb0;
+      font-size: 0.9em;
+    }
+    .live-demo input,
+    .live-demo textarea,
+    .live-demo select {
+      border: 2px solid #bee3f8;
+      border-radius: 6px;
+      padding: 7px 10px;
+      font-size: 0.93em;
+      width: 100%;
+      max-width: 360px;
+      margin-bottom: 10px;
+      outline: none;
+      font-family: inherit;
+    }
+    .live-demo input:focus,
+    .live-demo textarea:focus,
+    .live-demo select:focus { border-color: #4299e1; }
+
+    table.ref-table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      margin: 14px 0;
+    }
+    table.ref-table th, table.ref-table td {
+      border: 1px solid #bee3f8;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.ref-table thead tr { background: #2b6cb0; color: #fff; }
+    table.ref-table tbody tr:nth-child(even) { background: #ebf8ff; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 { margin-top: 0; color: #c05621; border-left-color: #f6ad55; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #fbd38d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #fbd38d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-blue { background: #4299e1; color: #fff; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #bee3f8; color: #2b6cb0; display: block; }
+
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #bee3f8;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.summary thead tr { background: #2b6cb0; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #ebf8ff; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px 14px; }
+      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.82em; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px 16px; }
+      .quiz-block { padding: 14px 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+      .live-demo input,
+      .live-demo textarea,
+      .live-demo select { max-width: 100%; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>📝 HTML5 フォーム要素 学習サンプル</h1>
+<p>form / input / textarea / button / select / option / optgroup /
+meter / progress / datalist / output / label / fieldset / legend
+の役割と使い方を学びましょう。</p>
+
+
+<!-- 1. form要素 -->
+<h2>① form要素</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>form</code> 要素はフォームコントロールをまとめ、
+  サーバーへのデータ送信を定義するブロック要素です。<br>
+  ・<code>action</code> 属性で送信先URL、<code>method</code> 属性で送信方法を指定します。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- 基本的なform要素 --&gt;</span>
+<span class="tag">&lt;form</span> <span class="attr">action</span>=<span class="value">"/submit"</span>
+      <span class="attr">method</span>=<span class="value">"post"</span>
+      <span class="attr">enctype</span>=<span class="value">"multipart/form-data"</span>
+      <span class="attr">novalidate</span><span class="tag">&gt;</span>
+  <span class="comment">&lt;!-- フォームコントロール --&gt;</span>
+<span class="tag">&lt;/form&gt;</span>
+</pre>
+  <table class="ref-table">
+    <thead>
+      <tr><th>属性</th><th>説明</th><th>値の例</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>action</code></td><td>送信先URL</td><td><code>"/submit"</code></td></tr>
+      <tr><td><code>method</code></td><td>送信方法</td><td><code>get</code> / <code>post</code></td></tr>
+      <tr><td><code>enctype</code></td><td>エンコード形式（ファイル送信時に必要）</td><td><code>multipart/form-data</code></td></tr>
+      <tr><td><code>novalidate</code></td><td>ブラウザのバリデーションを無効化（論理属性）</td><td>—</td></tr>
+      <tr><td><code>autocomplete</code></td><td>フォーム全体のオートコンプリート</td><td><code>on</code> / <code>off</code></td></tr>
+      <tr><td><code>target</code></td><td>送信結果の表示先</td><td><code>_blank</code> / <code>_self</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 2. input要素 -->
+<h2>② input要素（HTML5で追加された型を含む）</h2>
+<div class="note">
+  <strong>ポイント①：HTML5以降で追加された多数の属性・type値を把握する</strong><br>
+  ・<code>input</code> 要素は <code>type</code> 属性によって多様な入力コントロールになる<strong>空要素</strong>です。<br>
+  ・HTML5で多数の <code>type</code> 値と属性が追加されました。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- HTML5以前から存在するtype値 --&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"text"</span>     <span class="attr">placeholder</span>=<span class="value">"テキスト入力"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"password"</span> <span class="attr">placeholder</span>=<span class="value">"パスワード"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"checkbox"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"radio"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"submit"</span>   <span class="attr">value</span>=<span class="value">"送信"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"reset"</span>    <span class="attr">value</span>=<span class="value">"リセット"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"hidden"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"file"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"image"</span>    <span class="attr">src</span>=<span class="value">"btn.png"</span> <span class="attr">alt</span>=<span class="value">"送信"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"button"</span>   <span class="attr">value</span>=<span class="value">"ボタン"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- HTML5で追加されたtype値 --&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"email"</span>          <span class="attr">placeholder</span>=<span class="value">"メールアドレス"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"url"</span>            <span class="attr">placeholder</span>=<span class="value">"URL"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"tel"</span>            <span class="attr">placeholder</span>=<span class="value">"電話番号"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"number"</span>         <span class="attr">min</span>=<span class="value">"0"</span> <span class="attr">max</span>=<span class="value">"100"</span> <span class="attr">step</span>=<span class="value">"1"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"range"</span>          <span class="attr">min</span>=<span class="value">"0"</span> <span class="attr">max</span>=<span class="value">"100"</span> <span class="attr">step</span>=<span class="value">"10"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"date"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"time"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"datetime-local"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"month"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"week"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"color"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"search"</span>         <span class="attr">placeholder</span>=<span class="value">"検索"</span><span class="tag">&gt;</span>
+</pre>
+
+  <div class="live-demo">
+    <p><strong>▼ HTML5追加type値の実際の表示</strong></p>
+    <label>email：</label>
+    <input type="email" placeholder="example@mail.com">
+    <label>number（0〜100）：</label>
+    <input type="number" min="0" max="100" step="1" style="max-width:120px;">
+    <label>range：</label>
+    <input type="range" min="0" max="100" step="10" style="max-width:200px;">
+    <label>date：</label>
+    <input type="date" style="max-width:200px;">
+    <label>color：</label>
+    <input type="color" value="#4299e1" style="max-width:60px; height:36px; padding:2px;">
+    <label>search：</label>
+    <input type="search" placeholder="検索キーワード">
+  </div>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>HTML5追加のtype値</th><th>説明</th><th>バリデーション</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>email</code></td><td>メールアドレス入力</td><td>メール形式チェック</td></tr>
+      <tr><td><code>url</code></td><td>URL入力</td><td>URL形式チェック</td></tr>
+      <tr><td><code>tel</code></td><td>電話番号入力</td><td>形式チェックなし（スマホでテンキー表示）</td></tr>
+      <tr><td><code>number</code></td><td>数値入力</td><td>min / max / step でバリデーション</td></tr>
+      <tr><td><code>range</code></td><td>スライダー入力</td><td>min / max / step</td></tr>
+      <tr><td><code>date</code></td><td>日付入力</td><td>日付形式チェック</td></tr>
+      <tr><td><code>time</code></td><td>時刻入力</td><td>時刻形式チェック</td></tr>
+      <tr><td><code>datetime-local</code></td><td>日付と時刻の入力</td><td>日時形式チェック</td></tr>
+      <tr><td><code>month</code></td><td>年月入力</td><td>年月形式チェック</td></tr>
+      <tr><td><code>week</code></td><td>週入力</td><td>週形式チェック</td></tr>
+      <tr><td><code>color</code></td><td>カラーピッカー</td><td>—</td></tr>
+      <tr><td><code>search</code></td><td>検索入力（×ボタン付き）</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h3>HTML5で追加された主な属性</h3>
+  <table class="ref-table">
+    <thead>
+      <tr><th>属性</th><th>説明</th><th>対応type</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>placeholder</code></td><td>入力前のヒントテキスト</td><td>text / email / url など</td></tr>
+      <tr><td><code>required</code></td><td>必須入力（論理属性）</td><td>ほぼ全て</td></tr>
+      <tr><td><code>autofocus</code></td><td>ページ読み込み時に自動フォーカス（論理属性）</td><td>ほぼ全て</td></tr>
+      <tr><td><code>autocomplete</code></td><td>オートコンプリートの制御</td><td>text / email など</td></tr>
+      <tr><td><code>pattern</code></td><td>正規表現によるバリデーション</td><td>text / email / url など</td></tr>
+      <tr><td><code>min</code> / <code>max</code></td><td>最小値・最大値</td><td>number / range / date など</td></tr>
+      <tr><td><code>step</code></td><td>増減ステップ値</td><td>number / range / date など</td></tr>
+      <tr><td><code>multiple</code></td><td>複数値の入力・選択（論理属性）</td><td>email / file</td></tr>
+      <tr><td><code>list</code></td><td>datalist要素との関連付け</td><td>text / email など</td></tr>
+      <tr><td><code>form</code></td><td>所属するform要素のid</td><td>全て</td></tr>
+      <tr><td><code>formaction</code></td><td>送信先URLの上書き</td><td>submit / image</td></tr>
+      <tr><td><code>formmethod</code></td><td>送信メソッドの上書き</td><td>submit / image</td></tr>
+      <tr><td><code>formnovalidate</code></td><td>バリデーション無効化の上書き（論理属性）</td><td>submit / image</td></tr>
+      <tr><td><code>inputmode</code></td><td>仮想キーボードの種類ヒント</td><td>text など</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 3. autocomplete属性 -->
+<h2>③ autocomplete属性（HTML5.1以降で大幅拡張）</h2>
+<div class="note">
+  <strong>ポイント②：HTML5.1以降ではautocomplete属性が大幅に拡張されている</strong><br>
+  ・HTML5では <code>on</code> / <code>off</code> のみでしたが、
+  HTML5.1以降では<strong>詳細なトークン値</strong>が追加されました。<br>
+  ・ブラウザが適切な候補を自動補完できるようになります。<br>
+  ・パスワードマネージャーとの連携にも重要です。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- HTML5：on / off のみ --&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"text"</span> <span class="attr">autocomplete</span>=<span class="value">"on"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"text"</span> <span class="attr">autocomplete</span>=<span class="value">"off"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- HTML5.1以降：詳細なトークン値 --&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"text"</span>     <span class="attr">autocomplete</span>=<span class="value">"name"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"text"</span>     <span class="attr">autocomplete</span>=<span class="value">"given-name"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"text"</span>     <span class="attr">autocomplete</span>=<span class="value">"family-name"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"email"</span>    <span class="attr">autocomplete</span>=<span class="value">"email"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"tel"</span>      <span class="attr">autocomplete</span>=<span class="value">"tel"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"text"</span>     <span class="attr">autocomplete</span>=<span class="value">"postal-code"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"text"</span>     <span class="attr">autocomplete</span>=<span class="value">"address-line1"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"text"</span>     <span class="attr">autocomplete</span>=<span class="value">"organization"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"password"</span> <span class="attr">autocomplete</span>=<span class="value">"current-password"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"password"</span> <span class="attr">autocomplete</span>=<span class="value">"new-password"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"text"</span>     <span class="attr">autocomplete</span>=<span class="value">"one-time-code"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"text"</span>     <span class="attr">autocomplete</span>=<span class="value">"cc-number"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"text"</span>     <span class="attr">autocomplete</span>=<span class="value">"bday"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"text"</span>     <span class="attr">autocomplete</span>=<span class="value">"sex"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"url"</span>      <span class="attr">autocomplete</span>=<span class="value">"url"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"text"</span>     <span class="attr">autocomplete</span>=<span class="value">"username"</span><span class="tag">&gt;</span>
+</pre>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>カテゴリ</th><th>主なトークン値</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>名前</td><td><code>name</code> / <code>given-name</code> / <code>family-name</code> / <code>nickname</code></td></tr>
+      <tr><td>連絡先</td><td><code>email</code> / <code>tel</code> / <code>url</code></td></tr>
+      <tr><td>住所</td><td><code>address-line1</code> / <code>address-line2</code> / <code>postal-code</code> / <code>country</code></td></tr>
+      <tr><td>認証</td><td><code>username</code> / <code>current-password</code> / <code>new-password</code> / <code>one-time-code</code></td></tr>
+      <tr><td>クレジットカード</td><td><code>cc-number</code> / <code>cc-name</code> / <code>cc-exp</code></td></tr>
+      <tr><td>その他</td><td><code>organization</code> / <code>bday</code> / <code>sex</code> / <code>language</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 4. textarea -->
+<h2>④ textarea要素</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- 複数行テキスト入力 --&gt;</span>
+<span class="tag">&lt;textarea</span> <span class="attr">name</span>=<span class="value">"message"</span>
+          <span class="attr">rows</span>=<span class="value">"5"</span>
+          <span class="attr">cols</span>=<span class="value">"40"</span>
+          <span class="attr">placeholder</span>=<span class="value">"メッセージを入力してください"</span>
+          <span class="attr">maxlength</span>=<span class="value">"500"</span>
+          <span class="attr">required</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/textarea&gt;</span>
+</pre>
+  <div class="live-demo">
+    <label>メッセージ：</label>
+    <textarea rows="4" placeholder="メッセージを入力してください" maxlength="500"
+      style="max-width:100%; width:100%; resize:vertical;"></textarea>
+  </div>
+  <div class="warn">
+    <strong>⚠️ textarea要素の注意点</strong><br>
+    ・<code>textarea</code> は<strong>空要素ではありません</strong>（開始タグと終了タグが必要）<br>
+    ・初期値はタグ内のテキストで指定します（<code>value</code> 属性はありません）<br>
+    ・<code>rows</code> / <code>cols</code> 属性でサイズを指定しますが、CSSでの指定が推奨です
+  </div>
+</div>
+
+
+<!-- 5. button -->
+<h2>⑤ button要素</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- type="submit"：フォームを送信（デフォルト） --&gt;</span>
+<span class="tag">&lt;button</span> <span class="attr">type</span>=<span class="value">"submit"</span><span class="tag">&gt;</span>送信する<span class="tag">&lt;/button&gt;</span>
+
+<span class="comment">&lt;!-- type="reset"：フォームをリセット --&gt;</span>
+<span class="tag">&lt;button</span> <span class="attr">type</span>=<span class="value">"reset"</span><span class="tag">&gt;</span>リセット<span class="tag">&lt;/button&gt;</span>
+
+<span class="comment">&lt;!-- type="button"：JavaScriptで使う汎用ボタン --&gt;</span>
+<span class="tag">&lt;button</span> <span class="attr">type</span>=<span class="value">"button"</span>
+        <span class="attr">onclick</span>=<span class="value">"alert('クリックされました')"</span><span class="tag">&gt;</span>
+  クリック
+<span class="tag">&lt;/button&gt;</span>
+
+<span class="comment">&lt;!-- disabled属性：無効化 --&gt;</span>
+<span class="tag">&lt;button</span> <span class="attr">type</span>=<span class="value">"submit"</span> <span class="attr">disabled</span><span class="tag">&gt;</span>送信（無効）<span class="tag">&lt;/button&gt;</span>
+</pre>
+  <div class="live-demo">
+    <button type="button" onclick="alert('クリックされました！')"
+      style="padding:8px 18px; background:#4299e1; color:#fff; border:none; border-radius:6px; cursor:pointer; font-weight:bold; margin-right:8px;">
+      クリック
+    </button>
+    <button type="button" disabled
+      style="padding:8px 18px; background:#a0aec0; color:#fff; border:none; border-radius:6px; cursor:not-allowed; font-weight:bold;">
+      無効ボタン
+    </button>
+  </div>
+  <div class="warn">
+    <strong>⚠️ button要素のtype属性</strong><br>
+    ・<code>type</code> 属性を省略するとデフォルトは <code>submit</code> になります<br>
+    ・フォーム外で使う場合は必ず <code>type="button"</code> を明示しましょう<br>
+    ・<code>input type="submit"</code> と異なり、<strong>内部にHTML要素を含められます</strong>（アイコンなど）
+  </div>
+</div>
+
+
+<!-- 6. select / option / optgroup -->
+<h2>⑥ select要素 / option要素 / optgroup要素</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- 基本的なselect --&gt;</span>
+<span class="tag">&lt;select</span> <span class="attr">name</span>=<span class="value">"prefecture"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="value">""</span><span class="tag">&gt;</span>選択してください<span class="tag">&lt;/option&gt;</span>
+  <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="value">"tokyo"</span><span class="tag">&gt;</span>東京都<span class="tag">&lt;/option&gt;</span>
+  <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="value">"osaka"</span> <span class="attr">selected</span><span class="tag">&gt;</span>大阪府<span class="tag">&lt;/option&gt;</span>
+  <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="value">"okayama"</span><span class="tag">&gt;</span>岡山県<span class="tag">&lt;/option&gt;</span>
+<span class="tag">&lt;/select&gt;</span>
+
+<span class="comment">&lt;!-- optgroup：選択肢をグループ化 --&gt;</span>
+<span class="tag">&lt;select</span> <span class="attr">name</span>=<span class="value">"language"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;optgroup</span> <span class="attr">label</span>=<span class="value">"フロントエンド"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="value">"html"</span><span class="tag">&gt;</span>HTML<span class="tag">&lt;/option&gt;</span>
+    <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="value">"css"</span><span class="tag">&gt;</span>CSS<span class="tag">&lt;/option&gt;</span>
+    <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="value">"js"</span><span class="tag">&gt;</span>JavaScript<span class="tag">&lt;/option&gt;</span>
+  <span class="tag">&lt;/optgroup&gt;</span>
+  <span class="tag">&lt;optgroup</span> <span class="attr">label</span>=<span class="value">"バックエンド"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="value">"php"</span><span class="tag">&gt;</span>PHP<span class="tag">&lt;/option&gt;</span>
+    <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="value">"python"</span><span class="tag">&gt;</span>Python<span class="tag">&lt;/option&gt;</span>
+  <span class="tag">&lt;/optgroup&gt;</span>
+<span class="tag">&lt;/select&gt;</span>
+
+<span class="comment">&lt;!-- multiple：複数選択 --&gt;</span>
+<span class="tag">&lt;select</span> <span class="attr">name</span>=<span class="value">"skills"</span> <span class="attr">multiple</span> <span class="attr">size</span>=<span class="value">"4"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="value">"html"</span><span class="tag">&gt;</span>HTML<span class="tag">&lt;/option&gt;</span>
+  <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="value">"css"</span><span class="tag">&gt;</span>CSS<span class="tag">&lt;/option&gt;</span>
+  <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="value">"js"</span><span class="tag">&gt;</span>JavaScript<span class="tag">&lt;/option&gt;</span>
+  <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="value">"php"</span><span class="tag">&gt;</span>PHP<span class="tag">&lt;/option&gt;</span>
+<span class="tag">&lt;/select&gt;</span>
+</pre>
+  <div class="live-demo">
+    <label>optgroupの表示：</label>
+    <select>
+      <optgroup label="フロントエンド">
+        <option value="html">HTML</option>
+        <option value="css">CSS</option>
+        <option value="js">JavaScript</option>
+      </optgroup>
+      <optgroup label="バックエンド">
+        <option value="php">PHP</option>
+        <option value="python">Python</option>
+      </optgroup>
+    </select>
+  </div>
+</div>
+
+
+<!-- 7. datalist -->
+<h2>⑦ datalist要素</h2>
+<div class="note">
+  <strong>ポイント③：datalist要素はinput要素に関連付けてサジェスト機能を追加する</strong><br>
+  ・<code>datalist</code> 要素は <code>input</code> 要素の <code>list</code> 属性で関連付けます。<br>
+  ・<code>select</code> と異なり、<strong>自由入力もできる</strong>（候補から選ぶことも、直接入力することもできる）。<br>
+  ・<code>datalist</code> 自体は画面に表示されません。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- inputのlist属性とdatalistのidを一致させる --&gt;</span>
+<span class="tag">&lt;label</span> <span class="attr">for</span>=<span class="value">"browser"</span><span class="tag">&gt;</span>ブラウザ：<span class="tag">&lt;/label&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"text"</span>
+       <span class="attr">id</span>=<span class="value">"browser"</span>
+       <span class="attr">name</span>=<span class="value">"browser"</span>
+       <span class="attr">list</span>=<span class="value">"browser-list"</span>
+       <span class="attr">placeholder</span>=<span class="value">"入力または選択"</span><span class="tag">&gt;</span>
+
+<span class="tag">&lt;datalist</span> <span class="attr">id</span>=<span class="value">"browser-list"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="value">"Chrome"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="value">"Firefox"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="value">"Safari"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="value">"Edge"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="value">"Opera"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/datalist&gt;</span>
+</pre>
+  <div class="live-demo">
+    <label for="demo-browser">ブラウザ名を入力（候補が表示されます）：</label>
+    <input type="text" id="demo-browser" list="demo-browser-list"
+           placeholder="入力または選択してください">
+    <datalist id="demo-browser-list">
+      <option value="Chrome">
+      <option value="Firefox">
+      <option value="Safari">
+      <option value="Edge">
+      <option value="Opera">
+    </datalist>
+  </div>
+  <div class="warn">
+    <strong>⚠️ datalist と select の違い</strong><br>
+    ・<code>datalist</code>：候補を提示しつつ<strong>自由入力も可能</strong>（サジェスト）<br>
+    ・<code>select</code>：候補の中からのみ選択（自由入力不可）<br><br>
+    ・<code>datalist</code> の <code>id</code> と <code>input</code> の <code>list</code> 属性値を<strong>必ず一致</strong>させます
+  </div>
+</div>
+
+
+<!-- 8. meter / progress -->
+<h2>⑧ meter要素 / progress要素</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- meter：既知の範囲内のスカラー値（ゲージ） --&gt;</span>
+<span class="tag">&lt;p&gt;</span>ディスク使用量：
+  <span class="tag">&lt;meter</span> <span class="attr">value</span>=<span class="value">"7"</span>
+         <span class="attr">min</span>=<span class="value">"0"</span>
+         <span class="attr">max</span>=<span class="value">"10"</span>
+         <span class="attr">low</span>=<span class="value">"3"</span>
+         <span class="attr">high</span>=<span class="value">"8"</span>
+         <span class="attr">optimum</span>=<span class="value">"2"</span><span class="tag">&gt;</span>
+    7/10
+  <span class="tag">&lt;/meter&gt;</span>
+<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- progress：タスクの進捗状況 --&gt;</span>
+<span class="tag">&lt;p&gt;</span>ダウンロード進捗：
+  <span class="tag">&lt;progress</span> <span class="attr">value</span>=<span class="value">"60"</span> <span class="attr">max</span>=<span class="value">"100"</span><span class="tag">&gt;</span>60%<span class="tag">&lt;/progress&gt;</span>
+<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- progress（不確定）：value属性なしで不確定な進捗 --&gt;</span>
+<span class="tag">&lt;p&gt;</span>読み込み中：
+  <span class="tag">&lt;progress&gt;</span>読み込み中…<span class="tag">&lt;/progress&gt;</span>
+<span class="tag">&lt;/p&gt;</span>
+</pre>
+  <div class="live-demo">
+    <p>ディスク使用量：<meter value="7" min="0" max="10" low="3" high="8" optimum="2">7/10</meter> 7/10GB</p>
+    <p>ダウンロード進捗：<progress value="60" max="100">60%</progress> 60%</p>
+    <p>読み込み中：<progress>読み込み中…</progress>（不確定）</p>
+  </div>
+  <table class="ref-table">
+    <thead>
+      <tr><th>比較</th><th>meter</th><th>progress</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>用途</td><td>既知の範囲内のスカラー値（ゲージ）</td><td>タスクの進捗状況</td></tr>
+      <tr><td>主な属性</td><td>value / min / max / low / high / optimum</td><td>value / max</td></tr>
+      <tr><td>不確定状態</td><td>なし</td><td>value属性を省略で不確定（アニメーション）</td></tr>
+      <tr><td>使用例</td><td>ディスク使用量・スコア・投票率</td><td>ダウンロード・アップロード・処理進捗</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 9. output -->
+<h2>⑨ output要素</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>output</code> 要素はフォームの<strong>計算結果や出力値</strong>を表示するための要素です。<br>
+  ・<code>for</code> 属性で関連する入力要素のIDを指定します。
+</div>
+<div class="demo-box">
+<pre>
+<span class="tag">&lt;form</span> <span class="attr">oninput</span>=<span class="value">"result.value = parseInt(a.value) + parseInt(b.value)"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"number"</span> <span class="attr">id</span>=<span class="value">"a"</span> <span class="attr">value</span>=<span class="value">"10"</span><span class="tag">&gt;</span>
+  +
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"number"</span> <span class="attr">id</span>=<span class="value">"b"</span> <span class="attr">value</span>=<span class="value">"20"</span><span class="tag">&gt;</span>
+  =
+  <span class="tag">&lt;output</span> <span class="attr">name</span>=<span class="value">"result"</span> <span class="attr">for</span>=<span class="value">"a b"</span><span class="tag">&gt;</span>30<span class="tag">&lt;/output&gt;</span>
+<span class="tag">&lt;/form&gt;</span>
+</pre>
+  <div class="live-demo">
+    <p><strong>▼ 数値の合計をリアルタイム表示</strong></p>
+    <form oninput="demoResult.value = (parseInt(demoA.value)||0) + (parseInt(demoB.value)||0)">
+      <input type="number" id="demoA" value="10" style="max-width:80px; display:inline;">
+      　+　
+      <input type="number" id="demoB" value="20" style="max-width:80px; display:inline;">
+      　=　
+      <output name="demoResult" for="demoA demoB"
+        style="font-weight:bold; color:#2b6cb0; font-size:1.1em;">30</output>
+    </form>
+  </div>
+</div>
+
+
+<!-- 10. label / fieldset / legend -->
+<h2>⑩ label要素 / fieldset要素 / legend要素</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- label：for属性でinputと関連付け --&gt;</span>
+<span class="tag">&lt;label</span> <span class="attr">for</span>=<span class="value">"username"</span><span class="tag">&gt;</span>ユーザー名：<span class="tag">&lt;/label&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"text"</span> <span class="attr">id</span>=<span class="value">"username"</span> <span class="attr">name</span>=<span class="value">"username"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- label：inputを内包する書き方（for属性不要） --&gt;</span>
+<span class="tag">&lt;label&gt;</span>
+  メールアドレス：
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"email"</span> <span class="attr">name</span>=<span class="value">"email"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/label&gt;</span>
+
+<span class="comment">&lt;!-- fieldset + legend：関連するコントロールをグループ化 --&gt;</span>
+<span class="tag">&lt;fieldset&gt;</span>
+  <span class="tag">&lt;legend&gt;</span>個人情報<span class="tag">&lt;/legend&gt;</span>
+  <span class="tag">&lt;label</span> <span class="attr">for</span>=<span class="value">"fname"</span><span class="tag">&gt;</span>名前：<span class="tag">&lt;/label&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"text"</span> <span class="attr">id</span>=<span class="value">"fname"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;br&gt;</span>
+  <span class="tag">&lt;label</span> <span class="attr">for</span>=<span class="value">"femail"</span><span class="tag">&gt;</span>メール：<span class="tag">&lt;/label&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"email"</span> <span class="attr">id</span>=<span class="value">"femail"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/fieldset&gt;</span>
+
+<span class="comment">&lt;!-- disabled属性でfieldset全体を無効化 --&gt;</span>
+<span class="tag">&lt;fieldset</span> <span class="attr">disabled</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;legend&gt;</span>支払い情報（現在無効）<span class="tag">&lt;/legend&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="value">"text"</span> <span class="attr">placeholder</span>=<span class="value">"カード番号"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/fieldset&gt;</span>
+</pre>
+  <div class="live-demo">
+    <fieldset style="border:2px solid #bee3f8; border-radius:8px; padding:14px;">
+      <legend style="font-weight:bold; color:#2b6cb0; padding:0 8px;">個人情報</legend>
+      <label for="demo-fname">名前：</label>
+      <input type="text" id="demo-fname" placeholder="山田太郎"><br>
+      <label for="demo-femail" style="margin-top:8px; display:inline-block;">メール：</label>
+      <input type="email" id="demo-femail" placeholder="example@mail.com">
+    </fieldset>
+  </div>
+  <div class="good">
+    ✅ <strong>labelのアクセシビリティ効果</strong><br>
+    ・<code>label</code> をクリックすると関連する <code>input</code> にフォーカスが移ります<br>
+    ・スクリーンリーダーがフォームコントロールの目的を読み上げます<br>
+    ・<code>for</code> 属性の値と <code>input</code> の <code>id</code> 属性の値を<strong>必ず一致</strong>させます
+  </div>
+</div>
+
+
+<!-- 演習問題 -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      <code>datalist</code> 要素はユーザーが候補の中からしか選択できないため、
+      自由入力はできない。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn btn-blue" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.textContent =
+            '✅ 正解！datalist要素はサジェスト（候補提示）機能であり、' +
+            '自由入力も可能です。候補から選ぶこともできますし、' +
+            '候補にない値を直接入力することもできます。' +
+            '候補の中からしか選べないのはselect要素です。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。datalist要素は候補を提示しつつ自由入力も可能です。' +
+            '候補からのみ選択できるのはselect要素です。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合う要素名または属性名を入力してください。</p>
+
+    <label>① input要素にサジェスト機能を追加するための要素名：</label>
+    <input type="text" id="q2a" placeholder="要素名">
+
+    <label>② datalist要素とinput要素を関連付けるためにinputに指定する属性名：</label>
+    <input type="text" id="q2b" placeholder="属性名">
+
+    <label>③ 関連するフォームコントロールをグループ化する要素名：</label>
+    <input type="text" id="q2c" placeholder="要素名">
+
+    <label>④ fieldset要素のグループ名（タイトル）を表す要素名：</label>
+    <input type="text" id="q2d" placeholder="要素名">
+
+    <label>⑤ フォームの計算結果や出力値を表示する要素名：</label>
+    <input type="text" id="q2e" placeholder="要素名">
+
+    <label>⑥ ol要素のreversed属性のように、値なしで指定できる属性の種類（一般名称）：</label>
+    <input type="text" id="q2f" placeholder="〇〇属性">
+
+    <br>
+    <button class="btn btn-blue" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const b = document.getElementById('q2b').value.trim().toLowerCase();
+        const c = document.getElementById('q2c').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const d = document.getElementById('q2d').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const e = document.getElementById('q2e').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const f = document.getElementById('q2f').value.trim()
+                    .replace(/属性$/,'').replace(/attribute$/i,'').toLowerCase();
+        const r = document.getElementById('q2-result');
+        const ca = a === 'datalist';
+        const cb = b === 'list';
+        const cc = c === 'fieldset';
+        const cd = d === 'legend';
+        const ce = e === 'output';
+        const cf = f === '論理' || f === 'boolean' || f === 'ブール';
+        const count = [ca, cb, cc, cd, ce, cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！フォーム要素を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `① ${ca ? '✅' : '❌ datalist'}　` +
+            `② ${cb ? '✅' : '❌ list'}　` +
+            `③ ${cc ? '✅' : '❌ fieldset'}　` +
+            `④ ${cd ? '✅' : '❌ legend'}　` +
+            `⑤ ${ce ? '✅' : '❌ output'}　` +
+            `⑥ ${cf ? '✅' : '❌ 論理（属性）'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>
+      <code>autocomplete</code> 属性について正しい説明はどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">HTML5では on / off のみだったが、HTML5.1以降で name / email / postal-code などの詳細なトークン値が追加された</option>
+      <option value="b">autocomplete属性はpassword型のinputにのみ使用できる</option>
+      <option value="c">HTML5.1以降でautocomplete属性は廃止され、代わりにsuggest属性が使われる</option>
+      <option value="d">autocomplete属性はform要素には指定できず、input要素にのみ指定できる</option>
+    </select>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'a') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'HTML5では on / off のみでしたが、HTML5.1以降では<br>' +
+            'name / given-name / family-name / email / tel / postal-code /<br>' +
+            'current-password / new-password / one-time-code など<br>' +
+            '多数の詳細なトークン値が追加されました。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。autocomplete属性はHTML5では on/off のみでしたが、' +
+            'HTML5.1以降で多数の詳細なトークン値が追加されました。' +
+            'form要素にも指定でき、password以外のinputにも使用できます。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4a">
+      ① <code>input</code> 要素は空要素である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4b">
+      ② <code>textarea</code> 要素の初期値は <code>value</code> 属性で指定する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4c">
+      ③ <code>button</code> 要素の <code>type</code> 属性を省略するとデフォルトは <code>submit</code> になる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4d">
+      ④ <code>meter</code> 要素は <code>value</code> 属性を省略するとアニメーションする不確定状態になる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4e">
+      ⑤ <code>datalist</code> 要素の <code>id</code> と <code>input</code> 要素の <code>list</code> 属性値を一致させることで関連付けられる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4f">
+      ⑥ <code>fieldset</code> 要素に <code>disabled</code> 属性を指定すると、内部のフォームコントロールがすべて無効になる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4g">
+      ⑦ <code>label</code> 要素の <code>for</code> 属性の値は、関連する <code>input</code> 要素の <code>name</code> 属性と一致させる
+    </label>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const r = document.getElementById('q4-result');
+        const checks = {
+          a: document.getElementById('q4a').checked,
+          b: document.getElementById('q4b').checked,
+          c: document.getElementById('q4c').checked,
+          d: document.getElementById('q4d').checked,
+          e: document.getElementById('q4e').checked,
+          f: document.getElementById('q4f').checked,
+          g: document.getElementById('q4g').checked,
+        };
+        // 正解：①③⑤⑥（a, c, e, f）
+        // ②textareaの初期値はタグ内テキスト（value属性なし）
+        // ④不確定状態はprogressの話（meterには不確定状態なし）
+        // ⑦labelのforはinputのidと一致させる（nameではない）
+        const correct = { a:true, b:false, c:true, d:false, e:true, f:true, g:false };
+        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
+        const allCorrect = results.every(Boolean);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① input要素は空要素 ✅<br>' +
+            '・③ buttonのtype省略はsubmit ✅<br>' +
+            '・⑤ datalistのidとinputのlistを一致させる ✅<br>' +
+            '・⑥ fieldset disabled で内部が全て無効化 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① input要素は空要素（終了タグなし）<br>' +
+            '・③ button要素のtype省略はsubmitがデフォルト<br>' +
+            '・⑤ datalistのidとinputのlist属性値を一致させる<br>' +
+            '・⑥ fieldsetのdisabledで内部コントロールが全て無効化<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② textareaの初期値はタグ内テキストで指定（value属性はない）<br>' +
+            '・④ 不確定状態はprogress要素（valueなし）。meterには不確定状態なし<br>' +
+            '・⑦ labelのfor属性はinputのid属性と一致させる（nameではない）';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. コード穴埋め問題</h3>
+    <p>以下のコードの <code>__A__</code> 〜 <code>__F__</code> に
+    適切な要素名または属性名を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+&lt;form action="/submit" method="post"&gt;
+
+  &lt;__A__&gt;                          &lt;!-- 関連コントロールのグループ --&gt;
+    &lt;__B__&gt;お客様情報&lt;/__B__&gt;       &lt;!-- グループのタイトル --&gt;
+
+    &lt;label for="uname"&gt;名前：&lt;/label&gt;
+    &lt;input type="text" id="uname"
+           __C__="name"             &lt;!-- オートコンプリート（名前） --&gt;
+           required&gt;
+
+    &lt;label for="city"&gt;都市：&lt;/label&gt;
+    &lt;input type="text" id="city"
+           __D__="city-suggest"&gt;   &lt;!-- サジェスト機能の関連付け --&gt;
+
+    &lt;__E__ id="city-suggest"&gt;      &lt;!-- サジェスト候補リスト --&gt;
+      &lt;option value="東京"&gt;
+      &lt;option value="大阪"&gt;
+      &lt;option value="岡山"&gt;
+    &lt;/__E__&gt;
+
+  &lt;/__A__&gt;
+
+  &lt;__F__ type="submit"&gt;送信&lt;/__F__&gt;
+
+&lt;/form&gt;</pre>
+
+    <label>A（関連コントロールをグループ化する要素）：</label>
+    <input type="text" id="q5a" placeholder="要素名">
+    <label>B（グループのタイトルを表す要素）：</label>
+    <input type="text" id="q5b" placeholder="要素名">
+    <label>C（オートコンプリートを制御する属性）：</label>
+    <input type="text" id="q5c" placeholder="属性名">
+    <label>D（datalistと関連付けるinputの属性）：</label>
+    <input type="text" id="q5d" placeholder="属性名">
+    <label>E（サジェスト候補リストの要素）：</label>
+    <input type="text" id="q5e" placeholder="要素名">
+    <label>F（フォームを送信するボタン要素）：</label>
+    <input type="text" id="q5f" placeholder="要素名">
+    <br>
+    <button class="btn btn-blue" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const a = document.getElementById('q5a').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const b = document.getElementById('q5b').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const c = document.getElementById('q5c').value.trim().toLowerCase();
+        const d = document.getElementById('q5d').value.trim().toLowerCase();
+        const e = document.getElementById('q5e').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const f = document.getElementById('q5f').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const r = document.getElementById('q5-result');
+        const ca = a === 'fieldset';
+        const cb = b === 'legend';
+        const cc = c === 'autocomplete';
+        const cd = d === 'list';
+        const ce = e === 'datalist';
+        const cf = f === 'button';
+        const count = [ca, cb, cc, cd, ce, cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！フォーム要素の構造を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca ? '✅' : '❌ fieldset'}　` +
+            `B: ${cb ? '✅' : '❌ legend'}　` +
+            `C: ${cc ? '✅' : '❌ autocomplete'}　` +
+            `D: ${cd ? '✅' : '❌ list'}　` +
+            `E: ${ce ? '✅' : '❌ datalist'}　` +
+            `F: ${cf ? '✅' : '❌ button'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. 記述問題</h3>
+    <p>
+      <code>datalist</code> 要素と <code>select</code> 要素の違いを説明し、
+      それぞれが適切な場面を述べてください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q6" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ6()">模範解答を見る</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const r = document.getElementById('q6-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<strong>datalist要素：</strong><br>' +
+          '・input要素にlist属性で関連付けてサジェスト（候補提示）機能を追加する<br>' +
+          '・候補から選ぶことも、候補にない値を自由入力することも可能<br>' +
+          '・datalist自体は画面に表示されない<br>' +
+          '・適切な場面：検索ワード・ブラウザ名・都市名など、<br>' +
+          '　候補を提示しつつ自由入力も許可したい場合<br><br>' +
+          '<strong>select要素：</strong><br>' +
+          '・定義された選択肢の中からのみ選択できる<br>' +
+          '・自由入力はできない<br>' +
+          '・optgroup要素で選択肢をグループ化できる<br>' +
+          '・適切な場面：都道府県・性別・カテゴリなど、<br>' +
+          '　決まった選択肢の中から選ばせたい場合';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 フォーム要素 まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>要素</th><th>役割</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>form</code></td><td>フォーム全体の定義</td><td>action / method / enctype / novalidate属性</td></tr>
+    <tr><td><code>input</code></td><td>多様な入力コントロール（空要素）</td><td>HTML5でemail / url / number / date / color など多数のtype値が追加</td></tr>
+    <tr><td><code>textarea</code></td><td>複数行テキスト入力</td><td>空要素でない。初期値はタグ内テキスト（value属性なし）</td></tr>
+    <tr><td><code>button</code></td><td>ボタン</td><td>type省略はsubmit。内部にHTML要素を含められる</td></tr>
+    <tr><td><code>select</code></td><td>ドロップダウン選択</td><td>候補からのみ選択。multiple属性で複数選択可</td></tr>
+    <tr><td><code>option</code></td><td>選択肢</td><td>select / datalist の子要素。selected属性で初期選択</td></tr>
+    <tr><td><code>optgroup</code></td><td>選択肢のグループ化</td><td>label属性でグループ名を指定</td></tr>
+    <tr><td><code>meter</code></td><td>既知範囲内のスカラー値</td><td>low / high / optimum属性で色が変化。不確定状態なし</td></tr>
+    <tr><td><code>progress</code></td><td>タスクの進捗</td><td>value省略で不確定状態（アニメーション）</td></tr>
+    <tr><td><code>datalist</code></td><td>サジェスト候補リスト</td><td>inputのlist属性と自身のidを一致させて関連付け。自由入力も可能</td></tr>
+    <tr><td><code>output</code></td><td>計算結果・出力値の表示</td><td>for属性で関連input要素のidを指定</td></tr>
+    <tr><td><code>label</code></td><td>フォームコントロールのラベル</td><td>for属性とinputのidを一致させる。アクセシビリティに重要</td></tr>
+    <tr><td><code>fieldset</code></td><td>関連コントロールのグループ化</td><td>disabled属性で内部コントロールを一括無効化</td></tr>
+    <tr><td><code>legend</code></td><td>fieldsetのタイトル</td><td>fieldsetの最初の子要素として配置</td></tr>
+  </tbody>
+</table>
+
+</body>
+</html>
