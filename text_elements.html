@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>HTML5 テキスト要素 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #4299e1; padding-bottom: 10px; }
+    h2 { color: #2b6cb0; margin-top: 48px; border-left: 5px solid #4299e1; padding-left: 12px; }
+    h3 { color: #276749; margin-top: 24px; }
+
+    code {
+      background: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment { color: #68d391; }
+    pre .tag     { color: #90cdf4; }
+    pre .attr    { color: #fbd38d; }
+    pre .value   { color: #fc8181; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #90cdf4;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #2b6cb0; }
+
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+
+    .demo-box {
+      background: #fff;
+      border: 1px solid #bee3f8;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* 実際の表示デモ */
+    .live-demo {
+      background: #f7fafc;
+      border: 1px solid #bee3f8;
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin: 12px 0;
+      font-size: 0.95em;
+    }
+    .live-demo p { margin: 6px 0; }
+
+    /* 要素グループカード */
+    .elem-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      margin: 14px 0;
+    }
+    .elem-card {
+      background: #ebf8ff;
+      border: 1px solid #bee3f8;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.88em;
+    }
+    .elem-card .elem-name {
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-weight: bold;
+      color: #2b6cb0;
+      margin-bottom: 4px;
+    }
+    .elem-card .elem-desc { color: #4a5568; font-size: 0.9em; }
+
+    table.ref-table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      margin: 14px 0;
+    }
+    table.ref-table th, table.ref-table td {
+      border: 1px solid #bee3f8;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.93em;
+    }
+    table.ref-table thead tr { background: #2b6cb0; color: #fff; }
+    table.ref-table tbody tr:nth-child(even) { background: #ebf8ff; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 { margin-top: 0; color: #c05621; border-left-color: #f6ad55; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #fbd38d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #fbd38d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-blue { background: #4299e1; color: #fff; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #bee3f8; color: #2b6cb0; display: block; }
+
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #bee3f8;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.93em;
+    }
+    table.summary thead tr { background: #2b6cb0; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #ebf8ff; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px 14px; }
+      .elem-grid { grid-template-columns: 1fr 1fr; }
+      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.85em; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.85em; }
+      .quiz-section { padding: 16px 16px; }
+      .quiz-block { padding: 14px 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+      .elem-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>📝 HTML5 テキスト要素 学習サンプル</h1>
+<p>テキストに意味・構造・装飾を与えるインライン要素・ブロック要素を学びましょう。</p>
+
+
+<!-- グループ概要 -->
+<h2>① テキスト要素の全体像</h2>
+<div class="demo-box">
+  <div class="elem-grid">
+    <div class="elem-card"><div class="elem-name">p</div><div class="elem-desc">段落</div></div>
+    <div class="elem-card"><div class="elem-name">a</div><div class="elem-desc">ハイパーリンク</div></div>
+    <div class="elem-card"><div class="elem-name">em</div><div class="elem-desc">強調（意味的）</div></div>
+    <div class="elem-card"><div class="elem-name">strong</div><div class="elem-desc">重要（意味的）</div></div>
+    <div class="elem-card"><div class="elem-name">blockquote</div><div class="elem-desc">ブロック引用</div></div>
+    <div class="elem-card"><div class="elem-name">q</div><div class="elem-desc">インライン引用</div></div>
+    <div class="elem-card"><div class="elem-name">cite</div><div class="elem-desc">作品タイトル</div></div>
+    <div class="elem-card"><div class="elem-name">mark</div><div class="elem-desc">注目・ハイライト</div></div>
+    <div class="elem-card"><div class="elem-name">small</div><div class="elem-desc">注釈・免責事項</div></div>
+    <div class="elem-card"><div class="elem-name">data</div><div class="elem-desc">機械読み取り用データ</div></div>
+    <div class="elem-card"><div class="elem-name">time</div><div class="elem-desc">日時（dataの特化版）</div></div>
+    <div class="elem-card"><div class="elem-name">abbr</div><div class="elem-desc">略語</div></div>
+    <div class="elem-card"><div class="elem-name">dfn</div><div class="elem-desc">定義語</div></div>
+    <div class="elem-card"><div class="elem-name">b</div><div class="elem-desc">注目（意味なし太字）</div></div>
+    <div class="elem-card"><div class="elem-name">i</div><div class="elem-desc">専門語・慣用句</div></div>
+    <div class="elem-card"><div class="elem-name">s</div><div class="elem-desc">取り消し線</div></div>
+    <div class="elem-card"><div class="elem-name">u</div><div class="elem-desc">下線（注釈的）</div></div>
+    <div class="elem-card"><div class="elem-name">bdo</div><div class="elem-desc">書字方向の上書き</div></div>
+    <div class="elem-card"><div class="elem-name">bdi</div><div class="elem-desc">書字方向の分離</div></div>
+    <div class="elem-card"><div class="elem-name">pre</div><div class="elem-desc">整形済みテキスト</div></div>
+    <div class="elem-card"><div class="elem-name">code</div><div class="elem-desc">コード断片</div></div>
+    <div class="elem-card"><div class="elem-name">kbd</div><div class="elem-desc">キーボード入力</div></div>
+    <div class="elem-card"><div class="elem-name">samp</div><div class="elem-desc">プログラム出力</div></div>
+    <div class="elem-card"><div class="elem-name">var</div><div class="elem-desc">変数・引数</div></div>
+    <div class="elem-card"><div class="elem-name">sup</div><div class="elem-desc">上付き文字</div></div>
+    <div class="elem-card"><div class="elem-name">br</div><div class="elem-desc">改行（空要素）</div></div>
+    <div class="elem-card"><div class="elem-name">wbr</div><div class="elem-desc">改行可能位置（空要素）</div></div>
+    <div class="elem-card"><div class="elem-name">ins</div><div class="elem-desc">追加されたテキスト</div></div>
+    <div class="elem-card"><div class="elem-name">del</div><div class="elem-desc">削除されたテキスト</div></div>
+  </div>
+</div>
+
+
+<!-- 2. p / a -->
+<h2>② p要素 / a要素</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- p：段落を表すブロック要素 --&gt;</span>
+<span class="tag">&lt;p&gt;</span>これは段落です。段落はブロックレベル要素で、前後に改行が入ります。<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;p&gt;</span>2つ目の段落です。<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- a：ハイパーリンク --&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"https://example.com"</span><span class="tag">&gt;</span>外部リンク<span class="tag">&lt;/a&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"page.html"</span><span class="tag">&gt;</span>内部リンク<span class="tag">&lt;/a&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"#section"</span><span class="tag">&gt;</span>ページ内リンク<span class="tag">&lt;/a&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"mailto:info@example.com"</span><span class="tag">&gt;</span>メールリンク<span class="tag">&lt;/a&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"file.pdf"</span> <span class="attr">download</span><span class="tag">&gt;</span>ダウンロードリンク<span class="tag">&lt;/a&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"https://example.com"</span> <span class="attr">target</span>=<span class="value">"_blank"</span>
+   <span class="attr">rel</span>=<span class="value">"noopener noreferrer"</span><span class="tag">&gt;</span>新しいタブで開く<span class="tag">&lt;/a&gt;</span>
+</pre>
+  <div class="warn">
+    <strong>⚠️ target="_blank" のセキュリティ対策</strong><br>
+    <code>target="_blank"</code> を使う場合は
+    <code>rel="noopener noreferrer"</code> を必ず指定しましょう。<br>
+    指定しないと開いたページから元のページを操作できる脆弱性（タブナビング）が生じます。
+  </div>
+</div>
+
+
+<!-- 3. em / strong -->
+<h2>③ em要素 / strong要素</h2>
+<div class="note">
+  <strong>意味的な強調と重要性の違い</strong><br>
+  ・<code>em</code>：テキストに<strong>強調（アクセント）</strong>を与える。読み上げ時に強調される。<br>
+  ・<code>strong</code>：テキストの<strong>重要性・深刻さ・緊急性</strong>を示す。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- em：強調（斜体で表示される） --&gt;</span>
+<span class="tag">&lt;p&gt;</span>この操作は<span class="tag">&lt;em&gt;</span>元に戻せません<span class="tag">&lt;/em&gt;</span>。<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- strong：重要性（太字で表示される） --&gt;</span>
+<span class="tag">&lt;p&gt;</span><span class="tag">&lt;strong&gt;</span>警告：<span class="tag">&lt;/strong&gt;</span>このファイルを削除すると復元できません。<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- 組み合わせも可能 --&gt;</span>
+<span class="tag">&lt;p&gt;</span><span class="tag">&lt;strong&gt;&lt;em&gt;</span>絶対に<span class="tag">&lt;/em&gt;&lt;/strong&gt;</span>触れないでください。<span class="tag">&lt;/p&gt;</span>
+</pre>
+  <div class="live-demo">
+    <p>この操作は<em>元に戻せません</em>。</p>
+    <p><strong>警告：</strong>このファイルを削除すると復元できません。</p>
+    <p><strong><em>絶対に</em></strong>触れないでください。</p>
+  </div>
+  <div class="warn">
+    <strong>⚠️ b / i との違い</strong><br>
+    ・<code>em</code> は意味的な強調 → <code>i</code> は視覚的な斜体（意味なし）<br>
+    ・<code>strong</code> は意味的な重要性 → <code>b</code> は視覚的な太字（意味なし）
+  </div>
+</div>
+
+
+<!-- 4. blockquote / q / cite -->
+<h2>④ blockquote要素 / q要素 / cite要素</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- blockquote：ブロックレベルの引用 --&gt;</span>
+<span class="tag">&lt;blockquote</span> <span class="attr">cite</span>=<span class="value">"https://example.com/article"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;p&gt;</span>HTMLはウェブページの構造を定義するマークアップ言語です。<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;/blockquote&gt;</span>
+
+<span class="comment">&lt;!-- q：インラインの引用（引用符が自動で付く） --&gt;</span>
+<span class="tag">&lt;p&gt;</span>彼は<span class="tag">&lt;q</span> <span class="attr">cite</span>=<span class="value">"https://example.com"</span><span class="tag">&gt;</span>HTMLを学ぼう<span class="tag">&lt;/q&gt;</span>と言った。<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- cite：作品・文書のタイトル（斜体で表示） --&gt;</span>
+<span class="tag">&lt;p&gt;</span><span class="tag">&lt;cite&gt;</span>HTML5プロフェッショナル認定試験 公式テキスト<span class="tag">&lt;/cite&gt;</span>を参照。<span class="tag">&lt;/p&gt;</span>
+</pre>
+  <div class="live-demo">
+    <blockquote style="border-left:4px solid #4299e1; padding-left:12px; color:#4a5568;">
+      <p>HTMLはウェブページの構造を定義するマークアップ言語です。</p>
+    </blockquote>
+    <p>彼は<q>HTMLを学ぼう</q>と言った。</p>
+    <p><cite>HTML5プロフェッショナル認定試験 公式テキスト</cite>を参照。</p>
+  </div>
+  <div class="warn">
+    <strong>⚠️ cite属性 と cite要素 の違い</strong><br>
+    ・<code>cite属性</code>：<code>blockquote</code> / <code>q</code> の引用元URLを指定する属性<br>
+    ・<code>&lt;cite&gt;要素</code>：書籍・映画・記事などの<strong>作品タイトル</strong>を表す要素（人名には使わない）
+  </div>
+</div>
+
+
+<!-- 5. mark / small -->
+<h2>⑤ mark要素 / small要素</h2>
+<div class="note">
+  <strong>ポイント①：mark要素は「注目してもらうために目立たせている部分」を表す</strong><br>
+  ・検索結果のキーワードハイライト・重要箇所のマーカーなどに使います。<br>
+  ・単なる装飾目的のハイライトには使いません（CSSを使うべき）。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- mark：注目・ハイライト（黄色背景で表示） --&gt;</span>
+<span class="tag">&lt;p&gt;</span>検索結果：<span class="tag">&lt;mark&gt;</span>HTML5<span class="tag">&lt;/mark&gt;</span>の学習方法について<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;p&gt;</span>試験では<span class="tag">&lt;mark&gt;</span>セクション要素は4つ<span class="tag">&lt;/mark&gt;</span>という点が頻出です。<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- small：注釈・免責事項・著作権表示など --&gt;</span>
+<span class="tag">&lt;p&gt;</span>月額980円<span class="tag">&lt;small&gt;</span>（税込・初月無料）<span class="tag">&lt;/small&gt;</span><span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;footer&gt;</span>
+  <span class="tag">&lt;small&gt;</span>&amp;copy; 2025 MeshinoKiwamiOkome<span class="tag">&lt;/small&gt;</span>
+<span class="tag">&lt;/footer&gt;</span>
+</pre>
+  <div class="live-demo">
+    <p>検索結果：<mark>HTML5</mark>の学習方法について</p>
+    <p>試験では<mark>セクション要素は4つ</mark>という点が頻出です。</p>
+    <p>月額980円<small>（税込・初月無料）</small></p>
+  </div>
+</div>
+
+
+<!-- 6. data / time -->
+<h2>⑥ data要素 / time要素</h2>
+<div class="note">
+  <strong>ポイント②③：data要素とtime要素</strong><br>
+  ・<code>data</code>：<strong>機械読み取りが可能なデータ</strong>を <code>value</code> 属性として提供する要素<br>
+  ・<code>time</code>：<code>data</code> 要素を<strong>日時に特化</strong>させた要素。<code>datetime</code> 属性に機械読み取り用の日時を指定
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- data：機械読み取り用データをvalue属性に指定 --&gt;</span>
+<span class="tag">&lt;p&gt;</span>商品コード：
+  <span class="tag">&lt;data</span> <span class="attr">value</span>=<span class="value">"P-12345"</span><span class="tag">&gt;</span>ノートパソコン<span class="tag">&lt;/data&gt;</span>
+<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;p&gt;</span>価格：
+  <span class="tag">&lt;data</span> <span class="attr">value</span>=<span class="value">"89800"</span><span class="tag">&gt;</span>89,800円<span class="tag">&lt;/data&gt;</span>
+<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- time：日時に特化したdata要素 --&gt;</span>
+<span class="tag">&lt;p&gt;</span>公開日：
+  <span class="tag">&lt;time</span> <span class="attr">datetime</span>=<span class="value">"2025-03-26"</span><span class="tag">&gt;</span>2025年3月26日<span class="tag">&lt;/time&gt;</span>
+<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;p&gt;</span>開始時刻：
+  <span class="tag">&lt;time</span> <span class="attr">datetime</span>=<span class="value">"2025-03-26T14:00"</span><span class="tag">&gt;</span>午後2時<span class="tag">&lt;/time&gt;</span>
+<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;p&gt;</span>所要時間：
+  <span class="tag">&lt;time</span> <span class="attr">datetime</span>=<span class="value">"PT2H30M"</span><span class="tag">&gt;</span>2時間30分<span class="tag">&lt;/time&gt;</span>
+<span class="tag">&lt;/p&gt;</span>
+</pre>
+  <div class="live-demo">
+    <p>商品コード：<data value="P-12345">ノートパソコン</data></p>
+    <p>公開日：<time datetime="2025-03-26">2025年3月26日</time></p>
+    <p>開始時刻：<time datetime="2025-03-26T14:00">午後2時</time></p>
+    <p>所要時間：<time datetime="PT2H30M">2時間30分</time></p>
+  </div>
+  <table class="ref-table">
+    <thead>
+      <tr><th>比較</th><th>data要素</th><th>time要素</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>用途</td><td>任意の機械読み取り用データ</td><td>日時・期間に特化</td></tr>
+      <tr><td>属性</td><td><code>value</code>（必須）</td><td><code>datetime</code>（任意）</td></tr>
+      <tr><td>値の形式</td><td>任意の文字列</td><td>ISO 8601形式の日時</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 7. abbr / dfn -->
+<h2>⑦ abbr要素 / dfn要素</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- abbr：略語・頭字語（title属性で正式名称を指定） --&gt;</span>
+<span class="tag">&lt;p&gt;</span>
+  <span class="tag">&lt;abbr</span> <span class="attr">title</span>=<span class="value">"HyperText Markup Language"</span><span class="tag">&gt;</span>HTML<span class="tag">&lt;/abbr&gt;</span>は
+  <span class="tag">&lt;abbr</span> <span class="attr">title</span>=<span class="value">"World Wide Web Consortium"</span><span class="tag">&gt;</span>W3C<span class="tag">&lt;/abbr&gt;</span>が策定しました。
+<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- dfn：用語の定義（その文書内での初出定義に使う） --&gt;</span>
+<span class="tag">&lt;p&gt;</span>
+  <span class="tag">&lt;dfn&gt;</span>セマンティクス<span class="tag">&lt;/dfn&gt;</span>とは、
+  HTMLタグに意味を持たせることで文書構造を明確にする考え方です。
+<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- dfn + abbr の組み合わせ --&gt;</span>
+<span class="tag">&lt;p&gt;</span>
+  <span class="tag">&lt;dfn&gt;&lt;abbr</span> <span class="attr">title</span>=<span class="value">"Cascading Style Sheets"</span><span class="tag">&gt;</span>CSS<span class="tag">&lt;/abbr&gt;&lt;/dfn&gt;</span>は
+  スタイルを定義する言語です。
+<span class="tag">&lt;/p&gt;</span>
+</pre>
+  <div class="live-demo">
+    <p>
+      <abbr title="HyperText Markup Language">HTML</abbr>は
+      <abbr title="World Wide Web Consortium">W3C</abbr>が策定しました。
+    </p>
+    <p><dfn>セマンティクス</dfn>とは、HTMLタグに意味を持たせることで文書構造を明確にする考え方です。</p>
+  </div>
+</div>
+
+
+<!-- 8. b / i / s / u -->
+<h2>⑧ b要素 / i要素 / s要素 / u要素</h2>
+<div class="note">
+  <strong>意味的な要素との使い分けが重要</strong><br>
+  これらは視覚的な表現に加え、それぞれ固有の意味を持ちます。
+  単なる装飾目的にはCSSを使いましょう。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- b：注目させたい部分（重要性・強調の意味なし） --&gt;</span>
+<span class="tag">&lt;p&gt;</span>手順：<span class="tag">&lt;b&gt;</span>「設定」<span class="tag">&lt;/b&gt;</span>を開き、<span class="tag">&lt;b&gt;</span>「プライバシー」<span class="tag">&lt;/b&gt;</span>を選択。<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- i：専門用語・慣用句・外国語・技術用語など --&gt;</span>
+<span class="tag">&lt;p&gt;</span>ラテン語で<span class="tag">&lt;i</span> <span class="attr">lang</span>=<span class="value">"la"</span><span class="tag">&gt;</span>et cetera<span class="tag">&lt;/i&gt;</span>（など）と表記します。<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- s：もはや正確でない・関連性のない内容（取り消し線） --&gt;</span>
+<span class="tag">&lt;p&gt;</span>通常価格：<span class="tag">&lt;s&gt;</span>10,000円<span class="tag">&lt;/s&gt;</span> → セール価格：7,800円<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- u：注釈的な下線（スペルミスの指摘など） --&gt;</span>
+<span class="tag">&lt;p&gt;</span>この単語の<span class="tag">&lt;u&gt;</span>スペルに注意<span class="tag">&lt;/u&gt;</span>してください。<span class="tag">&lt;/p&gt;</span>
+</pre>
+  <div class="live-demo">
+    <p>手順：<b>「設定」</b>を開き、<b>「プライバシー」</b>を選択。</p>
+    <p>ラテン語で<i lang="la">et cetera</i>（など）と表記します。</p>
+    <p>通常価格：<s>10,000円</s> → セール価格：7,800円</p>
+    <p>この単語の<u>スペルに注意</u>してください。</p>
+  </div>
+  <table class="ref-table">
+    <thead>
+      <tr><th>要素</th><th>意味</th><th>混同しやすい要素</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>b</code></td><td>注目させたい部分（重要性・強調なし）</td><td><code>strong</code>（重要性あり）</td></tr>
+      <tr><td><code>i</code></td><td>専門語・慣用句・外国語・技術用語</td><td><code>em</code>（強調あり）</td></tr>
+      <tr><td><code>s</code></td><td>もはや正確でない・関連性のない内容</td><td><code>del</code>（編集上の削除）</td></tr>
+      <tr><td><code>u</code></td><td>注釈的な下線・スペルミスの指摘</td><td>CSSの<code>text-decoration</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 9. bdo / bdi -->
+<h2>⑨ bdo要素 / bdi要素</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- bdo：書字方向を強制的に上書き --&gt;</span>
+<span class="tag">&lt;p&gt;</span><span class="tag">&lt;bdo</span> <span class="attr">dir</span>=<span class="value">"rtl"</span><span class="tag">&gt;</span>Hello, World!<span class="tag">&lt;/bdo&gt;&lt;/p&gt;</span>
+<span class="comment">&lt;!-- 表示：!dlroW ,olleH --&gt;</span>
+
+<span class="comment">&lt;!-- bdi：周囲のテキストから書字方向を分離 --&gt;</span>
+<span class="comment">&lt;!-- ユーザー名など、書字方向が不明なテキストを含む場合に使用 --&gt;</span>
+<span class="tag">&lt;ul&gt;</span>
+  <span class="tag">&lt;li&gt;</span>1位：<span class="tag">&lt;bdi&gt;</span>山田太郎<span class="tag">&lt;/bdi&gt;</span> - 100点<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;li&gt;</span>2位：<span class="tag">&lt;bdi&gt;</span>Ahmed Ali<span class="tag">&lt;/bdi&gt;</span> - 95点<span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ul&gt;</span>
+</pre>
+  <div class="live-demo">
+    <p>bdo（rtl）：<bdo dir="rtl">Hello, World!</bdo></p>
+    <ul>
+      <li>1位：<bdi>山田太郎</bdi> - 100点</li>
+      <li>2位：<bdi>Ahmed Ali</bdi> - 95点</li>
+    </ul>
+  </div>
+  <div class="good">
+    ✅ <strong>bdo と bdi の使い分け</strong><br>
+    ・<code>bdo</code>：書字方向を<strong>強制的に指定</strong>したいとき（<code>dir</code> 属性必須）<br>
+    ・<code>bdi</code>：書字方向が不明なテキスト（ユーザー名など）を<strong>周囲から分離</strong>したいとき
+  </div>
+</div>
+
+
+<!-- 10. pre / code / kbd / samp / var -->
+<h2>⑩ pre / code / kbd / samp / var要素</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- pre：整形済みテキスト（空白・改行をそのまま表示） --&gt;</span>
+<span class="tag">&lt;pre&gt;</span>
+  function hello() {
+    console.log("Hello!");
+  }
+<span class="tag">&lt;/pre&gt;</span>
+
+<span class="comment">&lt;!-- code：コードの断片（インライン） --&gt;</span>
+<span class="tag">&lt;p&gt;</span><span class="tag">&lt;code&gt;</span>console.log()<span class="tag">&lt;/code&gt;</span>でコンソールに出力できます。<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- pre + code：コードブロック（組み合わせが一般的） --&gt;</span>
+<span class="tag">&lt;pre&gt;&lt;code&gt;</span>
+const x = 10;
+const y = 20;
+console.log(x + y); // 30
+<span class="tag">&lt;/code&gt;&lt;/pre&gt;</span>
+
+<span class="comment">&lt;!-- kbd：キーボード入力 --&gt;</span>
+<span class="tag">&lt;p&gt;</span>保存するには<span class="tag">&lt;kbd&gt;</span>Ctrl<span class="tag">&lt;/kbd&gt;</span> + <span class="tag">&lt;kbd&gt;</span>S<span class="tag">&lt;/kbd&gt;</span>を押してください。<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- samp：プログラムの出力結果 --&gt;</span>
+<span class="tag">&lt;p&gt;</span>実行結果：<span class="tag">&lt;samp&gt;</span>Hello, World!<span class="tag">&lt;/samp&gt;</span><span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- var：変数・引数・数式の変数 --&gt;</span>
+<span class="tag">&lt;p&gt;</span>面積 <span class="tag">&lt;var&gt;</span>S<span class="tag">&lt;/var&gt;</span> = <span class="tag">&lt;var&gt;</span>a<span class="tag">&lt;/var&gt;</span> × <span class="tag">&lt;var&gt;</span>b<span class="tag">&lt;/var&gt;</span><span class="tag">&lt;/p&gt;</span>
+</pre>
+  <div class="live-demo">
+    <p><code>console.log()</code>でコンソールに出力できます。</p>
+    <p>保存するには<kbd style="border:1px solid #a0aec0; border-radius:3px; padding:1px 6px; background:#edf2f7;">Ctrl</kbd> + <kbd style="border:1px solid #a0aec0; border-radius:3px; padding:1px 6px; background:#edf2f7;">S</kbd>を押してください。</p>
+    <p>実行結果：<samp>Hello, World!</samp></p>
+    <p>面積 <var>S</var> = <var>a</var> × <var>b</var></p>
+  </div>
+</div>
+
+
+<!-- 11. sup / br / wbr -->
+<h2>⑪ sup要素 / br要素 / wbr要素</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- sup：上付き文字 --&gt;</span>
+<span class="tag">&lt;p&gt;</span>E = mc<span class="tag">&lt;sup&gt;</span>2<span class="tag">&lt;/sup&gt;</span><span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;p&gt;</span>注釈<span class="tag">&lt;sup&gt;</span>*1<span class="tag">&lt;/sup&gt;</span>を参照してください。<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- br：改行（空要素）--&gt;</span>
+<span class="tag">&lt;p&gt;</span>〒700-0000<span class="tag">&lt;br&gt;</span>岡山県総社市○○1-2-3<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- wbr：改行可能位置のヒント（空要素）--&gt;</span>
+<span class="comment">&lt;!-- 長いURLや単語の折り返し位置を指定 --&gt;</span>
+<span class="tag">&lt;p&gt;</span>https://www.example.com<span class="tag">&lt;wbr&gt;</span>/very<span class="tag">&lt;wbr&gt;</span>/long<span class="tag">&lt;wbr&gt;</span>/path<span class="tag">&lt;/p&gt;</span>
+</pre>
+  <div class="live-demo">
+    <p>E = mc<sup>2</sup></p>
+    <p>注釈<sup>*1</sup>を参照してください。</p>
+    <p>〒700-0000<br>岡山県総社市○○1-2-3</p>
+  </div>
+  <div class="warn">
+    <strong>⚠️ br要素の注意点</strong><br>
+    ・<code>br</code> は<strong>段落の区切りには使いません</strong>（<code>p</code> 要素を使う）<br>
+    ・住所・詩・歌詞など、改行自体がコンテンツの一部である場合に使います<br>
+    ・レイアウト目的の改行はCSSで対応します
+  </div>
+</div>
+
+
+<!-- 12. ins / del -->
+<h2>⑫ ins要素 / del要素</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- ins：文書に追加されたテキスト（下線で表示） --&gt;</span>
+<span class="comment">&lt;!-- del：文書から削除されたテキスト（取り消し線で表示） --&gt;</span>
+<span class="tag">&lt;p&gt;</span>
+  開催日：
+  <span class="tag">&lt;del</span> <span class="attr">datetime</span>=<span class="value">"2025-03-20"</span><span class="tag">&gt;</span>3月20日<span class="tag">&lt;/del&gt;</span>
+  <span class="tag">&lt;ins</span> <span class="attr">datetime</span>=<span class="value">"2025-03-26"</span><span class="tag">&gt;</span>3月26日<span class="tag">&lt;/ins&gt;</span>
+<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- cite属性で変更理由のURLを指定できる --&gt;</span>
+<span class="tag">&lt;del</span> <span class="attr">cite</span>=<span class="value">"https://example.com/changelog"</span>
+     <span class="attr">datetime</span>=<span class="value">"2025-01-01"</span><span class="tag">&gt;</span>
+  旧仕様のテキスト
+<span class="tag">&lt;/del&gt;</span>
+</pre>
+  <div class="live-demo">
+    <p>
+      開催日：
+      <del datetime="2025-03-20">3月20日</del>
+      <ins datetime="2025-03-26">3月26日</ins>
+    </p>
+  </div>
+  <div class="warn">
+    <strong>⚠️ s要素 と del要素 の違い</strong><br>
+    ・<code>s</code>：もはや正確でない・関連性のない内容（セール価格の旧価格など）<br>
+    ・<code>del</code>：文書の編集履歴として<strong>削除されたテキスト</strong>（変更履歴の管理）<br>
+    　<code>datetime</code> 属性で削除日時、<code>cite</code> 属性で変更理由のURLを指定できます
+  </div>
+</div>
+
+
+<!-- 演習問題 -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      <code>time</code> 要素は <code>data</code> 要素とは全く別の独立した要素であり、
+      両者に関連性はない。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn btn-blue" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 正解！time要素はdata要素を日時に特化させた要素です。data要素が任意の機械読み取り用データを扱うのに対し、time要素はISO 8601形式の日時データを扱います。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent = '❌ 不正解。time要素はdata要素を日時に特化させた要素です。data要素のvalue属性に相当するのがtime要素のdatetime属性です。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合う要素名を入力してください。</p>
+
+    <label>① 注目してもらうために目立たせている部分を表す要素（黄色ハイライト）：</label>
+    <input type="text" id="q2a" placeholder="要素名">
+
+    <label>② 機械読み取り可能なデータをvalue属性として提供する要素：</label>
+    <input type="text" id="q2b" placeholder="要素名">
+
+    <label>③ 略語・頭字語を表し、title属性で正式名称を指定する要素：</label>
+    <input type="text" id="q2c" placeholder="要素名">
+
+    <label>④ 文書の編集履歴として追加されたテキストを表す要素：</label>
+    <input type="text" id="q2d" placeholder="要素名">
+
+    <label>⑤ 整形済みテキスト（空白・改行をそのまま表示）を表す要素：</label>
+    <input type="text" id="q2e" placeholder="要素名">
+
+    <br>
+    <button class="btn btn-blue" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const b = document.getElementById('q2b').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const c = document.getElementById('q2c').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const d = document.getElementById('q2d').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const e = document.getElementById('q2e').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const r = document.getElementById('q2-result');
+        const ca = a === 'mark';
+        const cb = b === 'data';
+        const cc = c === 'abbr';
+        const cd = d === 'ins';
+        const ce = e === 'pre';
+        const count = [ca, cb, cc, cd, ce].filter(Boolean).length;
+        if (count === 5) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！テキスト要素を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/5 問正解。<br>` +
+            `① ${ca ? '✅' : '❌ mark'}　` +
+            `② ${cb ? '✅' : '❌ data'}　` +
+            `③ ${cc ? '✅' : '❌ abbr'}　` +
+            `④ ${cd ? '✅' : '❌ ins'}　` +
+            `⑤ ${ce ? '✅' : '❌ pre'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>
+      <code>s</code> 要素と <code>del</code> 要素の使い分けとして
+      正しいものはどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">s要素は編集履歴の削除に使い、del要素はセール価格の旧価格表示に使う</option>
+      <option value="b">s要素はもはや正確でない内容に使い、del要素は編集履歴として削除されたテキストに使う</option>
+      <option value="c">s要素とdel要素は全く同じ意味で、どちらを使っても問題ない</option>
+      <option value="d">s要素はインライン要素で使えないが、del要素はブロック・インライン両方で使える</option>
+    </select>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            '・s要素：もはや正確でない・関連性のない内容（セール価格の旧価格など）<br>' +
+            '・del要素：文書の編集履歴として削除されたテキスト<br>' +
+            '　datetime属性で削除日時、cite属性で変更理由のURLを指定できます。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.textContent = '❌ 不正解。s要素は「もはや正確でない内容」、del要素は「編集履歴としての削除」に使います。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4a">
+      ① <code>em</code> 要素は意味的な強調を表し、スクリーンリーダーで強調して読み上げられる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4b">
+      ② <code>cite</code> 要素は人名を表すために使う
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4c">
+      ③ <code>mark</code> 要素は単なる装飾目的のハイライトに使うべきである
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4d">
+      ④ <code>time</code> 要素の <code>datetime</code> 属性にはISO 8601形式の日時を指定する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4e">
+      ⑤ <code>br</code> 要素は段落の区切りとして使うことができる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4f">
+      ⑥ <code>kbd</code> 要素はキーボード入力を表す
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4g">
+      ⑦ <code>bdo</code> 要素は <code>dir</code> 属性で書字方向を強制的に上書きできる
+    </label>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const r = document.getElementById('q4-result');
+        const checks = {
+          a: document.getElementById('q4a').checked,
+          b: document.getElementById('q4b').checked,
+          c: document.getElementById('q4c').checked,
+          d: document.getElementById('q4d').checked,
+          e: document.getElementById('q4e').checked,
+          f: document.getElementById('q4f').checked,
+          g: document.getElementById('q4g').checked,
+        };
+        // 正解：①④⑥⑦（a, d, f, g）
+        // ②cite要素は作品タイトル（人名不可）
+        // ③mark要素は注目目的（装飾目的はCSS）
+        // ⑤br要素は段落区切りに使わない
+        const correct = { a:true, b:false, c:false, d:true, e:false, f:true, g:true };
+        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
+        const allCorrect = results.every(Boolean);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① em要素は意味的強調 ✅<br>' +
+            '・④ time要素のdatetimeはISO 8601形式 ✅<br>' +
+            '・⑥ kbd要素はキーボード入力 ✅<br>' +
+            '・⑦ bdo要素はdir属性で書字方向を上書き ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① em要素は意味的な強調（スクリーンリーダーで強調読み上げ）<br>' +
+            '・④ time要素のdatetimeはISO 8601形式<br>' +
+            '・⑥ kbd要素はキーボード入力を表す<br>' +
+            '・⑦ bdo要素はdir属性で書字方向を強制上書き<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② cite要素は作品・文書のタイトルに使う（人名には使わない）<br>' +
+            '・③ mark要素は注目目的（単なる装飾にはCSSを使う）<br>' +
+            '・⑤ br要素は段落区切りに使わない（p要素を使う）';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. コード穴埋め問題</h3>
+    <p>以下のコードの <code>__A__</code> 〜 <code>__E__</code> に適切な要素名を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+&lt;p&gt;
+  試験日：&lt;__A__ datetime="2025-06-15"&gt;2025年6月15日&lt;/__A__&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+  &lt;__B__ title="HyperText Markup Language"&gt;HTML&lt;/__B__&gt;は
+  マークアップ言語です。
+&lt;/p&gt;
+
+&lt;p&gt;
+  検索キーワード：&lt;__C__&gt;グローバル属性&lt;/__C__&gt;の一覧
+&lt;/p&gt;
+
+&lt;p&gt;
+  旧価格：&lt;__D__&gt;12,000円&lt;/__D__&gt; → 新価格：9,800円
+&lt;/p&gt;
+
+&lt;p&gt;
+  &lt;__E__&gt;警告：&lt;/__E__&gt;この操作は取り消せません。
+&lt;/p&gt;</pre>
+
+    <label>A（日時を表す要素）：</label>
+    <input type="text" id="q5a" placeholder="要素名">
+    <label>B（略語・頭字語を表す要素）：</label>
+    <input type="text" id="q5b" placeholder="要素名">
+    <label>C（注目・ハイライトを表す要素）：</label>
+    <input type="text" id="q5c" placeholder="要素名">
+    <label>D（もはや正確でない内容を表す要素）：</label>
+    <input type="text" id="q5d" placeholder="要素名">
+    <label>E（重要性・深刻さを表す要素）：</label>
+    <input type="text" id="q5e" placeholder="要素名">
+    <br>
+    <button class="btn btn-blue" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const a = document.getElementById('q5a').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const b = document.getElementById('q5b').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const c = document.getElementById('q5c').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const d = document.getElementById('q5d').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const e = document.getElementById('q5e').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const r = document.getElementById('q5-result');
+        const ca = a === 'time';
+        const cb = b === 'abbr';
+        const cc = c === 'mark';
+        const cd = d === 's';
+        const ce = e === 'strong';
+        const count = [ca, cb, cc, cd, ce].filter(Boolean).length;
+        if (count === 5) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！テキスト要素の使い分けを完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/5 問正解。<br>` +
+            `A: ${ca ? '✅' : '❌ time'}　` +
+            `B: ${cb ? '✅' : '❌ abbr'}　` +
+            `C: ${cc ? '✅' : '❌ mark'}　` +
+            `D: ${cd ? '✅' : '❌ s'}　` +
+            `E: ${ce ? '✅' : '❌ strong'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. 記述問題</h3>
+    <p>
+      <code>em</code> と <code>strong</code>、<code>b</code> と <code>i</code> の
+      それぞれの違いと適切な使い分けを説明してください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q6" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ6()">模範解答を見る</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const r = document.getElementById('q6-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<strong>em と strong の違い：</strong><br>' +
+          '・em：テキストに意味的な強調（アクセント）を与える。<br>' +
+          '　　　スクリーンリーダーで強調して読み上げられる。<br>' +
+          '　　　例：「この操作は<em>元に戻せません</em>」<br>' +
+          '・strong：テキストの重要性・深刻さ・緊急性を示す。<br>' +
+          '　　　　　例：「<strong>警告：</strong>データが削除されます」<br><br>' +
+          '<strong>b と i の違い：</strong><br>' +
+          '・b：注目させたい部分（重要性・強調の意味はない）。<br>' +
+          '　　UIのキーワード・製品名・操作手順のキーワードなどに使う。<br>' +
+          '　　意味的な重要性があるなら strong を使うべき。<br>' +
+          '・i：専門用語・慣用句・外国語・技術用語・思考など。<br>' +
+          '　　意味的な強調があるなら em を使うべき。<br><br>' +
+          '<strong>共通の注意点：</strong><br>' +
+          '単なる視覚的な装飾（太字・斜体）が目的ならCSSを使うべきです。';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 テキスト要素 まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>要素</th><th>意味・用途</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>p</code></td><td>段落</td><td>ブロック要素。改行目的には使わない</td></tr>
+    <tr><td><code>a</code></td><td>ハイパーリンク</td><td>target="_blank"にはrel="noopener noreferrer"を付ける</td></tr>
+    <tr><td><code>em</code></td><td>意味的な強調</td><td>スクリーンリーダーで強調読み上げ。iとは異なる</td></tr>
+    <tr><td><code>strong</code></td><td>重要性・深刻さ・緊急性</td><td>bとは異なる（bは意味なし）</td></tr>
+    <tr><td><code>blockquote</code></td><td>ブロックレベルの引用</td><td>cite属性で引用元URLを指定</td></tr>
+    <tr><td><code>q</code></td><td>インラインの引用</td><td>引用符が自動付与される</td></tr>
+    <tr><td><code>cite</code></td><td>作品・文書のタイトル</td><td>人名には使わない</td></tr>
+    <tr><td><code>mark</code></td><td>注目・ハイライト</td><td>注目目的のみ。装飾目的にはCSS</td></tr>
+    <tr><td><code>small</code></td><td>注釈・免責事項・著作権</td><td>重要度が低い補足情報</td></tr>
+    <tr><td><code>data</code></td><td>機械読み取り用データ</td><td>value属性に機械読み取り用の値を指定</td></tr>
+    <tr><td><code>time</code></td><td>日時（dataの特化版）</td><td>datetime属性にISO 8601形式で指定</td></tr>
+    <tr><td><code>abbr</code></td><td>略語・頭字語</td><td>title属性で正式名称を指定</td></tr>
+    <tr><td><code>dfn</code></td><td>用語の定義（初出）</td><td>その文書での定義箇所に使う</td></tr>
+    <tr><td><code>b</code></td><td>注目（意味・重要性なし）</td><td>重要性があればstrongを使う</td></tr>
+    <tr><td><code>i</code></td><td>専門語・慣用句・外国語</td><td>強調があればemを使う</td></tr>
+    <tr><td><code>s</code></td><td>もはや正確でない内容</td><td>編集履歴の削除はdelを使う</td></tr>
+    <tr><td><code>u</code></td><td>注釈的な下線・スペルミス指摘</td><td>リンクと混同されやすいため注意</td></tr>
+    <tr><td><code>bdo</code></td><td>書字方向の強制上書き</td><td>dir属性必須</td></tr>
+    <tr><td><code>bdi</code></td><td>書字方向の分離</td><td>ユーザー名など方向不明テキストに使用</td></tr>
+    <tr><td><code>pre</code></td><td>整形済みテキスト</td><td>空白・改行をそのまま表示。codeと組み合わせ</td></tr>
+    <tr><td><code>code</code></td><td>コードの断片</td><td>インライン使用。preと組み合わせてブロックに</td></tr>
+    <tr><td><code>kbd</code></td><td>キーボード入力</td><td>ショートカットキーの表記などに使用</td></tr>
+    <tr><td><code>samp</code></td><td>プログラムの出力結果</td><td>コンソール出力・エラーメッセージなど</td></tr>
+    <tr><td><code>var</code></td><td>変数・引数・数式の変数</td><td>数学・プログラミングの変数表記</td></tr>
+    <tr><td><code>sup</code></td><td>上付き文字</td><td>数式の指数・脚注番号など</td></tr>
+    <tr><td><code>br</code></td><td>改行（空要素）</td><td>段落区切りには使わない。住所・詩などに使用</td></tr>
+    <tr><td><code>wbr</code></td><td>改行可能位置（空要素）</td><td>長いURLや単語の折り返し位置のヒント</td></tr>
+    <tr><td><code>ins</code></td><td>追加されたテキスト</td><td>datetime・cite属性で変更情報を記録</td></tr>
+    <tr><td><code>del</code></td><td>削除されたテキスト</td><td>sとは異なる（sはもはや正確でない内容）</td></tr>
+  </tbody>
+</table>
+
+</body>
+</html>
