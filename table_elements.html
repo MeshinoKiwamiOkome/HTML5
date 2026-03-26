@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>HTML5 テーブル要素 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #4299e1; padding-bottom: 10px; }
+    h2 { color: #2b6cb0; margin-top: 48px; border-left: 5px solid #4299e1; padding-left: 12px; }
+    h3 { color: #276749; margin-top: 24px; }
+
+    code {
+      background: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment { color: #68d391; }
+    pre .tag     { color: #90cdf4; }
+    pre .attr    { color: #fbd38d; }
+    pre .value   { color: #fc8181; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #90cdf4;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #2b6cb0; }
+
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+
+    .demo-box {
+      background: #fff;
+      border: 1px solid #bee3f8;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* テーブルデモ共通スタイル */
+    .tbl {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 14px 0;
+      font-size: 0.93em;
+    }
+    .tbl th, .tbl td {
+      border: 1px solid #bee3f8;
+      padding: 9px 14px;
+      text-align: left;
+    }
+    .tbl thead tr { background: #2b6cb0; color: #fff; }
+    .tbl tbody tr:nth-child(even) { background: #ebf8ff; }
+    .tbl tfoot tr { background: #e6fffa; color: #276749; font-weight: bold; }
+    .tbl caption {
+      caption-side: top;
+      font-weight: bold;
+      color: #2b6cb0;
+      margin-bottom: 8px;
+      font-size: 1em;
+      text-align: left;
+    }
+
+    /* 構造図 */
+    .structure-diagram {
+      display: grid;
+      gap: 6px;
+      margin: 14px 0;
+      font-size: 0.88em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .sd-block {
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-weight: bold;
+    }
+    .sd-table   { background: #d6bcfa; color: #44337a; border: 2px solid #9f7aea; }
+    .sd-caption { background: #fbd38d; color: #744210; border: 2px solid #f6ad55; }
+    .sd-colgroup{ background: #bee3f8; color: #2b6cb0; border: 2px dashed #4299e1; }
+    .sd-thead   { background: #c6f6d5; color: #276749; border: 2px solid #48bb78; }
+    .sd-tbody   { background: #ebf8ff; color: #2b6cb0; border: 2px solid #4299e1; }
+    .sd-tfoot   { background: #e6fffa; color: #276749; border: 2px solid #38b2ac; }
+    .sd-tr      { background: #f7fafc; color: #4a5568; border: 1px dashed #a0aec0; margin-left: 16px; }
+    .sd-th      { background: #fefcbf; color: #744210; border: 1px solid #ecc94b; margin-left: 32px; }
+    .sd-td      { background: #fff;    color: #4a5568; border: 1px solid #bee3f8; margin-left: 32px; }
+
+    table.ref-table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      margin: 14px 0;
+    }
+    table.ref-table th, table.ref-table td {
+      border: 1px solid #bee3f8;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.ref-table thead tr { background: #2b6cb0; color: #fff; }
+    table.ref-table tbody tr:nth-child(even) { background: #ebf8ff; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 { margin-top: 0; color: #c05621; border-left-color: #f6ad55; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #fbd38d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #fbd38d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-blue { background: #4299e1; color: #fff; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #bee3f8; color: #2b6cb0; display: block; }
+
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #bee3f8;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.summary thead tr { background: #2b6cb0; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #ebf8ff; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px 14px; }
+      .tbl th, .tbl td { padding: 7px 8px; font-size: 0.85em; }
+      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.82em; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px 16px; }
+      .quiz-block { padding: 14px 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>📊 HTML5 テーブル要素 学習サンプル</h1>
+<p>table / tr / th / td / thead / tbody / tfoot / caption / colgroup / col
+の役割と使い方を学びましょう。</p>
+
+
+<!-- 1. テーブルの全体構造 -->
+<h2>① テーブルの全体構造</h2>
+<div class="demo-box">
+  <div class="structure-diagram">
+    <div class="sd-block sd-table">&lt;table&gt; ─ テーブル全体</div>
+    <div class="sd-block sd-caption" style="margin-left:16px;">&lt;caption&gt; ─ テーブルのタイトル（省略可）</div>
+    <div class="sd-block sd-colgroup" style="margin-left:16px;">&lt;colgroup&gt; / &lt;col&gt; ─ 列のグループ化（省略可）</div>
+    <div class="sd-block sd-thead" style="margin-left:16px;">&lt;thead&gt; ─ ヘッダー行グループ（省略可）</div>
+    <div class="sd-block sd-tr" style="margin-left:32px;">&lt;tr&gt; ─ 行</div>
+    <div class="sd-block sd-th" style="margin-left:48px;">&lt;th&gt; ─ 見出しセル</div>
+    <div class="sd-block sd-tbody" style="margin-left:16px;">&lt;tbody&gt; ─ ボディ行グループ（省略可・自動補完）</div>
+    <div class="sd-block sd-tr" style="margin-left:32px;">&lt;tr&gt; ─ 行</div>
+    <div class="sd-block sd-td" style="margin-left:48px;">&lt;td&gt; ─ データセル</div>
+    <div class="sd-block sd-tfoot" style="margin-left:16px;">&lt;tfoot&gt; ─ フッター行グループ（省略可・最後に1つ）</div>
+    <div class="sd-block sd-tr" style="margin-left:32px;">&lt;tr&gt; ─ 行</div>
+    <div class="sd-block sd-td" style="margin-left:48px;">&lt;td&gt; ─ データセル（合計など）</div>
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ 試験重要ポイント②：tfoot要素の配置ルール</strong><br><br>
+    ・<code>tfoot</code> 要素は <strong>tbody要素・tr要素よりも後</strong>に配置します<br>
+    ・<strong>1つしか配置できません</strong><br><br>
+    ✅ 正しい順序：<code>caption</code> → <code>colgroup</code> → <code>thead</code>
+    → <code>tbody</code> → <strong><code>tfoot</code></strong><br><br>
+    ※ HTML4では <code>tfoot</code> を <code>tbody</code> より前に書く仕様でしたが、
+    HTML Living Standard では <strong>後に配置</strong>するよう変更されています。
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ 試験重要ポイント③：終了タグの省略</strong><br><br>
+    テーブル要素の多くは終了タグを省略できます。<br><br>
+    ✅ 終了タグ省略可：<code>tr</code> / <code>th</code> / <code>td</code> /
+    <code>thead</code> / <code>tbody</code> / <code>tfoot</code> /
+    <code>caption</code> / <code>colgroup</code><br>
+    ❌ 終了タグ省略不可：<code>table</code> / <code>col</code>（空要素）
+  </div>
+</div>
+
+
+<!-- 2. table / tr / th / td -->
+<h2>② table要素 / tr要素 / th要素 / td要素</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>table</code>：テーブル全体を定義するブロック要素<br>
+  ・<code>tr</code>（Table Row）：行を定義する要素<br>
+  ・<code>th</code>（Table Header）：見出しセル。デフォルトで太字・中央揃え<br>
+  ・<code>td</code>（Table Data）：データセル
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- 最小構成のテーブル --&gt;</span>
+<span class="tag">&lt;table&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>
+    <span class="tag">&lt;th&gt;</span>名前<span class="tag">&lt;/th&gt;</span>
+    <span class="tag">&lt;th&gt;</span>年齢<span class="tag">&lt;/th&gt;</span>
+    <span class="tag">&lt;th&gt;</span>職業<span class="tag">&lt;/th&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>
+    <span class="tag">&lt;td&gt;</span>山田太郎<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>28<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>エンジニア<span class="tag">&lt;/td&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>
+    <span class="tag">&lt;td&gt;</span>鈴木花子<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>32<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>デザイナー<span class="tag">&lt;/td&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+<span class="tag">&lt;/table&gt;</span>
+</pre>
+
+  <table class="tbl">
+    <tr>
+      <th>名前</th><th>年齢</th><th>職業</th>
+    </tr>
+    <tr>
+      <td>山田太郎</td><td>28</td><td>エンジニア</td>
+    </tr>
+    <tr>
+      <td>鈴木花子</td><td>32</td><td>デザイナー</td>
+    </tr>
+  </table>
+
+  <h3>th要素の scope属性</h3>
+<pre>
+<span class="comment">&lt;!-- scope属性：見出しが行・列どちらに対応するかを示す --&gt;</span>
+<span class="tag">&lt;table&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>
+    <span class="tag">&lt;th</span> <span class="attr">scope</span>=<span class="value">"col"</span><span class="tag">&gt;</span>名前<span class="tag">&lt;/th&gt;</span>   <span class="comment">&lt;!-- 列見出し --&gt;</span>
+    <span class="tag">&lt;th</span> <span class="attr">scope</span>=<span class="value">"col"</span><span class="tag">&gt;</span>点数<span class="tag">&lt;/th&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>
+    <span class="tag">&lt;th</span> <span class="attr">scope</span>=<span class="value">"row"</span><span class="tag">&gt;</span>山田太郎<span class="tag">&lt;/th&gt;</span>  <span class="comment">&lt;!-- 行見出し --&gt;</span>
+    <span class="tag">&lt;td&gt;</span>95<span class="tag">&lt;/td&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+<span class="tag">&lt;/table&gt;</span>
+</pre>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>scope属性の値</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>col</code></td><td>列全体の見出し</td></tr>
+      <tr><td><code>row</code></td><td>行全体の見出し</td></tr>
+      <tr><td><code>colgroup</code></td><td>列グループの見出し</td></tr>
+      <tr><td><code>rowgroup</code></td><td>行グループの見出し</td></tr>
+    </tbody>
+  </table>
+
+  <h3>colspan / rowspan属性（セルの結合）</h3>
+<pre>
+<span class="comment">&lt;!-- colspan：列方向に結合 / rowspan：行方向に結合 --&gt;</span>
+<span class="tag">&lt;table&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>
+    <span class="tag">&lt;th</span> <span class="attr">colspan</span>=<span class="value">"2"</span><span class="tag">&gt;</span>前期<span class="tag">&lt;/th&gt;</span>   <span class="comment">&lt;!-- 2列分を結合 --&gt;</span>
+    <span class="tag">&lt;th</span> <span class="attr">colspan</span>=<span class="value">"2"</span><span class="tag">&gt;</span>後期<span class="tag">&lt;/th&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>
+    <span class="tag">&lt;td&gt;</span>4月<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>5月<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>10月<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>11月<span class="tag">&lt;/td&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>
+    <span class="tag">&lt;td</span> <span class="attr">rowspan</span>=<span class="value">"2"</span><span class="tag">&gt;</span>継続<span class="tag">&lt;/td&gt;</span>  <span class="comment">&lt;!-- 2行分を結合 --&gt;</span>
+    <span class="tag">&lt;td&gt;</span>A<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>B<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>C<span class="tag">&lt;/td&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>
+    <span class="tag">&lt;td&gt;</span>D<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>E<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>F<span class="tag">&lt;/td&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+<span class="tag">&lt;/table&gt;</span>
+</pre>
+
+  <table class="tbl">
+    <tr>
+      <th colspan="2">前期</th>
+      <th colspan="2">後期</th>
+    </tr>
+    <tr>
+      <td>4月</td><td>5月</td>
+      <td>10月</td><td>11月</td>
+    </tr>
+    <tr>
+      <td rowspan="2" style="background:#fef3c7; font-weight:bold;">継続</td>
+      <td>A</td><td>B</td><td>C</td>
+    </tr>
+    <tr>
+      <td>D</td><td>E</td><td>F</td>
+    </tr>
+  </table>
+</div>
+
+
+<!-- 3. thead / tbody / tfoot -->
+<h2>③ thead要素 / tbody要素 / tfoot要素</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>thead</code>：テーブルのヘッダー行グループ（省略可・1つまで）<br>
+  ・<code>tbody</code>：テーブルのボディ行グループ（省略可・複数配置可・省略時は自動補完）<br>
+  ・<code>tfoot</code>：テーブルのフッター行グループ（省略可・<strong>1つまで・最後に配置</strong>）
+</div>
+<div class="demo-box">
+<pre>
+<span class="tag">&lt;table&gt;</span>
+  <span class="tag">&lt;thead&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;th&gt;</span>科目<span class="tag">&lt;/th&gt;</span>
+      <span class="tag">&lt;th&gt;</span>前期<span class="tag">&lt;/th&gt;</span>
+      <span class="tag">&lt;th&gt;</span>後期<span class="tag">&lt;/th&gt;</span>
+    <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;/thead&gt;</span>
+
+  <span class="tag">&lt;tbody&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;td&gt;</span>HTML<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>90<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>95<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;/tr&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;td&gt;</span>CSS<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>85<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>88<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;/tr&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;td&gt;</span>JavaScript<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>78<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>82<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;/tbody&gt;</span>
+
+  <span class="comment">&lt;!-- tfoot は tbody の後に配置（HTML Living Standard） --&gt;</span>
+  <span class="tag">&lt;tfoot&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;td&gt;</span>合計<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>253<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>265<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;/tfoot&gt;</span>
+<span class="tag">&lt;/table&gt;</span>
+</pre>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>科目</th><th>前期</th><th>後期</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>HTML</td><td>90</td><td>95</td></tr>
+      <tr><td>CSS</td><td>85</td><td>88</td></tr>
+      <tr><td>JavaScript</td><td>78</td><td>82</td></tr>
+    </tbody>
+    <tfoot>
+      <tr><td>合計</td><td>253</td><td>265</td></tr>
+    </tfoot>
+  </table>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>要素</th><th>個数制限</th><th>配置順序</th><th>終了タグ省略</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>thead</code></td><td>1つまで</td><td>colgroup の後・tbody の前</td><td>✅ 省略可</td></tr>
+      <tr><td><code>tbody</code></td><td>複数可</td><td>thead の後・tfoot の前</td><td>✅ 省略可</td></tr>
+      <tr><td><code>tfoot</code></td><td>1つまで</td><td><strong>tbody・tr の後（最後）</strong></td><td>✅ 省略可</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 4. caption -->
+<h2>④ caption要素</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>caption</code> 要素はテーブルの<strong>タイトル・説明</strong>を表します。<br>
+  ・<code>table</code> 要素の<strong>最初の子要素</strong>として配置します。<br>
+  ・1つの <code>table</code> に <code>caption</code> は<strong>1つだけ</strong>配置できます。<br>
+  ・終了タグは省略できます。
+</div>
+<div class="demo-box">
+<pre>
+<span class="tag">&lt;table&gt;</span>
+  <span class="comment">&lt;!-- captionはtableの最初の子要素 --&gt;</span>
+  <span class="tag">&lt;caption&gt;</span>2025年度 試験結果一覧<span class="tag">&lt;/caption&gt;</span>
+  <span class="tag">&lt;thead&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;th&gt;</span>氏名<span class="tag">&lt;/th&gt;</span>
+      <span class="tag">&lt;th&gt;</span>スコア<span class="tag">&lt;/th&gt;</span>
+      <span class="tag">&lt;th&gt;</span>合否<span class="tag">&lt;/th&gt;</span>
+    <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;/thead&gt;</span>
+  <span class="tag">&lt;tbody&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;td&gt;</span>山田太郎<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>92<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>合格<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;/tbody&gt;</span>
+<span class="tag">&lt;/table&gt;</span>
+</pre>
+
+  <table class="tbl">
+    <caption>2025年度 試験結果一覧</caption>
+    <thead>
+      <tr><th>氏名</th><th>スコア</th><th>合否</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>山田太郎</td><td>92</td><td>合格</td></tr>
+      <tr><td>鈴木花子</td><td>78</td><td>合格</td></tr>
+      <tr><td>田中一郎</td><td>54</td><td>不合格</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 5. colgroup / col -->
+<h2>⑤ colgroup要素 / col要素</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>colgroup</code> 要素は<strong>列のグループ</strong>を定義します。<br>
+  ・<code>col</code> 要素は<strong>個々の列</strong>を表す<strong>空要素</strong>です。<br>
+  ・CSSでの列スタイル適用・<code>span</code> 属性による複数列のグループ化に使います。<br>
+  ・<code>colgroup</code> は <code>caption</code> の後・<code>thead</code> の前に配置します。
+</div>
+<div class="demo-box">
+<pre>
+<span class="tag">&lt;table&gt;</span>
+  <span class="tag">&lt;caption&gt;</span>月別売上表<span class="tag">&lt;/caption&gt;</span>
+
+  <span class="comment">&lt;!-- colgroup：列グループの定義 --&gt;</span>
+  <span class="tag">&lt;colgroup&gt;</span>
+    <span class="tag">&lt;col</span> <span class="attr">style</span>=<span class="value">"background:#fef3c7;"</span><span class="tag">&gt;</span>  <span class="comment">&lt;!-- 1列目 --&gt;</span>
+    <span class="tag">&lt;col</span> <span class="attr">span</span>=<span class="value">"2"</span> <span class="attr">style</span>=<span class="value">"background:#ebf8ff;"</span><span class="tag">&gt;</span>  <span class="comment">&lt;!-- 2〜3列目 --&gt;</span>
+    <span class="tag">&lt;col</span> <span class="attr">style</span>=<span class="value">"background:#c6f6d5;"</span><span class="tag">&gt;</span>  <span class="comment">&lt;!-- 4列目 --&gt;</span>
+  <span class="tag">&lt;/colgroup&gt;</span>
+
+  <span class="tag">&lt;thead&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;th&gt;</span>月<span class="tag">&lt;/th&gt;</span>
+      <span class="tag">&lt;th&gt;</span>商品A<span class="tag">&lt;/th&gt;</span>
+      <span class="tag">&lt;th&gt;</span>商品B<span class="tag">&lt;/th&gt;</span>
+      <span class="tag">&lt;th&gt;</span>合計<span class="tag">&lt;/th&gt;</span>
+    <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;/thead&gt;</span>
+  <span class="tag">&lt;tbody&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;td&gt;</span>1月<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>120<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>80<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>200<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;/tr&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;td&gt;</span>2月<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>150<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>95<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>245<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;/tbody&gt;</span>
+<span class="tag">&lt;/table&gt;</span>
+
+<span class="comment">&lt;!-- span属性：複数列をまとめて指定 --&gt;</span>
+<span class="tag">&lt;colgroup&gt;</span>
+  <span class="tag">&lt;col</span> <span class="attr">span</span>=<span class="value">"3"</span><span class="tag">&gt;</span>  <span class="comment">&lt;!-- 最初の3列をグループ化 --&gt;</span>
+<span class="tag">&lt;/colgroup&gt;</span>
+</pre>
+
+  <table class="tbl">
+    <caption>月別売上表</caption>
+    <colgroup>
+      <col style="background:#fef3c7;">
+      <col span="2" style="background:#ebf8ff;">
+      <col style="background:#c6f6d5;">
+    </colgroup>
+    <thead>
+      <tr><th>月</th><th>商品A</th><th>商品B</th><th>合計</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1月</td><td>120</td><td>80</td><td>200</td></tr>
+      <tr><td>2月</td><td>150</td><td>95</td><td>245</td></tr>
+      <tr><td>3月</td><td>130</td><td>110</td><td>240</td></tr>
+    </tbody>
+    <tfoot>
+      <tr><td>合計</td><td>400</td><td>285</td><td>685</td></tr>
+    </tfoot>
+  </table>
+
+  <div class="warn">
+    <strong>⚠️ col要素は空要素</strong><br>
+    ・<code>col</code> 要素は空要素のため終了タグはありません<br>
+    ・<code>span</code> 属性で複数列をまとめて指定できます（デフォルトは1）<br>
+    ・CSSで適用できるプロパティは限定的です（<code>background</code> / <code>width</code> / <code>border</code> / <code>visibility</code> など）
+  </div>
+</div>
+
+
+<!-- 6. border属性の廃止 -->
+<h2>⑥ border属性の廃止（HTML Living Standard）</h2>
+<div class="note">
+  <strong>ポイント①：HTML Living Standardでは table要素の border属性は削除されている</strong>
+</div>
+<div class="demo-box">
+  <div class="warn">
+    <strong>⚠️ 試験重要ポイント①：border属性の廃止</strong><br><br>
+    HTML4では <code>&lt;table border="1"&gt;</code> のように
+    <code>border</code> 属性でテーブルの枠線を表示していました。<br><br>
+    しかし <strong>HTML Living Standard（現在の標準仕様）では
+    table要素の border属性は削除されています。</strong><br><br>
+    ❌ <code>&lt;table border="1"&gt;</code>　← 現在の仕様では不正<br><br>
+    ✅ テーブルの枠線は <strong>CSS</strong> で指定します：
+  </div>
+
+<pre>
+<span class="comment">&lt;!-- ❌ 非推奨（HTML Living Standardでは削除） --&gt;</span>
+<span class="tag">&lt;table</span> <span class="attr">border</span>=<span class="value">"1"</span><span class="tag">&gt;</span> ... <span class="tag">&lt;/table&gt;</span>
+
+<span class="comment">&lt;!-- ✅ 推奨：CSSで枠線を指定 --&gt;</span>
+<span class="tag">&lt;style&gt;</span>
+  table { border-collapse: collapse; }
+  th, td { border: 1px solid #ccc; padding: 8px; }
+<span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;table&gt;</span> ... <span class="tag">&lt;/table&gt;</span>
+</pre>
+
+  <div class="good">
+    ✅ <strong>HTML属性 vs CSS の使い分け原則</strong><br>
+    ・<strong>構造・意味</strong> → HTML属性で指定<br>
+    ・<strong>見た目・スタイル</strong> → CSSで指定<br>
+    ・<code>border</code> / <code>bgcolor</code> / <code>align</code> / <code>width</code>（テーブル用）
+    などの見た目に関する属性はすべてCSSに移行されています
+  </div>
+</div>
+
+
+<!-- 7. 終了タグの省略まとめ -->
+<h2>⑦ 終了タグの省略まとめ</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- 終了タグを省略した書き方（文法的に正しい） --&gt;</span>
+<span class="tag">&lt;table&gt;</span>
+  <span class="tag">&lt;caption&gt;</span>省略デモ          <span class="comment">&lt;!-- &lt;/caption&gt; 省略可 --&gt;</span>
+  <span class="tag">&lt;colgroup&gt;</span>
+    <span class="tag">&lt;col&gt;</span>                    <span class="comment">&lt;!-- col は空要素 --&gt;</span>
+    <span class="tag">&lt;col&gt;</span>
+                             <span class="comment">&lt;!-- &lt;/colgroup&gt; 省略可 --&gt;</span>
+  <span class="tag">&lt;thead&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;th&gt;</span>列1            <span class="comment">&lt;!-- &lt;/th&gt; 省略可 --&gt;</span>
+      <span class="tag">&lt;th&gt;</span>列2            <span class="comment">&lt;!-- &lt;/th&gt; 省略可 --&gt;</span>
+                           <span class="comment">&lt;!-- &lt;/tr&gt; 省略可 --&gt;</span>
+                           <span class="comment">&lt;!-- &lt;/thead&gt; 省略可 --&gt;</span>
+  <span class="tag">&lt;tbody&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;td&gt;</span>データ1        <span class="comment">&lt;!-- &lt;/td&gt; 省略可 --&gt;</span>
+      <span class="tag">&lt;td&gt;</span>データ2        <span class="comment">&lt;!-- &lt;/td&gt; 省略可 --&gt;</span>
+                           <span class="comment">&lt;!-- &lt;/tr&gt; 省略可 --&gt;</span>
+                           <span class="comment">&lt;!-- &lt;/tbody&gt; 省略可 --&gt;</span>
+  <span class="tag">&lt;tfoot&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;td&gt;</span>フッター1      <span class="comment">&lt;!-- &lt;/td&gt; 省略可 --&gt;</span>
+      <span class="tag">&lt;td&gt;</span>フッター2      <span class="comment">&lt;!-- &lt;/td&gt; 省略可 --&gt;</span>
+                           <span class="comment">&lt;!-- &lt;/tr&gt; 省略可 --&gt;</span>
+                           <span class="comment">&lt;!-- &lt;/tfoot&gt; 省略可 --&gt;</span>
+<span class="tag">&lt;/table&gt;</span>               <span class="comment">&lt;!-- &lt;/table&gt; は省略不可 --&gt;</span>
+</pre>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>要素</th><th>終了タグ省略</th><th>備考</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>table</code></td><td>❌ 省略不可</td><td>必須</td></tr>
+      <tr><td><code>caption</code></td><td>✅ 省略可</td><td>—</td></tr>
+      <tr><td><code>colgroup</code></td><td>✅ 省略可</td><td>—</td></tr>
+      <tr><td><code>col</code></td><td>— 空要素</td><td>終了タグなし</td></tr>
+      <tr><td><code>thead</code></td><td>✅ 省略可</td><td>—</td></tr>
+      <tr><td><code>tbody</code></td><td>✅ 省略可</td><td>省略時はブラウザが自動補完</td></tr>
+      <tr><td><code>tfoot</code></td><td>✅ 省略可</td><td>tbody・trの後・1つのみ</td></tr>
+      <tr><td><code>tr</code></td><td>✅ 省略可</td><td>—</td></tr>
+      <tr><td><code>th</code></td><td>✅ 省略可</td><td>—</td></tr>
+      <tr><td><code>td</code></td><td>✅ 省略可</td><td>—</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 演習問題 -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      HTML Living Standardでは、<code>&lt;table border="1"&gt;</code> のように
+      table要素の <code>border</code> 属性を使ってテーブルの枠線を表示することが推奨されている。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn btn-blue" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.textContent =
+            '✅ 正解！HTML Living Standardではtable要素のborder属性は削除されています。' +
+            'テーブルの枠線はCSSのborderプロパティで指定するのが現在の正しい方法です。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。HTML Living Standardではtable要素のborder属性は削除されています。' +
+            'テーブルの見た目はCSSで指定します。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合う要素名または属性名を入力してください。</p>
+
+    <label>① テーブルのタイトルを表す要素名（table要素の最初の子要素）：</label>
+    <input type="text" id="q2a" placeholder="要素名">
+
+    <label>② テーブルのフッター行グループを表す要素名（tbody・trの後に1つだけ）：</label>
+    <input type="text" id="q2b" placeholder="要素名">
+
+    <label>③ 列を定義する空要素名：</label>
+    <input type="text" id="q2c" placeholder="要素名">
+
+    <label>④ セルを列方向に結合する属性名：</label>
+    <input type="text" id="q2d" placeholder="属性名">
+
+    <label>⑤ セルを行方向に結合する属性名：</label>
+    <input type="text" id="q2e" placeholder="属性名">
+
+    <label>⑥ th要素で見出しが行・列どちらに対応するかを示す属性名：</label>
+    <input type="text" id="q2f" placeholder="属性名">
+
+    <br>
+    <button class="btn btn-blue" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const b = document.getElementById('q2b').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const c = document.getElementById('q2c').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const d = document.getElementById('q2d').value.trim().toLowerCase();
+        const e = document.getElementById('q2e').value.trim().toLowerCase();
+        const f = document.getElementById('q2f').value.trim().toLowerCase();
+        const r = document.getElementById('q2-result');
+        const ca = a === 'caption';
+        const cb = b === 'tfoot';
+        const cc = c === 'col';
+        const cd = d === 'colspan';
+        const ce = e === 'rowspan';
+        const cf = f === 'scope';
+        const count = [ca, cb, cc, cd, ce, cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！テーブル要素を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `① ${ca ? '✅' : '❌ caption'}　` +
+            `② ${cb ? '✅' : '❌ tfoot'}　` +
+            `③ ${cc ? '✅' : '❌ col'}　` +
+            `④ ${cd ? '✅' : '❌ colspan'}　` +
+            `⑤ ${ce ? '✅' : '❌ rowspan'}　` +
+            `⑥ ${cf ? '✅' : '❌ scope'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>
+      <code>tfoot</code> 要素の配置に関して、
+      HTML Living Standardとして正しい説明はどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">tfoot要素はtbody要素よりも前に配置しなければならない</option>
+      <option value="b">tfoot要素はtbody要素・tr要素よりも後に配置し、1つしか配置できない</option>
+      <option value="c">tfoot要素は複数配置でき、どこに置いても構わない</option>
+      <option value="d">tfoot要素はthead要素の直後に配置しなければならない</option>
+    </select>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'HTML Living Standardでは、tfoot要素はtbody要素・tr要素よりも<strong>後</strong>に配置し、' +
+            '<strong>1つだけ</strong>配置できます。<br>' +
+            'HTML4では tfoot を tbody より前に書く仕様でしたが、現在は変更されています。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。HTML Living Standardではtfoot要素はtbody・trの後に1つだけ配置します。' +
+            'HTML4の「tfootをtbodyより前に書く」仕様とは異なる点に注意してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4a">
+      ① <code>tr</code> / <code>th</code> / <code>td</code> 要素はすべて終了タグを省略できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4b">
+      ② <code>table</code> 要素の終了タグは省略できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4c">
+      ③ <code>col</code> 要素は空要素であり終了タグはない
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4d">
+      ④ <code>tbody</code> 要素を省略した場合、ブラウザが自動的に補完する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4e">
+      ⑤ <code>caption</code> 要素は <code>table</code> 要素内に複数配置できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4f">
+      ⑥ <code>colgroup</code> 要素は <code>caption</code> の後・<code>thead</code> の前に配置する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4g">
+      ⑦ <code>col</code> 要素の <code>span</code> 属性で複数列をまとめて指定できる
+    </label>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const r = document.getElementById('q4-result');
+        const checks = {
+          a: document.getElementById('q4a').checked,
+          b: document.getElementById('q4b').checked,
+          c: document.getElementById('q4c').checked,
+          d: document.getElementById('q4d').checked,
+          e: document.getElementById('q4e').checked,
+          f: document.getElementById('q4f').checked,
+          g: document.getElementById('q4g').checked,
+        };
+        // 正解：①③④⑥⑦（a, c, d, f, g）
+        // ②tableの終了タグは省略不可
+        // ⑤captionは1つのみ
+        const correct = { a:true, b:false, c:true, d:true, e:false, f:true, g:true };
+        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
+        const allCorrect = results.every(Boolean);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① tr / th / td は終了タグ省略可 ✅<br>' +
+            '・③ col は空要素 ✅<br>' +
+            '・④ tbody省略時はブラウザが自動補完 ✅<br>' +
+            '・⑥ colgroupはcaptionの後・theadの前 ✅<br>' +
+            '・⑦ colのspan属性で複数列指定可 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① tr / th / td は終了タグ省略可<br>' +
+            '・③ col は空要素（終了タグなし）<br>' +
+            '・④ tbody省略時はブラウザが自動補完<br>' +
+            '・⑥ colgroupはcaptionの後・theadの前に配置<br>' +
+            '・⑦ colのspan属性で複数列をまとめて指定可<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② table要素の終了タグは省略できない（必須）<br>' +
+            '・⑤ caption要素はtable内に1つだけ（複数不可）';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. コード穴埋め問題</h3>
+    <p>以下のコードの <code>__A__</code> 〜 <code>__F__</code> に
+    適切な要素名または属性名を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+&lt;table&gt;
+  &lt;__A__&gt;2025年度 成績表&lt;/__A__&gt;  &lt;!-- テーブルのタイトル --&gt;
+
+  &lt;colgroup&gt;
+    &lt;__B__ __C__="2"&gt;              &lt;!-- 最初の2列をまとめる空要素 --&gt;
+    &lt;__B__&gt;                        &lt;!-- 3列目 --&gt;
+  &lt;/colgroup&gt;
+
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th __D__="col"&gt;氏名&lt;/th&gt;   &lt;!-- 列見出し --&gt;
+      &lt;th __D__="col"&gt;点数&lt;/th&gt;
+      &lt;th __D__="col"&gt;合否&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;山田太郎&lt;/td&gt;
+      &lt;td __E__="2"&gt;合格&lt;/td&gt;    &lt;!-- 2列分を結合 --&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+
+  &lt;__F__&gt;                          &lt;!-- フッター（tbodyの後） --&gt;
+    &lt;tr&gt;&lt;td colspan="3"&gt;以上&lt;/td&gt;&lt;/tr&gt;
+  &lt;/__F__&gt;
+&lt;/table&gt;</pre>
+
+    <label>A（テーブルのタイトル要素）：</label>
+    <input type="text" id="q5a" placeholder="要素名">
+    <label>B（列を定義する空要素）：</label>
+    <input type="text" id="q5b" placeholder="要素名">
+    <label>C（複数列をまとめるcol要素の属性）：</label>
+    <input type="text" id="q5c" placeholder="属性名">
+    <label>D（見出しが列に対応することを示すth要素の属性）：</label>
+    <input type="text" id="q5d" placeholder="属性名">
+    <label>E（列方向にセルを結合する属性）：</label>
+    <input type="text" id="q5e" placeholder="属性名">
+    <label>F（テーブルのフッター行グループ要素）：</label>
+    <input type="text" id="q5f" placeholder="要素名">
+    <br>
+    <button class="btn btn-blue" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const a = document.getElementById('q5a').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const b = document.getElementById('q5b').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const c = document.getElementById('q5c').value.trim().toLowerCase();
+        const d = document.getElementById('q5d').value.trim().toLowerCase();
+        const e = document.getElementById('q5e').value.trim().toLowerCase();
+        const f = document.getElementById('q5f').value.trim().toLowerCase().replace(/[<>]/g,'');
+        const r = document.getElementById('q5-result');
+        const ca = a === 'caption';
+        const cb = b === 'col';
+        const cc = c === 'span';
+        const cd = d === 'scope';
+        const ce = e === 'colspan';
+        const cf = f === 'tfoot';
+        const count = [ca, cb, cc, cd, ce, cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！テーブル要素の構造を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca ? '✅' : '❌ caption'}　` +
+            `B: ${cb ? '✅' : '❌ col'}　` +
+            `C: ${cc ? '✅' : '❌ span'}　` +
+            `D: ${cd ? '✅' : '❌ scope'}　` +
+            `E: ${ce ? '✅' : '❌ colspan'}　` +
+            `F: ${cf ? '✅' : '❌ tfoot'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. 記述問題</h3>
+    <p>
+      HTML Living Standardにおける <code>tfoot</code> 要素の配置ルールと、
+      <code>border</code> 属性が廃止された理由（セマンティクスの観点から）を説明してください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q6" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn btn-blue" onclick="checkQ6()">模範解答を見る</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const r = document.getElementById('q6-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<strong>tfoot要素の配置ルール：</strong><br>' +
+          '・HTML Living Standardでは、tfoot要素はtbody要素・tr要素よりも<strong>後</strong>に配置します<br>' +
+          '・1つのtable要素内にtfootは<strong>1つだけ</strong>配置できます<br>' +
+          '・HTML4では「tfootをtbodyより前に書く」仕様でしたが、現在は変更されています<br><br>' +
+          '<strong>border属性廃止の理由（セマンティクスの観点）：</strong><br>' +
+          '・HTMLは文書の<strong>構造・意味</strong>を定義するものであり、<br>' +
+          '　見た目（スタイル）はCSSで分離して管理するのが原則です<br>' +
+          '・border属性は「枠線を表示する」という<strong>見た目の指定</strong>であり、<br>' +
+          '　HTMLの役割（意味・構造の定義）から外れています<br>' +
+          '・テーブルの枠線はCSSの border / border-collapse プロパティで指定します<br>' +
+          '・同様に bgcolor / align / width などの見た目属性もCSSに移行されています';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 テーブル要素 まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>要素</th><th>役割</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>table</code></td>
+      <td>テーブル全体</td>
+      <td>終了タグ省略不可。border属性はHTML Living Standardで削除済み</td>
+    </tr>
+    <tr>
+      <td><code>tr</code></td>
+      <td>行</td>
+      <td>終了タグ省略可。thead / tbody / tfoot 内に配置</td>
+    </tr>
+    <tr>
+      <td><code>th</code></td>
+      <td>見出しセル</td>
+      <td>終了タグ省略可。scope属性でcol / row / colgroup / rowgroupを指定</td>
+    </tr>
+    <tr>
+      <td><code>td</code></td>
+      <td>データセル</td>
+      <td>終了タグ省略可。colspan / rowspan属性でセル結合</td>
+    </tr>
+    <tr>
+      <td><code>thead</code></td>
+      <td>ヘッダー行グループ</td>
+      <td>終了タグ省略可。1つまで。colgroup の後・tbody の前</td>
+    </tr>
+    <tr>
+      <td><code>tbody</code></td>
+      <td>ボディ行グループ</td>
+      <td>終了タグ省略可。複数配置可。省略時はブラウザが自動補完</td>
+    </tr>
+    <tr>
+      <td><code>tfoot</code></td>
+      <td>フッター行グループ</td>
+      <td>終了タグ省略可。<strong>1つまで・tbody / tr の後（最後）</strong>に配置</td>
+    </tr>
+    <tr>
+      <td><code>caption</code></td>
+      <td>テーブルのタイトル</td>
+      <td>終了タグ省略可。table内に1つだけ。table要素の最初の子要素</td>
+    </tr>
+    <tr>
+      <td><code>colgroup</code></td>
+      <td>列のグループ化</td>
+      <td>終了タグ省略可。caption の後・thead の前に配置</td>
+    </tr>
+    <tr>
+      <td><code>col</code></td>
+      <td>個々の列の定義（空要素）</td>
+      <td>終了タグなし（空要素）。span属性で複数列をまとめて指定可</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
