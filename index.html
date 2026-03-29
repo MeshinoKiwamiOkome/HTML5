@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>HTML5 Pro 学習ノート | MeshinoKiwamiOkome</title>
+  <title>HTML5 / CSS 学習ノート | MeshinoKiwamiOkome</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
 
@@ -76,6 +76,11 @@
       margin: 40px 0 20px;
       letter-spacing: 0.04em;
     }
+    /* CSS編セクション見出し（紫系） */
+    .section-title.css {
+      color: #553c9a;
+      border-left-color: #9f7aea;
+    }
 
     /* ===== カードグリッド ===== */
     .card-grid {
@@ -84,7 +89,7 @@
       gap: 22px;
     }
 
-    /* ===== カード（公開済み） ===== */
+    /* ===== カード（公開済み・HTML編） ===== */
     .card {
       background: #fff;
       border: 1px solid #bee3f8;
@@ -102,6 +107,24 @@
       transform: translateY(-4px);
       box-shadow: 0 8px 24px rgba(66,153,225,0.18);
     }
+
+    /* ===== カード（公開済み・CSS編） ===== */
+    .card.css-card {
+      border-color: #e9d8fd;
+    }
+    .card.css-card:hover {
+      box-shadow: 0 8px 24px rgba(159,122,234,0.18);
+    }
+    .card.css-card .card-title { color: #553c9a; }
+    .card.css-card .tag {
+      background: #faf5ff;
+      color: #553c9a;
+      border-color: #e9d8fd;
+    }
+    .card.css-card .card-footer {
+      border-top-color: #faf5ff;
+    }
+
     .card-icon { font-size: 2em; line-height: 1; }
     .card-title {
       font-size: 1.08em;
@@ -178,18 +201,27 @@
       font-size: 1em;
       color: #2b6cb0;
     }
+    /* HTML編進捗 */
     .progress-bar-wrap {
       background: #ebf8ff;
       border-radius: 99px;
       height: 14px;
       overflow: hidden;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .progress-bar {
       height: 100%;
       border-radius: 99px;
       background: linear-gradient(90deg, #4299e1, #48bb78);
       transition: width 1s ease;
+    }
+    /* CSS編進捗 */
+    .progress-bar-wrap.css {
+      background: #faf5ff;
+      margin-top: 12px;
+    }
+    .progress-bar.css {
+      background: linear-gradient(90deg, #9f7aea, #ed64a6);
     }
     .progress-label {
       font-size: 0.85em;
@@ -330,11 +362,25 @@
   <!-- 進捗バー -->
   <div class="progress-section">
     <h2>📊 学習進捗（公開済みページ数）</h2>
+
+    <!-- HTML編 -->
+    <div style="font-size:0.85em; color:#2b6cb0; font-weight:bold; margin-bottom:4px;">
+      🟦 HTML編
+    </div>
     <div class="progress-bar-wrap">
-      <!-- HTML編 10/10 完了・CSS編 順次追加中 -->
       <div class="progress-bar" style="width: 100%;"></div>
     </div>
-    <div class="progress-label">HTML編 10 / 10 ページ完了 🎉 ― CSS編 順次追加中</div>
+    <div class="progress-label">HTML編 10 / 10 ページ完了 🎉</div>
+
+    <!-- CSS編 -->
+    <div style="font-size:0.85em; color:#553c9a; font-weight:bold; margin: 14px 0 4px;">
+      🟪 CSS編
+    </div>
+    <div class="progress-bar-wrap css">
+      <!-- CSS編 1/5ページ = 20% -->
+      <div class="progress-bar css" style="width: 20%;"></div>
+    </div>
+    <div class="progress-label">CSS編 1 / 5 ページ公開済み（順次追加中）</div>
   </div>
 
   <!-- HTML編 公開済みページ -->
@@ -514,7 +560,7 @@
       <div class="card-footer">📁 form_elements.html</div>
     </a>
 
-    <!-- table_elements.html（新規追加） -->
+    <!-- table_elements.html -->
     <a class="card" href="table_elements.html">
       <div class="card-icon">📊</div>
       <div class="card-title">テーブル要素</div>
@@ -536,14 +582,40 @@
 
   </div><!-- /card-grid -->
 
+  <!-- CSS編 公開済みページ -->
+  <div class="section-title css">✅ CSS編 ― 公開済み</div>
+  <div class="card-grid">
+
+    <!-- css_basics.html（新規追加） -->
+    <a class="card css-card" href="css_basics.html">
+      <div class="card-icon">🎨</div>
+      <div class="card-title">CSS基礎知識</div>
+      <div class="card-desc">
+        CSSの基本書式・各部の名称・HTMLへの組み込み方（link / style / style属性 / @import）・
+        ボックスモデル・長さの単位を学びます。
+        type属性省略・media属性のメディアクエリ指定など試験頻出ポイントを網羅。
+      </div>
+      <div class="card-tags">
+        <span class="tag">ルールセット</span>
+        <span class="tag">@import</span>
+        <span class="tag">box-sizing</span>
+        <span class="tag">rem</span>
+        <span class="tag">vw</span>
+        <span class="tag">em</span>
+      </div>
+      <div class="card-footer">📁 css_basics.html</div>
+    </a>
+
+  </div><!-- /card-grid -->
+
   <!-- CSS編 準備中 -->
-  <div class="section-title">🚧 CSS編 ― 順次追加予定</div>
+  <div class="section-title css">🚧 CSS編 ― 順次追加予定</div>
   <div class="card-grid">
 
     <div class="card-coming">
-      <div class="card-icon">🎨</div>
+      <div class="card-icon">🎯</div>
       <div class="card-title">CSSセレクタ</div>
-      <div class="card-desc">要素・クラス・ID・属性・擬似クラス・擬似要素セレクタなど</div>
+      <div class="card-desc">要素・クラス・ID・属性・擬似クラス・擬似要素セレクタ・詳細度など</div>
       <div class="card-tags">
         <span class="tag">:hover</span>
         <span class="tag">::before</span>
@@ -553,13 +625,13 @@
     </div>
 
     <div class="card-coming">
-      <div class="card-icon">📦</div>
-      <div class="card-title">ボックスモデル</div>
-      <div class="card-desc">margin・padding・border・width・height・box-sizing など</div>
+      <div class="card-icon">🔤</div>
+      <div class="card-title">テキスト・フォント</div>
+      <div class="card-desc">font-family・font-size・font-weight・line-height・text-align など</div>
       <div class="card-tags">
-        <span class="tag">margin</span>
-        <span class="tag">padding</span>
-        <span class="tag">box-sizing</span>
+        <span class="tag">font-family</span>
+        <span class="tag">line-height</span>
+        <span class="tag">@font-face</span>
       </div>
       <span class="coming-badge">🚧 準備中</span>
     </div>
