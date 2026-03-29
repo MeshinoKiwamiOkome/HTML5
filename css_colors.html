@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>CSS 色 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #9f7aea; padding-bottom: 10px; }
+    h2 { color: #553c9a; margin-top: 48px; border-left: 5px solid #9f7aea; padding-left: 12px; }
+    h3 { color: #276749; margin-top: 24px; }
+
+    code {
+      background: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment  { color: #68d391; }
+    pre .prop     { color: #90cdf4; }
+    pre .val      { color: #fc8181; }
+    pre .keyword  { color: #b794f4; }
+    pre .hex      { color: #f6ad55; }
+    pre .func     { color: #fbd38d; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #b794f4;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #553c9a; }
+
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+
+    .demo-box {
+      background: #fff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* カラースウォッチ */
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+      margin: 14px 0;
+    }
+    .swatch {
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+      font-size: 0.82em;
+    }
+    .swatch-color {
+      height: 52px;
+      width: 100%;
+    }
+    .swatch-info {
+      background: #fff;
+      padding: 6px 10px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #2d3748;
+      border-top: 1px solid #edf2f7;
+      line-height: 1.5;
+    }
+    .swatch-name {
+      font-weight: bold;
+      color: #553c9a;
+      font-size: 0.95em;
+    }
+
+    /* 16進数説明図 */
+    .hex-diagram {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 14px 0;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .hex-part {
+      border-radius: 6px;
+      padding: 8px 12px;
+      text-align: center;
+      font-size: 0.9em;
+      font-weight: bold;
+    }
+    .hex-hash  { background: #edf2f7; color: #4a5568; padding: 8px 6px; }
+    .hex-r     { background: #fed7d7; color: #9b2335; }
+    .hex-g     { background: #c6f6d5; color: #276749; }
+    .hex-b     { background: #bee3f8; color: #2b6cb0; }
+    .hex-a     { background: #fefcbf; color: #744210; }
+    .hex-label { font-size: 0.72em; font-weight: normal; display: block; margin-top: 2px; }
+
+    /* HSL説明図 */
+    .hsl-diagram {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 14px 0;
+    }
+    .hsl-part {
+      flex: 1;
+      min-width: 160px;
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+    }
+    .hsl-part .hsl-letter {
+      font-size: 2em;
+      font-weight: bold;
+      color: #9f7aea;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .hsl-part .hsl-name { font-weight: bold; color: #553c9a; margin: 4px 0; }
+    .hsl-part .hsl-desc { font-size: 0.85em; color: #4a5568; }
+    .hsl-part .hsl-range {
+      font-size: 0.82em;
+      color: #718096;
+      font-family: 'Consolas', 'Monaco', monospace;
+      margin-top: 6px;
+    }
+
+    /* 色相環 */
+    .hue-wheel {
+      width: 100%;
+      max-width: 400px;
+      height: 24px;
+      border-radius: 12px;
+      background: linear-gradient(to right,
+        hsl(0,100%,50%), hsl(30,100%,50%), hsl(60,100%,50%),
+        hsl(90,100%,50%), hsl(120,100%,50%), hsl(150,100%,50%),
+        hsl(180,100%,50%), hsl(210,100%,50%), hsl(240,100%,50%),
+        hsl(270,100%,50%), hsl(300,100%,50%), hsl(330,100%,50%),
+        hsl(360,100%,50%));
+      margin: 8px 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    }
+
+    /* インタラクティブデモ */
+    .interactive-demo {
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+    .color-preview {
+      width: 100%;
+      height: 80px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border: 1px solid #e9d8fd;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .slider-row label {
+      font-size: 0.85em;
+      font-weight: bold;
+      min-width: 80px;
+      color: #553c9a;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .slider-row input[type="range"] {
+      flex: 1;
+      min-width: 120px;
+      accent-color: #9f7aea;
+    }
+    .slider-row .val-display {
+      min-width: 50px;
+      text-align: right;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.85em;
+      color: #2d3748;
+    }
+    .color-code-display {
+      background: #1a202c;
+      color: #68d391;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.88em;
+      margin-top: 8px;
+    }
+
+    /* opacity デモ */
+    .opacity-demo-wrap {
+      position: relative;
+      margin: 14px 0;
+    }
+    .opacity-bg {
+      background: repeating-linear-gradient(
+        45deg,
+        #e2e8f0 0px, #e2e8f0 10px,
+        #fff 10px, #fff 20px
+      );
+      border-radius: 8px;
+      padding: 20px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .opacity-box {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.82em;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+    }
+
+    table.ref-table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      margin: 14px 0;
+    }
+    table.ref-table th, table.ref-table td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.ref-table thead tr { background: #553c9a; color: #fff; }
+    table.ref-table tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 { margin-top: 0; color: #c05621; border-left-color: #f6ad55; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #fbd38d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #fbd38d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-purple { background: #9f7aea; color: #fff; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #e9d8fd; color: #553c9a; display: block; }
+
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.summary thead tr { background: #553c9a; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px 14px; }
+      .swatch-grid { grid-template-columns: repeat(2, 1fr); }
+      .hsl-diagram { flex-direction: column; gap: 8px; }
+      .hsl-part { min-width: unset; }
+      .opacity-box { width: 60px; height: 60px; font-size: 0.75em; }
+      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.82em; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px 16px; }
+      .quiz-block { padding: 14px 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>🎨 CSS 色 学習サンプル</h1>
+<p>16進数・キーワード・rgb()・hsl()・opacity など、CSSの色指定の方法を学びましょう。</p>
+
+
+<!-- 1. 16進数 -->
+<h2>① 色を示す値：16進数</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  16進数（HEX）は <code>#RRGGBB</code> の形式で赤・緑・青の各成分を
+  00〜FF（0〜255）で指定します。
+</div>
+<div class="demo-box">
+
+  <h3>16進数の構造</h3>
+  <div class="hex-diagram">
+    <div class="hex-part hex-hash">#</div>
+    <div class="hex-part hex-r">RR<span class="hex-label">赤（Red）</span></div>
+    <div class="hex-part hex-g">GG<span class="hex-label">緑（Green）</span></div>
+    <div class="hex-part hex-b">BB<span class="hex-label">青（Blue）</span></div>
+    <div style="color:#a0aec0; font-size:1.2em; padding:0 4px;">→ 例：</div>
+    <div class="hex-part" style="background:#4299e1; color:#fff;">
+      #4299e1<span class="hex-label">青色</span>
+    </div>
+  </div>
+
+  <div class="hex-diagram" style="margin-top:8px;">
+    <div class="hex-part hex-hash">#</div>
+    <div class="hex-part hex-r">RR<span class="hex-label">赤</span></div>
+    <div class="hex-part hex-g">GG<span class="hex-label">緑</span></div>
+    <div class="hex-part hex-b">BB<span class="hex-label">青</span></div>
+    <div class="hex-part hex-a">AA<span class="hex-label">透明度</span></div>
+    <div style="color:#a0aec0; font-size:1.2em; padding:0 4px;">→ 例：</div>
+    <div class="hex-part" style="background:rgba(66,153,225,0.5); color:#fff; border:1px solid #bee3f8;">
+      #4299e180<span class="hex-label">半透明青</span>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* 6桁の16進数（#RRGGBB） */</span>
+<span class="prop">color</span>: <span class="hex">#ff0000</span>;   <span class="comment">/* 赤 */</span>
+<span class="prop">color</span>: <span class="hex">#00ff00</span>;   <span class="comment">/* 緑 */</span>
+<span class="prop">color</span>: <span class="hex">#0000ff</span>;   <span class="comment">/* 青 */</span>
+<span class="prop">color</span>: <span class="hex">#ffffff</span>;   <span class="comment">/* 白 */</span>
+<span class="prop">color</span>: <span class="hex">#000000</span>;   <span class="comment">/* 黒 */</span>
+<span class="prop">color</span>: <span class="hex">#4299e1</span>;   <span class="comment">/* 青系 */</span>
+
+<span class="comment">/* 3桁の省略形（#RGB）：各桁を2つ並べたものと同じ */</span>
+<span class="prop">color</span>: <span class="hex">#f00</span>;      <span class="comment">/* = #ff0000（赤） */</span>
+<span class="prop">color</span>: <span class="hex">#0f0</span>;      <span class="comment">/* = #00ff00（緑） */</span>
+<span class="prop">color</span>: <span class="hex">#fff</span>;      <span class="comment">/* = #ffffff（白） */</span>
+<span class="prop">color</span>: <span class="hex">#000</span>;      <span class="comment">/* = #000000（黒） */</span>
+
+<span class="comment">/* 8桁（#RRGGBBAA）：CSS4で追加・アルファ値付き */</span>
+<span class="prop">color</span>: <span class="hex">#ff000080</span>; <span class="comment">/* 半透明の赤（80 = 128/255 ≈ 50%） */</span>
+<span class="prop">color</span>: <span class="hex">#4299e1cc</span>; <span class="comment">/* 80%不透明の青 */</span>
+
+<span class="comment">/* 4桁（#RGBA）：3桁の省略形にアルファ値を追加 */</span>
+<span class="prop">color</span>: <span class="hex">#f008</span>;     <span class="comment">/* = #ff000088（半透明の赤） */</span>
+</pre>
+
+  <div class="swatch-grid">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#ff0000;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">#ff0000</div>
+        <div>= #f00（省略形）</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#00ff00;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">#00ff00</div>
+        <div>= #0f0（省略形）</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#0000ff;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">#0000ff</div>
+        <div>= #00f（省略形）</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#9f7aea;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">#9f7aea</div>
+        <div>紫系</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#ffffff; border-bottom:1px solid #edf2f7;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">#ffffff</div>
+        <div>= #fff（白）</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#000000;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">#000000</div>
+        <div>= #000（黒）</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ 3桁省略形のルール</strong><br>
+    3桁に省略できるのは、各桁が同じ文字の繰り返しの場合のみです。<br>
+    ✅ <code>#aabbcc</code> → <code>#abc</code>（省略可）<br>
+    ❌ <code>#a1b2c3</code> → 省略不可（各桁が異なる）
+  </div>
+</div>
+
+
+<!-- 2. キーワード -->
+<h2>② 色を示す値：キーワード</h2>
+<div class="note">
+  <strong>ポイント①：CSS3からはtransparentがすべての箇所で使用可能</strong><br>
+  CSS3以降では、色の値が指定可能なすべての箇所で
+  <code>transparent</code>（完全透明）が使用できます。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* 基本的なカラーキーワード */</span>
+<span class="prop">color</span>: <span class="keyword">red</span>;
+<span class="prop">color</span>: <span class="keyword">green</span>;
+<span class="prop">color</span>: <span class="keyword">blue</span>;
+<span class="prop">color</span>: <span class="keyword">white</span>;
+<span class="prop">color</span>: <span class="keyword">black</span>;
+<span class="prop">color</span>: <span class="keyword">gray</span>;
+<span class="prop">color</span>: <span class="keyword">orange</span>;
+<span class="prop">color</span>: <span class="keyword">purple</span>;
+
+<span class="comment">/* 特殊なキーワード */</span>
+<span class="prop">color</span>:            <span class="keyword">transparent</span>; <span class="comment">/* 完全透明（CSS3以降すべての箇所で使用可） */</span>
+<span class="prop">background-color</span>: <span class="keyword">transparent</span>; <span class="comment">/* 背景を透明に */</span>
+<span class="prop">border-color</span>:     <span class="keyword">transparent</span>; <span class="comment">/* 枠線を透明に */</span>
+<span class="prop">color</span>:            <span class="keyword">currentColor</span>; <span class="comment">/* 現在のcolorプロパティの値を継承 */</span>
+<span class="prop">color</span>:            <span class="keyword">inherit</span>;      <span class="comment">/* 親要素の値を継承 */</span>
+</pre>
+
+  <div class="swatch-grid">
+    <div class="swatch">
+      <div class="swatch-color" style="background:red;"></div>
+      <div class="swatch-info"><div class="swatch-name">red</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:green;"></div>
+      <div class="swatch-info"><div class="swatch-name">green</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:blue;"></div>
+      <div class="swatch-info"><div class="swatch-name">blue</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:orange;"></div>
+      <div class="swatch-info"><div class="swatch-name">orange</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:purple;"></div>
+      <div class="swatch-info"><div class="swatch-name">purple</div></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color"
+        style="background: repeating-linear-gradient(45deg,#e2e8f0 0,#e2e8f0 5px,#fff 5px,#fff 10px);">
+      </div>
+      <div class="swatch-info"><div class="swatch-name">transparent</div><div>完全透明</div></div>
+    </div>
+  </div>
+
+  <div class="good">
+    ✅ <strong>transparentの主な用途</strong><br>
+    ・ボタンの背景を透明にする：<code>background-color: transparent;</code><br>
+    ・グラデーションの透明端：<code>linear-gradient(transparent, black)</code><br>
+    ・三角形の作成（borderで透明を使う）：<code>border-color: transparent transparent red transparent;</code><br>
+    ・ホバー時の色変化アニメーション（transitionと組み合わせ）
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ CSS2までのtransparent</strong><br>
+    CSS2では <code>transparent</code> は <code>background-color</code> にのみ使用可能でした。<br>
+    CSS3以降では<strong>色の値が指定可能なすべての箇所</strong>（color・border-color・
+    outline-color・text-shadow など）で使用できます。
+  </div>
+</div>
+
+
+<!-- 3. rgb() / rgba() -->
+<h2>③ 色を示す値：rgb() / rgba()</h2>
+<div class="note">
+  <strong>ポイント②：不透明度は0.0〜1.0の単位をつけない数値で指定する</strong><br>
+  <code>rgba()</code> の第4引数（アルファ値）は <code>0.0</code>（完全透明）〜
+  <code>1.0</code>（完全不透明）の<strong>単位なし</strong>の数値で指定します。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* rgb()：赤・緑・青を0〜255の整数で指定 */</span>
+<span class="prop">color</span>: <span class="func">rgb</span>(<span class="val">255, 0, 0</span>);       <span class="comment">/* 赤 */</span>
+<span class="prop">color</span>: <span class="func">rgb</span>(<span class="val">0, 128, 0</span>);       <span class="comment">/* 緑 */</span>
+<span class="prop">color</span>: <span class="func">rgb</span>(<span class="val">66, 153, 225</span>);    <span class="comment">/* 青系 */</span>
+<span class="prop">color</span>: <span class="func">rgb</span>(<span class="val">255, 255, 255</span>);   <span class="comment">/* 白 */</span>
+<span class="prop">color</span>: <span class="func">rgb</span>(<span class="val">0, 0, 0</span>);         <span class="comment">/* 黒 */</span>
+
+<span class="comment">/* パーセントでも指定可能 */</span>
+<span class="prop">color</span>: <span class="func">rgb</span>(<span class="val">100%, 0%, 0%</span>);    <span class="comment">/* 赤 */</span>
+
+<span class="comment">/* rgba()：アルファ値（不透明度）を追加 */</span>
+<span class="comment">/* アルファ値は 0.0（完全透明）〜 1.0（完全不透明）の単位なし数値 */</span>
+<span class="prop">color</span>: <span class="func">rgba</span>(<span class="val">255, 0, 0, 1.0</span>);   <span class="comment">/* 完全不透明の赤 */</span>
+<span class="prop">color</span>: <span class="func">rgba</span>(<span class="val">255, 0, 0, 0.5</span>);   <span class="comment">/* 50%透明の赤 */</span>
+<span class="prop">color</span>: <span class="func">rgba</span>(<span class="val">255, 0, 0, 0.0</span>);   <span class="comment">/* 完全透明 */</span>
+<span class="prop">color</span>: <span class="func">rgba</span>(<span class="val">66, 153, 225, 0.8</span>); <span class="comment">/* 80%不透明の青 */</span>
+
+<span class="comment">/* CSS4：スペース区切り・/ でアルファ値 */</span>
+<span class="prop">color</span>: <span class="func">rgb</span>(<span class="val">255 0 0</span>);           <span class="comment">/* カンマなしも可（CSS4） */</span>
+<span class="prop">color</span>: <span class="func">rgb</span>(<span class="val">255 0 0 / 0.5</span>);     <span class="comment">/* / でアルファ値（CSS4） */</span>
+</pre>
+
+  <h3>アルファ値のライブデモ</h3>
+  <div class="interactive-demo">
+    <p style="margin:0 0 10px; font-size:0.88em; color:#553c9a; font-weight:bold;">
+      スライダーを動かしてrgba()の値を確認しましょう
+    </p>
+    <div class="color-preview" id="rgb-preview"
+         style="background: rgba(66,153,225,1.0); color:#fff;">
+      rgba(66, 153, 225, 1.0)
+    </div>
+    <div class="slider-row">
+      <label>R（赤）</label>
+      <input type="range" id="rgb-r" min="0" max="255" value="66" oninput="updateRGB()">
+      <span class="val-display" id="rgb-r-val">66</span>
+    </div>
+    <div class="slider-row">
+      <label>G（緑）</label>
+      <input type="range" id="rgb-g" min="0" max="255" value="153" oninput="updateRGB()">
+      <span class="val-display" id="rgb-g-val">153</span>
+    </div>
+    <div class="slider-row">
+      <label>B（青）</label>
+      <input type="range" id="rgb-b" min="0" max="255" value="225" oninput="updateRGB()">
+      <span class="val-display" id="rgb-b-val">225</span>
+    </div>
+    <div class="slider-row">
+      <label>A（透明度）</label>
+      <input type="range" id="rgb-a" min="0" max="100" value="100" oninput="updateRGB()">
+      <span class="val-display" id="rgb-a-val">1.0</span>
+    </div>
+    <div class="color-code-display" id="rgb-code">color: rgba(66, 153, 225, 1.0);</div>
+  </div>
+  <script>
+    function updateRGB() {
+      const r = document.getElementById('rgb-r').value;
+      const g = document.getElementById('rgb-g').value;
+      const b = document.getElementById('rgb-b').value;
+      const a = (document.getElementById('rgb-a').value / 100).toFixed(1);
+      document.getElementById('rgb-r-val').textContent = r;
+      document.getElementById('rgb-g-val').textContent = g;
+      document.getElementById('rgb-b-val').textContent = b;
+      document.getElementById('rgb-a-val').textContent = a;
+      const bg = `rgba(${r}, ${g}, ${b}, ${a})`;
+      const preview = document.getElementById('rgb-preview');
+      preview.style.background = bg;
+      preview.textContent = bg;
+      const luma = 0.299*r + 0.587*g + 0.114*b;
+      preview.style.color = (luma > 128 && a > 0.5) ? '#1a202c' : '#fff';
+      document.getElementById('rgb-code').textContent = `color: ${bg};`;
+    }
+  </script>
+
+  <div class="warn">
+    <strong>⚠️ アルファ値の指定方法（試験頻出）</strong><br>
+    ・アルファ値は <code>0.0</code>〜<code>1.0</code> の<strong>単位なし</strong>の数値<br>
+    ❌ <code>rgba(255, 0, 0, 50%)</code>　← CSS3では不正（CSS4では%も可）<br>
+    ✅ <code>rgba(255, 0, 0, 0.5)</code>　← 正しい（50%透明）<br><br>
+    ・<code>0</code> = 完全透明、<code>1</code> または <code>1.0</code> = 完全不透明<br>
+    ・<code>0.5</code> の先頭の <code>0</code> は省略可：<code>.5</code> でも可
+  </div>
+</div>
+
+
+<!-- 4. hsl() / hsla() -->
+<h2>④ 色を示す値：hsl() / hsla()</h2>
+<div class="note">
+  <strong>ポイント③：hslはhue（色相）・saturation（彩度）・lightness（明度）の意味</strong>
+</div>
+<div class="demo-box">
+
+  <div class="hsl-diagram">
+    <div class="hsl-part">
+      <div class="hsl-letter">H</div>
+      <div class="hsl-name">Hue（色相）</div>
+      <div class="hsl-desc">色の種類を角度で指定</div>
+      <div class="hsl-range">0〜360（deg）</div>
+    </div>
+    <div class="hsl-part">
+      <div class="hsl-letter">S</div>
+      <div class="hsl-name">Saturation（彩度）</div>
+      <div class="hsl-desc">色の鮮やかさ<br>0%=グレー、100%=鮮やか</div>
+      <div class="hsl-range">0%〜100%</div>
+    </div>
+    <div class="hsl-part">
+      <div class="hsl-letter">L</div>
+      <div class="hsl-name">Lightness（明度）</div>
+      <div class="hsl-desc">色の明るさ<br>0%=黒、50%=標準、100%=白</div>
+      <div class="hsl-range">0%〜100%</div>
+    </div>
+  </div>
+
+  <h3>色相（Hue）の色相環</h3>
+  <div class="hue-wheel"></div>
+  <div style="display:flex; justify-content:space-between; font-size:0.78em; color:#718096; font-family:'Consolas','Monaco',monospace; margin-top:4px; padding:0 4px;">
+    <span>0° 赤</span>
+    <span>60° 黄</span>
+    <span>120° 緑</span>
+    <span>180° シアン</span>
+    <span>240° 青</span>
+    <span>300° マゼンタ</span>
+    <span>360° 赤</span>
+  </div>
+
+<pre>
+<span class="comment">/* hsl()：色相・彩度・明度で指定 */</span>
+<span class="prop">color</span>: <span class="func">hsl</span>(<span class="val">0,   100%, 50%</span>);   <span class="comment">/* 赤（色相0°） */</span>
+<span class="prop">color</span>: <span class="func">hsl</span>(<span class="val">120, 100%, 50%</span>);   <span class="comment">/* 緑（色相120°） */</span>
+<span class="prop">color</span>: <span class="func">hsl</span>(<span class="val">240, 100%, 50%</span>);   <span class="comment">/* 青（色相240°） */</span>
+<span class="prop">color</span>: <span class="func">hsl</span>(<span class="val">0,   0%,   50%</span>);   <span class="comment">/* グレー（彩度0%） */</span>
+<span class="prop">color</span>: <span class="func">hsl</span>(<span class="val">0,   100%, 0%</span>);    <span class="comment">/* 黒（明度0%） */</span>
+<span class="prop">color</span>: <span class="func">hsl</span>(<span class="val">0,   100%, 100%</span>);  <span class="comment">/* 白（明度100%） */</span>
+
+<span class="comment">/* 同じ色相で明度・彩度を変えてバリエーションを作る */</span>
+<span class="prop">color</span>: <span class="func">hsl</span>(<span class="val">270, 100%, 30%</span>);   <span class="comment">/* 暗い紫 */</span>
+<span class="prop">color</span>: <span class="func">hsl</span>(<span class="val">270, 100%, 50%</span>);   <span class="comment">/* 標準の紫 */</span>
+<span class="prop">color</span>: <span class="func">hsl</span>(<span class="val">270, 100%, 70%</span>);   <span class="comment">/* 明るい紫 */</span>
+<span class="prop">color</span>: <span class="func">hsl</span>(<span class="val">270, 50%,  50%</span>);   <span class="comment">/* くすんだ紫（彩度低め） */</span>
+
+<span class="comment">/* hsla()：アルファ値を追加 */</span>
+<span class="prop">color</span>: <span class="func">hsla</span>(<span class="val">270, 100%, 50%, 0.5</span>); <span class="comment">/* 50%透明の紫 */</span>
+<span class="prop">color</span>: <span class="func">hsla</span>(<span class="val">0, 100%, 50%, 0.8</span>);   <span class="comment">/* 80%不透明の赤 */</span>
+
+<span class="comment">/* CSS4：スペース区切り・/ でアルファ値 */</span>
+<span class="prop">color</span>: <span class="func">hsl</span>(<span class="val">270 100% 50% / 0.5</span>);   <span class="comment">/* CSS4の書き方 */</span>
+</pre>
+
+  <h3>HSLインタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="margin:0 0 10px; font-size:0.88em; color:#553c9a; font-weight:bold;">
+      スライダーを動かしてhsl()の値を確認しましょう
+    </p>
+    <div class="color-preview" id="hsl-preview"
+         style="background: hsl(270, 100%, 50%); color:#fff;">
+      hsl(270, 100%, 50%)
+    </div>
+    <div class="slider-row">
+      <label>H（色相）</label>
+      <input type="range" id="hsl-h" min="0" max="360" value="270" oninput="updateHSL()">
+      <span class="val-display" id="hsl-h-val">270°</span>
+    </div>
+    <div class="slider-row">
+      <label>S（彩度）</label>
+      <input type="range" id="hsl-s" min="0" max="100" value="100" oninput="updateHSL()">
+      <span class="val-display" id="hsl-s-val">100%</span>
+    </div>
+    <div class="slider-row">
+      <label>L（明度）</label>
+      <input type="range" id="hsl-l" min="0" max="100" value="50" oninput="updateHSL()">
+      <span class="val-display" id="hsl-l-val">50%</span>
+    </div>
+    <div class="slider-row">
+      <label>A（透明度）</label>
+      <input type="range" id="hsl-a" min="0" max="100" value="100" oninput="updateHSL()">
+      <span class="val-display" id="hsl-a-val">1.0</span>
+    </div>
+    <div class="color-code-display" id="hsl-code">color: hsl(270, 100%, 50%);</div>
+  </div>
+  <script>
+    function updateHSL() {
+      const h = document.getElementById('hsl-h').value;
+      const s = document.getElementById('hsl-s').value;
+      const l = document.getElementById('hsl-l').value;
+      const a = (document.getElementById('hsl-a').value / 100).toFixed(1);
+      document.getElementById('hsl-h-val').textContent = h + '°';
+      document.getElementById('hsl-s-val').textContent = s + '%';
+      document.getElementById('hsl-l-val').textContent = l + '%';
+      document.getElementById('hsl-a-val').textContent = a;
+      const isAlpha = parseFloat(a) < 1.0;
+      const bg = isAlpha
+        ? `hsla(${h}, ${s}%, ${l}%, ${a})`
+        : `hsl(${h}, ${s}%, ${l}%)`;
+      const preview = document.getElementById('hsl-preview');
+      preview.style.background = bg;
+      preview.textContent = bg;
+      preview.style.color = (parseInt(l) > 55 && parseFloat(a) > 0.5) ? '#1a202c' : '#fff';
+      document.getElementById('hsl-code').textContent = `color: ${bg};`;
+    }
+  </script>
+
+  <div class="good">
+    ✅ <strong>HSLのメリット</strong><br>
+    ・色相（H）を変えるだけで別の色に変えられる<br>
+    ・明度（L）を調整するだけで同系色の明暗バリエーションが作れる<br>
+    ・デザインシステムで「同じ色相の薄い色・濃い色」を作るのに便利<br>
+    ・人間の感覚に近い色指定ができる（RGBより直感的）
+  </div>
+</div>
+
+
+<!-- 5. colorプロパティ -->
+<h2>⑤ colorプロパティ</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* colorプロパティ：テキストの色を指定 */</span>
+<span class="prop">color</span>: <span class="hex">#2d3748</span>;
+<span class="prop">color</span>: <span class="keyword">red</span>;
+<span class="prop">color</span>: <span class="func">rgb</span>(<span class="val">45, 55, 72</span>);
+<span class="prop">color</span>: <span class="func">hsl</span>(<span class="val">220, 26%, 23%</span>);
+
+<span class="comment">/* colorは子要素に継承される */</span>
+<span class="prop">body</span> { <span class="prop">color</span>: <span class="hex">#2d3748</span>; } <span class="comment">/* 全体のテキスト色を設定 */</span>
+
+<span class="comment">/* currentColor：現在のcolorプロパティの値を参照 */</span>
+<span class="prop">.icon</span> {
+    <span class="prop">color</span>: <span class="hex">#9f7aea</span>;
+    <span class="prop">border</span>: <span class="val">2px solid</span> <span class="keyword">currentColor</span>; <span class="comment">/* colorと同じ紫になる */</span>
+    <span class="prop">fill</span>: <span class="keyword">currentColor</span>;              <span class="comment">/* SVGのfillにも使える */</span>
+}
+</pre>
+
+  <div style="background:#faf5ff; border:1px solid #e9d8fd; border-radius:6px; padding:14px 18px; margin:12px 0;">
+    <p style="color: #9f7aea; margin:0 0 8px;">
+      color: #9f7aea（紫）が指定されたテキスト
+    </p>
+    <p style="color: rgb(66, 153, 225); margin:0 0 8px;">
+      color: rgb(66, 153, 225)（青）が指定されたテキスト
+    </p>
+    <p style="color: hsl(120, 60%, 35%); margin:0 0 8px;">
+      color: hsl(120, 60%, 35%)（緑）が指定されたテキスト
+    </p>
+    <p style="color: rgba(255, 0, 0, 0.4); margin:0;">
+      color: rgba(255, 0, 0, 0.4)（40%不透明の赤）が指定されたテキスト
+    </p>
+  </div>
+</div>
+
+
+<!-- 6. opacityプロパティ -->
+<h2>⑥ opacityプロパティ</h2>
+<div class="note">
+  <strong>ポイント②：不透明度は0.0〜1.0の単位をつけない数値で指定する</strong><br>
+  <code>opacity</code> プロパティは要素全体（子要素・テキスト・背景すべて）の
+  不透明度を指定します。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* opacityプロパティ：要素全体の不透明度 */</span>
+<span class="comment">/* 0.0（完全透明）〜 1.0（完全不透明）の単位なし数値 */</span>
+<span class="prop">opacity</span>: <span class="val">1</span>;     <span class="comment">/* 完全不透明（デフォルト） */</span>
+<span class="prop">opacity</span>: <span class="val">0.8</span>;   <span class="comment">/* 80%不透明 */</span>
+<span class="prop">opacity</span>: <span class="val">0.5</span>;   <span class="comment">/* 50%不透明（半透明） */</span>
+<span class="prop">opacity</span>: <span class="val">0.2</span>;   <span class="comment">/* 20%不透明 */</span>
+<span class="prop">opacity</span>: <span class="val">0</span>;     <span class="comment">/* 完全透明（見えないが領域は残る） */</span>
+</pre>
+
+  <p><strong>▼ opacityのライブデモ（市松模様が背景）</strong></p>
+  <div class="opacity-demo-wrap">
+    <div class="opacity-bg">
+      <div class="opacity-box" style="background:#9f7aea; opacity:1.0;">
+        opacity<br>1.0
+      </div>
+      <div class="opacity-box" style="background:#9f7aea; opacity:0.8;">
+        opacity<br>0.8
+      </div>
+      <div class="opacity-box" style="background:#9f7aea; opacity:0.6;">
+        opacity<br>0.6
+      </div>
+      <div class="opacity-box" style="background:#9f7aea; opacity:0.4;">
+        opacity<br>0.4
+      </div>
+      <div class="opacity-box" style="background:#9f7aea; opacity:0.2;">
+        opacity<br>0.2
+      </div>
+      <div class="opacity-box" style="background:#9f7aea; opacity:0.0;">
+        opacity<br>0.0
+      </div>
+    </div>
+  </div>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>比較</th><th>opacity</th><th>rgba() / hsla() のアルファ値</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>適用範囲</td>
+        <td>要素全体（子要素・テキスト・背景すべて）</td>
+        <td>その色のみ（背景色だけ、文字色だけなど）</td>
+      </tr>
+      <tr>
+        <td>子要素への影響</td>
+        <td>子要素も同じ透明度になる（継承）</td>
+        <td>その要素の指定した色のみ</td>
+      </tr>
+      <tr>
+        <td>値の範囲</td>
+        <td>0.0〜1.0（単位なし）</td>
+        <td>0.0〜1.0（単位なし）</td>
+      </tr>
+      <tr>
+        <td>使い分け</td>
+        <td>要素全体をフェードさせたい場合</td>
+        <td>背景だけ半透明・文字は不透明にしたい場合</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warn">
+    <strong>⚠️ opacityの注意点</strong><br>
+    ・<code>opacity: 0</code> は要素が見えなくなりますが、
+    <strong>領域は残り</strong>クリックも可能です（<code>display: none</code> とは異なる）<br>
+    ・<code>opacity</code> は子要素に継承されるため、
+    親要素に設定すると子要素のテキストも透明になります<br>
+    ・背景だけ半透明にしたい場合は <code>rgba()</code> を使います
+  </div>
+</div>
+
+
+<!-- 演習問題 -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      CSS3以降では、<code>transparent</code> は
+      <code>background-color</code> だけでなく
+      <code>color</code> や <code>border-color</code> など
+      色の値が指定可能なすべての箇所で使用できる。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn btn-purple" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg correct';
+          r.textContent =
+            '✅ 正解！CSS3以降ではtransparentは色の値が指定可能なすべての箇所で使用できます。' +
+            'CSS2ではbackground-colorのみでしたが、CSS3からcolor・border-color・' +
+            'outline-color・text-shadowなどでも使用可能になりました。';
+        } else if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。CSS3以降ではtransparentは色の値が指定可能なすべての箇所で使用できます。' +
+            'CSS2ではbackground-colorのみでしたが、CSS3から拡張されました。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合う値・用語を入力してください。</p>
+
+    <label>① hsl()の「H」が表す意味（英語）：</label>
+    <input type="text" id="q2a" placeholder="英語で">
+
+    <label>② hsl()の「S」が表す意味（英語）：</label>
+    <input type="text" id="q2b" placeholder="英語で">
+
+    <label>③ hsl()の「L」が表す意味（英語）：</label>
+    <input type="text" id="q2c" placeholder="英語で">
+
+    <label>④ rgba()のアルファ値で「完全透明」を表す値：</label>
+    <input type="text" id="q2d" placeholder="数値">
+
+    <label>⑤ rgba()のアルファ値で「完全不透明」を表す値：</label>
+    <input type="text" id="q2e" placeholder="数値">
+
+    <label>⑥ #aabbcc を3桁に省略した形：</label>
+    <input type="text" id="q2f" placeholder="#〇〇〇">
+
+    <br>
+    <button class="btn btn-purple" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value.trim().toLowerCase();
+        const b = document.getElementById('q2b').value.trim().toLowerCase();
+        const c = document.getElementById('q2c').value.trim().toLowerCase();
+        const d = document.getElementById('q2d').value.trim();
+        const e = document.getElementById('q2e').value.trim();
+        const f = document.getElementById('q2f').value.trim().toLowerCase();
+        const r = document.getElementById('q2-result');
+        const ca = a === 'hue' || a === 'hue（色相）' || a === 'hue(色相)';
+        const cb = b === 'saturation' || b === 'saturation（彩度）' || b === 'saturation(彩度)';
+        const cc = c === 'lightness' || c === 'lightness（明度）' || c === 'lightness(明度)';
+        const cd = d === '0' || d === '0.0';
+        const ce = e === '1' || e === '1.0';
+        const cf = f === '#abc';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！色の値を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `① ${ca?'✅':'❌ Hue（色相）'}　` +
+            `② ${cb?'✅':'❌ Saturation（彩度）'}　` +
+            `③ ${cc?'✅':'❌ Lightness（明度）'}　` +
+            `④ ${cd?'✅':'❌ 0（または0.0）'}　` +
+            `⑤ ${ce?'✅':'❌ 1（または1.0）'}　` +
+            `⑥ ${cf?'✅':'❌ #abc'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>
+      <code>opacity</code> プロパティと <code>rgba()</code> のアルファ値の
+      違いとして正しい説明はどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">opacityは背景色のみに影響し、rgba()は要素全体に影響する</option>
+      <option value="b">opacityは要素全体（子要素を含む）に影響し、rgba()はその色のみに影響する</option>
+      <option value="c">opacityとrgba()のアルファ値は全く同じ効果をもたらす</option>
+      <option value="d">opacityは0〜100の整数で指定し、rgba()は0.0〜1.0で指定する</option>
+    </select>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            '・opacity：要素全体（子要素・テキスト・背景すべて）に影響する<br>' +
+            '・rgba()のアルファ値：その色のみに影響する<br><br>' +
+            '例：背景だけ半透明にしたい場合は background: rgba(0,0,0,0.5) を使います。<br>' +
+            'opacity: 0.5 を使うと子要素のテキストも半透明になってしまいます。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。opacityは要素全体（子要素含む）に影響し、' +
+            'rgba()のアルファ値はその色のみに影響します。' +
+            'どちらも0.0〜1.0の単位なし数値で指定します。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4a">
+      ① <code>rgba(255, 0, 0, 0.5)</code> は50%透明の赤を表す
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4b">
+      ② <code>rgba(255, 0, 0, 50%)</code> はCSS3では正しい書き方である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4c">
+      ③ <code>hsl(120, 100%, 50%)</code> は緑色を表す
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4d">
+      ④ <code>#f00</code> は <code>#ff0000</code> と同じ色を表す
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4e">
+      ⑤ <code>opacity: 0</code> を指定した要素は、見えなくなり領域も消える
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4f">
+      ⑥ <code>hsl()</code> の彩度（S）を0%にするとグレーになる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4g">
+      ⑦ <code>transparent</code> はCSS3以降、色の値が指定可能なすべての箇所で使用できる
+    </label>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const r = document.getElementById('q4-result');
+        const checks = {
+          a: document.getElementById('q4a').checked,
+          b: document.getElementById('q4b').checked,
+          c: document.getElementById('q4c').checked,
+          d: document.getElementById('q4d').checked,
+          e: document.getElementById('q4e').checked,
+          f: document.getElementById('q4f').checked,
+          g: document.getElementById('q4g').checked,
+        };
+        // 正解：①③④⑥⑦（a, c, d, f, g）
+        // ②CSS3ではアルファ値に%は不可（CSS4から可）
+        // ⑤opacity:0は領域は残る（display:noneとの違い）
+        const correct = { a:true, b:false, c:true, d:true, e:false, f:true, g:true };
+        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
+        const allCorrect = results.every(Boolean);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① rgba(255,0,0,0.5) は50%透明の赤 ✅<br>' +
+            '・③ hsl(120,100%,50%) は緑 ✅<br>' +
+            '・④ #f00 = #ff0000 ✅<br>' +
+            '・⑥ 彩度0%でグレー ✅<br>' +
+            '・⑦ CSS3以降transparentはすべての色指定箇所で使用可 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① rgba(255,0,0,0.5) は50%透明の赤（0.5 = 50%不透明）<br>' +
+            '・③ hsl(120,100%,50%) は緑（色相120°）<br>' +
+            '・④ #f00 = #ff0000（3桁省略形）<br>' +
+            '・⑥ 彩度（S）0%でグレーになる<br>' +
+            '・⑦ CSS3以降transparentはすべての色指定箇所で使用可<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② CSS3ではアルファ値に%は使えない（CSS4から可能）<br>' +
+            '・⑤ opacity:0は要素が見えなくなるが領域は残る（display:noneとは異なる）';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. コード穴埋め問題</h3>
+    <p>以下のコードの <code>__A__</code> 〜 <code>__F__</code> に
+    適切な値・関数名・プロパティ名を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+/* A：青色を16進数3桁で表す */
+color: __A__;
+
+/* B：hsl()で赤色（色相0°・彩度100%・明度50%）を指定 */
+color: __B__(0, 100%, 50%);
+
+/* C：rgba()で50%透明の黒を指定 */
+background-color: rgba(0, 0, 0, __C__);
+
+/* D：要素全体を80%不透明にする */
+__D__: 0.8;
+
+/* E：hsl()で彩度を0%にするとどんな色になるか */
+color: hsl(0, __E__, 50%);  /* → グレー */
+
+/* F：CSS3以降、色の値が指定可能なすべての箇所で使える透明キーワード */
+border-color: __F__;</pre>
+
+    <label>A（青色の16進数3桁）：</label>
+    <input type="text" id="q5a" placeholder="#〇〇〇">
+    <label>B（色相・彩度・明度で色を指定する関数名）：</label>
+    <input type="text" id="q5b" placeholder="関数名">
+    <label>C（50%透明を表すアルファ値）：</label>
+    <input type="text" id="q5c" placeholder="数値">
+    <label>D（要素全体の不透明度を指定するプロパティ）：</label>
+    <input type="text" id="q5d" placeholder="プロパティ名">
+    <label>E（グレーにするための彩度の値）：</label>
+    <input type="text" id="q5e" placeholder="値">
+    <label>F（完全透明を表すキーワード）：</label>
+    <input type="text" id="q5f" placeholder="キーワード">
+    <br>
+    <button class="btn btn-purple" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const a = document.getElementById('q5a').value.trim().toLowerCase();
+        const b = document.getElementById('q5b').value.trim().toLowerCase();
+        const c = document.getElementById('q5c').value.trim();
+        const d = document.getElementById('q5d').value.trim().toLowerCase();
+        const e = document.getElementById('q5e').value.trim();
+        const f = document.getElementById('q5f').value.trim().toLowerCase();
+        const r = document.getElementById('q5-result');
+        const ca = a === '#00f' || a === '#0000ff';
+        const cb = b === 'hsl';
+        const cc = c === '0.5' || c === '.5';
+        const cd = d === 'opacity';
+        const ce = e === '0%';
+        const cf = f === 'transparent';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！色の指定方法を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca?'✅':'❌ #00f（または#0000ff）'}　` +
+            `B: ${cb?'✅':'❌ hsl'}　` +
+            `C: ${cc?'✅':'❌ 0.5'}　` +
+            `D: ${cd?'✅':'❌ opacity'}　` +
+            `E: ${ce?'✅':'❌ 0%'}　` +
+            `F: ${cf?'✅':'❌ transparent'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. 記述問題</h3>
+    <p>
+      <code>hsl()</code> を使うメリットを、
+      <code>rgb()</code> や16進数と比較しながら説明してください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q6" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ6()">模範解答を見る</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const r = document.getElementById('q6-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<strong>rgb() / 16進数の特徴：</strong><br>' +
+          '・赤・緑・青の混合量を数値で指定する<br>' +
+          '・直感的に色を想像しにくい（例：#4299e1が何色か一目でわからない）<br>' +
+          '・同系色のバリエーションを作るには複数の値を計算する必要がある<br><br>' +
+          '<strong>hsl()のメリット：</strong><br>' +
+          '① 人間の感覚に近い色指定ができる<br>' +
+          '　・H（色相）を変えるだけで別の色に変えられる<br>' +
+          '　・L（明度）を調整するだけで同系色の明暗バリエーションが作れる<br><br>' +
+          '② デザインシステムに便利<br>' +
+          '　・hsl(270, 100%, 30%)（暗い紫）<br>' +
+          '　・hsl(270, 100%, 50%)（標準の紫）<br>' +
+          '　・hsl(270, 100%, 70%)（明るい紫）<br>' +
+          '　→ Hを固定してLだけ変えれば同系色のパレットが作れる<br><br>' +
+          '③ 色の意味が読みやすい<br>' +
+          '　・hsl(120, 100%, 50%) → 色相120°（緑）・彩度100%・明度50% と読める';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 CSS 色指定 まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>指定方法</th><th>書式</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>16進数（6桁）</td>
+      <td><code>#RRGGBB</code></td>
+      <td>各成分を00〜FFで指定。3桁省略形は各桁が同じ文字の繰り返しの場合のみ</td>
+    </tr>
+    <tr>
+      <td>16進数（8桁）</td>
+      <td><code>#RRGGBBAA</code></td>
+      <td>CSS4追加。アルファ値付き</td>
+    </tr>
+    <tr>
+      <td>キーワード</td>
+      <td><code>red</code> / <code>transparent</code></td>
+      <td>CSS3以降transparentはすべての色指定箇所で使用可</td>
+    </tr>
+    <tr>
+      <td>rgb()</td>
+      <td><code>rgb(R, G, B)</code></td>
+      <td>各成分を0〜255の整数またはパーセントで指定</td>
+    </tr>
+    <tr>
+      <td>rgba()</td>
+      <td><code>rgba(R, G, B, A)</code></td>
+      <td>アルファ値は0.0〜1.0の単位なし数値。CSS3では%不可</td>
+    </tr>
+    <tr>
+      <td>hsl()</td>
+      <td><code>hsl(H, S%, L%)</code></td>
+      <td>H=Hue（色相0〜360°）/ S=Saturation（彩度）/ L=Lightness（明度）</td>
+    </tr>
+    <tr>
+      <td>hsla()</td>
+      <td><code>hsla(H, S%, L%, A)</code></td>
+      <td>アルファ値は0.0〜1.0の単位なし数値</td>
+    </tr>
+    <tr>
+      <td>colorプロパティ</td>
+      <td><code>color: 値;</code></td>
+      <td>テキスト色を指定。子要素に継承される</td>
+    </tr>
+    <tr>
+      <td>opacityプロパティ</td>
+      <td><code>opacity: 0.0〜1.0;</code></td>
+      <td>要素全体の不透明度。子要素も影響を受ける。0でも領域は残る</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
