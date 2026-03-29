@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>CSS セレクタ 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #9f7aea; padding-bottom: 10px; }
+    h2 { color: #553c9a; margin-top: 48px; border-left: 5px solid #9f7aea; padding-left: 12px; }
+    h3 { color: #276749; margin-top: 24px; }
+
+    code {
+      background: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment  { color: #68d391; }
+    pre .selector { color: #f6ad55; }
+    pre .prop     { color: #90cdf4; }
+    pre .val      { color: #fc8181; }
+    pre .pseudo   { color: #b794f4; }
+    pre .attr-sel { color: #fbd38d; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #b794f4;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #553c9a; }
+
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+
+    .demo-box {
+      background: #fff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* ライブデモ共通 */
+    .live-demo {
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin: 12px 0;
+      font-size: 0.95em;
+    }
+
+    /* 属性セレクタ記号表 */
+    .attr-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .attr-card {
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 0.88em;
+    }
+    .attr-card .attr-sym {
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-weight: bold;
+      color: #553c9a;
+      font-size: 1.05em;
+      margin-bottom: 4px;
+    }
+    .attr-card .attr-desc { color: #4a5568; }
+
+    /* 結合子グリッド */
+    .combinator-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .combinator-card {
+      background: #fff;
+      border: 2px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 0.88em;
+      text-align: center;
+    }
+    .combinator-card .sym {
+      font-size: 1.8em;
+      font-weight: bold;
+      color: #9f7aea;
+      font-family: 'Consolas', 'Monaco', monospace;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .combinator-card .sym-name {
+      font-weight: bold;
+      color: #553c9a;
+      margin-bottom: 4px;
+    }
+    .combinator-card .sym-desc { color: #4a5568; font-size: 0.93em; }
+
+    table.ref-table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      margin: 14px 0;
+    }
+    table.ref-table th, table.ref-table td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.ref-table thead tr { background: #553c9a; color: #fff; }
+    table.ref-table tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 {
+      margin-top: 0;
+      color: #c05621;
+      border-left-color: #f6ad55;
+    }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #fbd38d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #fbd38d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-purple { background: #9f7aea; color: #fff; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #e9d8fd; color: #553c9a; display: block; }
+
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.summary thead tr { background: #553c9a; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* ===== ライブデモ用スタイル ===== */
+
+    /* 属性セレクタデモ */
+    .attr-demo a[href^="https"] { color: #276749; font-weight: bold; }
+    .attr-demo a[href$=".pdf"]::after { content: " 📄"; }
+    .attr-demo input[type="text"] {
+      border: 2px solid #9f7aea;
+      border-radius: 4px;
+      padding: 4px 8px;
+    }
+    .attr-demo input[type="email"] {
+      border: 2px solid #48bb78;
+      border-radius: 4px;
+      padding: 4px 8px;
+    }
+
+    /* 擬似クラスデモ */
+    .pseudo-demo li:first-child { color: #9f7aea; font-weight: bold; }
+    .pseudo-demo li:last-child  { color: #e53e3e; font-weight: bold; }
+    .pseudo-demo li:nth-child(2n) { background: #faf5ff; }
+    .pseudo-demo li:nth-child(3n+1) { border-left: 3px solid #9f7aea; padding-left: 8px; }
+
+    /* 結合子デモ */
+    .comb-demo .parent > p { color: #553c9a; font-weight: bold; }
+    .comb-demo .sibling + p { color: #276749; font-style: italic; }
+    .comb-demo .sibling-all ~ p { text-decoration: underline; }
+
+    /* 擬似要素デモ */
+    .pe-demo p::first-line { color: #553c9a; font-weight: bold; }
+    .pe-demo p::first-letter {
+      font-size: 2em;
+      float: left;
+      margin-right: 4px;
+      color: #9f7aea;
+      font-weight: bold;
+      line-height: 1;
+    }
+    .pe-demo .before-after::before {
+      content: "【";
+      color: #9f7aea;
+      font-weight: bold;
+    }
+    .pe-demo .before-after::after {
+      content: "】";
+      color: #9f7aea;
+      font-weight: bold;
+    }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px 14px; }
+      .attr-grid { grid-template-columns: 1fr; }
+      .combinator-grid { grid-template-columns: 1fr 1fr; }
+      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.82em; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px 16px; }
+      .quiz-block { padding: 14px 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+      .combinator-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+      .combinator-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<h1>🎯 CSS セレクタ 学習サンプル</h1>
+<p>セレクタの種類・属性セレクタの記号・擬似クラス・擬似要素・結合子を学びましょう。</p>
+
+
+<!-- 1. セレクタの種類と組み合わせのルール -->
+<h2>① セレクタの種類と組み合わせのルール</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* ===== セレクタの種類一覧 ===== */</span>
+
+<span class="selector">p</span>           { } <span class="comment">/* タイプセレクタ：要素名で指定 */</span>
+<span class="selector">*</span>           { } <span class="comment">/* ユニバーサルセレクタ：すべての要素 */</span>
+<span class="selector">.class</span>      { } <span class="comment">/* クラスセレクタ */</span>
+<span class="selector">#id</span>         { } <span class="comment">/* IDセレクタ */</span>
+<span class="selector">[attr]</span>      { } <span class="comment">/* 属性セレクタ */</span>
+<span class="selector">:hover</span>      { } <span class="comment">/* 擬似クラス */</span>
+<span class="selector">::before</span>    { } <span class="comment">/* 擬似要素 */</span>
+
+<span class="comment">/* ===== 組み合わせのルール ===== */</span>
+
+<span class="comment">/* グループ化（カンマ区切り）：複数セレクタに同じスタイル */</span>
+<span class="selector">h1</span>, <span class="selector">h2</span>, <span class="selector">h3</span> { <span class="prop">color</span>: <span class="val">#553c9a</span>; }
+
+<span class="comment">/* 複合セレクタ（スペースなし連結）：条件を重ねる */</span>
+<span class="selector">p.highlight</span>        { } <span class="comment">/* p要素 かつ .highlight クラス */</span>
+<span class="selector">input[type="text"]</span> { } <span class="comment">/* input要素 かつ type="text" */</span>
+<span class="selector">a:hover</span>            { } <span class="comment">/* a要素 かつ :hover 状態 */</span>
+</pre>
+
+  <div class="warn">
+    <strong>⚠️ ポイント①：属性セレクタと結合子の記号はしっかり覚える</strong><br>
+    記号の違いで意味が大きく変わります。次のセクションで詳しく学びましょう。
+  </div>
+</div>
+
+
+<!-- 2. タイプセレクタ / ユニバーサルセレクタ -->
+<h2>② タイプセレクタ / ユニバーサルセレクタ</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* タイプセレクタ：HTML要素名で指定 */</span>
+<span class="selector">p</span>    { <span class="prop">color</span>: <span class="val">#2d3748</span>; }
+<span class="selector">h1</span>   { <span class="prop">font-size</span>: <span class="val">2em</span>; }
+<span class="selector">a</span>    { <span class="prop">color</span>: <span class="val">#3182ce</span>; }
+<span class="selector">ul</span>   { <span class="prop">list-style</span>: <span class="val">disc</span>; }
+
+<span class="comment">/* ユニバーサルセレクタ：すべての要素に適用 */</span>
+<span class="selector">*</span> { <span class="prop">box-sizing</span>: <span class="val">border-box</span>; }
+
+<span class="comment">/* 名前空間付きユニバーサルセレクタ（SVG等） */</span>
+<span class="selector">*|*</span>  { } <span class="comment">/* すべての名前空間のすべての要素 */</span>
+<span class="selector">svg|*</span>{ } <span class="comment">/* SVG名前空間のすべての要素 */</span>
+</pre>
+
+  <div class="good">
+    ✅ <strong>ユニバーサルセレクタの主な用途</strong><br>
+    ・<code>* { box-sizing: border-box; }</code> でボックスサイズの計算方法を統一<br>
+    ・<code>* { margin: 0; padding: 0; }</code> でブラウザデフォルトスタイルをリセット<br>
+    ・結合子と組み合わせて使うことが多い（例：<code>.parent > *</code>）
+  </div>
+</div>
+
+
+<!-- 3. クラスセレクタ / IDセレクタ -->
+<h2>③ クラスセレクタ / IDセレクタ</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* クラスセレクタ：.クラス名 */</span>
+<span class="selector">.highlight</span>   { <span class="prop">background</span>: <span class="val">yellow</span>; }
+<span class="selector">.btn</span>         { <span class="prop">padding</span>: <span class="val">8px 16px</span>; }
+<span class="selector">.btn.primary</span> { <span class="prop">background</span>: <span class="val">#9f7aea</span>; } <span class="comment">/* 複数クラスの複合 */</span>
+<span class="selector">p.note</span>       { <span class="prop">color</span>: <span class="val">gray</span>; }           <span class="comment">/* p要素かつnoteクラス */</span>
+
+<span class="comment">/* IDセレクタ：#ID名 */</span>
+<span class="selector">#header</span>      { <span class="prop">background</span>: <span class="val">#1a365d</span>; }
+<span class="selector">#main-nav</span>    { <span class="prop">display</span>: <span class="val">flex</span>; }
+</pre>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>比較</th><th>クラスセレクタ</th><th>IDセレクタ</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>記号</td><td><code>.</code>（ドット）</td><td><code>#</code>（シャープ）</td></tr>
+      <tr><td>文書内での重複</td><td>✅ 複数要素に使用可</td><td>❌ 1ページに1つのみ</td></tr>
+      <tr><td>詳細度</td><td>0-1-0</td><td>1-0-0（クラスより高い）</td></tr>
+      <tr><td>主な用途</td><td>スタイルの再利用</td><td>ページ内リンク・JS操作</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 4. 属性セレクタ -->
+<h2>④ 属性セレクタ</h2>
+<div class="note">
+  <strong>ポイント①：属性セレクタの記号はしっかりと覚える</strong><br>
+  記号の違いで「完全一致」「前方一致」「後方一致」「部分一致」などが変わります。
+</div>
+<div class="demo-box">
+
+  <div class="attr-grid">
+    <div class="attr-card">
+      <div class="attr-sym">[attr]</div>
+      <div class="attr-desc">属性が存在する要素<br>
+      例：<code>[disabled]</code></div>
+    </div>
+    <div class="attr-card">
+      <div class="attr-sym">[attr="val"]</div>
+      <div class="attr-desc">属性値が完全一致<br>
+      例：<code>[type="text"]</code></div>
+    </div>
+    <div class="attr-card">
+      <div class="attr-sym">[attr~="val"]</div>
+      <div class="attr-desc">スペース区切りの値の1つに一致<br>
+      例：<code>[class~="btn"]</code></div>
+    </div>
+    <div class="attr-card">
+      <div class="attr-sym">[attr|="val"]</div>
+      <div class="attr-desc">値が完全一致 または 「val-」で始まる<br>
+      例：<code>[lang|="en"]</code> → en, en-US</div>
+    </div>
+    <div class="attr-card">
+      <div class="attr-sym">[attr^="val"]</div>
+      <div class="attr-desc">値が「val」で始まる（前方一致）<br>
+      例：<code>[href^="https"]</code></div>
+    </div>
+    <div class="attr-card">
+      <div class="attr-sym">[attr$="val"]</div>
+      <div class="attr-desc">値が「val」で終わる（後方一致）<br>
+      例：<code>[href$=".pdf"]</code></div>
+    </div>
+    <div class="attr-card">
+      <div class="attr-sym">[attr*="val"]</div>
+      <div class="attr-desc">値に「val」が含まれる（部分一致）<br>
+      例：<code>[href*="example"]</code></div>
+    </div>
+    <div class="attr-card">
+      <div class="attr-sym">[attr="val" i]</div>
+      <div class="attr-desc">大文字・小文字を区別しない<br>
+      例：<code>[type="TEXT" i]</code></div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* 属性セレクタの使用例 */</span>
+
+<span class="comment">/* [attr]：属性が存在する */</span>
+<span class="selector">input[disabled]</span>     { <span class="prop">opacity</span>: <span class="val">0.5</span>; }
+<span class="selector">a[target]</span>           { <span class="prop">color</span>: <span class="val">orange</span>; }
+
+<span class="comment">/* [attr="val"]：完全一致 */</span>
+<span class="selector">input[type="text"]</span>  { <span class="prop">border</span>: <span class="val">2px solid #9f7aea</span>; }
+<span class="selector">input[type="email"]</span> { <span class="prop">border</span>: <span class="val">2px solid #48bb78</span>; }
+
+<span class="comment">/* [attr^="val"]：前方一致（^はキャレット） */</span>
+<span class="selector">a[href^="https"]</span>    { <span class="prop">color</span>: <span class="val">green</span>; }    <span class="comment">/* httpsリンク */</span>
+<span class="selector">a[href^="mailto"]</span>   { <span class="prop">color</span>: <span class="val">blue</span>; }     <span class="comment">/* メールリンク */</span>
+<span class="selector">a[href^="tel"]</span>      { <span class="prop">color</span>: <span class="val">purple</span>; }   <span class="comment">/* 電話リンク */</span>
+
+<span class="comment">/* [attr$="val"]：後方一致（$はドル記号） */</span>
+<span class="selector">a[href$=".pdf"]</span>     { <span class="prop">color</span>: <span class="val">red</span>; }      <span class="comment">/* PDFリンク */</span>
+<span class="selector">a[href$=".zip"]</span>     { <span class="prop">color</span>: <span class="val">orange</span>; }   <span class="comment">/* ZIPリンク */</span>
+
+<span class="comment">/* [attr*="val"]：部分一致（*はアスタリスク） */</span>
+<span class="selector">a[href*="example"]</span>  { <span class="prop">font-weight</span>: <span class="val">bold</span>; }
+
+<span class="comment">/* [attr~="val"]：スペース区切りの値の1つに一致（~はチルダ） */</span>
+<span class="selector">[class~="btn"]</span>      { <span class="prop">cursor</span>: <span class="val">pointer</span>; }
+
+<span class="comment">/* [attr|="val"]：完全一致またはval-で始まる（|はパイプ） */</span>
+<span class="selector">[lang|="en"]</span>        { <span class="prop">font-family</span>: <span class="val">serif</span>; } <span class="comment">/* en, en-US, en-GB */</span>
+</pre>
+
+  <div class="live-demo attr-demo">
+    <p><strong>▼ 属性セレクタのライブデモ</strong></p>
+    <p>
+      <a href="https://example.com">httpsリンク（緑色・太字）</a>　
+      <a href="http://example.com">httpリンク（通常）</a>　
+      <a href="document.pdf">PDFリンク（📄アイコン付き）</a>
+    </p>
+    <p>
+      <input type="text" placeholder="text（紫枠）" style="margin-right:8px;">
+      <input type="email" placeholder="email（緑枠）">
+    </p>
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ 記号の覚え方</strong><br>
+    ・<code>^</code>（キャレット）= 前方一致　← 「^」は文字列の先頭を表す正規表現と同じ<br>
+    ・<code>$</code>（ドル）= 後方一致　← 「$」は文字列の末尾を表す正規表現と同じ<br>
+    ・<code>*</code>（アスタリスク）= 部分一致　← 「何でも」を表すワイルドカードと同じ<br>
+    ・<code>~</code>（チルダ）= スペース区切りの値の1つ<br>
+    ・<code>|</code>（パイプ）= 完全一致またはハイフン区切りの先頭
+  </div>
+</div>
+
+
+<!-- 5. リンク関連の擬似クラス -->
+<h2>⑤ 擬似クラス</h2>
+<div class="note">
+  <strong>ポイント②：擬似クラスの式「an+b」の指定方法をしっかりと覚える</strong><br>
+  <code>:nth-child(an+b)</code> の <code>a</code>・<code>n</code>・<code>b</code> の意味を理解しましょう。
+</div>
+<div class="demo-box">
+
+  <h3>リンク関連の擬似クラス</h3>
+<pre>
+<span class="comment">/* リンクの状態を表す擬似クラス（LVHA の順で記述するのが推奨） */</span>
+<span class="selector">a<span class="pseudo">:link</span></span>    { <span class="prop">color</span>: <span class="val">blue</span>; }      <span class="comment">/* 未訪問リンク */</span>
+<span class="selector">a<span class="pseudo">:visited</span></span> { <span class="prop">color</span>: <span class="val">purple</span>; }    <span class="comment">/* 訪問済みリンク */</span>
+<span class="selector">a<span class="pseudo">:hover</span></span>   { <span class="prop">color</span>: <span class="val">red</span>; }       <span class="comment">/* マウスオーバー */</span>
+<span class="selector">a<span class="pseudo">:active</span></span>  { <span class="prop">color</span>: <span class="val">orange</span>; }    <span class="comment">/* クリック中 */</span>
+<span class="selector">a<span class="pseudo">:focus</span></span>   { <span class="prop">outline</span>: <span class="val">2px solid blue</span>; } <span class="comment">/* フォーカス時 */</span>
+</pre>
+
+  <h3>構造的擬似クラス</h3>
+<pre>
+<span class="comment">/* 位置・順序による選択 */</span>
+<span class="selector">li<span class="pseudo">:first-child</span></span>       { } <span class="comment">/* 最初の子要素 */</span>
+<span class="selector">li<span class="pseudo">:last-child</span></span>        { } <span class="comment">/* 最後の子要素 */</span>
+<span class="selector">li<span class="pseudo">:only-child</span></span>        { } <span class="comment">/* 唯一の子要素 */</span>
+<span class="selector">p<span class="pseudo">:first-of-type</span></span>     { } <span class="comment">/* 同種の最初の要素 */</span>
+<span class="selector">p<span class="pseudo">:last-of-type</span></span>      { } <span class="comment">/* 同種の最後の要素 */</span>
+<span class="selector">p<span class="pseudo">:only-of-type</span></span>      { } <span class="comment">/* 同種の唯一の要素 */</span>
+<span class="selector"><span class="pseudo">:root</span></span>               { } <span class="comment">/* ルート要素（html要素） */</span>
+<span class="selector">p<span class="pseudo">:empty</span></span>             { } <span class="comment">/* 子要素・テキストがない要素 */</span>
+</pre>
+
+  <h3>an+b 式（nth系擬似クラス）</h3>
+<pre>
+<span class="comment">/* :nth-child(an+b) の式の意味 */</span>
+<span class="comment">/* a = 間隔（何個おき）, n = 0,1,2,3... , b = オフセット（開始位置） */</span>
+
+<span class="selector">li<span class="pseudo">:nth-child(2n)</span></span>    { } <span class="comment">/* 偶数番目（2,4,6...）even と同じ */</span>
+<span class="selector">li<span class="pseudo">:nth-child(2n+1)</span></span>  { } <span class="comment">/* 奇数番目（1,3,5...）odd と同じ */</span>
+<span class="selector">li<span class="pseudo">:nth-child(3n)</span></span>    { } <span class="comment">/* 3の倍数番目（3,6,9...） */</span>
+<span class="selector">li<span class="pseudo">:nth-child(3n+1)</span></span>  { } <span class="comment">/* 1,4,7,10... */</span>
+<span class="selector">li<span class="pseudo">:nth-child(n+3)</span></span>   { } <span class="comment">/* 3番目以降すべて */</span>
+<span class="selector">li<span class="pseudo">:nth-child(-n+3)</span></span>  { } <span class="comment">/* 最初の3つ（1,2,3） */</span>
+<span class="selector">li<span class="pseudo">:nth-child(1)</span></span>     { } <span class="comment">/* 1番目のみ（:first-child と同じ） */</span>
+<span class="selector">li<span class="pseudo">:nth-child(even)</span></span>  { } <span class="comment">/* 偶数番目（even キーワード） */</span>
+<span class="selector">li<span class="pseudo">:nth-child(odd)</span></span>   { } <span class="comment">/* 奇数番目（odd キーワード） */</span>
+
+<span class="comment">/* :nth-last-child：末尾から数える */</span>
+<span class="selector">li<span class="pseudo">:nth-last-child(2)</span></span>  { } <span class="comment">/* 末尾から2番目 */</span>
+
+<span class="comment">/* :nth-of-type：同種の要素の中でのn番目 */</span>
+<span class="selector">p<span class="pseudo">:nth-of-type(2n)</span></span>    { } <span class="comment">/* p要素の中で偶数番目 */</span>
+</pre>
+
+  <div class="live-demo pseudo-demo">
+    <p><strong>▼ nth-child のライブデモ</strong></p>
+    <ul style="list-style:none; padding:0; margin:0;">
+      <li style="padding:4px 8px;">1番目（:first-child → 紫・太字）</li>
+      <li style="padding:4px 8px;">2番目（:nth-child(2n) → 背景薄紫）</li>
+      <li style="padding:4px 8px;">3番目（:nth-child(3n+1) → 左ボーダー）</li>
+      <li style="padding:4px 8px;">4番目（:nth-child(2n) → 背景薄紫）</li>
+      <li style="padding:4px 8px;">5番目（:last-child → 赤・太字）</li>
+    </ul>
+  </div>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>式</th><th>選択される要素</th><th>キーワード</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>2n</code></td><td>2, 4, 6, 8 …（偶数）</td><td><code>even</code></td></tr>
+      <tr><td><code>2n+1</code></td><td>1, 3, 5, 7 …（奇数）</td><td><code>odd</code></td></tr>
+      <tr><td><code>3n</code></td><td>3, 6, 9, 12 …</td><td>—</td></tr>
+      <tr><td><code>3n+1</code></td><td>1, 4, 7, 10 …</td><td>—</td></tr>
+      <tr><td><code>n+3</code></td><td>3番目以降すべて</td><td>—</td></tr>
+      <tr><td><code>-n+3</code></td><td>1, 2, 3（最初の3つ）</td><td>—</td></tr>
+      <tr><td><code>1</code></td><td>1番目のみ</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h3>フォーム関連の擬似クラス</h3>
+<pre>
+<span class="selector">input<span class="pseudo">:enabled</span></span>   { } <span class="comment">/* 有効な入力要素 */</span>
+<span class="selector">input<span class="pseudo">:disabled</span></span>  { } <span class="comment">/* 無効な入力要素 */</span>
+<span class="selector">input<span class="pseudo">:checked</span></span>   { } <span class="comment">/* チェックされたcheckbox/radio */</span>
+<span class="selector">input<span class="pseudo">:required</span></span>  { } <span class="comment">/* required属性がある入力要素 */</span>
+<span class="selector">input<span class="pseudo">:optional</span></span>  { } <span class="comment">/* required属性がない入力要素 */</span>
+<span class="selector">input<span class="pseudo">:valid</span></span>     { } <span class="comment">/* バリデーション成功 */</span>
+<span class="selector">input<span class="pseudo">:invalid</span></span>   { } <span class="comment">/* バリデーション失敗 */</span>
+<span class="selector">input<span class="pseudo">:placeholder-shown</span></span> { } <span class="comment">/* プレースホルダーが表示中 */</span>
+</pre>
+
+  <h3>その他の擬似クラス</h3>
+<pre>
+<span class="selector"><span class="pseudo">:not(</span>p<span class="pseudo">)</span></span>        { } <span class="comment">/* p要素以外 */</span>
+<span class="selector"><span class="pseudo">:not(</span>.hidden<span class="pseudo">)</span></span>  { } <span class="comment">/* .hiddenクラス以外 */</span>
+<span class="selector"><span class="pseudo">:is(</span>h1, h2, h3<span class="pseudo">)</span></span> { } <span class="comment">/* h1・h2・h3のいずれか（CSS4） */</span>
+<span class="selector"><span class="pseudo">:where(</span>h1, h2<span class="pseudo">)</span></span> { } <span class="comment">/* :isと同じだが詳細度が0（CSS4） */</span>
+<span class="selector"><span class="pseudo">:has(</span>img<span class="pseudo">)</span></span>      { } <span class="comment">/* img要素を含む要素（CSS4） */</span>
+<span class="selector">p<span class="pseudo">:target</span></span>       { } <span class="comment">/* URLのフラグメントで指定された要素 */</span>
+<span class="selector">p<span class="pseudo">:lang(ja)</span></span>     { } <span class="comment">/* lang属性がjaの要素 */</span>
+</pre>
+</div>
+
+
+<!-- 6. 擬似要素 -->
+<h2>⑥ 擬似要素</h2>
+<div class="note">
+  <strong>ポイント③：擬似要素の先頭のコロンは、CSSから2つになった</strong><br>
+  ・CSS2では <code>:before</code>（コロン1つ）でしたが、
+  CSS3以降では <code>::before</code>（コロン2つ）が正式な書き方です。<br>
+  ・擬似クラス（<code>:hover</code> など）との区別のためにコロンが2つになりました。<br>
+  ・後方互換性のため <code>:before</code>（1つ）も多くのブラウザで動作しますが、
+  <strong>現在は <code>::before</code>（2つ）が推奨</strong>です。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* ===== CSS2（旧） vs CSS3以降（現在） ===== */</span>
+<span class="selector">p<span class="pseudo">:before</span></span>  { } <span class="comment">/* CSS2の書き方（非推奨） */</span>
+<span class="selector">p<span class="pseudo">::before</span></span> { } <span class="comment">/* CSS3以降の正式な書き方（推奨） */</span>
+
+<span class="comment">/* ===== 主な擬似要素 ===== */</span>
+
+<span class="comment">/* ::before / ::after：要素の前後にコンテンツを挿入 */</span>
+<span class="selector">.note<span class="pseudo">::before</span></span> {
+    <span class="prop">content</span>: <span class="val">"📌 "</span>;    <span class="comment">/* contentプロパティは必須 */</span>
+}
+<span class="selector">.external<span class="pseudo">::after</span></span> {
+    <span class="prop">content</span>: <span class="val">" ↗"</span>;
+}
+<span class="comment">/* content: "" で空文字（装飾目的） */</span>
+<span class="selector">.divider<span class="pseudo">::after</span></span> {
+    <span class="prop">content</span>: <span class="val">""</span>;
+    <span class="prop">display</span>: <span class="val">block</span>;
+    <span class="prop">border-bottom</span>: <span class="val">1px solid #ccc</span>;
+}
+
+<span class="comment">/* ::first-line：最初の行 */</span>
+<span class="selector">p<span class="pseudo">::first-line</span></span> {
+    <span class="prop">font-weight</span>: <span class="val">bold</span>;
+    <span class="prop">color</span>: <span class="val">#553c9a</span>;
+}
+
+<span class="comment">/* ::first-letter：最初の文字（ドロップキャップ） */</span>
+<span class="selector">p<span class="pseudo">::first-letter</span></span> {
+    <span class="prop">font-size</span>: <span class="val">2em</span>;
+    <span class="prop">float</span>: <span class="val">left</span>;
+    <span class="prop">color</span>: <span class="val">#9f7aea</span>;
+}
+
+<span class="comment">/* ::selection：テキスト選択時のスタイル */</span>
+<span class="selector"><span class="pseudo">::selection</span></span> {
+    <span class="prop">background</span>: <span class="val">#9f7aea</span>;
+    <span class="prop">color</span>: <span class="val">#fff</span>;
+}
+
+<span class="comment">/* ::placeholder：プレースホルダーのスタイル */</span>
+<span class="selector">input<span class="pseudo">::placeholder</span></span> {
+    <span class="prop">color</span>: <span class="val">#a0aec0</span>;
+    <span class="prop">font-style</span>: <span class="val">italic</span>;
+}
+
+<span class="comment">/* ::marker：リストマーカーのスタイル */</span>
+<span class="selector">li<span class="pseudo">::marker</span></span> {
+    <span class="prop">color</span>: <span class="val">#9f7aea</span>;
+    <span class="prop">font-size</span>: <span class="val">1.2em</span>;
+}
+</pre>
+
+  <div class="live-demo pe-demo">
+    <p><strong>▼ 擬似要素のライブデモ</strong></p>
+    <p>これは ::first-line（最初の行が紫・太字）と ::first-letter（最初の文字が大きく紫）のデモです。テキストが複数行になると効果がよくわかります。</p>
+    <p class="before-after">before・afterで括弧を追加</p>
+  </div>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>擬似要素</th><th>説明</th><th>CSS2記法（非推奨）</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>::before</code></td><td>要素の直前にコンテンツ挿入</td><td><code>:before</code></td></tr>
+      <tr><td><code>::after</code></td><td>要素の直後にコンテンツ挿入</td><td><code>:after</code></td></tr>
+      <tr><td><code>::first-line</code></td><td>最初の行</td><td><code>:first-line</code></td></tr>
+      <tr><td><code>::first-letter</code></td><td>最初の文字</td><td><code>:first-letter</code></td></tr>
+      <tr><td><code>::selection</code></td><td>選択されたテキスト</td><td>なし（CSS3追加）</td></tr>
+      <tr><td><code>::placeholder</code></td><td>プレースホルダー</td><td>なし（CSS3追加）</td></tr>
+      <tr><td><code>::marker</code></td><td>リストマーカー</td><td>なし（CSS4追加）</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 7. 結合子 -->
+<h2>⑦ 結合子</h2>
+<div class="note">
+  <strong>ポイント①：結合子の記号はしっかりと覚える</strong><br>
+  結合子はセレクタとセレクタの「関係性」を指定します。
+</div>
+<div class="demo-box">
+
+  <div class="combinator-grid">
+    <div class="combinator-card">
+      <span class="sym">A B</span>
+      <div class="sym-name">子孫結合子</div>
+      <div class="sym-desc">（スペース）<br>AのすべてのB子孫</div>
+    </div>
+    <div class="combinator-card">
+      <span class="sym">A &gt; B</span>
+      <div class="sym-name">子結合子</div>
+      <div class="sym-desc">（&gt;）<br>Aの直接の子Bのみ</div>
+    </div>
+    <div class="combinator-card">
+      <span class="sym">A + B</span>
+      <div class="sym-name">隣接兄弟結合子</div>
+      <div class="sym-desc">（+）<br>Aの直後の兄弟B</div>
+    </div>
+    <div class="combinator-card">
+      <span class="sym">A ~ B</span>
+      <div class="sym-name">一般兄弟結合子</div>
+      <div class="sym-desc">（~）<br>Aの後ろにある兄弟Bすべて</div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* 子孫結合子（スペース）：Aの中にあるすべてのB */</span>
+<span class="selector">div p</span>        { <span class="prop">color</span>: <span class="val">blue</span>; }   <span class="comment">/* div内のすべてのp（深さ問わず） */</span>
+<span class="selector">.nav a</span>       { <span class="prop">color</span>: <span class="val">white</span>; }  <span class="comment">/* .nav内のすべてのa */</span>
+
+<span class="comment">/* 子結合子（>）：Aの直接の子Bのみ */</span>
+<span class="selector">ul > li</span>      { <span class="prop">color</span>: <span class="val">red</span>; }    <span class="comment">/* ulの直接の子liのみ（孫liは対象外） */</span>
+<span class="selector">.parent > p</span> { <span class="prop">color</span>: <span class="val">purple</span>; }
+
+<span class="comment">/* 隣接兄弟結合子（+）：Aの直後の兄弟Bのみ */</span>
+<span class="selector">h1 + p</span>       { <span class="prop">font-size</span>: <span class="val">1.2em</span>; } <span class="comment">/* h1の直後のpのみ */</span>
+<span class="selector">label + input</span>{ <span class="prop">margin-left</span>: <span class="val">8px</span>; }
+
+<span class="comment">/* 一般兄弟結合子（~）：Aの後ろにある兄弟Bすべて */</span>
+<span class="selector">h1 ~ p</span>       { <span class="prop">color</span>: <span class="val">gray</span>; }    <span class="comment">/* h1の後ろにあるすべてのp */</span>
+<span class="selector">.active ~ li</span>{ <span class="prop">opacity</span>: <span class="val">0.5</span>; }
+</pre>
+
+  <div class="live-demo comb-demo">
+    <p><strong>▼ 結合子のライブデモ</strong></p>
+    <div class="parent" style="background:#f7fafc; border:1px solid #e9d8fd; border-radius:6px; padding:12px; margin-bottom:10px;">
+      <p>子結合子（&gt;）：.parent の直接の子p → 紫・太字</p>
+      <div>
+        <p>孫のp（子結合子の対象外）</p>
+      </div>
+    </div>
+    <div>
+      <p class="sibling" style="color:#553c9a; font-weight:bold;">基準要素（.sibling）</p>
+      <p>隣接兄弟（+）：直後のp → 緑・斜体</p>
+      <p class="sibling-all" style="color:#553c9a; font-weight:bold;">基準要素（.sibling-all）</p>
+      <p>一般兄弟（~）：後ろのpすべて → 下線</p>
+      <p>一般兄弟（~）：後ろのpすべて → 下線</p>
+    </div>
+  </div>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>結合子</th><th>記号</th><th>選択対象</th><th>例</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>子孫結合子</td><td>スペース</td><td>Aの中にあるすべてのB（深さ問わず）</td><td><code>div p</code></td></tr>
+      <tr><td>子結合子</td><td><code>&gt;</code></td><td>Aの直接の子Bのみ</td><td><code>ul &gt; li</code></td></tr>
+      <tr><td>隣接兄弟結合子</td><td><code>+</code></td><td>Aの直後の兄弟Bのみ（1つ）</td><td><code>h1 + p</code></td></tr>
+      <tr><td>一般兄弟結合子</td><td><code>~</code></td><td>Aの後ろにある兄弟Bすべて</td><td><code>h1 ~ p</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 演習問題 -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      CSS3以降では擬似要素の記法はコロン2つ（<code>::before</code>）が正式であり、
+      コロン1つの <code>:before</code> は現在の仕様では完全に無効である。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn btn-purple" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.textContent =
+            '✅ 正解！CSS3以降は ::before（コロン2つ）が正式ですが、' +
+            ':before（コロン1つ）も後方互換性のため多くのブラウザで動作します。' +
+            'ただし現在の推奨は ::before（コロン2つ）です。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。:before（コロン1つ）はCSS2の書き方ですが、' +
+            '後方互換性のため多くのブラウザで動作します。' +
+            '現在の推奨は ::before（コロン2つ）です。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 属性セレクタの記号穴埋め（入力）</h3>
+    <p>以下の説明に合う属性セレクタの記号を入力してください（例：<code>^=</code>）。</p>
+
+    <label>① 属性値が「val」で<strong>始まる</strong>要素を選択（前方一致）：</label>
+    <input type="text" id="q2a" placeholder="記号">
+
+    <label>② 属性値が「val」で<strong>終わる</strong>要素を選択（後方一致）：</label>
+    <input type="text" id="q2b" placeholder="記号">
+
+    <label>③ 属性値に「val」が<strong>含まれる</strong>要素を選択（部分一致）：</label>
+    <input type="text" id="q2c" placeholder="記号">
+
+    <label>④ スペース区切りの値の<strong>1つ</strong>が「val」に一致する要素を選択：</label>
+    <input type="text" id="q2d" placeholder="記号">
+
+    <label>⑤ 属性値が「val」と<strong>完全一致</strong>、または「val-」で始まる要素を選択：</label>
+    <input type="text" id="q2e" placeholder="記号">
+
+    <br>
+    <button class="btn btn-purple" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value.trim().replace(/\s/g,'');
+        const b = document.getElementById('q2b').value.trim().replace(/\s/g,'');
+        const c = document.getElementById('q2c').value.trim().replace(/\s/g,'');
+        const d = document.getElementById('q2d').value.trim().replace(/\s/g,'');
+        const e = document.getElementById('q2e').value.trim().replace(/\s/g,'');
+        const r = document.getElementById('q2-result');
+        const ca = a === '^=';
+        const cb = b === '$=';
+        const cc = c === '*=';
+        const cd = d === '~=';
+        const ce = e === '|=';
+        const count = [ca, cb, cc, cd, ce].filter(Boolean).length;
+        if (count === 5) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！属性セレクタの記号を完璧に覚えています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/5 問正解。<br>` +
+            `① ${ca ? '✅' : '❌ ^=（前方一致）'}　` +
+            `② ${cb ? '✅' : '❌ $=（後方一致）'}　` +
+            `③ ${cc ? '✅' : '❌ *=（部分一致）'}　` +
+            `④ ${cd ? '✅' : '❌ ~=（スペース区切り）'}　` +
+            `⑤ ${ce ? '✅' : '❌ |=（ハイフン区切り）'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. nth-child式の選択問題</h3>
+    <p>
+      <code>li:nth-child(3n+1)</code> が選択するli要素の番号として正しいものはどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">1, 2, 3 番目</option>
+      <option value="b">1, 4, 7, 10 番目</option>
+      <option value="c">3, 6, 9, 12 番目</option>
+      <option value="d">2, 5, 8, 11 番目</option>
+    </select>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            '3n+1 の式は n=0,1,2,3... を代入して計算します：<br>' +
+            'n=0 → 3×0+1 = 1<br>' +
+            'n=1 → 3×1+1 = 4<br>' +
+            'n=2 → 3×2+1 = 7<br>' +
+            'n=3 → 3×3+1 = 10<br>' +
+            '→ 1, 4, 7, 10 番目が選択されます。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。3n+1 は n=0,1,2,3... を代入します。<br>' +
+            'n=0→1, n=1→4, n=2→7, n=3→10 → 1,4,7,10番目です。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 結合子の選択問題</h3>
+    <p>
+      <code>ul > li</code> の結合子（<code>&gt;</code>）の説明として正しいものはどれですか？
+    </p>
+    <select id="q4">
+      <option value="">-- 選択してください --</option>
+      <option value="a">ul要素の中にあるすべてのli要素（深さ問わず）</option>
+      <option value="b">ul要素の直接の子であるli要素のみ</option>
+      <option value="c">ul要素の直後にある兄弟のli要素のみ</option>
+      <option value="d">ul要素の後ろにあるすべての兄弟li要素</option>
+    </select>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const v = document.getElementById('q4').value;
+        const r = document.getElementById('q4-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            '> は子結合子で、Aの直接の子Bのみを選択します。<br>' +
+            '孫要素（ネストされたul > li）は対象外です。<br><br>' +
+            '・スペース（子孫）：深さ問わずすべてのB<br>' +
+            '・>（子）：直接の子Bのみ<br>' +
+            '・+（隣接兄弟）：直後の兄弟Bのみ<br>' +
+            '・~（一般兄弟）：後ろのすべての兄弟B';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。> は子結合子で、Aの直接の子Bのみを選択します。' +
+            '孫以下の要素は対象外です。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5a">
+      ① <code>a[href^="https"]</code> はhref属性が「https」で始まるa要素を選択する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5b">
+      ② <code>li:nth-child(2n)</code> と <code>li:nth-child(even)</code> は同じ要素を選択する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5c">
+      ③ <code>h1 + p</code> はh1要素の後ろにあるすべての兄弟p要素を選択する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5d">
+      ④ CSS3以降では擬似要素の記法は <code>::before</code>（コロン2つ）が正式である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5e">
+      ⑤ <code>[lang|="en"]</code> は lang属性が「en」または「en-」で始まる要素を選択する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5f">
+      ⑥ <code>li:nth-child(-n+3)</code> は末尾から3つのli要素を選択する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5g">
+      ⑦ <code>::before</code> 擬似要素を使う場合、<code>content</code> プロパティは必須である
+    </label>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const r = document.getElementById('q5-result');
+        const checks = {
+          a: document.getElementById('q5a').checked,
+          b: document.getElementById('q5b').checked,
+          c: document.getElementById('q5c').checked,
+          d: document.getElementById('q5d').checked,
+          e: document.getElementById('q5e').checked,
+          f: document.getElementById('q5f').checked,
+          g: document.getElementById('q5g').checked,
+        };
+        // 正解：①②④⑤⑦（a, b, d, e, g）
+        // ③h1+pは直後の1つのみ（~が後ろすべて）
+        // ⑥-n+3は最初の3つ（1,2,3）。末尾からはnth-last-child
+        const correct = { a:true, b:true, c:false, d:true, e:true, f:false, g:true };
+        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
+        const allCorrect = results.every(Boolean);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① [href^="https"] は前方一致 ✅<br>' +
+            '・② 2n と even は同じ ✅<br>' +
+            '・④ CSS3以降は ::before（コロン2つ）が正式 ✅<br>' +
+            '・⑤ [lang|="en"] は en または en- で始まる ✅<br>' +
+            '・⑦ ::before には content プロパティが必須 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① [href^="https"] は前方一致で正しい<br>' +
+            '・② 2n と even は同じ（偶数番目）<br>' +
+            '・④ CSS3以降は ::before（コロン2つ）が正式<br>' +
+            '・⑤ [lang|="en"] は en または en- で始まる要素<br>' +
+            '・⑦ ::before / ::after には content プロパティが必須<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・③ h1 + p は直後の1つのみ（後ろすべては h1 ~ p）<br>' +
+            '・⑥ -n+3 は最初の3つ（1,2,3）。末尾から3つは :nth-last-child(-n+3)';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. コード穴埋め問題</h3>
+    <p>以下のコードの <code>__A__</code> 〜 <code>__F__</code> に
+    適切なセレクタ・記号・値を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+/* A：PDFリンクの後方一致 */
+a[href__A__".pdf"] { color: red; }
+
+/* B：httpsリンクの前方一致 */
+a[href__B__"https"] { color: green; }
+
+/* C：テーブルの偶数行（even と同じ） */
+tr:nth-child(__C__) { background: #f0f0f0; }
+
+/* D：h2の直後のpのみ（隣接兄弟） */
+h2 __D__ p { margin-top: 0; }
+
+/* E：ulの直接の子liのみ（子結合子） */
+ul __E__ li { list-style: disc; }
+
+/* F：::beforeの必須プロパティ */
+.icon::before {
+    __F__: "★";
+}</pre>
+
+    <label>A（後方一致の記号）：</label>
+    <input type="text" id="q6a" placeholder="記号">
+    <label>B（前方一致の記号）：</label>
+    <input type="text" id="q6b" placeholder="記号">
+    <label>C（偶数番目を表すan+b式）：</label>
+    <input type="text" id="q6c" placeholder="式">
+    <label>D（隣接兄弟結合子の記号）：</label>
+    <input type="text" id="q6d" placeholder="記号">
+    <label>E（子結合子の記号）：</label>
+    <input type="text" id="q6e" placeholder="記号">
+    <label>F（::before / ::afterの必須プロパティ）：</label>
+    <input type="text" id="q6f" placeholder="プロパティ名">
+    <br>
+    <button class="btn btn-purple" onclick="checkQ6()">答え合わせ</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const a = document.getElementById('q6a').value.trim().replace(/\s/g,'');
+        const b = document.getElementById('q6b').value.trim().replace(/\s/g,'');
+        const c = document.getElementById('q6c').value.trim().replace(/\s/g,'');
+        const d = document.getElementById('q6d').value.trim().replace(/\s/g,'');
+        const e = document.getElementById('q6e').value.trim().replace(/\s/g,'');
+        const f = document.getElementById('q6f').value.trim().toLowerCase();
+        const r = document.getElementById('q6-result');
+        const ca = a === '$=';
+        const cb = b === '^=';
+        const cc = c === '2n' || c === 'even';
+        const cd = d === '+';
+        const ce = e === '>';
+        const cf = f === 'content';
+        const count = [ca, cb, cc, cd, ce, cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！セレクタの記号を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca ? '✅' : '❌ $='}　` +
+            `B: ${cb ? '✅' : '❌ ^='}　` +
+            `C: ${cc ? '✅' : '❌ 2n（またはeven）'}　` +
+            `D: ${cd ? '✅' : '❌ +'}　` +
+            `E: ${ce ? '✅' : '❌ >'}　` +
+            `F: ${cf ? '✅' : '❌ content'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q7 -->
+  <div class="quiz-block">
+    <h3>Q7. 記述問題</h3>
+    <p>
+      擬似クラスと擬似要素の違いを説明し、
+      CSS3以降で擬似要素のコロンが2つになった理由を述べてください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q7" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ7()">模範解答を見る</button>
+    <div class="result-msg" id="q7-result"></div>
+    <script>
+      function checkQ7() {
+        const r = document.getElementById('q7-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<strong>擬似クラス（:）：</strong><br>' +
+          '・要素の「状態」や「位置」を条件として選択する<br>' +
+          '・例：:hover（マウスオーバー）/ :nth-child()（n番目）/ :focus（フォーカス）<br>' +
+          '・コロン1つ（:）で記述する<br><br>' +
+          '<strong>擬似要素（::）：</strong><br>' +
+          '・要素の「一部分」や「仮想的な要素」を選択・生成する<br>' +
+          '・例：::before（要素の前）/ ::first-line（最初の行）/ ::selection（選択テキスト）<br>' +
+          '・CSS3以降はコロン2つ（::）で記述する<br><br>' +
+          '<strong>コロンが2つになった理由：</strong><br>' +
+          '・CSS2では擬似クラスも擬似要素も同じコロン1つ（:）で記述していた<br>' +
+          '・CSS3で擬似クラス（:）と擬似要素（::）を<strong>視覚的に区別</strong>するために<br>' +
+          '　擬似要素のコロンを2つ（::）に変更した<br>' +
+          '・後方互換性のため :before（1つ）も多くのブラウザで動作するが、<br>' +
+          '　現在の推奨は ::before（2つ）';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 セレクタ まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>種類</th><th>記法</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>タイプセレクタ</td><td><code>p</code> / <code>h1</code></td><td>HTML要素名で指定</td></tr>
+    <tr><td>ユニバーサルセレクタ</td><td><code>*</code></td><td>すべての要素。box-sizingリセットなどに使用</td></tr>
+    <tr><td>クラスセレクタ</td><td><code>.class</code></td><td>複数要素に使用可。詳細度 0-1-0</td></tr>
+    <tr><td>IDセレクタ</td><td><code>#id</code></td><td>1ページに1つ。詳細度 1-0-0</td></tr>
+    <tr><td>属性セレクタ</td><td><code>[attr^="val"]</code> など</td><td>^=前方 / $=後方 / *=部分 / ~=スペース区切り / |=ハイフン</td></tr>
+    <tr><td>擬似クラス</td><td><code>:hover</code> / <code>:nth-child()</code></td><td>コロン1つ。an+b式：n=0,1,2...を代入</td></tr>
+    <tr><td>擬似要素</td><td><code>::before</code> / <code>::after</code></td><td>コロン2つ（CSS3以降）。::beforeはcontentプロパティ必須</td></tr>
+    <tr><td>子孫結合子</td><td>スペース</td><td>Aの中のすべてのB（深さ問わず）</td></tr>
+    <tr><td>子結合子</td><td><code>&gt;</code></td><td>Aの直接の子Bのみ</td></tr>
+    <tr><td>隣接兄弟結合子</td><td><code>+</code></td><td>Aの直後の兄弟Bのみ（1つ）</td></tr>
+    <tr><td>一般兄弟結合子</td><td><code>~</code></td><td>Aの後ろにある兄弟Bすべて</td></tr>
+  </tbody>
+</table>
+
+</body>
+</html>
