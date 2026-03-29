@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>CSS 適用の優先順位 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #9f7aea; padding-bottom: 10px; }
+    h2 { color: #553c9a; margin-top: 48px; border-left: 5px solid #9f7aea; padding-left: 12px; }
+    h3 { color: #276749; margin-top: 24px; }
+
+    code {
+      background: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment   { color: #68d391; }
+    pre .selector  { color: #f6ad55; }
+    pre .prop      { color: #90cdf4; }
+    pre .val       { color: #fc8181; }
+    pre .important { color: #fc8181; font-weight: bold; }
+    pre .tag       { color: #90cdf4; }
+    pre .attr      { color: #fbd38d; }
+    pre .value     { color: #68d391; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #b794f4;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #553c9a; }
+
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+
+    .demo-box {
+      background: #fff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* 優先順位ピラミッド */
+    .priority-pyramid {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      margin: 20px 0;
+    }
+    .pyramid-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      padding: 10px 20px;
+      font-weight: bold;
+      font-size: 0.9em;
+      text-align: center;
+      gap: 12px;
+    }
+    .pyramid-row .rank {
+      font-size: 0.78em;
+      opacity: 0.8;
+      font-weight: normal;
+      min-width: 60px;
+      text-align: right;
+    }
+    .pyramid-row .label { min-width: 220px; }
+    .pyramid-row .arrow {
+      font-size: 0.78em;
+      opacity: 0.8;
+      min-width: 60px;
+    }
+    .p1 { background: #fed7d7; color: #9b2335; width: 100%; }
+    .p2 { background: #fbd38d; color: #744210; width: 90%; }
+    .p3 { background: #fefcbf; color: #744210; width: 80%; }
+    .p4 { background: #c6f6d5; color: #276749; width: 70%; }
+    .p5 { background: #bee3f8; color: #2b6cb0; width: 60%; }
+    .p6 { background: #e9d8fd; color: #553c9a; width: 50%; }
+    .p7 { background: #edf2f7; color: #4a5568; width: 40%; }
+
+    /* 詳細度カード */
+    .specificity-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 10px 0;
+      flex-wrap: wrap;
+    }
+    .spec-selector {
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.95em;
+      color: #2d3748;
+      min-width: 200px;
+    }
+    .spec-score {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .spec-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.1em;
+      line-height: 1;
+    }
+    .spec-box .spec-label {
+      font-size: 0.6em;
+      font-weight: normal;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+    .spec-id      { background: #fed7d7; color: #9b2335; border: 2px solid #fc8181; }
+    .spec-class   { background: #fefcbf; color: #744210; border: 2px solid #f6e05e; }
+    .spec-element { background: #c6f6d5; color: #276749; border: 2px solid #68d391; }
+    .spec-sep     { font-size: 1.2em; color: #a0aec0; font-weight: bold; }
+    .spec-result  {
+      background: #1a202c;
+      color: #e2e8f0;
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.9em;
+    }
+
+    /* 詳細度計算インタラクティブ */
+    .calc-area {
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+    .calc-input-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .calc-input-row input {
+      border: 2px solid #e9d8fd;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      width: 260px;
+      outline: none;
+    }
+    .calc-input-row input:focus { border-color: #9f7aea; }
+    .calc-result-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    table.ref-table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      margin: 14px 0;
+    }
+    table.ref-table th, table.ref-table td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.ref-table thead tr { background: #553c9a; color: #fff; }
+    table.ref-table tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 {
+      margin-top: 0;
+      color: #c05621;
+      border-left-color: #f6ad55;
+    }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #fbd38d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #fbd38d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-purple { background: #9f7aea; color: #fff; }
+    .btn-sm {
+      padding: 6px 14px;
+      font-size: 0.88em;
+      margin-top: 0;
+    }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #e9d8fd; color: #553c9a; display: block; }
+
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.summary thead tr { background: #553c9a; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px 14px; }
+      .pyramid-row { width: 100% !important; font-size: 0.82em; padding: 8px 10px; }
+      .pyramid-row .rank, .pyramid-row .arrow { min-width: 40px; font-size: 0.72em; }
+      .pyramid-row .label { min-width: unset; }
+      .spec-selector { min-width: unset; width: 100%; }
+      .specificity-display { flex-direction: column; align-items: flex-start; }
+      .calc-input-row input { width: 100%; }
+      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.82em; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px 16px; }
+      .quiz-block { padding: 14px 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>⚖️ CSS 適用の優先順位 学習サンプル</h1>
+<p>指定元による優先順位・<code>!important</code>・セレクタの詳細度の計算方法を学びましょう。</p>
+
+
+<!-- 1. CSSの指定元による優先順位 -->
+<h2>① CSSの指定元による優先順位</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  CSSは3つの「指定元（オリジン）」から適用されます。<br>
+  優先度は <strong>製作者 &gt; ユーザー &gt; ユーザーエージェント</strong> の順です。
+</div>
+<div class="demo-box">
+
+  <h3>3つの指定元（オリジン）</h3>
+  <table class="ref-table">
+    <thead>
+      <tr><th>指定元</th><th>説明</th><th>例</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ユーザーエージェント</strong><br>（ブラウザ）</td>
+        <td>ブラウザが持つデフォルトスタイル</td>
+        <td>h1が大きく表示される・aが青色・ulに●マーク</td>
+      </tr>
+      <tr>
+        <td><strong>ユーザー</strong></td>
+        <td>ブラウザの設定やユーザーが適用するスタイル</td>
+        <td>ブラウザのフォントサイズ設定・ユーザースタイルシート</td>
+      </tr>
+      <tr>
+        <td><strong>製作者</strong></td>
+        <td>Webサイト制作者が書いたCSS</td>
+        <td>link要素・style要素・style属性で指定したCSS</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>通常時の優先順位（高い順）</h3>
+  <div class="priority-pyramid">
+    <div class="pyramid-row p1">
+      <span class="rank">最高</span>
+      <span class="label">🥇 製作者のCSS</span>
+      <span class="arrow">← 最優先</span>
+    </div>
+    <div class="pyramid-row p4">
+      <span class="rank">中</span>
+      <span class="label">🥈 ユーザーのCSS</span>
+      <span class="arrow"></span>
+    </div>
+    <div class="pyramid-row p6">
+      <span class="rank">最低</span>
+      <span class="label">🥉 ユーザーエージェント（ブラウザ）のCSS</span>
+      <span class="arrow">← 最低</span>
+    </div>
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ 試験重要ポイント①：!importantで優先順位が逆転する</strong><br><br>
+    通常は <strong>製作者 &gt; ユーザー &gt; ユーザーエージェント</strong> の順ですが、<br>
+    <code>!important</code> を付けると<strong>逆転</strong>します。<br><br>
+    <code>!important</code> 付きの優先順位（高い順）：<br>
+    <strong>ユーザーエージェント !important &gt; ユーザー !important &gt; 製作者 !important</strong>
+  </div>
+
+  <h3>!important 付きの優先順位（高い順）</h3>
+  <div class="priority-pyramid">
+    <div class="pyramid-row p1">
+      <span class="rank">最高</span>
+      <span class="label">🔴 ユーザーエージェントの !important</span>
+      <span class="arrow">← 逆転！</span>
+    </div>
+    <div class="pyramid-row p2">
+      <span class="rank">↑</span>
+      <span class="label">🟠 ユーザーの !important</span>
+      <span class="arrow"></span>
+    </div>
+    <div class="pyramid-row p3">
+      <span class="rank">↑</span>
+      <span class="label">🟡 製作者の !important</span>
+      <span class="arrow"></span>
+    </div>
+    <div class="pyramid-row p4">
+      <span class="rank">↓</span>
+      <span class="label">🟢 製作者の通常CSS</span>
+      <span class="arrow"></span>
+    </div>
+    <div class="pyramid-row p5">
+      <span class="rank">↓</span>
+      <span class="label">🔵 ユーザーの通常CSS</span>
+      <span class="arrow"></span>
+    </div>
+    <div class="pyramid-row p6">
+      <span class="rank">最低</span>
+      <span class="label">🟣 ユーザーエージェントの通常CSS</span>
+      <span class="arrow">← 最低</span>
+    </div>
+  </div>
+
+  <div class="good">
+    ✅ <strong>覚え方のポイント</strong><br>
+    ・通常時：<strong>製作者</strong>が最優先（Webサイトのデザインを優先）<br>
+    ・<code>!important</code> 付き：<strong>逆転</strong>して
+    ユーザーエージェント &gt; ユーザー &gt; 製作者 の順になる<br>
+    ・ユーザーの <code>!important</code> が製作者より優先されるのは、
+    アクセシビリティ（視覚障害者の大文字設定など）のため
+  </div>
+</div>
+
+
+<!-- 2. !importantで優先順位を高くする -->
+<h2>② !importantで優先順位を高くする</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>!important</code> は宣言の値の後ろに記述します。<br>
+  ・同じ指定元内では <code>!important</code> が付いた宣言が最優先になります。<br>
+  ・<code>!important</code> 同士が競合した場合は詳細度で決まります。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* !important の書き方 */</span>
+<span class="selector">p</span> {
+    <span class="prop">color</span>: <span class="val">red</span> <span class="important">!important</span>;   <span class="comment">/* !important を付ける */</span>
+    <span class="prop">font-size</span>: <span class="val">16px</span>;           <span class="comment">/* こちらは通常の宣言 */</span>
+}
+
+<span class="comment">/* 詳細度が低くても !important で勝てる例 */</span>
+<span class="selector">p</span>       { <span class="prop">color</span>: <span class="val">blue</span>; }           <span class="comment">/* 詳細度 0-0-1 */</span>
+<span class="selector">#main p</span> { <span class="prop">color</span>: <span class="val">green</span>; }          <span class="comment">/* 詳細度 1-0-1（高い） */</span>
+<span class="selector">p</span>       { <span class="prop">color</span>: <span class="val">red</span> <span class="important">!important</span>; } <span class="comment">/* !important → 赤が適用される */</span>
+
+<span class="comment">/* !important 同士が競合した場合は詳細度で決まる */</span>
+<span class="selector">p</span>       { <span class="prop">color</span>: <span class="val">red</span>   <span class="important">!important</span>; } <span class="comment">/* 詳細度 0-0-1 */</span>
+<span class="selector">.text p</span> { <span class="prop">color</span>: <span class="val">blue</span>  <span class="important">!important</span>; } <span class="comment">/* 詳細度 0-1-1 → 青が適用 */</span>
+</pre>
+
+  <div class="warn">
+    <strong>⚠️ !importantの注意点</strong><br>
+    ・<code>!important</code> の多用はCSSの管理を複雑にします<br>
+    ・<code>!important</code> を上書きするには、さらに <code>!important</code> が必要になり
+    「!important地獄」になりがちです<br>
+    ・使用は最小限にとどめ、詳細度の設計で解決するのが推奨です<br>
+    ・アクセシビリティ対応（ユーザースタイルシート）や
+    サードパーティCSSの上書きなど、やむを得ない場合に限定して使います
+  </div>
+
+  <h3>同じ指定元・同じ詳細度の場合は後から書いた方が優先</h3>
+<pre>
+<span class="comment">/* 同じ詳細度（0-0-1）の場合、後に書いた方が適用される */</span>
+<span class="selector">p</span> { <span class="prop">color</span>: <span class="val">red</span>; }    <span class="comment">/* ← こちらは上書きされる */</span>
+<span class="selector">p</span> { <span class="prop">color</span>: <span class="val">blue</span>; }   <span class="comment">/* ← 後に書いた方が適用される */</span>
+
+<span class="comment">/* 外部CSSとstyle要素の順序も同様 */</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="value">"stylesheet"</span> <span class="attr">href</span>=<span class="value">"base.css"</span><span class="tag">&gt;</span>   <span class="comment">&lt;!-- 先に読み込まれる --&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="value">"stylesheet"</span> <span class="attr">href</span>=<span class="value">"theme.css"</span><span class="tag">&gt;</span>  <span class="comment">&lt;!-- 後に読み込まれる → 優先 --&gt;</span>
+</pre>
+</div>
+
+
+<!-- 3. セレクタの詳細度 -->
+<h2>③ セレクタの詳細度による優先順位の計算方法</h2>
+<div class="note">
+  <strong>ポイント②③：詳細度の仕組み</strong><br>
+  ・<strong>詳細度が最も高いのは style属性による指定</strong>（インラインスタイル）<br>
+  ・セレクタの詳細度は
+  <strong>IDセレクタ（A）・属性系セレクタ（B）・要素系セレクタ（C）の3桁</strong>で示します
+</div>
+<div class="demo-box">
+
+  <h3>詳細度の4段階（高い順）</h3>
+  <div class="priority-pyramid">
+    <div class="pyramid-row p1">
+      <span class="rank">最高</span>
+      <span class="label">style属性（インラインスタイル）</span>
+      <span class="arrow">1-0-0-0</span>
+    </div>
+    <div class="pyramid-row p2">
+      <span class="rank">高</span>
+      <span class="label">IDセレクタ（#id）</span>
+      <span class="arrow">0-1-0-0</span>
+    </div>
+    <div class="pyramid-row p4">
+      <span class="rank">中</span>
+      <span class="label">クラス・属性・擬似クラスセレクタ</span>
+      <span class="arrow">0-0-1-0</span>
+    </div>
+    <div class="pyramid-row p6">
+      <span class="rank">低</span>
+      <span class="label">要素・擬似要素セレクタ</span>
+      <span class="arrow">0-0-0-1</span>
+    </div>
+  </div>
+
+  <h3>3桁の詳細度（A-B-C）の計算方法</h3>
+  <div style="background:#faf5ff; border:1px solid #e9d8fd; border-radius:8px; padding:16px 20px; margin:14px 0;">
+    <div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center; margin-bottom:12px;">
+      <div style="text-align:center;">
+        <div class="spec-box spec-id" style="width:60px; height:60px; font-size:1.3em; margin:0 auto 4px;">A</div>
+        <div style="font-size:0.82em; font-weight:bold; color:#9b2335;">IDセレクタ</div>
+        <div style="font-size:0.78em; color:#718096;">#id</div>
+      </div>
+      <div style="display:flex; align-items:center; font-size:1.5em; color:#a0aec0;">-</div>
+      <div style="text-align:center;">
+        <div class="spec-box spec-class" style="width:60px; height:60px; font-size:1.3em; margin:0 auto 4px;">B</div>
+        <div style="font-size:0.82em; font-weight:bold; color:#744210;">属性系セレクタ</div>
+        <div style="font-size:0.78em; color:#718096;">.class / [attr] / :hover</div>
+      </div>
+      <div style="display:flex; align-items:center; font-size:1.5em; color:#a0aec0;">-</div>
+      <div style="text-align:center;">
+        <div class="spec-box spec-element" style="width:60px; height:60px; font-size:1.3em; margin:0 auto 4px;">C</div>
+        <div style="font-size:0.82em; font-weight:bold; color:#276749;">要素系セレクタ</div>
+        <div style="font-size:0.78em; color:#718096;">p / h1 / ::before</div>
+      </div>
+    </div>
+    <div style="font-size:0.88em; color:#4a5568; text-align:center;">
+      ※ ユニバーサルセレクタ（*）・結合子（スペース / &gt; / + / ~）は詳細度に影響しない
+    </div>
+  </div>
+
+  <h3>詳細度の計算例</h3>
+
+  <div class="specificity-display">
+    <span class="spec-selector">* { }</span>
+    <div class="spec-score">
+      <div class="spec-box spec-id">0<div class="spec-label">ID</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-class">0<div class="spec-label">属性系</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-element">0<div class="spec-label">要素系</div></div>
+    </div>
+    <span class="spec-result">0-0-0</span>
+  </div>
+
+  <div class="specificity-display">
+    <span class="spec-selector">p { }</span>
+    <div class="spec-score">
+      <div class="spec-box spec-id">0<div class="spec-label">ID</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-class">0<div class="spec-label">属性系</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-element">1<div class="spec-label">要素系</div></div>
+    </div>
+    <span class="spec-result">0-0-1</span>
+  </div>
+
+  <div class="specificity-display">
+    <span class="spec-selector">p::before { }</span>
+    <div class="spec-score">
+      <div class="spec-box spec-id">0<div class="spec-label">ID</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-class">0<div class="spec-label">属性系</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-element">2<div class="spec-label">要素系</div></div>
+    </div>
+    <span class="spec-result">0-0-2</span>
+    <span style="font-size:0.82em; color:#718096;">（p=1 + ::before=1）</span>
+  </div>
+
+  <div class="specificity-display">
+    <span class="spec-selector">.class { }</span>
+    <div class="spec-score">
+      <div class="spec-box spec-id">0<div class="spec-label">ID</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-class">1<div class="spec-label">属性系</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-element">0<div class="spec-label">要素系</div></div>
+    </div>
+    <span class="spec-result">0-1-0</span>
+  </div>
+
+  <div class="specificity-display">
+    <span class="spec-selector">p.note { }</span>
+    <div class="spec-score">
+      <div class="spec-box spec-id">0<div class="spec-label">ID</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-class">1<div class="spec-label">属性系</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-element">1<div class="spec-label">要素系</div></div>
+    </div>
+    <span class="spec-result">0-1-1</span>
+    <span style="font-size:0.82em; color:#718096;">（p=1 + .note=1）</span>
+  </div>
+
+  <div class="specificity-display">
+    <span class="spec-selector">div p.note { }</span>
+    <div class="spec-score">
+      <div class="spec-box spec-id">0<div class="spec-label">ID</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-class">1<div class="spec-label">属性系</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-element">2<div class="spec-label">要素系</div></div>
+    </div>
+    <span class="spec-result">0-1-2</span>
+    <span style="font-size:0.82em; color:#718096;">（div=1 + p=1 + .note=1）</span>
+  </div>
+
+  <div class="specificity-display">
+    <span class="spec-selector">#header { }</span>
+    <div class="spec-score">
+      <div class="spec-box spec-id">1<div class="spec-label">ID</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-class">0<div class="spec-label">属性系</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-element">0<div class="spec-label">要素系</div></div>
+    </div>
+    <span class="spec-result">1-0-0</span>
+  </div>
+
+  <div class="specificity-display">
+    <span class="spec-selector">#header .nav a { }</span>
+    <div class="spec-score">
+      <div class="spec-box spec-id">1<div class="spec-label">ID</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-class">1<div class="spec-label">属性系</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-element">1<div class="spec-label">要素系</div></div>
+    </div>
+    <span class="spec-result">1-1-1</span>
+    <span style="font-size:0.82em; color:#718096;">（#header=1 + .nav=1 + a=1）</span>
+  </div>
+
+  <div class="specificity-display">
+    <span class="spec-selector">input[type="text"] { }</span>
+    <div class="spec-score">
+      <div class="spec-box spec-id">0<div class="spec-label">ID</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-class">1<div class="spec-label">属性系</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-element">1<div class="spec-label">要素系</div></div>
+    </div>
+    <span class="spec-result">0-1-1</span>
+    <span style="font-size:0.82em; color:#718096;">（input=1 + [type="text"]=1）</span>
+  </div>
+
+  <div class="specificity-display">
+    <span class="spec-selector">a:hover { }</span>
+    <div class="spec-score">
+      <div class="spec-box spec-id">0<div class="spec-label">ID</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-class">1<div class="spec-label">属性系</div></div>
+      <span class="spec-sep">-</span>
+      <div class="spec-box spec-element">1<div class="spec-label">要素系</div></div>
+    </div>
+    <span class="spec-result">0-1-1</span>
+    <span style="font-size:0.82em; color:#718096;">（a=1 + :hover=1）</span>
+  </div>
+
+  <h3>🧮 詳細度 インタラクティブ計算機</h3>
+  <div class="calc-area">
+    <p style="margin:0 0 10px; font-size:0.9em; color:#553c9a; font-weight:bold;">
+      セレクタを入力すると詳細度を計算します
+    </p>
+    <div class="calc-input-row">
+      <input type="text" id="calc-input" placeholder="例: #nav .item a:hover"
+             oninput="calcSpecificity()">
+    </div>
+    <div class="calc-result-row" id="calc-result" style="min-height:52px;">
+      <span style="color:#a0aec0; font-size:0.88em;">← セレクタを入力してください</span>
+    </div>
+  </div>
+
+  <script>
+    function calcSpecificity() {
+      const input = document.getElementById('calc-input').value.trim();
+      const resultEl = document.getElementById('calc-result');
+      if (!input) {
+        resultEl.innerHTML = '<span style="color:#a0aec0; font-size:0.88em;">← セレクタを入力してください</span>';
+        return;
+      }
+
+      // 簡易的な詳細度計算
+      let sel = input;
+      let a = 0, b = 0, c = 0;
+      const details = [];
+
+      // style属性チェック
+      if (/^style$/i.test(sel.trim())) {
+        resultEl.innerHTML =
+          '<span style="background:#fed7d7; color:#9b2335; padding:4px 12px; border-radius:6px; font-weight:bold;">style属性：詳細度は 1-0-0-0（最高）</span>';
+        return;
+      }
+
+      // !importantを除去
+      sel = sel.replace(/!important/gi, '');
+
+      // IDセレクタをカウント・除去
+      const idMatches = sel.match(/#[\w-]+/g) || [];
+      a += idMatches.length;
+      if (idMatches.length) details.push(`ID(${idMatches.join(', ')})×${idMatches.length}`);
+      sel = sel.replace(/#[\w-]+/g, '');
+
+      // 擬似要素をカウント・除去（::xxx）
+      const peMatches = sel.match(/::[\w-]+/g) || [];
+      c += peMatches.length;
+      if (peMatches.length) details.push(`擬似要素(${peMatches.join(', ')})×${peMatches.length}`);
+      sel = sel.replace(/::[\w-]+/g, '');
+
+      // :not() の中身を取り出して処理（:notは詳細度に影響しない）
+      const notContents = [];
+      sel = sel.replace(/:not\(([^)]*)\)/g, (_, inner) => {
+        notContents.push(inner.trim());
+        return ' ' + inner.trim() + ' ';
+      });
+
+      // 属性セレクタをカウント・除去
+      const attrMatches = sel.match(/\[[^\]]*\]/g) || [];
+      b += attrMatches.length;
+      if (attrMatches.length) details.push(`属性セレクタ(${attrMatches.join(', ')})×${attrMatches.length}`);
+      sel = sel.replace(/\[[^\]]*\]/g, '');
+
+      // 擬似クラスをカウント・除去（:xxx）
+      const pcMatches = sel.match(/:[:\w-]+\([^)]*\)|:[\w-]+/g) || [];
+      b += pcMatches.length;
+      if (pcMatches.length) details.push(`擬似クラス(${pcMatches.join(', ')})×${pcMatches.length}`);
+      sel = sel.replace(/:[:\w-]+\([^)]*\)|:[\w-]+/g, '');
+
+      // クラスセレクタをカウント・除去
+      const classMatches = sel.match(/\.[\w-]+/g) || [];
+      b += classMatches.length;
+      if (classMatches.length) details.push(`クラス(${classMatches.join(', ')})×${classMatches.length}`);
+      sel = sel.replace(/\.[\w-]+/g, '');
+
+      // ユニバーサルセレクタ・結合子・空白を除去
+      sel = sel.replace(/[*>+~\s,]/g, ' ');
+
+      // 要素セレクタをカウント
+      const elemMatches = sel.trim().split(/\s+/).filter(s => /^[a-zA-Z][\w-]*$/.test(s));
+      c += elemMatches.length;
+      if (elemMatches.length) details.push(`要素(${elemMatches.join(', ')})×${elemMatches.length}`);
+
+      const detailStr = details.length ? details.join(' + ') : '（カウント対象なし）';
+
+      resultEl.innerHTML = `
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <div class="spec-box spec-id">${a}<div class="spec-label">ID</div></div>
+          <span class="spec-sep">-</span>
+          <div class="spec-box spec-class">${b}<div class="spec-label">属性系</div></div>
+          <span class="spec-sep">-</span>
+          <div class="spec-box spec-element">${c}<div class="spec-label">要素系</div></div>
+          <span class="spec-result">${a}-${b}-${c}</span>
+          <span style="font-size:0.82em; color:#718096;">${detailStr}</span>
+        </div>`;
+    }
+  </script>
+
+  <h3>詳細度の比較ルール</h3>
+<pre>
+<span class="comment">/* 詳細度の比較は左の桁（ID）から順に比較する */</span>
+
+<span class="comment">/* 例1：IDセレクタ vs クラスセレクタ多数 */</span>
+<span class="selector">#id</span>                        { <span class="prop">color</span>: <span class="val">red</span>; }   <span class="comment">/* 1-0-0 */</span>
+<span class="selector">.a.b.c.d.e.f.g.h.i.j.k</span>   { <span class="prop">color</span>: <span class="val">blue</span>; }  <span class="comment">/* 0-11-0 → 赤が適用！ */</span>
+<span class="comment">/* → IDの桁（1 vs 0）で比較するため、クラスが何個あっても#idが勝つ */</span>
+
+<span class="comment">/* 例2：詳細度が同じ場合は後に書いた方が適用 */</span>
+<span class="selector">.btn.primary</span>  { <span class="prop">color</span>: <span class="val">blue</span>; }   <span class="comment">/* 0-2-0 */</span>
+<span class="selector">.nav .item</span>    { <span class="prop">color</span>: <span class="val">red</span>; }    <span class="comment">/* 0-2-0 → 後に書いた赤が適用 */</span>
+</pre>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>セレクタの種類</th><th>詳細度への影響</th><th>例</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>style属性</td><td>1-0-0-0（最高・別格）</td><td><code>style="color:red"</code></td></tr>
+      <tr><td>IDセレクタ</td><td>A桁に +1</td><td><code>#header</code></td></tr>
+      <tr><td>クラスセレクタ</td><td>B桁に +1</td><td><code>.nav</code></td></tr>
+      <tr><td>属性セレクタ</td><td>B桁に +1</td><td><code>[type="text"]</code></td></tr>
+      <tr><td>擬似クラス</td><td>B桁に +1</td><td><code>:hover</code> / <code>:nth-child()</code></td></tr>
+      <tr><td>要素セレクタ（タイプ）</td><td>C桁に +1</td><td><code>p</code> / <code>h1</code></td></tr>
+      <tr><td>擬似要素</td><td>C桁に +1</td><td><code>::before</code> / <code>::first-line</code></td></tr>
+      <tr><td>ユニバーサルセレクタ</td><td>影響なし（0-0-0）</td><td><code>*</code></td></tr>
+      <tr><td>結合子</td><td>影響なし</td><td>スペース / <code>&gt;</code> / <code>+</code> / <code>~</code></td></tr>
+      <tr><td><code>:not()</code> 自体</td><td>影響なし（中身は計算）</td><td><code>:not(.hidden)</code></td></tr>
+      <tr><td><code>:is()</code> / <code>:has()</code></td><td>引数の中で最も高い詳細度</td><td><code>:is(#id, .cls)</code> → 1-0-0</td></tr>
+      <tr><td><code>:where()</code></td><td>常に 0-0-0</td><td><code>:where(h1, h2)</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 4. 優先順位の総まとめ -->
+<h2>④ 優先順位の総まとめ（高い順）</h2>
+<div class="demo-box">
+  <div class="priority-pyramid">
+    <div class="pyramid-row p1">
+      <span class="rank">①最高</span>
+      <span class="label">ユーザーエージェントの !important</span>
+      <span class="arrow">逆転</span>
+    </div>
+    <div class="pyramid-row p1" style="background:#feb2b2;">
+      <span class="rank">②</span>
+      <span class="label">ユーザーの !important</span>
+      <span class="arrow">逆転</span>
+    </div>
+    <div class="pyramid-row p2">
+      <span class="rank">③</span>
+      <span class="label">製作者の !important</span>
+      <span class="arrow">↑ !important</span>
+    </div>
+    <div class="pyramid-row p2" style="background:#fde68a;">
+      <span class="rank">④</span>
+      <span class="label">製作者：style属性（インライン）</span>
+      <span class="arrow">詳細度最高</span>
+    </div>
+    <div class="pyramid-row p3">
+      <span class="rank">⑤</span>
+      <span class="label">製作者：IDセレクタ（#id）</span>
+      <span class="arrow">A桁</span>
+    </div>
+    <div class="pyramid-row p4">
+      <span class="rank">⑥</span>
+      <span class="label">製作者：クラス・属性・擬似クラス</span>
+      <span class="arrow">B桁</span>
+    </div>
+    <div class="pyramid-row p5">
+      <span class="rank">⑦</span>
+      <span class="label">製作者：要素・擬似要素</span>
+      <span class="arrow">C桁</span>
+    </div>
+    <div class="pyramid-row p6">
+      <span class="rank">⑧</span>
+      <span class="label">ユーザーの通常CSS</span>
+      <span class="arrow"></span>
+    </div>
+    <div class="pyramid-row p7">
+      <span class="rank">⑨最低</span>
+      <span class="label">ユーザーエージェントの通常CSS</span>
+      <span class="arrow">最低</span>
+    </div>
+  </div>
+  <p style="font-size:0.85em; color:#718096; text-align:center; margin-top:8px;">
+    ※ 同じ優先度レベル内では詳細度 → 記述順（後が優先）で決まります
+  </p>
+</div>
+
+
+<!-- 演習問題 -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      <code>!important</code> を付けた場合、
+      製作者のCSSはユーザーの <code>!important</code> よりも優先される。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn btn-purple" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.textContent =
+            '✅ 正解！!important付きの優先順位は通常と逆転します。' +
+            '!important付きでは「ユーザーエージェント > ユーザー > 製作者」の順になるため、' +
+            'ユーザーの!importantが製作者の!importantより優先されます。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。!important付きでは優先順位が逆転します。' +
+            '「ユーザーエージェント > ユーザー > 製作者」の順になるため、' +
+            'ユーザーの!importantが製作者の!importantより優先されます。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 詳細度の計算（入力）</h3>
+    <p>以下のセレクタの詳細度を「A-B-C」の形式で入力してください。</p>
+
+    <label>① <code>h1</code></label>
+    <input type="text" id="q2a" placeholder="例: 0-0-1">
+
+    <label>② <code>.nav</code></label>
+    <input type="text" id="q2b" placeholder="例: 0-1-0">
+
+    <label>③ <code>#header</code></label>
+    <input type="text" id="q2c" placeholder="例: 1-0-0">
+
+    <label>④ <code>ul li</code></label>
+    <input type="text" id="q2d" placeholder="例: 0-0-2">
+
+    <label>⑤ <code>a:hover</code></label>
+    <input type="text" id="q2e" placeholder="例: 0-1-1">
+
+    <label>⑥ <code>#main .content p</code></label>
+    <input type="text" id="q2f" placeholder="例: 1-1-1">
+
+    <label>⑦ <code>input[type="text"]:focus</code></label>
+    <input type="text" id="q2g" placeholder="例: 0-2-1">
+
+    <br>
+    <button class="btn btn-purple" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const normalize = v => v.trim().replace(/\s/g,'');
+        const a = normalize(document.getElementById('q2a').value);
+        const b = normalize(document.getElementById('q2b').value);
+        const c = normalize(document.getElementById('q2c').value);
+        const d = normalize(document.getElementById('q2d').value);
+        const e = normalize(document.getElementById('q2e').value);
+        const f = normalize(document.getElementById('q2f').value);
+        const g = normalize(document.getElementById('q2g').value);
+        const r = document.getElementById('q2-result');
+        const ca = a === '0-0-1';
+        const cb = b === '0-1-0';
+        const cc = c === '1-0-0';
+        const cd = d === '0-0-2';
+        const ce = e === '0-1-1';
+        const cf = f === '1-1-1';
+        const cg = g === '0-2-1';
+        const count = [ca,cb,cc,cd,ce,cf,cg].filter(Boolean).length;
+        if (count === 7) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！詳細度の計算を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/7 問正解。<br>` +
+            `① ${ca?'✅':'❌ 0-0-1（h1=要素1）'}　` +
+            `② ${cb?'✅':'❌ 0-1-0（.nav=クラス1）'}　` +
+            `③ ${cc?'✅':'❌ 1-0-0（#header=ID1）'}　` +
+            `④ ${cd?'✅':'❌ 0-0-2（ul=1+li=1）'}　` +
+            `⑤ ${ce?'✅':'❌ 0-1-1（a=1+:hover=1）'}　` +
+            `⑥ ${cf?'✅':'❌ 1-1-1（#main=1+.content=1+p=1）'}　` +
+            `⑦ ${cg?'✅':'❌ 0-2-1（input=1+[type]=1+:focus=1）'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題：どのスタイルが適用されるか</h3>
+    <p>
+      以下のCSSが同じ要素に適用される場合、最終的に適用される <code>color</code> の値はどれですか？
+    </p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:12px; border-radius:6px; font-size:0.85em; line-height:1.8;">
+p           { color: blue; }        /* 詳細度 0-0-1 */
+.text       { color: green; }       /* 詳細度 0-1-0 */
+#main p     { color: orange; }      /* 詳細度 1-0-1 */
+p           { color: red !important; } /* !important */
+.text       { color: purple; }      /* 詳細度 0-1-0 */</pre>
+    <p>対象要素：<code>&lt;p id="main" class="text"&gt;</code></p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">blue</option>
+      <option value="b">green</option>
+      <option value="c">orange</option>
+      <option value="d">red</option>
+      <option value="e">purple</option>
+    </select>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'd') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！red が適用されます。<br><br>' +
+            '理由：<code>p { color: red !important; }</code> に<br>' +
+            '<code>!important</code> が付いているため、詳細度に関わらず最優先になります。<br><br>' +
+            '!importantがなければ：<br>' +
+            '・詳細度 1-0-1 の <code>#main p { color: orange; }</code> が最高詳細度のため orange が適用されます。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<code>p { color: red !important; }</code> に !important が付いているため、' +
+            '詳細度に関わらず red が最優先で適用されます。<br>' +
+            '!importantがなければ詳細度 1-0-1 の orange が適用されます。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4a">
+      ① 通常時の優先順位は「製作者 &gt; ユーザー &gt; ユーザーエージェント」の順である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4b">
+      ② <code>!important</code> 付きでは「製作者 &gt; ユーザー &gt; ユーザーエージェント」の順になる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4c">
+      ③ style属性（インラインスタイル）の詳細度はIDセレクタより高い
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4d">
+      ④ ユニバーサルセレクタ（*）は詳細度の計算に影響しない
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4e">
+      ⑤ クラスセレクタを11個重ねると、IDセレクタ1つより詳細度が高くなる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4f">
+      ⑥ 詳細度が同じ場合は、後に記述したスタイルが優先される
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4g">
+      ⑦ 擬似クラス（:hover など）はIDセレクタと同じB桁にカウントされる
+    </label>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const r = document.getElementById('q4-result');
+        const checks = {
+          a: document.getElementById('q4a').checked,
+          b: document.getElementById('q4b').checked,
+          c: document.getElementById('q4c').checked,
+          d: document.getElementById('q4d').checked,
+          e: document.getElementById('q4e').checked,
+          f: document.getElementById('q4f').checked,
+          g: document.getElementById('q4g').checked,
+        };
+        // 正解：①③④⑥（a, c, d, f）
+        // ②!important付きは逆転（ユーザーエージェント > ユーザー > 製作者）
+        // ⑤クラスが何個あってもIDには勝てない（桁が違う）
+        // ⑦擬似クラスはB桁（クラスと同じ）。IDはA桁
+        const correct = { a:true, b:false, c:true, d:true, e:false, f:true, g:false };
+        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
+        const allCorrect = results.every(Boolean);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① 通常時は製作者 > ユーザー > UA ✅<br>' +
+            '・③ style属性はIDより詳細度が高い ✅<br>' +
+            '・④ ユニバーサルセレクタは詳細度に影響しない ✅<br>' +
+            '・⑥ 詳細度が同じなら後が優先 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① 通常時は製作者 > ユーザー > ユーザーエージェント<br>' +
+            '・③ style属性の詳細度はIDセレクタより高い（別格の1-0-0-0）<br>' +
+            '・④ ユニバーサルセレクタ（*）は詳細度に影響しない（0-0-0）<br>' +
+            '・⑥ 詳細度が同じ場合は後に記述したスタイルが優先<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② !important付きは逆転して「UA > ユーザー > 製作者」の順になる<br>' +
+            '・⑤ クラスが何個あってもIDには勝てない（A桁 vs B桁は桁が違う）<br>' +
+            '・⑦ 擬似クラスはB桁（クラスと同じ）。IDはA桁（別の桁）';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. コード穴埋め問題</h3>
+    <p>以下のコードの <code>__A__</code> 〜 <code>__E__</code> に
+    適切な詳細度・値・説明を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+/* A：このセレクタの詳細度は？ */
+#nav .menu li a:hover { color: red; }
+/* 詳細度 → __A__ */
+
+/* B：このセレクタの詳細度は？ */
+.card.active::before { content: "★"; }
+/* 詳細度 → __B__ */
+
+/* C：!importantで優先順位を上げる書き方 */
+p { color: blue __C__; }
+
+/* D：詳細度に影響しないセレクタ */
+__D__ { box-sizing: border-box; }
+
+/* E：製作者CSSの中で詳細度が最も高い指定方法 */
+&lt;p __E__="color: red;"&gt;テキスト&lt;/p&gt;</pre>
+
+    <label>A（#nav .menu li a:hover の詳細度）：</label>
+    <input type="text" id="q5a" placeholder="A-B-C形式">
+    <label>B（.card.active::before の詳細度）：</label>
+    <input type="text" id="q5b" placeholder="A-B-C形式">
+    <label>C（!importantの記述）：</label>
+    <input type="text" id="q5c" placeholder="!〇〇〇〇〇〇〇〇〇">
+    <label>D（詳細度0-0-0のセレクタ）：</label>
+    <input type="text" id="q5d" placeholder="記号">
+    <label>E（インラインスタイルの属性名）：</label>
+    <input type="text" id="q5e" placeholder="属性名">
+    <br>
+    <button class="btn btn-purple" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const normalize = v => v.trim().replace(/\s/g,'').toLowerCase();
+        const a = normalize(document.getElementById('q5a').value);
+        const b = normalize(document.getElementById('q5b').value);
+        const c = normalize(document.getElementById('q5c').value);
+        const d = normalize(document.getElementById('q5d').value);
+        const e = normalize(document.getElementById('q5e').value);
+        const r = document.getElementById('q5-result');
+        // A: #nav=1, .menu=1, li=1, a=1, :hover=1 → 1-2-2
+        const ca = a === '1-2-2';
+        // B: .card=1, .active=1, ::before=1 → 0-2-1
+        const cb = b === '0-2-1';
+        const cc = c === '!important';
+        const cd = d === '*';
+        const ce = e === 'style';
+        const count = [ca,cb,cc,cd,ce].filter(Boolean).length;
+        if (count === 5) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！優先順位と詳細度を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/5 問正解。<br>` +
+            `A: ${ca?'✅':'❌ 1-2-2（#nav=1 + .menu=1 + :hover=1 = A1 / li=1 + a=1 = C2）'}　` +
+            `B: ${cb?'✅':'❌ 0-2-1（.card=1 + .active=1 = B2 / ::before=1 = C1）'}　` +
+            `C: ${cc?'✅':'❌ !important'}　` +
+            `D: ${cd?'✅':'❌ *（ユニバーサルセレクタ）'}　` +
+            `E: ${ce?'✅':'❌ style（style属性）'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. 記述問題</h3>
+    <p>
+      CSSの「指定元による優先順位」と「!importantによる逆転」について、
+      なぜユーザーの <code>!important</code> が製作者の <code>!important</code> より
+      優先されるのか、その理由を説明してください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q6" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ6()">模範解答を見る</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const r = document.getElementById('q6-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<strong>通常時の優先順位：</strong><br>' +
+          '製作者 &gt; ユーザー &gt; ユーザーエージェント<br>' +
+          '→ Webサイトのデザインが意図通り表示されるよう、製作者が最優先<br><br>' +
+          '<strong>!important付きの優先順位（逆転）：</strong><br>' +
+          'ユーザーエージェント !important &gt; ユーザー !important &gt; 製作者 !important<br><br>' +
+          '<strong>ユーザーの!importantが製作者より優先される理由：</strong><br>' +
+          '・ユーザーが !important を使う主な目的は<strong>アクセシビリティ</strong>のため<br>' +
+          '・例：視覚障害のあるユーザーが文字を大きくしたい場合、<br>' +
+          '　製作者のCSSに !important があっても上書きできる必要がある<br>' +
+          '・ユーザーの意図（アクセシビリティ設定）が<br>' +
+          '　製作者のデザイン意図より優先されるべきという設計思想<br>' +
+          '・これにより、ユーザーは自分の環境に合わせたスタイルを<br>' +
+          '　確実に適用できる';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 CSS適用の優先順位 まとめ</h2>
+<table class="summary">
+  <thead>
+    <tr><th>優先順位</th><th>内容</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>指定元（通常）</td>
+      <td>製作者 &gt; ユーザー &gt; UA</td>
+      <td>製作者のCSSが最優先</td>
+    </tr>
+    <tr>
+      <td>指定元（!important）</td>
+      <td>UA !important &gt; ユーザー !important &gt; 製作者 !important</td>
+      <td>!importantで逆転。アクセシビリティのため</td>
+    </tr>
+    <tr>
+      <td>style属性</td>
+      <td>詳細度 1-0-0-0（別格）</td>
+      <td>製作者CSSの中で最高詳細度</td>
+    </tr>
+    <tr>
+      <td>詳細度 A桁</td>
+      <td>IDセレクタ（#id）</td>
+      <td>1IDにつき +1</td>
+    </tr>
+    <tr>
+      <td>詳細度 B桁</td>
+      <td>クラス・属性セレクタ・擬似クラス</td>
+      <td>1つにつき +1。:not()自体は0</td>
+    </tr>
+    <tr>
+      <td>詳細度 C桁</td>
+      <td>要素セレクタ・擬似要素</td>
+      <td>1つにつき +1</td>
+    </tr>
+    <tr>
+      <td>詳細度なし</td>
+      <td>ユニバーサルセレクタ・結合子</td>
+      <td>詳細度に影響しない（0-0-0）</td>
+    </tr>
+    <tr>
+      <td>同詳細度の場合</td>
+      <td>後に記述したスタイルが優先</td>
+      <td>カスケード（上書き）の基本</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
