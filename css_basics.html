@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>CSS基礎知識 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #9f7aea; padding-bottom: 10px; }
+    h2 { color: #553c9a; margin-top: 48px; border-left: 5px solid #9f7aea; padding-left: 12px; }
+    h3 { color: #276749; margin-top: 24px; }
+
+    code {
+      background: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment  { color: #68d391; }
+    pre .selector { color: #f6ad55; }
+    pre .prop     { color: #90cdf4; }
+    pre .val      { color: #fc8181; }
+    pre .at       { color: #b794f4; }
+    pre .tag      { color: #90cdf4; }
+    pre .attr     { color: #fbd38d; }
+    pre .value    { color: #fc8181; }
+    pre .str      { color: #68d391; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #b794f4;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #553c9a; }
+
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+
+    .demo-box {
+      background: #fff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* 書式図 */
+    .syntax-diagram {
+      background: #1a202c;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 14px 0;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 1em;
+      line-height: 2.2;
+      overflow-x: auto;
+    }
+    .sd-selector  { color: #f6ad55; font-weight: bold; }
+    .sd-brace     { color: #e2e8f0; font-weight: bold; }
+    .sd-prop      { color: #90cdf4; }
+    .sd-colon     { color: #e2e8f0; }
+    .sd-val       { color: #fc8181; }
+    .sd-semi      { color: #68d391; }
+    .sd-label {
+      display: inline-block;
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
+      padding: 1px 8px;
+      font-size: 0.75em;
+      color: #a0aec0;
+      margin-left: 8px;
+      vertical-align: middle;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* ボックスモデル図 */
+    .box-model-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .bm-margin {
+      background: #fef3c7;
+      border: 2px dashed #f6ad55;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      font-size: 0.82em;
+      color: #744210;
+      font-weight: bold;
+      min-width: 320px;
+    }
+    .bm-border {
+      background: #fed7d7;
+      border: 4px solid #fc8181;
+      border-radius: 4px;
+      padding: 16px;
+      color: #9b2335;
+      font-size: 0.82em;
+      font-weight: bold;
+    }
+    .bm-padding {
+      background: #c6f6d5;
+      border: 2px dashed #48bb78;
+      border-radius: 2px;
+      padding: 16px;
+      color: #276749;
+      font-size: 0.82em;
+      font-weight: bold;
+    }
+    .bm-content {
+      background: #bee3f8;
+      border: 2px solid #4299e1;
+      border-radius: 2px;
+      padding: 14px 20px;
+      color: #2b6cb0;
+      font-size: 0.88em;
+      font-weight: bold;
+    }
+    .bm-label {
+      font-size: 0.75em;
+      opacity: 0.8;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    /* 単位比較表 */
+    table.ref-table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      margin: 14px 0;
+    }
+    table.ref-table th, table.ref-table td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.ref-table thead tr { background: #553c9a; color: #fff; }
+    table.ref-table tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 {
+      margin-top: 0;
+      color: #c05621;
+      border-left-color: #f6ad55;
+    }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #fbd38d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #fbd38d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-purple { background: #9f7aea; color: #fff; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #e9d8fd; color: #553c9a; display: block; }
+
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.summary thead tr { background: #553c9a; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px 14px; }
+      .bm-margin { min-width: unset; padding: 12px; }
+      .bm-border { padding: 10px; }
+      .bm-padding { padding: 10px; }
+      .bm-content { padding: 10px 12px; }
+      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.82em; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px 16px; }
+      .quiz-block { padding: 14px 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>🎨 CSS 基礎知識 学習サンプル</h1>
+<p>CSSの書式・HTMLへの組み込み方・ボックスモデル・単位の基礎を学びましょう。</p>
+
+
+<!-- 1. 基本的な書式と各部の名称 -->
+<h2>① 基本的な書式と各部の名称</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  CSSは <strong>セレクタ</strong>・<strong>プロパティ</strong>・<strong>値</strong> の3つで構成されます。<br>
+  セレクタとプロパティ・値のペアをまとめて <strong>ルールセット（スタイルルール）</strong> と呼びます。
+</div>
+<div class="demo-box">
+
+  <div class="syntax-diagram">
+    <span class="sd-selector">h1</span>
+    <span class="sd-label">セレクタ（どの要素に適用するか）</span><br>
+    <span class="sd-brace">{</span>
+    <span class="sd-label">宣言ブロック 開始</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="sd-prop">color</span>
+    <span class="sd-label">プロパティ（何を変えるか）</span>
+    <span class="sd-colon">:</span>
+    <span class="sd-val">red</span>
+    <span class="sd-label">値（どう変えるか）</span>
+    <span class="sd-semi">;</span>
+    <span class="sd-label">← 宣言（プロパティ + 値）</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="sd-prop">font-size</span><span class="sd-colon">:</span>
+    <span class="sd-val">24px</span><span class="sd-semi">;</span><br>
+    <span class="sd-brace">}</span>
+    <span class="sd-label">宣言ブロック 終了</span>
+  </div>
+
+<pre>
+<span class="comment">/* ルールセット（スタイルルール）の基本構造 */</span>
+<span class="selector">セレクタ</span> {
+    <span class="prop">プロパティ</span>: <span class="val">値</span>;
+    <span class="prop">プロパティ</span>: <span class="val">値</span>;
+}
+
+<span class="comment">/* 実際の例 */</span>
+<span class="selector">h1</span> {
+    <span class="prop">color</span>: <span class="val">red</span>;
+    <span class="prop">font-size</span>: <span class="val">24px</span>;
+}
+
+<span class="comment">/* 複数のセレクタに同じスタイルを適用（グループ化） */</span>
+<span class="selector">h1</span>, <span class="selector">h2</span>, <span class="selector">h3</span> {
+    <span class="prop">color</span>: <span class="val">#2b6cb0</span>;
+}
+</pre>
+
+  <div class="warn">
+    <strong>⚠️ 試験重要ポイント①：空白文字の扱い</strong><br><br>
+    CSSの書式には<strong>自由に空白文字（スペース・タブ・改行）を入れられます</strong>が、
+    <strong>セレクタだけは例外</strong>です。<br><br>
+    セレクタ内の空白は<strong>「子孫セレクタ」</strong>として解釈されるため、
+    意図しない意味になります。<br><br>
+    ✅ プロパティ・値・コロン・セミコロン周辺は自由に空白を入れられる<br>
+    <code>color : red ;</code>　← 文法的に正しい（コロン前後の空白OK）<br><br>
+    ❌ セレクタに意図しない空白を入れると別の意味になる<br>
+    <code>h 1 { color: red; }</code>　← <code>h</code> 要素の子孫の <code>1</code> という意味になる（不正）<br>
+    <code>h1 { color: red; }</code>　← 正しい（h1要素を指定）<br><br>
+    ✅ セレクタのグループ化（カンマ区切り）の前後の空白はOK<br>
+    <code>h1 , h2 { color: red; }</code>　← 正しい
+  </div>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>用語</th><th>説明</th><th>例</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>セレクタ</strong></td><td>スタイルを適用する対象の指定</td><td><code>h1</code> / <code>.class</code> / <code>#id</code></td></tr>
+      <tr><td><strong>プロパティ</strong></td><td>変更するスタイルの種類</td><td><code>color</code> / <code>font-size</code></td></tr>
+      <tr><td><strong>値</strong></td><td>プロパティに設定する内容</td><td><code>red</code> / <code>24px</code></td></tr>
+      <tr><td><strong>宣言</strong></td><td>プロパティと値のペア</td><td><code>color: red</code></td></tr>
+      <tr><td><strong>宣言ブロック</strong></td><td><code>{ }</code> で囲まれた宣言の集まり</td><td><code>{ color: red; }</code></td></tr>
+      <tr><td><strong>ルールセット</strong></td><td>セレクタ＋宣言ブロック全体</td><td><code>h1 { color: red; }</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 2. link要素でHTMLに組み込む -->
+<h2>② link要素でHTMLに組み込む（外部スタイルシート）</h2>
+<div class="note">
+  <strong>ポイント②：link要素に type="text/css" の指定は不要</strong><br>
+  HTML5以降では <code>type="text/css"</code> はデフォルト値のため省略できます。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- ❌ HTML4時代の書き方（type属性が必要だった） --&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="value">"stylesheet"</span>
+      <span class="attr">type</span>=<span class="value">"text/css"</span>
+      <span class="attr">href</span>=<span class="value">"style.css"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- ✅ HTML5以降の正しい書き方（type属性は省略可） --&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="value">"stylesheet"</span>
+      <span class="attr">href</span>=<span class="value">"style.css"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- ✅ media属性でメディアクエリを指定できる --&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="value">"stylesheet"</span>
+      <span class="attr">href</span>=<span class="value">"style.css"</span>
+      <span class="attr">media</span>=<span class="value">"screen"</span><span class="tag">&gt;</span>
+
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="value">"stylesheet"</span>
+      <span class="attr">href</span>=<span class="value">"print.css"</span>
+      <span class="attr">media</span>=<span class="value">"print"</span><span class="tag">&gt;</span>
+
+<span class="comment">&lt;!-- ✅ media属性にメディアクエリを指定（ポイント③） --&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="value">"stylesheet"</span>
+      <span class="attr">href</span>=<span class="value">"mobile.css"</span>
+      <span class="attr">media</span>=<span class="value">"screen and (max-width: 600px)"</span><span class="tag">&gt;</span>
+</pre>
+
+  <div class="warn">
+    <strong>⚠️ 試験重要ポイント③：media属性にはメディアクエリが指定可能</strong><br>
+    <code>link</code> 要素の <code>media</code> 属性には
+    <code>screen</code> / <code>print</code> などのメディアタイプだけでなく、
+    <code>screen and (max-width: 600px)</code> のような
+    <strong>メディアクエリ</strong>を指定できます。
+  </div>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>属性</th><th>説明</th><th>備考</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>rel</code></td><td>リソースの関係性</td><td><code>"stylesheet"</code> を指定（必須）</td></tr>
+      <tr><td><code>href</code></td><td>CSSファイルのURL</td><td>必須</td></tr>
+      <tr><td><code>type</code></td><td>MIMEタイプ</td><td>HTML5以降は省略可（デフォルト: text/css）</td></tr>
+      <tr><td><code>media</code></td><td>適用するメディア</td><td>メディアクエリも指定可</td></tr>
+    </tbody>
+  </table>
+
+  <div class="good">
+    ✅ <strong>外部スタイルシートのメリット</strong><br>
+    ・複数のHTMLファイルに同じCSSを適用できる<br>
+    ・CSSファイルがブラウザにキャッシュされ、ページ読み込みが高速化<br>
+    ・HTMLとCSSの役割を分離できる（保守性向上）
+  </div>
+</div>
+
+
+<!-- 3. style要素でHTMLに組み込む -->
+<h2>③ style要素でHTMLに組み込む（内部スタイルシート）</h2>
+<div class="note">
+  <strong>ポイント②：style要素に type="text/css" の指定は不要</strong><br>
+  <code>style</code> 要素も同様に、HTML5以降では <code>type="text/css"</code> は省略できます。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- ❌ HTML4時代の書き方 --&gt;</span>
+<span class="tag">&lt;style</span> <span class="attr">type</span>=<span class="value">"text/css"</span><span class="tag">&gt;</span>
+  h1 { color: red; }
+<span class="tag">&lt;/style&gt;</span>
+
+<span class="comment">&lt;!-- ✅ HTML5以降の正しい書き方（type属性は省略可） --&gt;</span>
+<span class="tag">&lt;style&gt;</span>
+  h1 { color: red; }
+<span class="tag">&lt;/style&gt;</span>
+
+<span class="comment">&lt;!-- ✅ media属性でメディアクエリを指定できる（ポイント③） --&gt;</span>
+<span class="tag">&lt;style</span> <span class="attr">media</span>=<span class="value">"screen and (max-width: 600px)"</span><span class="tag">&gt;</span>
+  body { font-size: 0.85em; }
+<span class="tag">&lt;/style&gt;</span>
+
+<span class="comment">&lt;!-- style要素は通常 head 要素内に記述する --&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    <span class="selector">body</span> { <span class="prop">font-family</span>: <span class="val">sans-serif</span>; }
+    <span class="selector">h1</span>   { <span class="prop">color</span>: <span class="val">#2b6cb0</span>; }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+</pre>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>属性</th><th>説明</th><th>備考</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>type</code></td><td>MIMEタイプ</td><td>HTML5以降は省略可（デフォルト: text/css）</td></tr>
+      <tr><td><code>media</code></td><td>適用するメディア</td><td>メディアクエリも指定可</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 4. style属性でHTMLに組み込む -->
+<h2>④ style属性でHTMLに組み込む（インラインスタイル）</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>style</code> 属性はHTML要素に直接スタイルを指定します。<br>
+  ・セレクタは不要で、プロパティと値のペアを直接記述します。<br>
+  ・<strong>最も優先度が高い</strong>スタイル指定方法です（<code>!important</code> を除く）。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">&lt;!-- style属性の書き方：セレクタは不要 --&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">style</span>=<span class="value">"color: red; font-size: 18px;"</span><span class="tag">&gt;</span>
+  赤色・18pxのテキスト
+<span class="tag">&lt;/p&gt;</span>
+
+<span class="tag">&lt;h1</span> <span class="attr">style</span>=<span class="value">"color: #2b6cb0; border-bottom: 2px solid #4299e1;"</span><span class="tag">&gt;</span>
+  見出し
+<span class="tag">&lt;/h1&gt;</span>
+</pre>
+
+  <div style="background:#f7fafc; border:1px solid #e9d8fd; border-radius:6px; padding:14px 18px; margin:12px 0;">
+    <p style="color: #9f7aea; font-size: 18px; margin:0 0 8px;">
+      style属性で紫色・18pxを指定したテキスト
+    </p>
+    <h3 style="color: #2b6cb0; border-bottom: 2px solid #4299e1; padding-bottom:4px; margin:0;">
+      style属性で色と下線を指定した見出し
+    </h3>
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ インラインスタイルの注意点</strong><br>
+    ・<code>media</code> 属性は使えません（メディアクエリ不可）<br>
+    ・セレクタが不要なため、複数要素への一括適用はできません<br>
+    ・HTMLとCSSが混在するため保守性が下がります<br>
+    ・JavaScriptで動的にスタイルを変更する場合などに限定して使うのが推奨です
+  </div>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>組み込み方法</th><th>場所</th><th>type属性</th><th>media属性</th><th>優先度</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>link要素（外部）</td><td>head内</td><td>省略可</td><td>✅ メディアクエリ可</td><td>低</td></tr>
+      <tr><td>style要素（内部）</td><td>head内</td><td>省略可</td><td>✅ メディアクエリ可</td><td>中</td></tr>
+      <tr><td>style属性（インライン）</td><td>各要素</td><td>なし</td><td>❌ 不可</td><td>高</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 5. @importでCSSに組み込む -->
+<h2>⑤ @importでCSSに組み込む</h2>
+<div class="note">
+  <strong>ポイント③：@importにはメディアクエリが指定可能</strong><br>
+  ・<code>@import</code> はCSSファイルの中から別のCSSファイルを読み込む方法です。<br>
+  ・<strong>CSSファイルの先頭</strong>に記述する必要があります（他のルールより前）。<br>
+  ・<code>@import</code> にもメディアクエリを指定できます。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* ===== style.css の中での @import ===== */</span>
+
+<span class="comment">/* 基本的な書き方 */</span>
+<span class="at">@import</span> <span class="str">"reset.css"</span>;
+<span class="at">@import</span> <span class="str">url("typography.css")</span>;
+
+<span class="comment">/* メディアタイプを指定 */</span>
+<span class="at">@import</span> <span class="str">"print.css"</span> <span class="val">print</span>;
+
+<span class="comment">/* メディアクエリを指定（ポイント③） */</span>
+<span class="at">@import</span> <span class="str">"mobile.css"</span> <span class="val">screen and (max-width: 600px)</span>;
+<span class="at">@import</span> <span class="str">"dark.css"</span>   <span class="val">screen and (prefers-color-scheme: dark)</span>;
+
+<span class="comment">/* ❌ @importはCSSの先頭に書く（他のルールの後はNG） */</span>
+<span class="selector">body</span> { <span class="prop">color</span>: <span class="val">black</span>; }
+<span class="at">@import</span> <span class="str">"other.css"</span>;  <span class="comment">/* ← 無視される */</span>
+</pre>
+
+  <div class="warn">
+    <strong>⚠️ @importの注意点</strong><br>
+    ・必ず<strong>CSSファイルの先頭</strong>（他のルールセットより前）に記述します<br>
+    ・他のルールの後に書いた <code>@import</code> は<strong>無視されます</strong><br>
+    ・<code>@import</code> は読み込みが直列になるため、
+    <code>link</code> 要素による並列読み込みより<strong>パフォーマンスが低下</strong>する場合があります<br>
+    ・<code>url()</code> は省略可能（文字列のみでもOK）
+  </div>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>書き方</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>@import "file.css";</code></td><td>文字列で指定（url()省略可）</td></tr>
+      <tr><td><code>@import url("file.css");</code></td><td>url()で指定</td></tr>
+      <tr><td><code>@import "file.css" print;</code></td><td>メディアタイプを指定</td></tr>
+      <tr><td><code>@import "file.css" screen and (max-width: 600px);</code></td><td>メディアクエリを指定</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 6. ボックスの構造 -->
+<h2>⑥ ボックスの構造（ボックスモデル）</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  HTMLの各要素はすべて<strong>ボックス（箱）</strong>として扱われます。<br>
+  ボックスは外側から <strong>margin → border → padding → content</strong> の4層で構成されます。
+</div>
+<div class="demo-box">
+
+  <div class="box-model-wrap">
+    <div class="bm-margin">
+      <span class="bm-label">margin（外側の余白）</span>
+      <div class="bm-border">
+        <span class="bm-label">border（枠線）</span>
+        <div class="bm-padding">
+          <span class="bm-label">padding（内側の余白）</span>
+          <div class="bm-content">
+            content<br>
+            <span style="font-size:0.8em; font-weight:normal;">（コンテンツ領域）</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* ボックスモデルの各部分 */</span>
+<span class="selector">.box</span> {
+    <span class="comment">/* content：コンテンツ領域のサイズ */</span>
+    <span class="prop">width</span>:  <span class="val">300px</span>;
+    <span class="prop">height</span>: <span class="val">200px</span>;
+
+    <span class="comment">/* padding：内側の余白（content と border の間） */</span>
+    <span class="prop">padding</span>:        <span class="val">20px</span>;          <span class="comment">/* 上下左右すべて */</span>
+    <span class="prop">padding-top</span>:    <span class="val">10px</span>;
+    <span class="prop">padding-right</span>:  <span class="val">20px</span>;
+    <span class="prop">padding-bottom</span>: <span class="val">10px</span>;
+    <span class="prop">padding-left</span>:   <span class="val">20px</span>;
+
+    <span class="comment">/* border：枠線 */</span>
+    <span class="prop">border</span>:       <span class="val">2px solid #4299e1</span>;
+    <span class="prop">border-width</span>: <span class="val">2px</span>;
+    <span class="prop">border-style</span>: <span class="val">solid</span>;
+    <span class="prop">border-color</span>: <span class="val">#4299e1</span>;
+
+    <span class="comment">/* margin：外側の余白（要素と要素の間隔） */</span>
+    <span class="prop">margin</span>:        <span class="val">16px</span>;          <span class="comment">/* 上下左右すべて */</span>
+    <span class="prop">margin-top</span>:    <span class="val">16px</span>;
+    <span class="prop">margin-right</span>:  <span class="val">auto</span>;          <span class="comment">/* 中央揃えに使用 */</span>
+    <span class="prop">margin-bottom</span>: <span class="val">16px</span>;
+    <span class="prop">margin-left</span>:   <span class="val">auto</span>;
+}
+
+<span class="comment">/* box-sizing：ボックスサイズの計算方法 */</span>
+<span class="selector">.box-content</span> {
+    <span class="prop">box-sizing</span>: <span class="val">content-box</span>;  <span class="comment">/* デフォルト：width = content のみ */</span>
+}
+<span class="selector">.box-border</span> {
+    <span class="prop">box-sizing</span>: <span class="val">border-box</span>;   <span class="comment">/* width = content + padding + border */</span>
+}
+</pre>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>box-sizing</th><th>widthが示す範囲</th><th>用途</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>content-box</code></td>
+        <td>contentのみ<br>（実際の幅 = width + padding + border）</td>
+        <td>デフォルト値</td>
+      </tr>
+      <tr>
+        <td><code>border-box</code></td>
+        <td>content + padding + border<br>（実際の幅 = width のまま）</td>
+        <td>レイアウト計算が直感的。<br><code>* { box-sizing: border-box; }</code> が一般的</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="good">
+    ✅ <strong>margin の特殊な動作</strong><br>
+    ・<code>margin: auto</code> を左右に指定するとブロック要素を<strong>水平中央揃え</strong>にできます<br>
+    ・上下に隣接するブロック要素のmarginは<strong>マージンの相殺</strong>（大きい方だけが適用）が起きます<br>
+    ・<code>margin</code> は背景色が適用されません（透明な余白）
+  </div>
+</div>
+
+
+<!-- 7. 長さを表す単位 -->
+<h2>⑦ 長さを表す単位</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  CSSの単位は<strong>絶対単位</strong>と<strong>相対単位</strong>に分類されます。<br>
+  レスポンシブデザインでは相対単位の活用が重要です。
+</div>
+<div class="demo-box">
+
+  <h3>絶対単位</h3>
+  <table class="ref-table">
+    <thead>
+      <tr><th>単位</th><th>名称</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>px</code></td><td>ピクセル</td><td>画面の物理ピクセル（最も一般的な絶対単位）</td></tr>
+      <tr><td><code>pt</code></td><td>ポイント</td><td>1pt = 1/72インチ。印刷向け</td></tr>
+      <tr><td><code>pc</code></td><td>パイカ</td><td>1pc = 12pt。印刷向け</td></tr>
+      <tr><td><code>cm</code></td><td>センチメートル</td><td>実際の長さ。印刷向け</td></tr>
+      <tr><td><code>mm</code></td><td>ミリメートル</td><td>実際の長さ。印刷向け</td></tr>
+      <tr><td><code>in</code></td><td>インチ</td><td>1in = 2.54cm = 96px</td></tr>
+      <tr><td><code>Q</code></td><td>クォーター・ミリメートル</td><td>1Q = 0.25mm。印刷向け</td></tr>
+    </tbody>
+  </table>
+
+  <h3>相対単位</h3>
+  <table class="ref-table">
+    <thead>
+      <tr><th>単位</th><th>名称</th><th>基準</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>em</code></td>
+        <td>エム</td>
+        <td>親要素のフォントサイズ</td>
+        <td>親が16pxなら 1em = 16px。ネストで累積</td>
+      </tr>
+      <tr>
+        <td><code>rem</code></td>
+        <td>ルートエム</td>
+        <td>ルート要素（html）のフォントサイズ</td>
+        <td>累積しない。レスポンシブに最適</td>
+      </tr>
+      <tr>
+        <td><code>%</code></td>
+        <td>パーセント</td>
+        <td>親要素の同プロパティの値</td>
+        <td>幅・高さ・フォントサイズなどに使用</td>
+      </tr>
+      <tr>
+        <td><code>vw</code></td>
+        <td>ビューポート幅</td>
+        <td>ビューポートの幅</td>
+        <td>1vw = ビューポート幅の1%</td>
+      </tr>
+      <tr>
+        <td><code>vh</code></td>
+        <td>ビューポート高さ</td>
+        <td>ビューポートの高さ</td>
+        <td>1vh = ビューポート高さの1%</td>
+      </tr>
+      <tr>
+        <td><code>vmin</code></td>
+        <td>ビューポート最小辺</td>
+        <td>vw / vh の小さい方</td>
+        <td>1vmin = vw・vhのうち小さい方の1%</td>
+      </tr>
+      <tr>
+        <td><code>vmax</code></td>
+        <td>ビューポート最大辺</td>
+        <td>vw / vh の大きい方</td>
+        <td>1vmax = vw・vhのうち大きい方の1%</td>
+      </tr>
+      <tr>
+        <td><code>ch</code></td>
+        <td>文字幅</td>
+        <td>「0」の文字幅</td>
+        <td>テキスト幅の制御に使用</td>
+      </tr>
+      <tr>
+        <td><code>ex</code></td>
+        <td>エックスハイト</td>
+        <td>小文字「x」の高さ</td>
+        <td>フォントの高さ基準</td>
+      </tr>
+    </tbody>
+  </table>
+
+<pre>
+<span class="comment">/* 単位の使い分け例 */</span>
+<span class="selector">html</span> {
+    <span class="prop">font-size</span>: <span class="val">16px</span>;       <span class="comment">/* ルートフォントサイズ */</span>
+}
+<span class="selector">body</span> {
+    <span class="prop">font-size</span>: <span class="val">1rem</span>;       <span class="comment">/* = 16px（ルート基準） */</span>
+    <span class="prop">max-width</span>: <span class="val">960px</span>;
+    <span class="prop">padding</span>:   <span class="val">0 1.5rem</span>;   <span class="comment">/* = 0 24px */</span>
+}
+<span class="selector">h1</span> {
+    <span class="prop">font-size</span>: <span class="val">2rem</span>;        <span class="comment">/* = 32px（ルート基準・累積なし） */</span>
+}
+<span class="selector">.hero</span> {
+    <span class="prop">height</span>:    <span class="val">100vh</span>;       <span class="comment">/* ビューポートの高さいっぱい */</span>
+    <span class="prop">font-size</span>: <span class="val">5vw</span>;         <span class="comment">/* ビューポート幅に応じたサイズ */</span>
+}
+<span class="selector">.container</span> {
+    <span class="prop">width</span>:     <span class="val">90%</span>;         <span class="comment">/* 親要素の90% */</span>
+    <span class="prop">margin</span>:    <span class="val">0 auto</span>;      <span class="comment">/* 中央揃え */</span>
+}
+</pre>
+
+  <div class="warn">
+    <strong>⚠️ em と rem の違い（試験頻出）</strong><br><br>
+    <strong>em：</strong>親要素のフォントサイズを基準とするため、
+    ネストが深くなると<strong>累積して大きくなります</strong><br>
+    例：親が 16px → 子が <code>2em</code> = 32px → 孫が <code>2em</code> = 64px<br><br>
+    <strong>rem：</strong>常にルート要素（<code>html</code>）のフォントサイズを基準とするため
+    <strong>累積しません</strong><br>
+    例：html が 16px → どこで使っても <code>2rem</code> = 32px
+  </div>
+</div>
+
+
+<!-- 演習問題 -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      HTML5以降では、<code>&lt;link rel="stylesheet" href="style.css"&gt;</code> のように
+      <code>type="text/css"</code> を省略して記述するのが正しい書き方である。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn btn-purple" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg correct';
+          r.textContent =
+            '✅ 正解！HTML5以降では link要素・style要素の type="text/css" は' +
+            'デフォルト値のため省略できます（省略するのが推奨）。';
+        } else if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。HTML5以降では type="text/css" はデフォルト値のため省略できます。' +
+            '省略した書き方が現在の推奨です。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合う用語・単位・プロパティ名を入力してください。</p>
+
+    <label>① CSSのセレクタ・プロパティ・値のセット全体を指す名称：</label>
+    <input type="text" id="q2a" placeholder="〇〇〇〇〇">
+
+    <label>② 常にルート要素（html）のフォントサイズを基準とする相対単位：</label>
+    <input type="text" id="q2b" placeholder="単位">
+
+    <label>③ ビューポートの幅を基準とする相対単位（1単位 = ビューポート幅の1%）：</label>
+    <input type="text" id="q2c" placeholder="単位">
+
+    <label>④ CSSのボックスモデルで、contentとborderの間にある余白の名称：</label>
+    <input type="text" id="q2d" placeholder="〇〇〇〇〇〇〇">
+
+    <label>⑤ width属性がcontent + padding + borderを含む計算方法になるbox-sizingの値：</label>
+    <input type="text" id="q2e" placeholder="〇〇〇〇〇〇〇〇〇〇">
+
+    <label>⑥ CSSファイルの中から別のCSSファイルを読み込むアットルール：</label>
+    <input type="text" id="q2f" placeholder="@〇〇〇〇〇〇">
+
+    <br>
+    <button class="btn btn-purple" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value.trim().toLowerCase()
+                    .replace(/\s/g,'').replace(/-/g,'');
+        const b = document.getElementById('q2b').value.trim().toLowerCase();
+        const c = document.getElementById('q2c').value.trim().toLowerCase();
+        const d = document.getElementById('q2d').value.trim().toLowerCase();
+        const e = document.getElementById('q2e').value.trim().toLowerCase()
+                    .replace(/-/g,'');
+        const f = document.getElementById('q2f').value.trim().toLowerCase()
+                    .replace(/^@/,'');
+        const r = document.getElementById('q2-result');
+        const ca = a === 'ルールセット' || a === 'ruleset' ||
+                   a === 'スタイルルール' || a === 'stylerule';
+        const cb = b === 'rem';
+        const cc = c === 'vw';
+        const cd = d === 'padding';
+        const ce = e === 'borderbox';
+        const cf = f === 'import';
+        const count = [ca, cb, cc, cd, ce, cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！CSS基礎知識を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `① ${ca ? '✅' : '❌ ルールセット（スタイルルール）'}　` +
+            `② ${cb ? '✅' : '❌ rem'}　` +
+            `③ ${cc ? '✅' : '❌ vw'}　` +
+            `④ ${cd ? '✅' : '❌ padding'}　` +
+            `⑤ ${ce ? '✅' : '❌ border-box'}　` +
+            `⑥ ${cf ? '✅' : '❌ @import'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>
+      CSSの書式における空白文字の扱いとして正しい説明はどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">CSSのどこにでも自由に空白文字を入れられる</option>
+      <option value="b">CSSには空白文字を一切入れられない</option>
+      <option value="c">CSSには自由に空白文字を入れられるが、セレクタだけは例外で空白が別の意味を持つ</option>
+      <option value="d">プロパティと値の間にのみ空白を入れられる</option>
+    </select>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'c') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'CSSは自由に空白文字（スペース・タブ・改行）を入れられますが、' +
+            'セレクタだけは例外です。<br>' +
+            'セレクタ内の空白は「子孫セレクタ」として解釈されるため、' +
+            '意図しない意味になります。<br>' +
+            '例：<code>h 1 { }</code> は「h要素の子孫の1」という意味になります。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。CSSは自由に空白を入れられますが、' +
+            'セレクタ内の空白は「子孫セレクタ」として解釈されるため例外です。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4a">
+      ① <code>link</code> 要素の <code>media</code> 属性にはメディアクエリを指定できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4b">
+      ② <code>style</code> 属性（インラインスタイル）には <code>media</code> 属性でメディアクエリを指定できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4c">
+      ③ <code>@import</code> はCSSファイルの先頭に記述する必要がある
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4d">
+      ④ <code>rem</code> 単位は親要素のフォントサイズを基準とするため、ネストで累積する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4e">
+      ⑤ <code>box-sizing: border-box</code> を指定すると、<code>width</code> が content + padding + border を含む値になる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4f">
+      ⑥ <code>style</code> 要素の <code>type="text/css"</code> はHTML5以降では省略できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4g">
+      ⑦ <code>@import</code> にはメディアクエリを指定できる
+    </label>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const r = document.getElementById('q4-result');
+        const checks = {
+          a: document.getElementById('q4a').checked,
+          b: document.getElementById('q4b').checked,
+          c: document.getElementById('q4c').checked,
+          d: document.getElementById('q4d').checked,
+          e: document.getElementById('q4e').checked,
+          f: document.getElementById('q4f').checked,
+          g: document.getElementById('q4g').checked,
+        };
+        // 正解：①③⑤⑥⑦（a, c, e, f, g）
+        // ②style属性にmedia属性はない
+        // ④remはルート基準（累積しない）→emが累積する
+        const correct = { a:true, b:false, c:true, d:false, e:true, f:true, g:true };
+        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
+        const allCorrect = results.every(Boolean);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① link要素のmedia属性にメディアクエリ指定可 ✅<br>' +
+            '・③ @importはCSSの先頭に記述 ✅<br>' +
+            '・⑤ border-boxはwidth = content + padding + border ✅<br>' +
+            '・⑥ style要素のtype属性はHTML5以降省略可 ✅<br>' +
+            '・⑦ @importにメディアクエリ指定可 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① link要素のmedia属性にはメディアクエリを指定できる<br>' +
+            '・③ @importはCSSファイルの先頭に記述する<br>' +
+            '・⑤ border-boxはwidth = content + padding + border<br>' +
+            '・⑥ style要素のtype="text/css"はHTML5以降省略可<br>' +
+            '・⑦ @importにもメディアクエリを指定できる<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② style属性（インラインスタイル）にmedia属性はない<br>' +
+            '・④ 累積するのはem（親要素基準）。remはルート基準で累積しない';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. コード穴埋め問題</h3>
+    <p>以下のコードの <code>__A__</code> 〜 <code>__F__</code> に
+    適切な値・属性名・プロパティ名を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+&lt;!-- A：スマホ向けCSSをメディアクエリで読み込む --&gt;
+&lt;link rel="stylesheet"
+      href="mobile.css"
+      __A__="screen and (max-width: 600px)"&gt;
+
+&lt;!-- B：type属性を省略した正しい書き方 --&gt;
+&lt;style __B__="print"&gt;
+  body { font-size: 12pt; }
+&lt;/style&gt;
+
+/* C：CSSファイルの先頭でモバイル用CSSを読み込む */
+__C__ "mobile.css" screen and (max-width: 600px);
+
+/* D：ルート要素のフォントサイズを基準とする単位 */
+h1 { font-size: 2__D__; }
+
+/* E・F：ボックスサイズにpaddingとborderを含める */
+* {
+    __E__: __F__;
+}</pre>
+
+    <label>A（メディアクエリを指定するlink要素の属性）：</label>
+    <input type="text" id="q5a" placeholder="属性名">
+    <label>B（style要素でメディアを指定する属性）：</label>
+    <input type="text" id="q5b" placeholder="属性名">
+    <label>C（CSSファイルを読み込むアットルール）：</label>
+    <input type="text" id="q5c" placeholder="@〇〇〇〇〇〇">
+    <label>D（ルート要素基準の相対単位）：</label>
+    <input type="text" id="q5d" placeholder="単位">
+    <label>E（ボックスサイズの計算方法を指定するプロパティ）：</label>
+    <input type="text" id="q5e" placeholder="プロパティ名">
+    <label>F（content + padding + border をwidthに含める値）：</label>
+    <input type="text" id="q5f" placeholder="値">
+    <br>
+    <button class="btn btn-purple" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const a = document.getElementById('q5a').value.trim().toLowerCase();
+        const b = document.getElementById('q5b').value.trim().toLowerCase();
+        const c = document.getElementById('q5c').value.trim().toLowerCase()
+                    .replace(/^@/,'');
+        const d = document.getElementById('q5d').value.trim().toLowerCase();
+        const e = document.getElementById('q5e').value.trim().toLowerCase()
+                    .replace(/-/g,'');
+        const f = document.getElementById('q5f').value.trim().toLowerCase()
+                    .replace(/-/g,'');
+        const r = document.getElementById('q5-result');
+        const ca = a === 'media';
+        const cb = b === 'media';
+        const cc = c === 'import';
+        const cd = d === 'rem';
+        const ce = e === 'boxsizing';
+        const cf = f === 'borderbox';
+        const count = [ca, cb, cc, cd, ce, cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！CSS基礎知識の構文を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca ? '✅' : '❌ media'}　` +
+            `B: ${cb ? '✅' : '❌ media'}　` +
+            `C: ${cc ? '✅' : '❌ @import'}　` +
+            `D: ${cd ? '✅' : '❌ rem'}　` +
+            `E: ${ce ? '✅' : '❌ box-sizing'}　` +
+            `F: ${cf ? '✅' : '❌ border-box'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. 記述問題</h3>
+    <p>
+      <code>em</code> 単位と <code>rem</code> 単位の違いを説明し、
+      <code>rem</code> がレスポンシブデザインで好まれる理由を述べてください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q6" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ6()">模範解答を見る</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const r = document.getElementById('q6-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<strong>em単位：</strong><br>' +
+          '・親要素のフォントサイズを基準とする相対単位<br>' +
+          '・ネストが深くなると累積して大きくなる<br>' +
+          '　例：親16px → 子2em = 32px → 孫2em = 64px<br><br>' +
+          '<strong>rem単位：</strong><br>' +
+          '・常にルート要素（html要素）のフォントサイズを基準とする相対単位<br>' +
+          '・ネストしても累積しない（どこで使っても同じ基準）<br>' +
+          '　例：html 16px → どこでも 2rem = 32px<br><br>' +
+          '<strong>remがレスポンシブデザインで好まれる理由：</strong><br>' +
+          '・html要素のfont-sizeを1か所変えるだけで、<br>' +
+          '　rem単位を使った全要素のサイズを一括調整できる<br>' +
+          '・累積しないため、計算が直感的でバグが起きにくい<br>' +
+          '・メディアクエリで html { font-size: 14px; } のように変えると<br>' +
+          '　サイト全体のサイズを簡単にスケールできる';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 CSS基礎知識 まとめ</h2>
+<table class="summary">
+  <thead>
+    <tr><th>項目</th><th>内容</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>基本書式</td>
+      <td>セレクタ { プロパティ: 値; }</td>
+      <td>空白は自由に入れられるが、セレクタ内の空白は子孫セレクタになる</td>
+    </tr>
+    <tr>
+      <td>link要素</td>
+      <td>外部CSSファイルの読み込み</td>
+      <td>type="text/css" は省略可。media属性にメディアクエリ指定可</td>
+    </tr>
+    <tr>
+      <td>style要素</td>
+      <td>HTML内への直接記述</td>
+      <td>type="text/css" は省略可。media属性にメディアクエリ指定可</td>
+    </tr>
+    <tr>
+      <td>style属性</td>
+      <td>要素への直接指定（インライン）</td>
+      <td>優先度最高。media属性なし。保守性が低いため限定的に使用</td>
+    </tr>
+    <tr>
+      <td>@import</td>
+      <td>CSSファイルからCSSを読み込む</td>
+      <td>CSSの先頭に記述必須。メディアクエリ指定可。パフォーマンス注意</td>
+    </tr>
+    <tr>
+      <td>ボックスモデル</td>
+      <td>margin / border / padding / content</td>
+      <td>box-sizing: border-box でwidthにpadding+borderを含める</td>
+    </tr>
+    <tr>
+      <td>絶対単位</td>
+      <td>px / pt / cm / mm など</td>
+      <td>pxが最も一般的。印刷にはpt / cm / mmを使用</td>
+    </tr>
+    <tr>
+      <td>相対単位</td>
+      <td>em / rem / % / vw / vh など</td>
+      <td>em：親基準（累積あり）/ rem：ルート基準（累積なし）/ vw・vh：ビューポート基準</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
