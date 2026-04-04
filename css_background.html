@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>CSS 背景 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #9f7aea; padding-bottom: 10px; }
+    h2 { color: #553c9a; margin-top: 48px; border-left: 5px solid #9f7aea; padding-left: 12px; }
+    h3 { color: #276749; margin-top: 24px; }
+
+    code {
+      background: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment  { color: #68d391; }
+    pre .selector { color: #f6ad55; }
+    pre .prop     { color: #90cdf4; }
+    pre .val      { color: #fc8181; }
+    pre .fn       { color: #68d391; }
+    pre .kw       { color: #b794f4; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #b794f4;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #553c9a; }
+
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+
+    .demo-box {
+      background: #fff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* ライブデモ共通 */
+    .live-demo {
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin: 12px 0;
+    }
+    .live-demo p {
+      margin: 0 0 6px;
+      font-size: 0.88em;
+      color: #553c9a;
+      font-weight: bold;
+    }
+
+    /* 背景デモ用ボックス共通 */
+    .bg-demo {
+      width: 100%;
+      height: 120px;
+      border-radius: 6px;
+      border: 2px solid #e9d8fd;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82em;
+      color: rgba(255,255,255,0.9);
+      font-weight: bold;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    /* background-clip デモ */
+    .clip-demo-wrap {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .clip-item {
+      text-align: center;
+      font-size: 0.82em;
+      color: #4a5568;
+    }
+    .clip-box {
+      height: 90px;
+      border: 10px dashed #9f7aea;
+      padding: 10px;
+      margin-bottom: 4px;
+      border-radius: 4px;
+    }
+
+    /* background-origin デモ */
+    .origin-demo-wrap {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .origin-item {
+      text-align: center;
+      font-size: 0.82em;
+      color: #4a5568;
+    }
+    .origin-box {
+      height: 100px;
+      border: 10px dashed #9f7aea;
+      padding: 10px;
+      margin-bottom: 4px;
+      border-radius: 4px;
+      background-image: repeating-linear-gradient(
+        45deg,
+        rgba(159,122,234,0.3) 0px,
+        rgba(159,122,234,0.3) 10px,
+        transparent 10px,
+        transparent 20px
+      );
+      background-repeat: no-repeat;
+      background-size: 60px 60px;
+    }
+
+    /* background-size デモ */
+    .size-demo-wrap {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .size-item {
+      text-align: center;
+      font-size: 0.82em;
+      color: #4a5568;
+    }
+    .size-box {
+      height: 100px;
+      border: 1px solid #e9d8fd;
+      border-radius: 6px;
+      margin-bottom: 4px;
+      background-image: repeating-linear-gradient(
+        45deg,
+        #9f7aea 0px, #9f7aea 8px,
+        #e9d8fd 8px, #e9d8fd 16px
+      );
+    }
+
+    /* インタラクティブ背景デモ */
+    .interactive-demo {
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+    .control-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .control-row label {
+      font-size: 0.88em;
+      font-weight: bold;
+      color: #553c9a;
+      min-width: 130px;
+    }
+    .control-row select,
+    .control-row input[type="range"] {
+      border: 1px solid #e9d8fd;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 0.88em;
+      background: #fff;
+      accent-color: #9f7aea;
+    }
+    .control-row .val-display {
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.85em;
+      color: #553c9a;
+      min-width: 80px;
+    }
+    .bg-preview {
+      width: 100%;
+      height: 140px;
+      border-radius: 8px;
+      border: 2px solid #e9d8fd;
+      margin-top: 10px;
+      background-image: repeating-linear-gradient(
+        45deg,
+        #9f7aea 0px, #9f7aea 10px,
+        #e9d8fd 10px, #e9d8fd 20px
+      );
+      transition: all 0.2s;
+    }
+    .bg-code {
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.82em;
+      color: #553c9a;
+      margin-top: 8px;
+      background: #fff;
+      border: 1px solid #e9d8fd;
+      border-radius: 4px;
+      padding: 8px 12px;
+      word-break: break-all;
+    }
+
+    table.ref-table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      margin: 14px 0;
+    }
+    table.ref-table th, table.ref-table td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.ref-table thead tr { background: #553c9a; color: #fff; }
+    table.ref-table tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 { margin-top: 0; color: #c05621; border-left-color: #f6ad55; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #fbd38d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #fbd38d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-purple { background: #9f7aea; color: #fff; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #e9d8fd; color: #553c9a; display: block; }
+
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.summary thead tr { background: #553c9a; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px 14px; }
+      .clip-demo-wrap,
+      .origin-demo-wrap { grid-template-columns: 1fr; }
+      .size-demo-wrap { grid-template-columns: repeat(2, 1fr); }
+      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.82em; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px 16px; }
+      .quiz-block { padding: 14px 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+      .control-row label { min-width: 100px; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+      .clip-demo-wrap,
+      .origin-demo-wrap { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>🖼️ CSS 背景 学習サンプル</h1>
+<p>background-color / background-image / background-clip / background-repeat /
+background-size / background-origin / background-position / background-attachment /
+background の使い方を学びましょう。</p>
+
+
+<!-- 1. background-color -->
+<h2>① background-color</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・要素の背景色を指定します。<br>
+  ・色の指定方法は16進数・キーワード・rgb()・hsl()などすべて使えます。<br>
+  ・<code>transparent</code>（透明）がデフォルト値です。
+</div>
+<div class="demo-box">
+<pre>
+<span class="selector">.box</span> { <span class="prop">background-color</span>: <span class="val">#9f7aea</span>; }
+<span class="selector">.box</span> { <span class="prop">background-color</span>: <span class="kw">skyblue</span>; }
+<span class="selector">.box</span> { <span class="prop">background-color</span>: <span class="fn">rgb</span>(<span class="val">159, 122, 234</span>); }
+<span class="selector">.box</span> { <span class="prop">background-color</span>: <span class="fn">rgba</span>(<span class="val">159, 122, 234, 0.4</span>); }
+<span class="selector">.box</span> { <span class="prop">background-color</span>: <span class="fn">hsl</span>(<span class="val">270, 60%, 60%</span>); }
+<span class="selector">.box</span> { <span class="prop">background-color</span>: <span class="kw">transparent</span>; } <span class="comment">/* デフォルト値 */</span>
+</pre>
+  <div class="live-demo">
+    <p>▼ background-color のデモ</p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <div style="width:100px; height:60px; background-color:#9f7aea; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:0.78em; font-weight:bold;">#9f7aea</div>
+      <div style="width:100px; height:60px; background-color:skyblue; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:0.78em; font-weight:bold;">skyblue</div>
+      <div style="width:100px; height:60px; background-color:rgba(159,122,234,0.4); border-radius:6px; border:1px solid #e9d8fd; display:flex; align-items:center; justify-content:center; font-size:0.78em; font-weight:bold;">rgba 0.4</div>
+      <div style="width:100px; height:60px; background-color:transparent; border-radius:6px; border:2px dashed #9f7aea; display:flex; align-items:center; justify-content:center; font-size:0.78em; font-weight:bold;">transparent</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- 2. background-image -->
+<h2>② background-image</h2>
+<div class="note">
+  <strong>ポイント①：背景画像は複数指定できる</strong><br>
+  ・<code>background-image</code> にカンマ区切りで複数の画像を指定できます。<br>
+  ・<strong>最初に書いた画像が最前面</strong>に表示されます。<br>
+  ・<code>url()</code> で画像ファイルを、<code>linear-gradient()</code> などでグラデーションを指定できます。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* 単一の背景画像 */</span>
+<span class="selector">.box</span> {
+    <span class="prop">background-image</span>: <span class="fn">url</span>(<span class="val">"image.png"</span>);
+}
+
+<span class="comment">/* グラデーション */</span>
+<span class="selector">.box</span> {
+    <span class="prop">background-image</span>: <span class="fn">linear-gradient</span>(<span class="val">to right, #9f7aea, #4299e1</span>);
+}
+<span class="selector">.box</span> {
+    <span class="prop">background-image</span>: <span class="fn">radial-gradient</span>(<span class="val">circle, #9f7aea, #1a202c</span>);
+}
+
+<span class="comment">/* ポイント①：複数の背景画像（カンマ区切り） */</span>
+<span class="comment">/* 最初に書いた画像が最前面に表示される */</span>
+<span class="selector">.box</span> {
+    <span class="prop">background-image</span>:
+        <span class="fn">url</span>(<span class="val">"icon.png"</span>),          <span class="comment">/* 最前面 */</span>
+        <span class="fn">url</span>(<span class="val">"pattern.png"</span>),       <span class="comment">/* 2番目 */</span>
+        <span class="fn">linear-gradient</span>(<span class="val">to bottom, #9f7aea, #4299e1</span>); <span class="comment">/* 最背面 */</span>
+}
+
+<span class="comment">/* none：背景画像なし */</span>
+<span class="selector">.box</span> { <span class="prop">background-image</span>: <span class="kw">none</span>; }
+</pre>
+
+  <div class="live-demo">
+    <p>▼ 複数背景画像のデモ（グラデーションを重ねた例）</p>
+    <div style="height:100px; border-radius:8px; background-image: linear-gradient(to right, rgba(159,122,234,0.85), rgba(66,153,225,0.85)), repeating-linear-gradient(45deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 5px, transparent 5px, transparent 10px); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; font-size:0.9em;">
+      2つのグラデーションを重ねた背景
+    </div>
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ 複数背景の重ね順</strong><br>
+    ・カンマ区切りで複数指定した場合、<strong>先に書いたものが前面</strong>に来ます<br>
+    ・各背景に対して <code>background-repeat</code> / <code>background-position</code> /
+    <code>background-size</code> もカンマ区切りで個別指定できます<br>
+    ・<code>background-color</code> は常に最背面に表示されます
+  </div>
+</div>
+
+
+<!-- 3. background-repeat -->
+<h2>③ background-repeat</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  背景画像の繰り返し方法を指定します。デフォルトは <code>repeat</code>（縦横に繰り返し）です。
+</div>
+<div class="demo-box">
+<pre>
+<span class="selector">.box</span> { <span class="prop">background-repeat</span>: <span class="kw">repeat</span>; }    <span class="comment">/* 縦横に繰り返し（デフォルト） */</span>
+<span class="selector">.box</span> { <span class="prop">background-repeat</span>: <span class="kw">repeat-x</span>; }  <span class="comment">/* 横方向のみ繰り返し */</span>
+<span class="selector">.box</span> { <span class="prop">background-repeat</span>: <span class="kw">repeat-y</span>; }  <span class="comment">/* 縦方向のみ繰り返し */</span>
+<span class="selector">.box</span> { <span class="prop">background-repeat</span>: <span class="kw">no-repeat</span>; } <span class="comment">/* 繰り返しなし */</span>
+<span class="selector">.box</span> { <span class="prop">background-repeat</span>: <span class="kw">space</span>; }     <span class="comment">/* 切れないように等間隔で配置 */</span>
+<span class="selector">.box</span> { <span class="prop">background-repeat</span>: <span class="kw">round</span>; }     <span class="comment">/* 切れないようにサイズ調整して繰り返し */</span>
+</pre>
+
+  <div class="live-demo">
+    <p>▼ background-repeat のデモ</p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:10px;">
+      <div style="text-align:center; font-size:0.78em; color:#4a5568;">
+        <div style="height:80px; border:1px solid #e9d8fd; border-radius:4px; background-image:radial-gradient(circle, #9f7aea 4px, transparent 4px); background-size:20px 20px; background-repeat:repeat; margin-bottom:4px;"></div>
+        repeat（デフォルト）
+      </div>
+      <div style="text-align:center; font-size:0.78em; color:#4a5568;">
+        <div style="height:80px; border:1px solid #e9d8fd; border-radius:4px; background-image:radial-gradient(circle, #9f7aea 4px, transparent 4px); background-size:20px 20px; background-repeat:repeat-x; margin-bottom:4px;"></div>
+        repeat-x
+      </div>
+      <div style="text-align:center; font-size:0.78em; color:#4a5568;">
+        <div style="height:80px; border:1px solid #e9d8fd; border-radius:4px; background-image:radial-gradient(circle, #9f7aea 4px, transparent 4px); background-size:20px 20px; background-repeat:repeat-y; margin-bottom:4px;"></div>
+        repeat-y
+      </div>
+      <div style="text-align:center; font-size:0.78em; color:#4a5568;">
+        <div style="height:80px; border:1px solid #e9d8fd; border-radius:4px; background-image:radial-gradient(circle, #9f7aea 4px, transparent 4px); background-size:20px 20px; background-repeat:no-repeat; margin-bottom:4px;"></div>
+        no-repeat
+      </div>
+      <div style="text-align:center; font-size:0.78em; color:#4a5568;">
+        <div style="height:80px; border:1px solid #e9d8fd; border-radius:4px; background-image:radial-gradient(circle, #9f7aea 4px, transparent 4px); background-size:20px 20px; background-repeat:space; margin-bottom:4px;"></div>
+        space
+      </div>
+      <div style="text-align:center; font-size:0.78em; color:#4a5568;">
+        <div style="height:80px; border:1px solid #e9d8fd; border-radius:4px; background-image:radial-gradient(circle, #9f7aea 4px, transparent 4px); background-size:20px 20px; background-repeat:round; margin-bottom:4px;"></div>
+        round
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- 4. background-position -->
+<h2>④ background-position</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  背景画像の表示位置を指定します。
+  キーワード・px・%・calc() などで指定できます。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* キーワード指定 */</span>
+<span class="selector">.box</span> { <span class="prop">background-position</span>: <span class="kw">center</span>; }          <span class="comment">/* 中央 */</span>
+<span class="selector">.box</span> { <span class="prop">background-position</span>: <span class="kw">top left</span>; }        <span class="comment">/* 左上 */</span>
+<span class="selector">.box</span> { <span class="prop">background-position</span>: <span class="kw">bottom right</span>; }     <span class="comment">/* 右下 */</span>
+<span class="selector">.box</span> { <span class="prop">background-position</span>: <span class="kw">center top</span>; }      <span class="comment">/* 上中央 */</span>
+
+<span class="comment">/* 数値・パーセント指定（水平 垂直の順） */</span>
+<span class="selector">.box</span> { <span class="prop">background-position</span>: <span class="val">50% 50%</span>; }        <span class="comment">/* center と同じ */</span>
+<span class="selector">.box</span> { <span class="prop">background-position</span>: <span class="val">20px 40px</span>; }       <span class="comment">/* 左から20px・上から40px */</span>
+<span class="selector">.box</span> { <span class="prop">background-position</span>: <span class="val">100% 0%</span>; }         <span class="comment">/* 右上 */</span>
+
+<span class="comment">/* CSS3：4値指定（端からの距離を指定） */</span>
+<span class="selector">.box</span> { <span class="prop">background-position</span>: <span class="kw">right</span> <span class="val">20px</span> <span class="kw">bottom</span> <span class="val">10px</span>; }
+<span class="comment">/* 右端から20px・下端から10pxの位置 */</span>
+</pre>
+
+  <div class="live-demo">
+    <p>▼ background-position のデモ</p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(130px,1fr)); gap:8px;">
+      <div style="text-align:center; font-size:0.78em; color:#4a5568;">
+        <div style="height:80px; border:1px solid #e9d8fd; border-radius:4px; background-image:radial-gradient(circle, #9f7aea 10px, transparent 10px); background-size:24px 24px; background-repeat:no-repeat; background-position:top left; margin-bottom:4px;"></div>
+        top left
+      </div>
+      <div style="text-align:center; font-size:0.78em; color:#4a5568;">
+        <div style="height:80px; border:1px solid #e9d8fd; border-radius:4px; background-image:radial-gradient(circle, #9f7aea 10px, transparent 10px); background-size:24px 24px; background-repeat:no-repeat; background-position:center top; margin-bottom:4px;"></div>
+        center top
+      </div>
+      <div style="text-align:center; font-size:0.78em; color:#4a5568;">
+        <div style="height:80px; border:1px solid #e9d8fd; border-radius:4px; background-image:radial-gradient(circle, #9f7aea 10px, transparent 10px); background-size:24px 24px; background-repeat:no-repeat; background-position:center; margin-bottom:4px;"></div>
+        center
+      </div>
+      <div style="text-align:center; font-size:0.78em; color:#4a5568;">
+        <div style="height:80px; border:1px solid #e9d8fd; border-radius:4px; background-image:radial-gradient(circle, #9f7aea 10px, transparent 10px); background-size:24px 24px; background-repeat:no-repeat; background-position:bottom right; margin-bottom:4px;"></div>
+        bottom right
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- 5. background-size -->
+<h2>⑤ background-size</h2>
+<div class="note">
+  <strong>ポイント③：背景画像は表示サイズを指定できる</strong><br>
+  ・<code>background-size</code> で背景画像の表示サイズを指定できます。<br>
+  ・<code>cover</code> と <code>contain</code> がよく使われます。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* キーワード指定 */</span>
+<span class="selector">.box</span> { <span class="prop">background-size</span>: <span class="kw">auto</span>; }      <span class="comment">/* 元のサイズ（デフォルト） */</span>
+<span class="selector">.box</span> { <span class="prop">background-size</span>: <span class="kw">cover</span>; }     <span class="comment">/* 要素全体を覆う（アスペクト比維持・はみ出しあり） */</span>
+<span class="selector">.box</span> { <span class="prop">background-size</span>: <span class="kw">contain</span>; }   <span class="comment">/* 要素内に収める（アスペクト比維持・余白あり） */</span>
+
+<span class="comment">/* 数値・パーセント指定（幅 高さの順） */</span>
+<span class="selector">.box</span> { <span class="prop">background-size</span>: <span class="val">200px 100px</span>; } <span class="comment">/* 幅200px・高さ100px */</span>
+<span class="selector">.box</span> { <span class="prop">background-size</span>: <span class="val">50%</span>; }          <span class="comment">/* 幅50%・高さはauto */</span>
+<span class="selector">.box</span> { <span class="prop">background-size</span>: <span class="val">100% 100%</span>; }   <span class="comment">/* 要素いっぱいに引き伸ばす */</span>
+
+<span class="comment">/* 複数背景の場合はカンマ区切りで指定 */</span>
+<span class="selector">.box</span> {
+    <span class="prop">background-image</span>: <span class="fn">url</span>(<span class="val">"a.png"</span>), <span class="fn">url</span>(<span class="val">"b.png"</span>);
+    <span class="prop">background-size</span>: <span class="val">50px 50px</span>, <span class="kw">cover</span>;
+}
+</pre>
+
+  <div class="size-demo-wrap">
+    <div class="size-item">
+      <div class="size-box" style="background-size:auto;"></div>
+      auto（デフォルト）
+    </div>
+    <div class="size-item">
+      <div class="size-box" style="background-size:cover;"></div>
+      cover
+    </div>
+    <div class="size-item">
+      <div class="size-box" style="background-size:contain; background-repeat:no-repeat;"></div>
+      contain
+    </div>
+    <div class="size-item">
+      <div class="size-box" style="background-size:30px 30px;"></div>
+      30px 30px
+    </div>
+    <div class="size-item">
+      <div class="size-box" style="background-size:100% 100%;"></div>
+      100% 100%
+    </div>
+    <div class="size-item">
+      <div class="size-box" style="background-size:50%;"></div>
+      50%
+    </div>
+  </div>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>値</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>auto</code></td><td>画像の元のサイズ（デフォルト）</td></tr>
+      <tr><td><code>cover</code></td><td>アスペクト比を維持しつつ要素全体を覆う（はみ出しあり）</td></tr>
+      <tr><td><code>contain</code></td><td>アスペクト比を維持しつつ要素内に収める（余白あり）</td></tr>
+      <tr><td><code>幅 高さ</code></td><td>具体的なサイズを指定（px / % / em など）</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 6. background-origin -->
+<h2>⑥ background-origin</h2>
+<div class="note">
+  <strong>ポイント②：背景の表示領域は変更できる</strong><br>
+  ・<code>background-origin</code> は背景画像の<strong>描画開始位置（原点）</strong>を指定します。<br>
+  ・<code>background-clip</code> と組み合わせて使うことが多いです。
+</div>
+<div class="demo-box">
+<pre>
+<span class="selector">.box</span> { <span class="prop">background-origin</span>: <span class="kw">padding-box</span>; }  <span class="comment">/* paddingの左上が原点（デフォルト） */</span>
+<span class="selector">.box</span> { <span class="prop">background-origin</span>: <span class="kw">border-box</span>; }   <span class="comment">/* borderの左上が原点 */</span>
+<span class="selector">.box</span> { <span class="prop">background-origin</span>: <span class="kw">content-box</span>; }  <span class="comment">/* contentの左上が原点 */</span>
+</pre>
+
+  <div class="origin-demo-wrap">
+    <div class="origin-item">
+      <div class="origin-box" style="background-origin:padding-box;"></div>
+      padding-box（デフォルト）<br>paddingの左上が原点
+    </div>
+    <div class="origin-item">
+      <div class="origin-box" style="background-origin:border-box;"></div>
+      border-box<br>borderの左上が原点
+    </div>
+    <div class="origin-item">
+      <div class="origin-box" style="background-origin:content-box;"></div>
+      content-box<br>contentの左上が原点
+    </div>
+  </div>
+</div>
+
+
+<!-- 7. background-clip -->
+<h2>⑦ background-clip</h2>
+<div class="note">
+  <strong>ポイント②：背景の表示領域は変更できる</strong><br>
+  ・<code>background-clip</code> は背景（色・画像）を<strong>どの領域まで表示するか</strong>を指定します。<br>
+  ・<code>text</code> 値（CSS4）を使うとテキストの形に背景を切り抜けます。
+</div>
+<div class="demo-box">
+<pre>
+<span class="selector">.box</span> { <span class="prop">background-clip</span>: <span class="kw">border-box</span>; }   <span class="comment">/* border領域まで表示（デフォルト） */</span>
+<span class="selector">.box</span> { <span class="prop">background-clip</span>: <span class="kw">padding-box</span>; }  <span class="comment">/* padding領域まで（borderは透明） */</span>
+<span class="selector">.box</span> { <span class="prop">background-clip</span>: <span class="kw">content-box</span>; }  <span class="comment">/* content領域のみ */</span>
+
+<span class="comment">/* text：テキストの形に背景を切り抜く（CSS4） */</span>
+<span class="selector">.text-clip</span> {
+    <span class="prop">background-image</span>: <span class="fn">linear-gradient</span>(<span class="val">to right, #9f7aea, #4299e1</span>);
+    <span class="prop">background-clip</span>: <span class="kw">text</span>;
+    <span class="prop">-webkit-background-clip</span>: <span class="kw">text</span>; <span class="comment">/* Safari/Chrome用 */</span>
+    <span class="prop">color</span>: <span class="kw">transparent</span>;
+}
+</pre>
+
+  <div class="clip-demo-wrap">
+    <div class="clip-item">
+      <div class="clip-box" style="background:linear-gradient(135deg,#9f7aea,#4299e1); background-clip:border-box;"></div>
+      border-box（デフォルト）<br>border領域まで表示
+    </div>
+    <div class="clip-item">
+      <div class="clip-box" style="background:linear-gradient(135deg,#9f7aea,#4299e1); background-clip:padding-box;"></div>
+      padding-box<br>padding領域まで
+    </div>
+    <div class="clip-item">
+      <div class="clip-box" style="background:linear-gradient(135deg,#9f7aea,#4299e1); background-clip:content-box;"></div>
+      content-box<br>content領域のみ
+    </div>
+  </div>
+
+  <div style="text-align:center; padding:16px; background:#1a202c; border-radius:8px; margin:10px 0;">
+    <span style="font-size:2.2em; font-weight:bold; background:linear-gradient(to right,#9f7aea,#4299e1,#48bb78); -webkit-background-clip:text; background-clip:text; color:transparent; letter-spacing:0.05em;">
+      background-clip: text
+    </span>
+  </div>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>プロパティ</th><th>役割</th><th>デフォルト値</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>background-origin</code></td><td>背景画像の<strong>描画開始位置（原点）</strong></td><td><code>padding-box</code></td></tr>
+      <tr><td><code>background-clip</code></td><td>背景の<strong>表示（クリッピング）領域</strong></td><td><code>border-box</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 8. background-attachment -->
+<h2>⑧ background-attachment</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  背景画像をスクロールに対して固定するかどうかを指定します。
+</div>
+<div class="demo-box">
+<pre>
+<span class="selector">.box</span> { <span class="prop">background-attachment</span>: <span class="kw">scroll</span>; }  <span class="comment">/* 要素と一緒にスクロール（デフォルト） */</span>
+<span class="selector">.box</span> { <span class="prop">background-attachment</span>: <span class="kw">fixed</span>; }   <span class="comment">/* ビューポートに対して固定（パララックス効果） */</span>
+<span class="selector">.box</span> { <span class="prop">background-attachment</span>: <span class="kw">local</span>; }   <span class="comment">/* 要素内のスクロールに追従 */</span>
+</pre>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>値</th><th>説明</th><th>用途</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>scroll</code></td><td>要素と一緒にスクロール（デフォルト）</td><td>通常の背景</td></tr>
+      <tr><td><code>fixed</code></td><td>ビューポートに対して固定</td><td>パララックス効果・ヒーロー画像</td></tr>
+      <tr><td><code>local</code></td><td>要素内のスクロールに追従</td><td>スクロール可能なコンテナ</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 9. background（一括指定） -->
+<h2>⑨ background（一括指定）</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>background</code> は背景関連プロパティをまとめて指定できる<strong>ショートハンド</strong>です。<br>
+  ・複数背景の場合はカンマ区切りで指定し、<code>background-color</code> は<strong>最後のレイヤーのみ</strong>指定できます。<br>
+  ・<code>background-size</code> は <code>background-position</code> の後に <code>/</code> で区切って指定します。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* background ショートハンドの書式 */</span>
+<span class="comment">/* background: color image repeat attachment position / size origin clip; */</span>
+
+<span class="comment">/* 基本的な例 */</span>
+<span class="selector">.box</span> {
+    <span class="prop">background</span>: <span class="val">#9f7aea</span>;
+}
+<span class="selector">.box</span> {
+    <span class="prop">background</span>: <span class="fn">url</span>(<span class="val">"bg.png"</span>) <span class="kw">no-repeat center</span> / <span class="kw">cover</span>;
+}
+<span class="selector">.box</span> {
+    <span class="prop">background</span>: <span class="fn">linear-gradient</span>(<span class="val">to right, #9f7aea, #4299e1</span>);
+}
+
+<span class="comment">/* position / size の指定（/ で区切る） */</span>
+<span class="selector">.box</span> {
+    <span class="prop">background</span>: <span class="fn">url</span>(<span class="val">"icon.png"</span>) <span class="kw">no-repeat right</span> <span class="val">10px</span> <span class="kw">center</span> / <span class="val">40px 40px</span>;
+}
+
+<span class="comment">/* 複数背景（カンマ区切り）・background-colorは最後のレイヤーに */</span>
+<span class="selector">.box</span> {
+    <span class="prop">background</span>:
+        <span class="fn">url</span>(<span class="val">"icon.png"</span>) <span class="kw">no-repeat center top</span> / <span class="val">30px</span>,
+        <span class="fn">url</span>(<span class="val">"pattern.png"</span>) <span class="kw">repeat</span>,
+        <span class="val">#f0f4f8</span>;  <span class="comment">/* background-colorは最後のレイヤーのみ */</span>
+}
+</pre>
+
+  <div class="warn">
+    <strong>⚠️ background ショートハンドの注意点</strong><br>
+    ・<code>background-size</code> は <code>background-position</code> の直後に
+    <code>/</code> で区切って指定します<br>
+    ・ショートハンドで指定しなかったプロパティは<strong>初期値にリセット</strong>されます<br>
+    ・<code>background-color</code> は複数背景の<strong>最後のレイヤーにのみ</strong>指定できます<br>
+    ・<code>background-origin</code> と <code>background-clip</code> を1値で指定すると
+    両方に同じ値が設定されます
+  </div>
+</div>
+
+
+<!-- 10. インタラクティブデモ -->
+<h2>⑩ 🎛️ インタラクティブ 背景プロパティ デモ</h2>
+<div class="demo-box">
+  <div class="interactive-demo">
+    <div class="control-row">
+      <label>background-repeat</label>
+      <select id="ctrl-repeat" onchange="updateBgDemo()">
+        <option value="repeat">repeat</option>
+        <option value="repeat-x">repeat-x</option>
+        <option value="repeat-y">repeat-y</option>
+        <option value="no-repeat">no-repeat</option>
+        <option value="space">space</option>
+        <option value="round">round</option>
+      </select>
+    </div>
+    <div class="control-row">
+      <label>background-size</label>
+      <select id="ctrl-size" onchange="updateBgDemo()">
+        <option value="auto">auto</option>
+        <option value="cover">cover</option>
+        <option value="contain">contain</option>
+        <option value="30px 30px">30px 30px</option>
+        <option value="60px 60px">60px 60px</option>
+        <option value="50%">50%</option>
+        <option value="100% 100%">100% 100%</option>
+      </select>
+    </div>
+    <div class="control-row">
+      <label>background-position</label>
+      <select id="ctrl-pos" onchange="updateBgDemo()">
+        <option value="top left">top left</option>
+        <option value="center top">center top</option>
+        <option value="center" selected>center</option>
+        <option value="center bottom">center bottom</option>
+        <option value="bottom right">bottom right</option>
+        <option value="50% 50%">50% 50%</option>
+      </select>
+    </div>
+    <div class="control-row">
+      <label>background-clip</label>
+      <select id="ctrl-clip" onchange="updateBgDemo()">
+        <option value="border-box">border-box</option>
+        <option value="padding-box">padding-box</option>
+        <option value="content-box">content-box</option>
+      </select>
+    </div>
+    <div id="bg-preview" class="bg-preview"
+         style="border:12px solid rgba(159,122,234,0.4); padding:16px;"></div>
+    <div class="bg-code" id="bg-code-display"></div>
+  </div>
+  <script>
+    function updateBgDemo() {
+      const repeat = document.getElementById('ctrl-repeat').value;
+      const size   = document.getElementById('ctrl-size').value;
+      const pos    = document.getElementById('ctrl-pos').value;
+      const clip   = document.getElementById('ctrl-clip').value;
+      const el = document.getElementById('bg-preview');
+      el.style.backgroundRepeat   = repeat;
+      el.style.backgroundSize     = size;
+      el.style.backgroundPosition = pos;
+      el.style.backgroundClip    = clip;
+      document.getElementById('bg-code-display').textContent =
+        `background-repeat: ${repeat};\n` +
+        `background-size: ${size};\n` +
+        `background-position: ${pos};\n` +
+        `background-clip: ${clip};`;
+    }
+    updateBgDemo();
+  </script>
+</div>
+
+
+<!-- 演習問題 -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      <code>background-image</code> にカンマ区切りで複数の画像を指定した場合、
+      最後に書いた画像が最前面に表示される。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn btn-purple" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.textContent =
+            '✅ 正解！複数の背景画像を指定した場合、' +
+            '最初に書いた画像が最前面に表示されます。' +
+            '後に書いたものほど背面になります。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。最初に書いた画像が最前面です。' +
+            'background-colorは常に最背面になります。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合うプロパティ名または値を入力してください。</p>
+
+    <label>① 背景画像をアスペクト比を維持しつつ要素全体を覆うように表示する
+    <code>background-size</code> の値：</label>
+    <input type="text" id="q2a" placeholder="値">
+
+    <label>② 背景画像をアスペクト比を維持しつつ要素内に収める
+    <code>background-size</code> の値：</label>
+    <input type="text" id="q2b" placeholder="値">
+
+    <label>③ 背景の表示（クリッピング）領域を指定するプロパティ名：</label>
+    <input type="text" id="q2c" placeholder="プロパティ名">
+
+    <label>④ 背景画像の描画開始位置（原点）を指定するプロパティ名：</label>
+    <input type="text" id="q2d" placeholder="プロパティ名">
+
+    <label>⑤ 背景画像をビューポートに対して固定する
+    <code>background-attachment</code> の値：</label>
+    <input type="text" id="q2e" placeholder="値">
+
+    <label>⑥ <code>background-clip</code> のデフォルト値：</label>
+    <input type="text" id="q2f" placeholder="値">
+
+    <br>
+    <button class="btn btn-purple" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const n = v => v.trim().replace(/\s/g,'').toLowerCase();
+        const a = n(document.getElementById('q2a').value);
+        const b = n(document.getElementById('q2b').value);
+        const c = n(document.getElementById('q2c').value).replace(/-/g,'');
+        const d = n(document.getElementById('q2d').value).replace(/-/g,'');
+        const e = n(document.getElementById('q2e').value);
+        const f = n(document.getElementById('q2f').value).replace(/-/g,'');
+        const r = document.getElementById('q2-result');
+        const ca = a === 'cover';
+        const cb = b === 'contain';
+        const cc = c === 'backgroundclip';
+        const cd = d === 'backgroundorigin';
+        const ce = e === 'fixed';
+        const cf = f === 'borderbox';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！背景プロパティを完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `① ${ca?'✅':'❌ cover'}　` +
+            `② ${cb?'✅':'❌ contain'}　` +
+            `③ ${cc?'✅':'❌ background-clip'}　` +
+            `④ ${cd?'✅':'❌ background-origin'}　` +
+            `⑤ ${ce?'✅':'❌ fixed'}　` +
+            `⑥ ${cf?'✅':'❌ border-box'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>
+      <code>background</code> ショートハンドで
+      <code>background-size</code> を指定する正しい書き方はどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">background: url("bg.png") cover no-repeat center;</option>
+      <option value="b">background: url("bg.png") no-repeat center / cover;</option>
+      <option value="c">background: url("bg.png") no-repeat center, cover;</option>
+      <option value="d">background: cover url("bg.png") no-repeat center;</option>
+    </select>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'backgroundショートハンドでbackground-sizeを指定する場合は、<br>' +
+            '<code>background-position</code> の直後に <code>/</code> で区切って指定します。<br>' +
+            '書式：<code>background: image repeat position / size;</code>';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。background-sizeはbackground-positionの後に / で区切って指定します。' +
+            '正しくは: background: url("bg.png") no-repeat center / cover;';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4a">
+      ① <code>background-image</code> にカンマ区切りで複数の背景画像を指定できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4b">
+      ② <code>background-color</code> は複数背景の最前面に表示される
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4c">
+      ③ <code>background-size: cover</code> はアスペクト比を維持しつつ要素全体を覆う
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4d">
+      ④ <code>background-origin</code> のデフォルト値は <code>padding-box</code> である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4e">
+      ⑤ <code>background-clip: text</code> でテキストの形に背景を切り抜くことができる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4f">
+      ⑥ <code>background-attachment: fixed</code> は要素と一緒にスクロールする
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4g">
+      ⑦ <code>background-repeat: no-repeat</code> は背景画像を1回だけ表示する
+    </label>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const r = document.getElementById('q4-result');
+        const checks = {
+          a: document.getElementById('q4a').checked,
+          b: document.getElementById('q4b').checked,
+          c: document.getElementById('q4c').checked,
+          d: document.getElementById('q4d').checked,
+          e: document.getElementById('q4e').checked,
+          f: document.getElementById('q4f').checked,
+          g: document.getElementById('q4g').checked,
+        };
+        // 正解：①③④⑤⑦（a, c, d, e, g）
+        // ②background-colorは常に最背面
+        // ⑥fixed はビューポートに固定（スクロールしても動かない）
+        const correct = { a:true, b:false, c:true, d:true, e:true, f:false, g:true };
+        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
+        const allCorrect = results.every(Boolean);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① 複数背景はカンマ区切りで指定可 ✅<br>' +
+            '・③ cover はアスペクト比維持で全体を覆う ✅<br>' +
+            '・④ background-origin のデフォルトは padding-box ✅<br>' +
+            '・⑤ background-clip: text でテキスト形に切り抜き可 ✅<br>' +
+            '・⑦ no-repeat は繰り返しなし（1回のみ表示） ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① 複数背景はカンマ区切りで指定可<br>' +
+            '・③ cover はアスペクト比を維持しつつ要素全体を覆う<br>' +
+            '・④ background-origin のデフォルトは padding-box<br>' +
+            '・⑤ background-clip: text でテキスト形に切り抜き可（CSS4）<br>' +
+            '・⑦ no-repeat は繰り返しなし（1回のみ表示）<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② background-color は常に最背面（最後のレイヤーの後ろ）<br>' +
+            '・⑥ fixed はビューポートに固定（スクロールしても動かない）';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. コード穴埋め問題</h3>
+    <p>以下のコードの <code>__A__</code> 〜 <code>__F__</code> に
+    適切なプロパティ名または値を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+.hero {
+    /* A：背景画像を指定 */
+    __A__: url("hero.jpg");
+
+    /* B：繰り返しなし */
+    background-repeat: __B__;
+
+    /* C：要素全体を覆うサイズ */
+    background-size: __C__;
+
+    /* D：中央に配置 */
+    background-position: __D__;
+
+    /* E：ビューポートに固定（パララックス） */
+    background-attachment: __E__;
+}
+
+/* F：backgroundショートハンドで上記をまとめて指定 */
+.hero {
+    __F__: url("hero.jpg") no-repeat center / cover fixed;
+}</pre>
+
+    <label>A（背景画像を指定するプロパティ）：</label>
+    <input type="text" id="q5a" placeholder="プロパティ名">
+    <label>B（繰り返しなしの値）：</label>
+    <input type="text" id="q5b" placeholder="値">
+    <label>C（要素全体を覆うサイズの値）：</label>
+    <input type="text" id="q5c" placeholder="値">
+    <label>D（中央配置の値）：</label>
+    <input type="text" id="q5d" placeholder="値">
+    <label>E（ビューポートに固定する値）：</label>
+    <input type="text" id="q5e" placeholder="値">
+    <label>F（背景を一括指定するショートハンドプロパティ）：</label>
+    <input type="text" id="q5f" placeholder="プロパティ名">
+    <br>
+    <button class="btn btn-purple" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const n = v => v.trim().replace(/\s/g,'').toLowerCase().replace(/-/g,'');
+        const a = n(document.getElementById('q5a').value);
+        const b = n(document.getElementById('q5b').value);
+        const c = n(document.getElementById('q5c').value);
+        const d = n(document.getElementById('q5d').value);
+        const e = n(document.getElementById('q5e').value);
+        const f = n(document.getElementById('q5f').value);
+        const r = document.getElementById('q5-result');
+        const ca = a === 'backgroundimage';
+        const cb = b === 'norepeat';
+        const cc = c === 'cover';
+        const cd = d === 'center';
+        const ce = e === 'fixed';
+        const cf = f === 'background';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！背景プロパティの構文を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca?'✅':'❌ background-image'}　` +
+            `B: ${cb?'✅':'❌ no-repeat'}　` +
+            `C: ${cc?'✅':'❌ cover'}　` +
+            `D: ${cd?'✅':'❌ center'}　` +
+            `E: ${ce?'✅':'❌ fixed'}　` +
+            `F: ${cf?'✅':'❌ background'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. 記述問題</h3>
+    <p>
+      <code>background-origin</code> と <code>background-clip</code> の違いを説明し、
+      それぞれのデフォルト値とその意味を述べてください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q6" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ6()">模範解答を見る</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const r = document.getElementById('q6-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<strong>background-origin（背景画像の原点）：</strong><br>' +
+          '・背景画像の<strong>描画開始位置（原点）</strong>を指定する<br>' +
+          '・デフォルト値：<code>padding-box</code><br>' +
+          '　→ paddingの左上端を原点として背景画像を配置する<br>' +
+          '・値：border-box / padding-box / content-box<br><br>' +
+          '<strong>background-clip（背景のクリッピング領域）：</strong><br>' +
+          '・背景（色・画像）を<strong>どの領域まで表示するか</strong>を指定する<br>' +
+          '・デフォルト値：<code>border-box</code><br>' +
+          '　→ border領域まで背景を表示する（borderの下にも背景が表示される）<br>' +
+          '・値：border-box / padding-box / content-box / text（CSS4）<br><br>' +
+          '<strong>まとめ：</strong><br>' +
+          '・background-origin：背景画像を「どこから」描き始めるか<br>' +
+          '・background-clip：背景を「どこまで」表示するか';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 背景プロパティ まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>プロパティ</th><th>役割</th><th>主な値・デフォルト</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>background-color</code></td>
+      <td>背景色</td>
+      <td>色の値 / デフォルト：<code>transparent</code></td>
+    </tr>
+    <tr>
+      <td><code>background-image</code></td>
+      <td>背景画像（複数指定可）</td>
+      <td><code>url()</code> / グラデーション / <code>none</code>。先に書いた方が前面</td>
+    </tr>
+    <tr>
+      <td><code>background-repeat</code></td>
+      <td>繰り返し方法</td>
+      <td><code>repeat</code>（デフォルト）/ <code>no-repeat</code> / <code>repeat-x</code> / <code>repeat-y</code> / <code>space</code> / <code>round</code></td>
+    </tr>
+    <tr>
+      <td><code>background-position</code></td>
+      <td>表示位置</td>
+      <td>キーワード / px / % / デフォルト：<code>0% 0%</code></td>
+    </tr>
+    <tr>
+      <td><code>background-size</code></td>
+      <td>表示サイズ（変更可）</td>
+      <td><code>auto</code>（デフォルト）/ <code>cover</code> / <code>contain</code> / 数値</td>
+    </tr>
+    <tr>
+      <td><code>background-origin</code></td>
+      <td>背景画像の描画開始位置（原点）</td>
+      <td><code>padding-box</code>（デフォルト）/ <code>border-box</code> / <code>content-box</code></td>
+    </tr>
+    <tr>
+      <td><code>background-clip</code></td>
+      <td>背景の表示（クリッピング）領域</td>
+      <td><code>border-box</code>（デフォルト）/ <code>padding-box</code> / <code>content-box</code> / <code>text</code></td>
+    </tr>
+    <tr>
+      <td><code>background-attachment</code></td>
+      <td>スクロール時の挙動</td>
+      <td><code>scroll</code>（デフォルト）/ <code>fixed</code> / <code>local</code></td>
+    </tr>
+    <tr>
+      <td><code>background</code></td>
+      <td>一括指定（ショートハンド）</td>
+      <td>position / size の順。background-colorは最後のレイヤーのみ</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>

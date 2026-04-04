@@ -7,7 +7,7 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; }
 
-    /* ====== 基本レイアウト ===== */
+    /* ===== 基本レイアウト ===== */
     body {
       font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
       margin: 0;
@@ -350,10 +350,10 @@
       🟪 CSS編
     </div>
     <div class="progress-bar-wrap css">
-      <!-- CSS編 4/7ページ ≈ 57% -->
-      <div class="progress-bar css" style="width: 57%;"></div>
+      <!-- CSS編 8/10ページ = 80% -->
+      <div class="progress-bar css" style="width: 80%;"></div>
     </div>
-    <div class="progress-label">CSS編 4 / 7 ページ公開済み（順次追加中）</div>
+    <div class="progress-label">CSS編 8 / 10 ページ公開済み（順次追加中）</div>
   </div>
 
   <!-- HTML編 公開済みページ -->
@@ -556,7 +556,7 @@
   </div><!-- /card-grid -->
 
   <!-- CSS編 公開済みページ -->
-  <div class="section-title css">✅ CSS編 ― 公開済み</div>
+  <div class="section-title css">✅ CSS編 ― 公開済み（8ページ）</div>
   <div class="card-grid">
 
     <!-- css_basics.html -->
@@ -579,7 +579,7 @@
       <div class="card-footer">📁 css_basics.html</div>
     </a>
 
-    <!-- css_selectors.html（新規追加） -->
+    <!-- css_selectors.html -->
     <a class="card css-card" href="css_selectors.html">
       <div class="card-icon">🎯</div>
       <div class="card-title">CSSセレクタ</div>
@@ -599,7 +599,7 @@
       <div class="card-footer">📁 css_selectors.html</div>
     </a>
 
-    <!-- css_priority.html（新規追加） -->
+    <!-- css_priority.html -->
     <a class="card css-card" href="css_priority.html">
       <div class="card-icon">⚖️</div>
       <div class="card-title">CSS適用の優先順位</div>
@@ -619,14 +619,76 @@
       <div class="card-footer">📁 css_priority.html</div>
     </a>
 
-    <!-- css_colors.html（新規追加） -->
+    <!-- css_font.html -->
+    <a class="card css-card" href="css_font.html">
+      <div class="card-icon">🔤</div>
+      <div class="card-title">CSSフォント</div>
+      <div class="card-desc">
+        @font-face・font-family・font-size・font-weight・font-style・
+        font-variant・font ショートハンドを学びます。
+        Webフォントの定義・font ショートハンドの指定順序など試験頻出ポイントを網羅。
+      </div>
+      <div class="card-tags">
+        <span class="tag">@font-face</span>
+        <span class="tag">font-family</span>
+        <span class="tag">font-weight</span>
+        <span class="tag">font-variant</span>
+        <span class="tag">small-caps</span>
+        <span class="tag">font</span>
+      </div>
+      <div class="card-footer">📁 css_font.html</div>
+    </a>
+
+    <!-- css_text.html -->
+    <a class="card css-card" href="css_text.html">
+      <div class="card-icon">✍️</div>
+      <div class="card-title">CSSテキスト</div>
+      <div class="card-desc">
+        text-shadow・text-decoration関連・word-break・hyphens・white-space・
+        text-align・vertical-align・line-height・text-indent・
+        letter-spacing・word-spacing・text-transform・direction を学びます。
+        インタラクティブデモ付き。
+      </div>
+      <div class="card-tags">
+        <span class="tag">text-shadow</span>
+        <span class="tag">text-decoration</span>
+        <span class="tag">word-break</span>
+        <span class="tag">white-space</span>
+        <span class="tag">line-height</span>
+        <span class="tag">text-align</span>
+      </div>
+      <div class="card-footer">📁 css_text.html</div>
+    </a>
+
+    <!-- css_background.html -->
+    <a class="card css-card" href="css_background.html">
+      <div class="card-icon">🖼️</div>
+      <div class="card-title">CSS背景</div>
+      <div class="card-desc">
+        background-color / image / clip / repeat / size / origin /
+        position / attachment / background（一括指定）を学びます。
+        複数背景・cover / contain・background-clip: text など試験頻出ポイントを網羅。
+        インタラクティブデモ付き。
+      </div>
+      <div class="card-tags">
+        <span class="tag">background-image</span>
+        <span class="tag">cover</span>
+        <span class="tag">contain</span>
+        <span class="tag">background-clip</span>
+        <span class="tag">background-origin</span>
+        <span class="tag">fixed</span>
+      </div>
+      <div class="card-footer">📁 css_background.html</div>
+    </a>
+
+    <!-- css_colors.html -->
     <a class="card css-card" href="css_colors.html">
       <div class="card-icon">🌈</div>
-      <div class="card-title">CSS 色</div>
+      <div class="card-title">CSS色</div>
       <div class="card-desc">
         16進数・キーワード・rgb() / rgba()・hsl() / hsla()・
         colorプロパティ・opacityプロパティを学びます。
-        HSLスライダー・RGBスライダーでリアルタイムに色の変化を確認できます。
+        HSLスライダーでリアルタイムに色の変化を確認できます。
       </div>
       <div class="card-tags">
         <span class="tag">#RRGGBB</span>
@@ -639,23 +701,32 @@
       <div class="card-footer">📁 css_colors.html</div>
     </a>
 
+    <!-- css_border.html -->
+    <a class="card css-card" href="css_border.html">
+      <div class="card-icon">🔲</div>
+      <div class="card-title">CSS ボーダー</div>
+      <div class="card-desc">
+        border・border-width・border-style・border-color・border-radius・
+        outline・box-shadow を学びます。
+        border-radius による角丸・box-shadow の複数指定など試験頻出ポイントを網羅。
+        インタラクティブデモ付き。
+      </div>
+      <div class="card-tags">
+        <span class="tag">border</span>
+        <span class="tag">border-radius</span>
+        <span class="tag">outline</span>
+        <span class="tag">box-shadow</span>
+        <span class="tag">border-style</span>
+        <span class="tag">inset</span>
+      </div>
+      <div class="card-footer">📁 css_border.html</div>
+    </a>
+
   </div><!-- /card-grid -->
 
   <!-- CSS編 準備中 -->
   <div class="section-title css">🚧 CSS編 ― 順次追加予定</div>
   <div class="card-grid">
-
-    <div class="card-coming">
-      <div class="card-icon">🔤</div>
-      <div class="card-title">テキスト・フォント</div>
-      <div class="card-desc">font-family・font-size・font-weight・line-height・text-align など</div>
-      <div class="card-tags">
-        <span class="tag">font-family</span>
-        <span class="tag">line-height</span>
-        <span class="tag">@font-face</span>
-      </div>
-      <span class="coming-badge">🚧 準備中</span>
-    </div>
 
     <div class="card-coming">
       <div class="card-icon">🔲</div>

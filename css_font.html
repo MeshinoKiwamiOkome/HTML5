@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>CSS フォント 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #9f7aea; padding-bottom: 10px; }
+    h2 { color: #553c9a; margin-top: 48px; border-left: 5px solid #9f7aea; padding-left: 12px; }
+    h3 { color: #276749; margin-top: 24px; }
+
+    code {
+      background: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment   { color: #68d391; }
+    pre .selector  { color: #f6ad55; }
+    pre .prop      { color: #90cdf4; }
+    pre .val       { color: #fc8181; }
+    pre .at        { color: #b794f4; }
+    pre .str       { color: #68d391; }
+    pre .important { color: #fc8181; font-weight: bold; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #b794f4;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #553c9a; }
+
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+
+    .demo-box {
+      background: #fff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    .live-demo {
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin: 12px 0;
+    }
+    .live-demo p { margin: 6px 0; }
+
+    /* font shorthandの構造図 */
+    .font-shorthand {
+      background: #1a202c;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 14px 0;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.95em;
+      overflow-x: auto;
+    }
+    .fs-optional { color: #fbd38d; }
+    .fs-required { color: #fc8181; }
+    .fs-slash    { color: #e2e8f0; }
+    .fs-label {
+      display: inline-block;
+      font-size: 0.72em;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+    .fs-label.opt  { background: rgba(251,211,141,0.2); color: #fbd38d; }
+    .fs-label.req  { background: rgba(252,129,129,0.2); color: #fc8181; }
+
+    /* フォントサイズデモ */
+    .font-size-demo p { margin: 4px 0; }
+
+    /* font-weightデモ */
+    .weight-demo p { margin: 4px 0; }
+
+    table.ref-table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      margin: 14px 0;
+    }
+    table.ref-table th, table.ref-table td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.ref-table thead tr { background: #553c9a; color: #fff; }
+    table.ref-table tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 {
+      margin-top: 0;
+      color: #c05621;
+      border-left-color: #f6ad55;
+    }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #fbd38d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #fbd38d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 480px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-purple { background: #9f7aea; color: #fff; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #e9d8fd; color: #553c9a; display: block; }
+
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.summary thead tr { background: #553c9a; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px 14px; }
+      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.82em; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px 16px; }
+      .quiz-block { padding: 14px 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>🔤 CSS フォント 学習サンプル</h1>
+<p>Webフォント・font-family・font-size・font-weight・font-style・
+font-variant・font ショートハンドを学びましょう。</p>
+
+
+<!-- 1. Webフォント -->
+<h2>① Webフォント（@font-face）</h2>
+<div class="note">
+  <strong>ポイント①：Webフォントを使用するには @font-face{} の書式を適用する</strong><br>
+  ・<code>@font-face</code> でフォントファイルを定義し、
+  <code>font-family</code> プロパティで使用します。<br>
+  ・Google Fonts などの外部サービスを使う方法もあります。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* ===== @font-face の基本書式 ===== */</span>
+<span class="at">@font-face</span> {
+    <span class="prop">font-family</span>: <span class="str">"MyFont"</span>;            <span class="comment">/* フォント名を定義 */</span>
+    <span class="prop">src</span>: <span class="val">url</span>(<span class="str">"fonts/myfont.woff2"</span>) <span class="val">format</span>(<span class="str">"woff2"</span>),
+         <span class="val">url</span>(<span class="str">"fonts/myfont.woff"</span>)  <span class="val">format</span>(<span class="str">"woff"</span>);
+    <span class="prop">font-weight</span>: <span class="val">normal</span>;
+    <span class="prop">font-style</span>:  <span class="val">normal</span>;
+    <span class="prop">font-display</span>: <span class="val">swap</span>;             <span class="comment">/* フォント読み込み中の表示方法 */</span>
+}
+
+<span class="comment">/* 定義したフォントを使用 */</span>
+<span class="selector">body</span> {
+    <span class="prop">font-family</span>: <span class="str">"MyFont"</span>, <span class="val">sans-serif</span>;
+}
+
+<span class="comment">/* ===== 複数ウェイトを定義する場合 ===== */</span>
+<span class="at">@font-face</span> {
+    <span class="prop">font-family</span>: <span class="str">"MyFont"</span>;
+    <span class="prop">src</span>: <span class="val">url</span>(<span class="str">"fonts/myfont-bold.woff2"</span>) <span class="val">format</span>(<span class="str">"woff2"</span>);
+    <span class="prop">font-weight</span>: <span class="val">bold</span>;               <span class="comment">/* 太字用フォントファイル */</span>
+}
+
+<span class="comment">/* ===== Google Fonts の使用例（link要素で読み込む） ===== */</span>
+<span class="comment">/* HTML: &lt;link href="https://fonts.googleapis.com/css2?
+         family=Noto+Sans+JP&display=swap" rel="stylesheet"&gt; */</span>
+<span class="selector">body</span> {
+    <span class="prop">font-family</span>: <span class="str">"Noto Sans JP"</span>, <span class="val">sans-serif</span>;
+}
+</pre>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>@font-face の主なプロパティ</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>font-family</code></td><td>フォントに付ける名前（必須）</td></tr>
+      <tr><td><code>src</code></td><td>フォントファイルのURL（必須）。複数指定でフォールバック</td></tr>
+      <tr><td><code>font-weight</code></td><td>このフォントファイルが対応するウェイト</td></tr>
+      <tr><td><code>font-style</code></td><td>このフォントファイルが対応するスタイル</td></tr>
+      <tr><td><code>font-display</code></td><td>読み込み中の表示方法（swap / block / fallback / optional）</td></tr>
+      <tr><td><code>unicode-range</code></td><td>このフォントを適用する文字の範囲</td></tr>
+    </tbody>
+  </table>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>フォント形式</th><th>format()の値</th><th>対応状況</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>WOFF2</td><td><code>"woff2"</code></td><td>最新・最小サイズ。現在の主流</td></tr>
+      <tr><td>WOFF</td><td><code>"woff"</code></td><td>広くサポート。フォールバックに使用</td></tr>
+      <tr><td>TrueType</td><td><code>"truetype"</code></td><td>古いブラウザ向け</td></tr>
+      <tr><td>OpenType</td><td><code>"opentype"</code></td><td>古いブラウザ向け</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warn">
+    <strong>⚠️ font-display: swap について</strong><br>
+    ・<code>swap</code>：まずシステムフォントで表示し、Webフォント読み込み後に切り替える<br>
+    ・<code>block</code>：フォント読み込みまで非表示（最大3秒）<br>
+    ・<code>fallback</code>：非常に短い時間だけ非表示にし、その後フォールバックフォントを使用<br>
+    ・<code>optional</code>：ネットワーク状況が良い場合のみWebフォントを使用
+  </div>
+</div>
+
+
+<!-- 2. font-familyプロパティ -->
+<h2>② font-familyプロパティ</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  ・<code>font-family</code> はフォントの種類を指定します。<br>
+  ・カンマ区切りで複数指定でき、左から順に適用を試みます（フォールバック）。<br>
+  ・最後には必ず<strong>汎用ファミリー名</strong>を指定するのが推奨です。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* font-familyの基本 */</span>
+<span class="selector">body</span> {
+    <span class="prop">font-family</span>: <span class="str">"Helvetica Neue"</span>, <span class="str">"Arial"</span>, <span class="val">sans-serif</span>;
+    <span class="comment">/* ↑ 左から順に試みる。最後は汎用ファミリー名 */</span>
+}
+
+<span class="comment">/* スペースを含むフォント名はクォートで囲む */</span>
+<span class="selector">h1</span> {
+    <span class="prop">font-family</span>: <span class="str">"Times New Roman"</span>, <span class="val">serif</span>;
+}
+
+<span class="comment">/* スペースなしのフォント名はクォート不要（推奨はクォートあり） */</span>
+<span class="selector">code</span> {
+    <span class="prop">font-family</span>: Consolas, Monaco, <span class="val">monospace</span>;
+}
+</pre>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>汎用ファミリー名</th><th>説明</th><th>代表的なフォント</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>serif</code></td>
+        <td>セリフ体（ひげ付き）</td>
+        <td>Times New Roman / Georgia / 游明朝</td>
+      </tr>
+      <tr>
+        <td><code>sans-serif</code></td>
+        <td>サンセリフ体（ひげなし）</td>
+        <td>Arial / Helvetica / 游ゴシック</td>
+      </tr>
+      <tr>
+        <td><code>monospace</code></td>
+        <td>等幅フォント</td>
+        <td>Consolas / Courier New / Monaco</td>
+      </tr>
+      <tr>
+        <td><code>cursive</code></td>
+        <td>筆記体・手書き風</td>
+        <td>Comic Sans MS / Brush Script MT</td>
+      </tr>
+      <tr>
+        <td><code>fantasy</code></td>
+        <td>装飾的なフォント</td>
+        <td>Impact / Papyrus</td>
+      </tr>
+      <tr>
+        <td><code>system-ui</code></td>
+        <td>OSのUIフォント</td>
+        <td>San Francisco / Segoe UI</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="live-demo">
+    <p><strong>▼ 汎用ファミリー名の表示比較</strong></p>
+    <p style="font-family: serif;">serif：The quick brown fox jumps over the lazy dog. 日本語テキスト</p>
+    <p style="font-family: sans-serif;">sans-serif：The quick brown fox jumps over the lazy dog. 日本語テキスト</p>
+    <p style="font-family: monospace;">monospace：The quick brown fox jumps over the lazy dog. 日本語テキスト</p>
+    <p style="font-family: cursive;">cursive：The quick brown fox jumps over the lazy dog.</p>
+  </div>
+</div>
+
+
+<!-- 3. font-sizeプロパティ -->
+<h2>③ font-sizeプロパティ</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* 絶対サイズキーワード */</span>
+<span class="selector">p</span> { <span class="prop">font-size</span>: <span class="val">xx-small</span>; }
+<span class="selector">p</span> { <span class="prop">font-size</span>: <span class="val">x-small</span>; }
+<span class="selector">p</span> { <span class="prop">font-size</span>: <span class="val">small</span>; }
+<span class="selector">p</span> { <span class="prop">font-size</span>: <span class="val">medium</span>; }   <span class="comment">/* デフォルト（通常16px） */</span>
+<span class="selector">p</span> { <span class="prop">font-size</span>: <span class="val">large</span>; }
+<span class="selector">p</span> { <span class="prop">font-size</span>: <span class="val">x-large</span>; }
+<span class="selector">p</span> { <span class="prop">font-size</span>: <span class="val">xx-large</span>; }
+
+<span class="comment">/* 相対サイズキーワード（親要素より1段階大きく/小さく） */</span>
+<span class="selector">p</span> { <span class="prop">font-size</span>: <span class="val">larger</span>; }
+<span class="selector">p</span> { <span class="prop">font-size</span>: <span class="val">smaller</span>; }
+
+<span class="comment">/* 長さの単位 */</span>
+<span class="selector">p</span> { <span class="prop">font-size</span>: <span class="val">16px</span>; }    <span class="comment">/* ピクセル（絶対値） */</span>
+<span class="selector">p</span> { <span class="prop">font-size</span>: <span class="val">1rem</span>; }   <span class="comment">/* ルート要素基準（推奨） */</span>
+<span class="selector">p</span> { <span class="prop">font-size</span>: <span class="val">1.2em</span>; }  <span class="comment">/* 親要素基準（累積注意） */</span>
+<span class="selector">p</span> { <span class="prop">font-size</span>: <span class="val">120%</span>; }   <span class="comment">/* 親要素の120% */</span>
+<span class="selector">p</span> { <span class="prop">font-size</span>: <span class="val">2vw</span>; }    <span class="comment">/* ビューポート幅の2% */</span>
+</pre>
+
+  <div class="live-demo font-size-demo">
+    <p><strong>▼ font-sizeの表示比較</strong></p>
+    <p style="font-size: 10px;">font-size: 10px</p>
+    <p style="font-size: 14px;">font-size: 14px</p>
+    <p style="font-size: 16px;">font-size: 16px（medium / デフォルト）</p>
+    <p style="font-size: 20px;">font-size: 20px</p>
+    <p style="font-size: 28px;">font-size: 28px</p>
+    <p style="font-size: 1rem;">font-size: 1rem</p>
+    <p style="font-size: 1.5rem;">font-size: 1.5rem</p>
+    <p style="font-size: 2rem;">font-size: 2rem</p>
+  </div>
+</div>
+
+
+<!-- 4. font-weightプロパティ -->
+<h2>④ font-weightプロパティ</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* キーワード */</span>
+<span class="selector">p</span> { <span class="prop">font-weight</span>: <span class="val">normal</span>; }   <span class="comment">/* 400と同じ */</span>
+<span class="selector">p</span> { <span class="prop">font-weight</span>: <span class="val">bold</span>; }     <span class="comment">/* 700と同じ */</span>
+<span class="selector">p</span> { <span class="prop">font-weight</span>: <span class="val">lighter</span>; } <span class="comment">/* 親より1段階細く */</span>
+<span class="selector">p</span> { <span class="prop">font-weight</span>: <span class="val">bolder</span>; }  <span class="comment">/* 親より1段階太く */</span>
+
+<span class="comment">/* 数値（100〜900、100刻み） */</span>
+<span class="selector">p</span> { <span class="prop">font-weight</span>: <span class="val">100</span>; }  <span class="comment">/* Thin */</span>
+<span class="selector">p</span> { <span class="prop">font-weight</span>: <span class="val">200</span>; }  <span class="comment">/* ExtraLight */</span>
+<span class="selector">p</span> { <span class="prop">font-weight</span>: <span class="val">300</span>; }  <span class="comment">/* Light */</span>
+<span class="selector">p</span> { <span class="prop">font-weight</span>: <span class="val">400</span>; }  <span class="comment">/* Regular（normalと同じ） */</span>
+<span class="selector">p</span> { <span class="prop">font-weight</span>: <span class="val">500</span>; }  <span class="comment">/* Medium */</span>
+<span class="selector">p</span> { <span class="prop">font-weight</span>: <span class="val">600</span>; }  <span class="comment">/* SemiBold */</span>
+<span class="selector">p</span> { <span class="prop">font-weight</span>: <span class="val">700</span>; }  <span class="comment">/* Bold（boldと同じ） */</span>
+<span class="selector">p</span> { <span class="prop">font-weight</span>: <span class="val">800</span>; }  <span class="comment">/* ExtraBold */</span>
+<span class="selector">p</span> { <span class="prop">font-weight</span>: <span class="val">900</span>; }  <span class="comment">/* Black */</span>
+</pre>
+
+  <div class="live-demo weight-demo">
+    <p><strong>▼ font-weightの表示比較</strong></p>
+    <p style="font-weight:100;">font-weight: 100（Thin）</p>
+    <p style="font-weight:300;">font-weight: 300（Light）</p>
+    <p style="font-weight:400;">font-weight: 400（Regular / normal）</p>
+    <p style="font-weight:700;">font-weight: 700（Bold / bold）</p>
+    <p style="font-weight:900;">font-weight: 900（Black）</p>
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ font-weightの注意点</strong><br>
+    ・フォントファイルが対応するウェイトのみ有効です<br>
+    ・対応するウェイトがない場合はブラウザが最も近いウェイトを選択します<br>
+    ・<code>@font-face</code> で複数ウェイトを定義することで細かい制御が可能です
+  </div>
+</div>
+
+
+<!-- 5. font-styleプロパティ -->
+<h2>⑤ font-styleプロパティ</h2>
+<div class="demo-box">
+<pre>
+<span class="selector">p</span> { <span class="prop">font-style</span>: <span class="val">normal</span>; }   <span class="comment">/* 通常（デフォルト） */</span>
+<span class="selector">p</span> { <span class="prop">font-style</span>: <span class="val">italic</span>; }   <span class="comment">/* イタリック体（専用フォントを使用） */</span>
+<span class="selector">p</span> { <span class="prop">font-style</span>: <span class="val">oblique</span>; }  <span class="comment">/* 斜体（通常フォントを傾ける） */</span>
+<span class="selector">p</span> { <span class="prop">font-style</span>: <span class="val">oblique 20deg</span>; } <span class="comment">/* 傾き角度を指定（CSS4） */</span>
+</pre>
+
+  <div class="live-demo">
+    <p><strong>▼ font-styleの表示比較</strong></p>
+    <p style="font-style:normal;">font-style: normal（通常）</p>
+    <p style="font-style:italic;">font-style: italic（イタリック体）</p>
+    <p style="font-style:oblique;">font-style: oblique（斜体）</p>
+  </div>
+
+  <div class="good">
+    ✅ <strong>italic と oblique の違い</strong><br>
+    ・<code>italic</code>：フォントに専用のイタリック体がある場合はそれを使用。
+    なければ <code>oblique</code> と同様に傾ける<br>
+    ・<code>oblique</code>：通常フォントを機械的に傾けたもの
+  </div>
+</div>
+
+
+<!-- 6. font-variantプロパティ -->
+<h2>⑥ font-variantプロパティ</h2>
+<div class="note">
+  <strong>ポイント②：font-variantは関連プロパティの値を一括指定するプロパティ</strong><br>
+  ・<code>font-variant</code> は複数の <code>font-variant-*</code> サブプロパティの
+  ショートハンドです。<br>
+  ・最も基本的な用途は <code>small-caps</code>（スモールキャップス）の指定です。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* font-variant の基本値 */</span>
+<span class="selector">p</span> { <span class="prop">font-variant</span>: <span class="val">normal</span>; }      <span class="comment">/* デフォルト */</span>
+<span class="selector">p</span> { <span class="prop">font-variant</span>: <span class="val">small-caps</span>; }  <span class="comment">/* スモールキャップス */</span>
+<span class="selector">p</span> { <span class="prop">font-variant</span>: <span class="val">none</span>; }        <span class="comment">/* すべてリセット */</span>
+
+<span class="comment">/* font-variant は以下のサブプロパティの一括指定 */</span>
+<span class="selector">p</span> {
+    <span class="prop">font-variant-caps</span>:        <span class="val">small-caps</span>;  <span class="comment">/* 大文字の扱い */</span>
+    <span class="prop">font-variant-numeric</span>:     <span class="val">oldstyle-nums</span>; <span class="comment">/* 数字のスタイル */</span>
+    <span class="prop">font-variant-ligatures</span>:   <span class="val">common-ligatures</span>; <span class="comment">/* 合字 */</span>
+    <span class="prop">font-variant-alternates</span>:  <span class="val">normal</span>;
+    <span class="prop">font-variant-east-asian</span>:  <span class="val">normal</span>;
+}
+
+<span class="comment">/* 一括指定の例 */</span>
+<span class="selector">p</span> { <span class="prop">font-variant</span>: <span class="val">small-caps oldstyle-nums</span>; }
+</pre>
+
+  <div class="live-demo">
+    <p><strong>▼ font-variantの表示比較</strong></p>
+    <p style="font-variant:normal;">font-variant: normal → Hello World CSS Typography 2025</p>
+    <p style="font-variant:small-caps;">font-variant: small-caps → Hello World CSS Typography 2025</p>
+  </div>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>サブプロパティ</th><th>主な値</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>font-variant-caps</code></td>
+        <td><code>small-caps</code> / <code>all-small-caps</code></td>
+        <td>大文字・スモールキャップスの制御</td>
+      </tr>
+      <tr>
+        <td><code>font-variant-numeric</code></td>
+        <td><code>oldstyle-nums</code> / <code>lining-nums</code></td>
+        <td>数字のスタイル</td>
+      </tr>
+      <tr>
+        <td><code>font-variant-ligatures</code></td>
+        <td><code>common-ligatures</code> / <code>no-common-ligatures</code></td>
+        <td>合字（fi, fl など）の制御</td>
+      </tr>
+      <tr>
+        <td><code>font-variant-east-asian</code></td>
+        <td><code>jis78</code> / <code>jis83</code> / <code>ruby</code></td>
+        <td>東アジア文字の字体制御</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 7. fontプロパティ（ショートハンド） -->
+<h2>⑦ fontプロパティ（ショートハンド）</h2>
+<div class="note">
+  <strong>ポイント③：fontプロパティは値の指定順序に注意する</strong><br>
+  ・<code>font</code> ショートハンドは複数のフォント関連プロパティを一括指定します。<br>
+  ・<strong>font-size と font-family は必須</strong>で、順序も決まっています。<br>
+  ・省略した値はデフォルト値にリセットされます。
+</div>
+<div class="demo-box">
+
+  <h3>font ショートハンドの構文</h3>
+  <div class="font-shorthand">
+    <span style="color:#a0aec0;">font: </span>
+    <span class="fs-optional">font-style</span><span class="fs-label opt">省略可</span>
+    <span style="color:#a0aec0;"> </span>
+    <span class="fs-optional">font-variant</span><span class="fs-label opt">省略可</span>
+    <span style="color:#a0aec0;"> </span>
+    <span class="fs-optional">font-weight</span><span class="fs-label opt">省略可</span>
+    <span style="color:#a0aec0;"> </span>
+    <span class="fs-optional">font-stretch</span><span class="fs-label opt">省略可</span>
+    <br>
+    <span style="color:#a0aec0;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span class="fs-required">font-size</span><span class="fs-label req">必須</span>
+    <span style="color:#e2e8f0; font-weight:bold;">/</span>
+    <span class="fs-optional">line-height</span><span class="fs-label opt">省略可（/の後に指定）</span>
+    <br>
+    <span style="color:#a0aec0;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span class="fs-required">font-family</span><span class="fs-label req">必須・最後に指定</span>
+    <span style="color:#a0aec0;">;</span>
+  </div>
+
+<pre>
+<span class="comment">/* font ショートハンドの使用例 */</span>
+
+<span class="comment">/* 最小構成（必須のfont-sizeとfont-familyのみ） */</span>
+<span class="selector">p</span> { <span class="prop">font</span>: <span class="val">16px sans-serif</span>; }
+
+<span class="comment">/* font-size / line-height を指定（スラッシュで区切る） */</span>
+<span class="selector">p</span> { <span class="prop">font</span>: <span class="val">16px / 1.8 sans-serif</span>; }
+
+<span class="comment">/* font-weight と font-size / line-height と font-family */</span>
+<span class="selector">p</span> { <span class="prop">font</span>: <span class="val">bold 16px / 1.8 "Helvetica Neue", sans-serif</span>; }
+
+<span class="comment">/* すべてを指定する場合の順序 */</span>
+<span class="selector">p</span> {
+    <span class="prop">font</span>: <span class="val">italic</span>          <span class="comment">/* font-style */</span>
+          <span class="val">small-caps</span>     <span class="comment">/* font-variant */</span>
+          <span class="val">bold</span>           <span class="comment">/* font-weight */</span>
+          <span class="val">condensed</span>      <span class="comment">/* font-stretch */</span>
+          <span class="val">18px / 1.6</span>     <span class="comment">/* font-size / line-height */</span>
+          <span class="val">"Georgia", serif</span>; <span class="comment">/* font-family（最後・必須） */</span>
+}
+
+<span class="comment">/* ❌ 間違い例：font-sizeとfont-familyの順序が逆 */</span>
+<span class="selector">p</span> { <span class="prop">font</span>: <span class="val">sans-serif 16px</span>; }  <span class="comment">/* 無効 */</span>
+
+<span class="comment">/* ❌ 間違い例：font-sizeを省略 */</span>
+<span class="selector">p</span> { <span class="prop">font</span>: <span class="val">bold sans-serif</span>; }  <span class="comment">/* 無効（font-sizeは必須） */</span>
+
+<span class="comment">/* ⚠️ 省略した値はデフォルトにリセットされる */</span>
+<span class="selector">p</span> { <span class="prop">font</span>: <span class="val">16px sans-serif</span>; }
+<span class="comment">/* ↑ font-style / font-variant / font-weight は normal にリセット */</span>
+</pre>
+
+  <div class="live-demo">
+    <p><strong>▼ font ショートハンドの表示比較</strong></p>
+    <p style="font: 14px serif;">font: 14px serif</p>
+    <p style="font: 16px / 2 sans-serif;">font: 16px / 2 sans-serif（行間2倍）</p>
+    <p style="font: bold 18px / 1.4 sans-serif;">font: bold 18px / 1.4 sans-serif</p>
+    <p style="font: italic bold 16px / 1.6 serif;">font: italic bold 16px / 1.6 serif</p>
+    <p style="font: small-caps bold 16px sans-serif;">font: small-caps bold 16px sans-serif</p>
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ font ショートハンドの重要ルール</strong><br><br>
+    ① <code>font-size</code> と <code>font-family</code> は<strong>必須</strong>（省略不可）<br>
+    ② <code>font-family</code> は<strong>最後</strong>に指定する<br>
+    ③ <code>line-height</code> は <code>font-size</code> の後に
+    <strong>スラッシュ（/）で区切って</strong>指定する<br>
+    ④ 省略したプロパティは<strong>デフォルト値にリセット</strong>される<br>
+    　（前に個別指定していた値も上書きされる）<br>
+    ⑤ <code>font-style</code> / <code>font-variant</code> / <code>font-weight</code> /
+    <code>font-stretch</code> は <code>font-size</code> より<strong>前</strong>に指定する
+  </div>
+
+  <h3>font ショートハンドが一括指定するプロパティ</h3>
+  <table class="ref-table">
+    <thead>
+      <tr><th>プロパティ</th><th>必須</th><th>位置</th><th>省略時のデフォルト</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>font-style</code></td><td>❌</td><td>font-sizeより前</td><td><code>normal</code></td></tr>
+      <tr><td><code>font-variant</code></td><td>❌</td><td>font-sizeより前</td><td><code>normal</code></td></tr>
+      <tr><td><code>font-weight</code></td><td>❌</td><td>font-sizeより前</td><td><code>normal</code></td></tr>
+      <tr><td><code>font-stretch</code></td><td>❌</td><td>font-sizeより前</td><td><code>normal</code></td></tr>
+      <tr><td><code>font-size</code></td><td>✅ 必須</td><td>font-familyの直前</td><td>—</td></tr>
+      <tr><td><code>line-height</code></td><td>❌</td><td>font-sizeの後 / で区切る</td><td><code>normal</code></td></tr>
+      <tr><td><code>font-family</code></td><td>✅ 必須</td><td>最後</td><td>—</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 演習問題 -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      <code>font</code> ショートハンドでは <code>font-size</code> を省略しても
+      <code>font-family</code> だけ指定すれば有効である。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn btn-purple" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.textContent =
+            '✅ 正解！font ショートハンドでは font-size と font-family の両方が必須です。' +
+            'font-size を省略すると宣言全体が無効になります。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。font ショートハンドでは font-size と font-family の両方が必須です。' +
+            'どちらか一方でも省略すると宣言全体が無効になります。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合うプロパティ名・値・アットルールを入力してください。</p>
+
+    <label>① Webフォントを定義するアットルール：</label>
+    <input type="text" id="q2a" placeholder="@〇〇〇〇〇〇〇〇〇">
+
+    <label>② font-variant で小文字を小さな大文字で表示する値：</label>
+    <input type="text" id="q2b" placeholder="値">
+
+    <label>③ font-weight の「通常」を表すキーワード（数値では400）：</label>
+    <input type="text" id="q2c" placeholder="値">
+
+    <label>④ font ショートハンドで line-height を指定するときに font-size の後に使う区切り文字：</label>
+    <input type="text" id="q2d" placeholder="記号">
+
+    <label>⑤ @font-face で読み込み中の表示方法を指定するプロパティ名：</label>
+    <input type="text" id="q2e" placeholder="プロパティ名">
+
+    <label>⑥ font-style で専用のイタリック体フォントを使用する値：</label>
+    <input type="text" id="q2f" placeholder="値">
+
+    <br>
+    <button class="btn btn-purple" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const n = v => v.trim().toLowerCase().replace(/^@/,'').replace(/\s/g,'');
+        const a = n(document.getElementById('q2a').value);
+        const b = n(document.getElementById('q2b').value).replace(/-/g,'');
+        const c = n(document.getElementById('q2c').value);
+        const d = document.getElementById('q2d').value.trim();
+        const e = n(document.getElementById('q2e').value).replace(/-/g,'');
+        const f = n(document.getElementById('q2f').value);
+        const r = document.getElementById('q2-result');
+        const ca = a === 'font-face' || a === 'fontface';
+        const cb = b === 'smallcaps';
+        const cc = c === 'normal';
+        const cd = d === '/';
+        const ce = e === 'fontdisplay';
+        const cf = f === 'italic';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！フォントプロパティを完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `① ${ca?'✅':'❌ @font-face'}　` +
+            `② ${cb?'✅':'❌ small-caps'}　` +
+            `③ ${cc?'✅':'❌ normal'}　` +
+            `④ ${cd?'✅':'❌ /（スラッシュ）'}　` +
+            `⑤ ${ce?'✅':'❌ font-display'}　` +
+            `⑥ ${cf?'✅':'❌ italic'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題：font ショートハンドの正しい書き方</h3>
+    <p>
+      以下のうち、<strong>正しい</strong> <code>font</code> ショートハンドの記述はどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">font: sans-serif 16px;</option>
+      <option value="b">font: bold 16px / 1.8 "Helvetica", sans-serif;</option>
+      <option value="c">font: bold sans-serif;</option>
+      <option value="d">font: 16px bold "Helvetica", sans-serif;</option>
+    </select>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            '<code>font: bold 16px / 1.8 "Helvetica", sans-serif;</code><br><br>' +
+            '正しい順序：font-weight → font-size / line-height → font-family<br><br>' +
+            '他の選択肢が誤りな理由：<br>' +
+            '・a：font-family（sans-serif）が font-size（16px）より前 → 無効<br>' +
+            '・c：font-size が省略されている → 無効（必須）<br>' +
+            '・d：font-weight（bold）が font-size（16px）より後 → 無効';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。正解は b です。<br>' +
+            'font ショートハンドの順序：<br>' +
+            'font-style / font-variant / font-weight / font-stretch → font-size / line-height → font-family<br>' +
+            'font-size と font-family は必須で、font-family は最後に指定します。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4a">
+      ① <code>@font-face</code> の <code>src</code> プロパティは必須である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4b">
+      ② <code>font-variant</code> は <code>font-variant-caps</code> などのサブプロパティの一括指定である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4c">
+      ③ <code>font</code> ショートハンドで省略したプロパティは、直前に個別指定した値が維持される
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4d">
+      ④ <code>font-weight: bold</code> は <code>font-weight: 700</code> と同じである
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4e">
+      ⑤ <code>font-family</code> でスペースを含むフォント名はクォートで囲む必要がある
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4f">
+      ⑥ <code>font</code> ショートハンドで <code>line-height</code> は <code>font-size</code> の前にスラッシュで区切って指定する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q4g">
+      ⑦ <code>font-style: italic</code> はフォントに専用のイタリック体がある場合はそれを使用する
+    </label>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const r = document.getElementById('q4-result');
+        const checks = {
+          a: document.getElementById('q4a').checked,
+          b: document.getElementById('q4b').checked,
+          c: document.getElementById('q4c').checked,
+          d: document.getElementById('q4d').checked,
+          e: document.getElementById('q4e').checked,
+          f: document.getElementById('q4f').checked,
+          g: document.getElementById('q4g').checked,
+        };
+        // 正解：①②④⑤⑦（a, b, d, e, g）
+        // ③省略した値はデフォルトにリセット（維持されない）
+        // ⑥line-heightはfont-sizeの「後」にスラッシュで区切る
+        const correct = { a:true, b:true, c:false, d:true, e:true, f:false, g:true };
+        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
+        const allCorrect = results.every(Boolean);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① @font-faceのsrcは必須 ✅<br>' +
+            '・② font-variantはサブプロパティの一括指定 ✅<br>' +
+            '・④ bold = 700 ✅<br>' +
+            '・⑤ スペース含むフォント名はクォートが必要 ✅<br>' +
+            '・⑦ italicは専用イタリック体を使用 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① @font-faceのsrcプロパティは必須<br>' +
+            '・② font-variantはfont-variant-caps等のサブプロパティの一括指定<br>' +
+            '・④ font-weight: bold は font-weight: 700 と同じ<br>' +
+            '・⑤ スペースを含むフォント名はクォートで囲む<br>' +
+            '・⑦ font-style: italicは専用イタリック体がある場合はそれを使用<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・③ 省略したプロパティはデフォルト値にリセットされる（維持されない）<br>' +
+            '・⑥ line-heightはfont-sizeの「後」にスラッシュで区切って指定する';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. コード穴埋め問題</h3>
+    <p>以下のコードの <code>__A__</code> 〜 <code>__F__</code> に
+    適切な値・プロパティ名・記号を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+/* A：Webフォントの定義 */
+__A__ {
+    font-family: "MyFont";
+    src: url("myfont.woff2") format("woff2");
+    font-display: swap;
+}
+
+/* B：font ショートハンド（斜体・太字・18px/1.6・serif） */
+p {
+    font: __B__ bold 18px __C__ 1.6 serif;
+}
+
+/* D：スモールキャップスの指定 */
+h2 {
+    font-variant: __D__;
+}
+
+/* E：font-weightの「太字」を数値で指定 */
+strong {
+    font-weight: __E__;
+}
+
+/* F：汎用ファミリー名（等幅フォント） */
+code {
+    font-family: Consolas, Monaco, __F__;
+}</pre>
+
+    <label>A（Webフォントを定義するアットルール）：</label>
+    <input type="text" id="q5a" placeholder="@〇〇〇〇〇〇〇〇〇">
+    <label>B（斜体を指定するfont-styleの値）：</label>
+    <input type="text" id="q5b" placeholder="値">
+    <label>C（font-sizeとline-heightの区切り文字）：</label>
+    <input type="text" id="q5c" placeholder="記号">
+    <label>D（スモールキャップスの値）：</label>
+    <input type="text" id="q5d" placeholder="値">
+    <label>E（boldと同じ数値）：</label>
+    <input type="text" id="q5e" placeholder="数値">
+    <label>F（等幅フォントの汎用ファミリー名）：</label>
+    <input type="text" id="q5f" placeholder="汎用ファミリー名">
+    <br>
+    <button class="btn btn-purple" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const n = v => v.trim().toLowerCase().replace(/^@/,'').replace(/\s/g,'').replace(/-/g,'');
+        const a = n(document.getElementById('q5a').value);
+        const b = document.getElementById('q5b').value.trim().toLowerCase();
+        const c = document.getElementById('q5c').value.trim();
+        const d = n(document.getElementById('q5d').value);
+        const e = document.getElementById('q5e').value.trim();
+        const f = document.getElementById('q5f').value.trim().toLowerCase();
+        const r = document.getElementById('q5-result');
+        const ca = a === 'fontface';
+        const cb = b === 'italic';
+        const cc = c === '/';
+        const cd = d === 'smallcaps';
+        const ce = e === '700';
+        const cf = f === 'monospace';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！フォントプロパティの構文を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca?'✅':'❌ @font-face'}　` +
+            `B: ${cb?'✅':'❌ italic'}　` +
+            `C: ${cc?'✅':'❌ /（スラッシュ）'}　` +
+            `D: ${cd?'✅':'❌ small-caps'}　` +
+            `E: ${ce?'✅':'❌ 700'}　` +
+            `F: ${cf?'✅':'❌ monospace'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. 記述問題</h3>
+    <p>
+      <code>font</code> ショートハンドを使う際に注意すべき点を
+      「必須プロパティ」「指定順序」「省略時の挙動」の観点から説明してください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q6" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ6()">模範解答を見る</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const r = document.getElementById('q6-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<strong>必須プロパティ：</strong><br>' +
+          '・<code>font-size</code> と <code>font-family</code> の2つが必須<br>' +
+          '・どちらか一方でも省略すると宣言全体が無効になる<br><br>' +
+          '<strong>指定順序：</strong><br>' +
+          '① font-style / font-variant / font-weight / font-stretch（省略可・font-sizeより前）<br>' +
+          '② font-size（必須）<br>' +
+          '③ / line-height（省略可・font-sizeの直後にスラッシュで区切る）<br>' +
+          '④ font-family（必須・最後に指定）<br><br>' +
+          '<strong>省略時の挙動：</strong><br>' +
+          '・省略したプロパティは<strong>デフォルト値にリセット</strong>される<br>' +
+          '・例：font ショートハンドの前に <code>font-weight: bold</code> を指定していても、<br>' +
+          '　font ショートハンドで font-weight を省略すると normal にリセットされる<br>' +
+          '・そのため、個別プロパティとショートハンドを混在させる場合は順序に注意が必要';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 フォントプロパティ まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>プロパティ</th><th>役割</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>@font-face</code></td>
+      <td>Webフォントの定義</td>
+      <td>font-family（名前）とsrc（ファイル）が必須。font-displayでロード中の挙動を制御</td>
+    </tr>
+    <tr>
+      <td><code>font-family</code></td>
+      <td>フォント種類の指定</td>
+      <td>カンマ区切りでフォールバック指定。最後に汎用ファミリー名を推奨</td>
+    </tr>
+    <tr>
+      <td><code>font-size</code></td>
+      <td>フォントサイズ</td>
+      <td>px / rem / em / % / vw など。remがレスポンシブに最適</td>
+    </tr>
+    <tr>
+      <td><code>font-weight</code></td>
+      <td>フォントの太さ</td>
+      <td>normal=400 / bold=700。100〜900の数値でも指定可</td>
+    </tr>
+    <tr>
+      <td><code>font-style</code></td>
+      <td>イタリック・斜体</td>
+      <td>italic（専用フォント）/ oblique（機械的に傾ける）</td>
+    </tr>
+    <tr>
+      <td><code>font-variant</code></td>
+      <td>フォントバリアントの一括指定</td>
+      <td>font-variant-caps等のサブプロパティのショートハンド。small-capsが代表的</td>
+    </tr>
+    <tr>
+      <td><code>font</code></td>
+      <td>フォント関連の一括指定</td>
+      <td>font-size と font-family が必須。line-heightは/で区切る。省略値はリセット</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
