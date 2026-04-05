@@ -1,0 +1,1826 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>CSS ボックス 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #9f7aea; padding-bottom: 10px; }
+    h2 { color: #553c9a; margin-top: 48px; border-left: 5px solid #9f7aea; padding-left: 12px; }
+    h3 { color: #276749; margin-top: 24px; }
+
+    code {
+      background: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment  { color: #68d391; }
+    pre .prop     { color: #90cdf4; }
+    pre .val      { color: #fc8181; }
+    pre .keyword  { color: #b794f4; }
+    pre .func     { color: #fbd38d; }
+    pre .selector { color: #f6ad55; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #b794f4;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #553c9a; }
+
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+
+    .demo-box {
+      background: #fff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* ボックスモデル図 */
+    .box-model-diagram {
+      display: inline-block;
+      position: relative;
+      padding: 0;
+      margin: 16px auto;
+      text-align: center;
+    }
+    .bm-margin {
+      background: #fefcbf;
+      border: 2px dashed #d69e2e;
+      border-radius: 4px;
+      padding: 16px;
+      position: relative;
+    }
+    .bm-border {
+      background: #fed7d7;
+      border: 2px solid #e53e3e;
+      border-radius: 4px;
+      padding: 16px;
+    }
+    .bm-padding {
+      background: #c6f6d5;
+      border: 2px dashed #38a169;
+      border-radius: 4px;
+      padding: 16px;
+    }
+    .bm-content {
+      background: #bee3f8;
+      border: 2px solid #3182ce;
+      border-radius: 4px;
+      padding: 20px 32px;
+      font-weight: bold;
+      color: #2b6cb0;
+      font-size: 0.9em;
+      white-space: nowrap;
+    }
+    .bm-label {
+      position: absolute;
+      font-size: 0.72em;
+      font-weight: bold;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .bm-label-margin  { top: 2px; left: 6px; color: #b7791f; }
+    .bm-label-border  { top: 2px; left: 6px; color: #c53030; }
+    .bm-label-padding { top: 2px; left: 6px; color: #276749; }
+
+    /* インタラクティブデモ共通 */
+    .interactive-demo {
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .slider-row label {
+      font-size: 0.85em;
+      font-weight: bold;
+      min-width: 140px;
+      color: #553c9a;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .slider-row input[type="range"] {
+      flex: 1;
+      min-width: 120px;
+      accent-color: #9f7aea;
+    }
+    .slider-row .val-display {
+      min-width: 56px;
+      text-align: right;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.85em;
+      color: #2d3748;
+    }
+    .color-code-display {
+      background: #1a202c;
+      color: #68d391;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.85em;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* デモ用ボックス */
+    .live-box-wrap {
+      background: repeating-linear-gradient(
+        45deg, #e2e8f0 0, #e2e8f0 8px, #fff 8px, #fff 16px
+      );
+      border-radius: 8px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 120px;
+      margin-bottom: 12px;
+    }
+    .live-box {
+      background: #9f7aea;
+      color: #fff;
+      font-weight: bold;
+      font-size: 0.85em;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    /* border-radius デモ */
+    .radius-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .radius-item {
+      background: #9f7aea;
+      color: #fff;
+      height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-weight: bold;
+      gap: 4px;
+    }
+    .radius-item span { font-size: 0.85em; opacity: 0.85; }
+
+    /* shadow デモ */
+    .shadow-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      margin: 14px 0;
+    }
+    .shadow-item {
+      background: #fff;
+      border-radius: 6px;
+      padding: 16px;
+      text-align: center;
+      font-size: 0.8em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #553c9a;
+    }
+    .shadow-item .shadow-label {
+      margin-top: 10px;
+      color: #718096;
+      font-size: 0.9em;
+      word-break: break-all;
+    }
+
+    /* position デモ */
+    .position-demo-wrap {
+      position: relative;
+      background: #edf2f7;
+      border: 2px dashed #9f7aea;
+      border-radius: 8px;
+      height: 200px;
+      margin: 14px 0;
+      overflow: hidden;
+    }
+    .pos-box {
+      width: 100px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78em;
+      font-weight: bold;
+      border-radius: 4px;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    /* float デモ */
+    .float-demo {
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 14px;
+      margin: 12px 0;
+      overflow: hidden;
+    }
+    .float-img-mock {
+      width: 90px;
+      height: 70px;
+      background: #9f7aea;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75em;
+      font-weight: bold;
+      border-radius: 4px;
+    }
+
+    /* display デモ */
+    .display-demo {
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 14px;
+      margin: 12px 0;
+    }
+
+    /* visibility / overflow デモ */
+    .visibility-demo {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 12px 0;
+    }
+    .vis-box {
+      width: 120px;
+      height: 60px;
+      background: #9f7aea;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8em;
+      font-weight: bold;
+      border-radius: 4px;
+    }
+
+    table.ref-table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      margin: 14px 0;
+    }
+    table.ref-table th, table.ref-table td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.ref-table thead tr { background: #553c9a; color: #fff; }
+    table.ref-table tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 { margin-top: 0; color: #c05621; border-left-color: #f6ad55; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #fbd38d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #fbd38d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-purple { background: #9f7aea; color: #fff; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #e9d8fd; color: #553c9a; display: block; }
+
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.summary thead tr { background: #553c9a; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px 14px; }
+      .radius-grid { grid-template-columns: repeat(2, 1fr); }
+      .shadow-grid { grid-template-columns: 1fr; }
+      .slider-row label { min-width: 110px; }
+      .bm-content { padding: 12px 16px; font-size: 0.82em; }
+      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.82em; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px 16px; }
+      .quiz-block { padding: 14px 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+      .visibility-demo { gap: 10px; }
+      .vis-box { width: 90px; height: 50px; font-size: 0.72em; }
+      .position-demo-wrap { height: 160px; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>📦 CSS ボックス 学習サンプル</h1>
+<p>margin・padding・border・box-sizing・border-radius・box-shadow・position・float・display・visibility・overflow など、CSSボックスモデルに関するプロパティを学びましょう。</p>
+
+
+<!-- 1. ボックスモデルの基本 -->
+<h2>① ボックスモデルの基本構造</h2>
+<div class="note">
+  <strong>重要ポイント③：幅と高さの適用される領域は box-sizing プロパティで設定する</strong><br>
+  CSSのすべての要素は「ボックス」として扱われます。ボックスは外側から
+  <strong>margin（余白）→ border（枠線）→ padding（内側余白）→ content（内容）</strong>
+  の4層で構成されています。
+</div>
+<div class="demo-box">
+
+  <h3>ボックスモデル図</h3>
+  <div style="display:flex; justify-content:center; margin:16px 0;">
+    <div class="bm-margin" style="position:relative;">
+      <span class="bm-label bm-label-margin">margin（外側余白）</span>
+      <div class="bm-border" style="position:relative;">
+        <span class="bm-label bm-label-border">border（枠線）</span>
+        <div class="bm-padding" style="position:relative;">
+          <span class="bm-label bm-label-padding">padding（内側余白）</span>
+          <div class="bm-content">content（内容領域）<br><small>width / height が適用される</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* box-sizing: content-box（デフォルト） */</span>
+<span class="comment">/* width/height = コンテンツ領域のみ */</span>
+<span class="selector">.box</span> {
+  <span class="prop">width</span>: <span class="val">200px</span>;
+  <span class="prop">padding</span>: <span class="val">20px</span>;
+  <span class="prop">border</span>: <span class="val">5px solid #9f7aea</span>;
+  <span class="comment">/* 実際の表示幅 = 200 + 20×2 + 5×2 = 250px */</span>
+  <span class="prop">box-sizing</span>: <span class="val">content-box</span>; <span class="comment">/* デフォルト値 */</span>
+}
+
+<span class="comment">/* box-sizing: border-box */</span>
+<span class="comment">/* width/height = border + padding + content を含む全体 */</span>
+<span class="selector">.box</span> {
+  <span class="prop">width</span>: <span class="val">200px</span>;
+  <span class="prop">padding</span>: <span class="val">20px</span>;
+  <span class="prop">border</span>: <span class="val">5px solid #9f7aea</span>;
+  <span class="comment">/* 実際の表示幅 = 200px（指定した値そのまま） */</span>
+  <span class="prop">box-sizing</span>: <span class="val">border-box</span>;
+}
+
+<span class="comment">/* 全要素に border-box を適用する慣習的な書き方 */</span>
+<span class="selector">*, *::before, *::after</span> {
+  <span class="prop">box-sizing</span>: <span class="val">border-box</span>;
+}
+</pre>
+
+  <h3>box-sizing インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="margin:0 0 10px; font-size:0.88em; color:#553c9a; font-weight:bold;">
+      スライダーを動かして box-sizing の違いを確認しましょう
+    </p>
+    <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:12px;">
+      <div style="flex:1; min-width:200px;">
+        <div style="font-size:0.82em; font-weight:bold; color:#553c9a; margin-bottom:6px; font-family:'Consolas','Monaco',monospace;">content-box（デフォルト）</div>
+        <div style="background:#edf2f7; border-radius:6px; padding:12px; min-height:80px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+          <div id="demo-content-box"
+               style="background:#9f7aea; color:#fff; font-size:0.78em; font-weight:bold; text-align:center; transition:all 0.2s; box-sizing:content-box; padding:16px; border:4px solid #553c9a;">
+            content-box
+          </div>
+        </div>
+        <div class="color-code-display" id="cb-code" style="font-size:0.78em;">width: 120px; padding: 16px; border: 4px solid;</div>
+        <div style="font-size:0.78em; color:#c05621; margin-top:4px;">実際の幅: <strong id="cb-actual">168px</strong></div>
+      </div>
+      <div style="flex:1; min-width:200px;">
+        <div style="font-size:0.82em; font-weight:bold; color:#553c9a; margin-bottom:6px; font-family:'Consolas','Monaco',monospace;">border-box</div>
+        <div style="background:#edf2f7; border-radius:6px; padding:12px; min-height:80px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+          <div id="demo-border-box"
+               style="background:#68d391; color:#1a202c; font-size:0.78em; font-weight:bold; text-align:center; transition:all 0.2s; box-sizing:border-box; padding:16px; border:4px solid #276749;">
+            border-box
+          </div>
+        </div>
+        <div class="color-code-display" id="bb-code" style="font-size:0.78em;">width: 120px; padding: 16px; border: 4px solid;</div>
+        <div style="font-size:0.78em; color:#276749; margin-top:4px;">実際の幅: <strong id="bb-actual">120px（指定値のまま）</strong></div>
+      </div>
+    </div>
+    <div class="slider-row">
+      <label>width</label>
+      <input type="range" id="bs-width" min="80" max="240" value="120" oninput="updateBoxSizing()">
+      <span class="val-display" id="bs-width-val">120px</span>
+    </div>
+    <div class="slider-row">
+      <label>padding</label>
+      <input type="range" id="bs-padding" min="0" max="40" value="16" oninput="updateBoxSizing()">
+      <span class="val-display" id="bs-padding-val">16px</span>
+    </div>
+    <div class="slider-row">
+      <label>border-width</label>
+      <input type="range" id="bs-border" min="0" max="16" value="4" oninput="updateBoxSizing()">
+      <span class="val-display" id="bs-border-val">4px</span>
+    </div>
+  </div>
+  <script>
+    function updateBoxSizing() {
+      const w = +document.getElementById('bs-width').value;
+      const p = +document.getElementById('bs-padding').value;
+      const b = +document.getElementById('bs-border').value;
+      document.getElementById('bs-width-val').textContent = w + 'px';
+      document.getElementById('bs-padding-val').textContent = p + 'px';
+      document.getElementById('bs-border-val').textContent = b + 'px';
+      const cb = document.getElementById('demo-content-box');
+      cb.style.width = w + 'px';
+      cb.style.padding = p + 'px';
+      cb.style.borderWidth = b + 'px';
+      const bb = document.getElementById('demo-border-box');
+      bb.style.width = w + 'px';
+      bb.style.padding = p + 'px';
+      bb.style.borderWidth = b + 'px';
+      const actualCB = w + p * 2 + b * 2;
+      document.getElementById('cb-actual').textContent = actualCB + 'px';
+      document.getElementById('bb-actual').textContent = w + 'px（指定値のまま）';
+      const codeStr = `width: ${w}px; padding: ${p}px; border: ${b}px solid;`;
+      document.getElementById('cb-code').textContent = codeStr;
+      document.getElementById('bb-code').textContent = codeStr;
+    }
+  </script>
+
+  <div class="warn">
+    <strong>⚠️ box-sizing の試験ポイント</strong><br>
+    ・デフォルトは <code>content-box</code>：width/height はコンテンツ領域のみ<br>
+    ・<code>border-box</code>：width/height に border と padding が含まれる<br>
+    ・実務では <code>*, *::before, *::after { box-sizing: border-box; }</code> が慣習的
+  </div>
+</div>
+
+
+<!-- 2. margin -->
+<h2>② margin（外側余白）</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  <code>margin</code> は要素の外側の余白を指定します。
+  隣接するブロック要素の上下 margin は<strong>マージンの相殺（折りたたみ）</strong>が発生します。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* 個別指定 */</span>
+<span class="prop">margin-top</span>:    <span class="val">16px</span>;
+<span class="prop">margin-right</span>:  <span class="val">8px</span>;
+<span class="prop">margin-bottom</span>: <span class="val">16px</span>;
+<span class="prop">margin-left</span>:   <span class="val">8px</span>;
+
+<span class="comment">/* ショートハンド（時計回り：上 右 下 左） */</span>
+<span class="prop">margin</span>: <span class="val">16px 8px 16px 8px</span>;  <span class="comment">/* 上 右 下 左 */</span>
+<span class="prop">margin</span>: <span class="val">16px 8px</span>;           <span class="comment">/* 上下16px・左右8px */</span>
+<span class="prop">margin</span>: <span class="val">16px</span>;               <span class="comment">/* 全方向16px */</span>
+<span class="prop">margin</span>: <span class="val">16px 8px 4px</span>;       <span class="comment">/* 上16px・左右8px・下4px */</span>
+
+<span class="comment">/* 水平方向の中央揃え */</span>
+<span class="prop">margin</span>: <span class="val">0 auto</span>;  <span class="comment">/* ブロック要素を中央揃え（width指定が必要） */</span>
+
+<span class="comment">/* 負のマージン */</span>
+<span class="prop">margin-top</span>: <span class="val">-10px</span>; <span class="comment">/* 要素を上方向に引き上げる */</span>
+</pre>
+
+  <div class="warn">
+    <strong>⚠️ マージンの相殺（Margin Collapsing）</strong><br>
+    隣接するブロック要素の<strong>上下 margin は大きい方の値に折りたたまれます</strong>。<br>
+    例：上の要素の <code>margin-bottom: 20px</code> と下の要素の <code>margin-top: 30px</code> が隣接すると、
+    間隔は <strong>30px</strong>（大きい方）になります。<br>
+    ※ 左右 margin・flex/grid コンテナ内では相殺は発生しません。
+  </div>
+
+  <table class="ref-table">
+    <thead><tr><th>値</th><th>説明</th></tr></thead>
+    <tbody>
+      <tr><td><code>auto</code></td><td>ブラウザが自動計算（水平中央揃えに使用）</td></tr>
+      <tr><td>長さ（px, em など）</td><td>固定値で余白を指定</td></tr>
+      <tr><td>パーセント（%）</td><td>親要素の <strong>幅</strong> に対する割合（上下も幅基準）</td></tr>
+      <tr><td>負の値</td><td>要素を引き寄せる・重ねる効果</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 3. padding -->
+<h2>③ padding（内側余白）</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  <code>padding</code> は要素の内側の余白（コンテンツと border の間）を指定します。
+  margin と異なり、<strong>負の値は指定できません</strong>。
+  また、<strong>背景色・背景画像は padding 領域まで広がります</strong>。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* 個別指定 */</span>
+<span class="prop">padding-top</span>:    <span class="val">12px</span>;
+<span class="prop">padding-right</span>:  <span class="val">24px</span>;
+<span class="prop">padding-bottom</span>: <span class="val">12px</span>;
+<span class="prop">padding-left</span>:   <span class="val">24px</span>;
+
+<span class="comment">/* ショートハンド（時計回り：上 右 下 左） */</span>
+<span class="prop">padding</span>: <span class="val">12px 24px</span>;       <span class="comment">/* 上下12px・左右24px */</span>
+<span class="prop">padding</span>: <span class="val">8px 16px 12px</span>;  <span class="comment">/* 上8px・左右16px・下12px */</span>
+<span class="prop">padding</span>: <span class="val">8px</span>;             <span class="comment">/* 全方向8px */</span>
+</pre>
+
+  <h3>margin / padding インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="margin:0 0 10px; font-size:0.88em; color:#553c9a; font-weight:bold;">
+      スライダーを動かして余白の変化を確認しましょう
+    </p>
+    <div style="background:#edf2f7; border-radius:8px; padding:8px; margin-bottom:12px; overflow:hidden;">
+      <div id="mp-outer"
+           style="background:rgba(159,122,234,0.15); border:2px dashed #9f7aea; transition:all 0.2s; display:inline-block; width:100%;">
+        <div id="mp-box"
+             style="background:#9f7aea; color:#fff; font-weight:bold; font-size:0.82em; text-align:center; transition:all 0.2s; margin:16px; padding:16px; border-radius:4px;">
+          ボックス
+        </div>
+      </div>
+    </div>
+    <div class="slider-row">
+      <label>margin（全方向）</label>
+      <input type="range" id="mp-margin" min="0" max="40" value="16" oninput="updateMP()">
+      <span class="val-display" id="mp-margin-val">16px</span>
+    </div>
+    <div class="slider-row">
+      <label>padding（全方向）</label>
+      <input type="range" id="mp-padding" min="0" max="40" value="16" oninput="updateMP()">
+      <span class="val-display" id="mp-padding-val">16px</span>
+    </div>
+    <div class="color-code-display" id="mp-code">margin: 16px;  padding: 16px;</div>
+  </div>
+  <script>
+    function updateMP() {
+      const m = document.getElementById('mp-margin').value;
+      const p = document.getElementById('mp-padding').value;
+      document.getElementById('mp-margin-val').textContent = m + 'px';
+      document.getElementById('mp-padding-val').textContent = p + 'px';
+      const box = document.getElementById('mp-box');
+      box.style.margin = m + 'px';
+      box.style.padding = p + 'px';
+      document.getElementById('mp-code').textContent =
+        `margin: ${m}px;  padding: ${p}px;`;
+    }
+  </script>
+
+  <div class="warn">
+    <strong>⚠️ padding と margin の違い</strong><br>
+    ・<code>padding</code>：負の値は指定不可。背景色が padding 領域まで広がる<br>
+    ・<code>margin</code>：負の値が指定可能。背景色は margin 領域には広がらない<br>
+    ・<code>padding</code> の % 指定も、margin 同様に<strong>親要素の幅</strong>を基準にします
+  </div>
+</div>
+
+
+<!-- 4. border -->
+<h2>④ border（枠線）</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* border ショートハンド */</span>
+<span class="prop">border</span>: <span class="val">2px solid #9f7aea</span>;   <span class="comment">/* 幅 スタイル 色 */</span>
+
+<span class="comment">/* 個別プロパティ */</span>
+<span class="prop">border-width</span>: <span class="val">2px</span>;
+<span class="prop">border-style</span>: <span class="val">solid</span>;     <span class="comment">/* none/solid/dashed/dotted/double/groove/ridge/inset/outset */</span>
+<span class="prop">border-color</span>: <span class="val">#9f7aea</span>;
+
+<span class="comment">/* 方向別指定 */</span>
+<span class="prop">border-top</span>:    <span class="val">3px solid #9f7aea</span>;
+<span class="prop">border-right</span>:  <span class="val">1px dashed #b794f4</span>;
+<span class="prop">border-bottom</span>: <span class="val">3px solid #9f7aea</span>;
+<span class="prop">border-left</span>:   <span class="val">5px solid #553c9a</span>;
+
+<span class="comment">/* 枠線なし */</span>
+<span class="prop">border</span>: <span class="val">none</span>;
+<span class="prop">border</span>: <span class="val">0</span>;
+
+<span class="comment">/* border-style の一覧 */</span>
+<span class="prop">border-style</span>: <span class="val">solid</span>;   <span class="comment">/* 実線 */</span>
+<span class="prop">border-style</span>: <span class="val">dashed</span>;  <span class="comment">/* 破線 */</span>
+<span class="prop">border-style</span>: <span class="val">dotted</span>;  <span class="comment">/* 点線 */</span>
+<span class="prop">border-style</span>: <span class="val">double</span>;  <span class="comment">/* 二重線 */</span>
+<span class="prop">border-style</span>: <span class="val">none</span>;    <span class="comment">/* 枠線なし */</span>
+</pre>
+
+  <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap:10px; margin:14px 0;">
+    <div style="padding:12px; border:3px solid #9f7aea; border-radius:4px; text-align:center; font-size:0.82em; font-family:'Consolas','Monaco',monospace;">solid</div>
+    <div style="padding:12px; border:3px dashed #9f7aea; border-radius:4px; text-align:center; font-size:0.82em; font-family:'Consolas','Monaco',monospace;">dashed</div>
+    <div style="padding:12px; border:3px dotted #9f7aea; border-radius:4px; text-align:center; font-size:0.82em; font-family:'Consolas','Monaco',monospace;">dotted</div>
+    <div style="padding:12px; border:5px double #9f7aea; border-radius:4px; text-align:center; font-size:0.82em; font-family:'Consolas','Monaco',monospace;">double</div>
+    <div style="padding:12px; border:4px groove #9f7aea; border-radius:4px; text-align:center; font-size:0.82em; font-family:'Consolas','Monaco',monospace;">groove</div>
+    <div style="padding:12px; border:4px ridge #9f7aea; border-radius:4px; text-align:center; font-size:0.82em; font-family:'Consolas','Monaco',monospace;">ridge</div>
+  </div>
+</div>
+
+
+<!-- 5. 幅と高さ -->
+<h2>⑤ 幅と高さを設定するプロパティ</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* 幅・高さの基本 */</span>
+<span class="prop">width</span>:  <span class="val">300px</span>;   <span class="comment">/* 幅を固定値で指定 */</span>
+<span class="prop">height</span>: <span class="val">200px</span>;   <span class="comment">/* 高さを固定値で指定 */</span>
+<span class="prop">width</span>:  <span class="val">50%</span>;     <span class="comment">/* 親要素の幅に対する割合 */</span>
+<span class="prop">width</span>:  <span class="val">auto</span>;    <span class="comment">/* ブラウザが自動計算（デフォルト） */</span>
+
+<span class="comment">/* 最小・最大サイズ */</span>
+<span class="prop">min-width</span>:  <span class="val">200px</span>;  <span class="comment">/* これ以下には縮まない */</span>
+<span class="prop">max-width</span>:  <span class="val">800px</span>;  <span class="comment">/* これ以上には広がらない */</span>
+<span class="prop">min-height</span>: <span class="val">100px</span>;  <span class="comment">/* これ以下には縮まない */</span>
+<span class="prop">max-height</span>: <span class="val">400px</span>;  <span class="comment">/* これ以上には広がらない */</span>
+
+<span class="comment">/* レスポンシブによく使うパターン */</span>
+<span class="selector">.container</span> {
+  <span class="prop">width</span>: <span class="val">100%</span>;
+  <span class="prop">max-width</span>: <span class="val">960px</span>;
+  <span class="prop">margin</span>: <span class="val">0 auto</span>;
+}
+</pre>
+
+  <div class="good">
+    ✅ <strong>width: 100% と max-width の組み合わせ</strong><br>
+    <code>width: 100%</code> で画面幅いっぱいに広がり、
+    <code>max-width</code> で上限を設けることで、
+    大画面でも読みやすい幅に制限できます。レスポンシブデザインの基本パターンです。
+  </div>
+</div>
+
+
+<!-- 6. border-radius -->
+<h2>⑥ border-radius（角丸）</h2>
+<div class="note">
+  <strong>重要ポイント①：border-radius の角丸の値は、角を 1/4 円に見立てたときの半径を指定する</strong><br>
+  <code>border-radius: 20px</code> は「半径 20px の円の 1/4 を角に当てはめる」ことを意味します。
+  <code>50%</code> を指定すると正円になります。
+</div>
+<div class="demo-box">
+
+  <h3>border-radius の仕組み</h3>
+  <div style="display:flex; align-items:center; gap:24px; flex-wrap:wrap; margin:14px 0;">
+    <div style="position:relative; width:120px; height:120px; flex-shrink:0;">
+      <div style="width:120px; height:120px; background:#e9d8fd; border:2px dashed #9f7aea; border-radius:0;"></div>
+      <div style="position:absolute; bottom:0; left:0; width:40px; height:40px; border:3px solid #e53e3e; border-radius:0 40px 0 0; border-left:none; border-bottom:none;"></div>
+      <div style="position:absolute; bottom:4px; left:4px; font-size:0.7em; color:#e53e3e; font-weight:bold; font-family:'Consolas','Monaco',monospace;">r=40px</div>
+    </div>
+    <div style="font-size:0.88em; color:#4a5568; flex:1; min-width:180px;">
+      角を <strong>1/4 円</strong> に見立てて、その円の<strong>半径</strong>を指定します。<br>
+      半径が大きいほど、より丸みが強くなります。<br>
+      <code>border-radius: 50%</code> で正円・楕円になります。
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* 全角に同じ値 */</span>
+<span class="prop">border-radius</span>: <span class="val">8px</span>;
+
+<span class="comment">/* 対角ペアで指定（左上・右下 / 右上・左下） */</span>
+<span class="prop">border-radius</span>: <span class="val">8px 16px</span>;
+
+<span class="comment">/* 4角個別指定（左上 右上 右下 左下） */</span>
+<span class="prop">border-radius</span>: <span class="val">8px 16px 24px 0</span>;
+
+<span class="comment">/* 個別プロパティ */</span>
+<span class="prop">border-top-left-radius</span>:     <span class="val">8px</span>;
+<span class="prop">border-top-right-radius</span>:    <span class="val">16px</span>;
+<span class="prop">border-bottom-right-radius</span>: <span class="val">24px</span>;
+<span class="prop">border-bottom-left-radius</span>:  <span class="val">0</span>;
+
+<span class="comment">/* 楕円形の角丸（水平半径 / 垂直半径） */</span>
+<span class="prop">border-radius</span>: <span class="val">40px / 20px</span>;
+
+<span class="comment">/* 正円にする */</span>
+<span class="prop">border-radius</span>: <span class="val">50%</span>;
+
+<span class="comment">/* pill形（カプセル型）ボタン */</span>
+<span class="prop">border-radius</span>: <span class="val">9999px</span>;
+</pre>
+
+  <div class="radius-grid">
+    <div class="radius-item" style="border-radius:0;"><span>border-radius:</span>0</div>
+    <div class="radius-item" style="border-radius:8px;"><span>border-radius:</span>8px</div>
+    <div class="radius-item" style="border-radius:20px;"><span>border-radius:</span>20px</div>
+    <div class="radius-item" style="border-radius:50%;"><span>border-radius:</span>50%</div>
+    <div class="radius-item" style="border-radius:9999px;"><span>border-radius:</span>9999px</div>
+    <div class="radius-item" style="border-radius:40px 0;"><span>border-radius:</span>40px 0</div>
+    <div class="radius-item" style="border-radius:0 0 24px 24px;"><span>border-radius:</span>0 0 24px 24px</div>
+    <div class="radius-item" style="border-radius:40px/20px;"><span>border-radius:</span>40px/20px</div>
+  </div>
+
+  <h3>border-radius インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <div class="live-box-wrap">
+      <div id="radius-demo-box" class="live-box"
+           style="width:140px; height:100px; border-radius:8px; line-height:100px;">
+        角丸デモ
+      </div>
+    </div>
+    <div class="slider-row">
+      <label>border-radius</label>
+      <input type="range" id="radius-slider" min="0" max="70" value="8" oninput="updateRadius()">
+      <span class="val-display" id="radius-val">8px</span>
+    </div>
+    <div class="color-code-display" id="radius-code">border-radius: 8px;</div>
+  </div>
+  <script>
+    function updateRadius() {
+      const v = document.getElementById('radius-slider').value;
+      document.getElementById('radius-val').textContent = v + 'px';
+      document.getElementById('radius-demo-box').style.borderRadius = v + 'px';
+      document.getElementById('radius-code').textContent = `border-radius: ${v}px;`;
+    }
+  </script>
+</div>
+
+
+<!-- 7. box-shadow / text-shadow -->
+<h2>⑦ box-shadow / text-shadow（影）</h2>
+<div class="note">
+  <strong>重要ポイント②：box-shadow と text-shadow の影の指定方法はほぼ同じ</strong><br>
+  どちらも <code>水平オフセット 垂直オフセット ぼかし半径 色</code> の順で指定します。
+  <code>box-shadow</code> のみ「広がり半径（spread）」と「<code>inset</code>（内側の影）」が追加で指定できます。
+</div>
+<div class="demo-box">
+
+  <h3>指定値の構造比較</h3>
+  <table class="ref-table">
+    <thead>
+      <tr><th>値</th><th>box-shadow</th><th>text-shadow</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>水平オフセット（h-offset）</td><td>✅ 必須</td><td>✅ 必須</td></tr>
+      <tr><td>垂直オフセット（v-offset）</td><td>✅ 必須</td><td>✅ 必須</td></tr>
+      <tr><td>ぼかし半径（blur-radius）</td><td>省略可（0）</td><td>省略可（0）</td></tr>
+      <tr><td>広がり半径（spread-radius）</td><td>省略可（0）</td><td>❌ なし</td></tr>
+      <tr><td>色（color）</td><td>省略可</td><td>省略可</td></tr>
+      <tr><td>inset（内側の影）</td><td>✅ 指定可</td><td>❌ なし</td></tr>
+      <tr><td>複数指定</td><td>✅ カンマ区切り</td><td>✅ カンマ区切り</td></tr>
+    </tbody>
+  </table>
+
+<pre>
+<span class="comment">/* box-shadow の書式 */</span>
+<span class="comment">/* h-offset  v-offset  blur  spread  color */</span>
+<span class="prop">box-shadow</span>: <span class="val">4px 4px 8px 0px rgba(0,0,0,0.2)</span>;
+
+<span class="comment">/* text-shadow の書式 */</span>
+<span class="comment">/* h-offset  v-offset  blur  color */</span>
+<span class="prop">text-shadow</span>: <span class="val">2px 2px 4px rgba(0,0,0,0.3)</span>;
+
+<span class="comment">/* box-shadow のバリエーション */</span>
+<span class="prop">box-shadow</span>: <span class="val">0 2px 4px rgba(0,0,0,0.1)</span>;         <span class="comment">/* 薄い影 */</span>
+<span class="prop">box-shadow</span>: <span class="val">0 8px 24px rgba(0,0,0,0.15)</span>;        <span class="comment">/* 浮き上がり */</span>
+<span class="prop">box-shadow</span>: <span class="val">inset 0 2px 4px rgba(0,0,0,0.2)</span>;    <span class="comment">/* 内側の影 */</span>
+<span class="prop">box-shadow</span>: <span class="val">0 0 0 3px #9f7aea</span>;                  <span class="comment">/* spread でアウトライン */</span>
+<span class="prop">box-shadow</span>: <span class="val">-4px -4px 8px #fff, 4px 4px 8px rgba(0,0,0,0.15)</span>; <span class="comment">/* 複数指定 */</span>
+
+<span class="comment">/* text-shadow のバリエーション */</span>
+<span class="prop">text-shadow</span>: <span class="val">1px 1px 2px rgba(0,0,0,0.3)</span>;       <span class="comment">/* 読みやすさ向上 */</span>
+<span class="prop">text-shadow</span>: <span class="val">0 0 8px #9f7aea</span>;                   <span class="comment">/* グロー効果 */</span>
+<span class="prop">text-shadow</span>: <span class="val">2px 2px 0 #553c9a, -2px -2px 0 #553c9a</span>; <span class="comment">/* 縁取り */</span>
+</pre>
+
+  <div class="shadow-grid">
+    <div class="shadow-item" style="box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+      box-shadow
+      <div class="shadow-label">0 2px 4px rgba(0,0,0,0.1)</div>
+    </div>
+    <div class="shadow-item" style="box-shadow: 0 8px 24px rgba(0,0,0,0.18);">
+      box-shadow
+      <div class="shadow-label">0 8px 24px rgba(0,0,0,0.18)</div>
+    </div>
+    <div class="shadow-item" style="box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);">
+      box-shadow
+      <div class="shadow-label">inset 0 2px 8px rgba(0,0,0,0.2)</div>
+    </div>
+    <div class="shadow-item" style="box-shadow: 0 0 0 4px #9f7aea;">
+      box-shadow
+      <div class="shadow-label">0 0 0 4px #9f7aea</div>
+    </div>
+    <div class="shadow-item">
+      <span style="font-size:1.4em; font-weight:bold; color:#553c9a; text-shadow:2px 2px 4px rgba(0,0,0,0.3);">text-shadow</span>
+      <div class="shadow-label">2px 2px 4px rgba(0,0,0,0.3)</div>
+    </div>
+    <div class="shadow-item">
+      <span style="font-size:1.4em; font-weight:bold; color:#553c9a; text-shadow:0 0 10px #9f7aea;">text-shadow</span>
+      <div class="shadow-label">0 0 10px #9f7aea（グロー）</div>
+    </div>
+  </div>
+
+  <h3>box-shadow インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <div class="live-box-wrap">
+      <div id="shadow-demo-box" class="live-box"
+           style="width:140px; height:80px; border-radius:8px; box-shadow:4px 4px 8px 0px rgba(0,0,0,0.2); line-height:80px;">
+        影デモ
+      </div>
+    </div>
+    <div class="slider-row">
+      <label>h-offset（水平）</label>
+      <input type="range" id="sh-h" min="-20" max="20" value="4" oninput="updateShadow()">
+      <span class="val-display" id="sh-h-val">4px</span>
+    </div>
+    <div class="slider-row">
+      <label>v-offset（垂直）</label>
+      <input type="range" id="sh-v" min="-20" max="20" value="4" oninput="updateShadow()">
+      <span class="val-display" id="sh-v-val">4px</span>
+    </div>
+    <div class="slider-row">
+      <label>blur（ぼかし）</label>
+      <input type="range" id="sh-blur" min="0" max="40" value="8" oninput="updateShadow()">
+      <span class="val-display" id="sh-blur-val">8px</span>
+    </div>
+    <div class="slider-row">
+      <label>spread（広がり）</label>
+      <input type="range" id="sh-spread" min="-10" max="20" value="0" oninput="updateShadow()">
+      <span class="val-display" id="sh-spread-val">0px</span>
+    </div>
+    <div class="slider-row">
+      <label>alpha（透明度）</label>
+      <input type="range" id="sh-alpha" min="0" max="100" value="20" oninput="updateShadow()">
+      <span class="val-display" id="sh-alpha-val">0.2</span>
+    </div>
+    <div class="color-code-display" id="shadow-code">box-shadow: 4px 4px 8px 0px rgba(0,0,0,0.2);</div>
+  </div>
+  <script>
+    function updateShadow() {
+      const h = document.getElementById('sh-h').value;
+      const v = document.getElementById('sh-v').value;
+      const blur = document.getElementById('sh-blur').value;
+      const spread = document.getElementById('sh-spread').value;
+      const alpha = (document.getElementById('sh-alpha').value / 100).toFixed(2);
+      document.getElementById('sh-h-val').textContent = h + 'px';
+      document.getElementById('sh-v-val').textContent = v + 'px';
+      document.getElementById('sh-blur-val').textContent = blur + 'px';
+      document.getElementById('sh-spread-val').textContent = spread + 'px';
+      document.getElementById('sh-alpha-val').textContent = alpha;
+      const shadow = `${h}px ${v}px ${blur}px ${spread}px rgba(0,0,0,${alpha})`;
+      document.getElementById('shadow-demo-box').style.boxShadow = shadow;
+      document.getElementById('shadow-code').textContent = `box-shadow: ${shadow};`;
+    }
+  </script>
+</div>
+
+
+<!-- 8. position -->
+<h2>⑧ position（配置方法）</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  <code>position</code> プロパティで要素の配置方法を指定します。
+  <code>static</code> 以外の値を指定した要素は「<strong>位置指定要素</strong>」となり、
+  <code>top / right / bottom / left / z-index</code> が有効になります。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* static（デフォルト）：通常のフロー */</span>
+<span class="prop">position</span>: <span class="val">static</span>;   <span class="comment">/* top/left等は無効 */</span>
+
+<span class="comment">/* relative：通常の位置を基準にずらす */</span>
+<span class="prop">position</span>: <span class="val">relative</span>;
+<span class="prop">top</span>: <span class="val">10px</span>;   <span class="comment">/* 通常位置から10px下にずれる */</span>
+<span class="prop">left</span>: <span class="val">20px</span>;  <span class="comment">/* 通常位置から20px右にずれる */</span>
+<span class="comment">/* ※ 元の場所にスペースは残る */</span>
+
+<span class="comment">/* absolute：最も近い「位置指定された祖先要素」を基準に配置 */</span>
+<span class="prop">position</span>: <span class="val">absolute</span>;
+<span class="prop">top</span>: <span class="val">0</span>;
+<span class="prop">right</span>: <span class="val">0</span>;
+<span class="comment">/* ※ 通常フローから外れる（スペースを占有しない） */</span>
+
+<span class="comment">/* fixed：ビューポートを基準に固定 */</span>
+<span class="prop">position</span>: <span class="val">fixed</span>;
+<span class="prop">bottom</span>: <span class="val">20px</span>;
+<span class="prop">right</span>: <span class="val">20px</span>;
+<span class="comment">/* ※ スクロールしても動かない */</span>
+
+<span class="comment">/* sticky：スクロール位置に応じてrelativeとfixedを切り替え */</span>
+<span class="prop">position</span>: <span class="val">sticky</span>;
+<span class="prop">top</span>: <span class="val">0</span>;
+<span class="comment">/* ※ スクロールで閾値に達するとfixedのように固定される */</span>
+</pre>
+
+  <h3>position の違いを視覚で確認</h3>
+  <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap:12px; margin:14px 0;">
+    <!-- static -->
+    <div>
+      <div style="font-size:0.8em; font-weight:bold; color:#553c9a; margin-bottom:4px; font-family:'Consolas','Monaco',monospace;">position: static</div>
+      <div style="background:#edf2f7; border:2px dashed #9f7aea; border-radius:6px; height:100px; position:relative; overflow:hidden;">
+        <div style="position:static; background:#9f7aea; color:#fff; font-size:0.72em; font-weight:bold; padding:6px 10px; border-radius:4px; display:inline-block; margin:8px;">通常の位置</div>
+      </div>
+    </div>
+    <!-- relative -->
+    <div>
+      <div style="font-size:0.8em; font-weight:bold; color:#553c9a; margin-bottom:4px; font-family:'Consolas','Monaco',monospace;">position: relative</div>
+      <div style="background:#edf2f7; border:2px dashed #9f7aea; border-radius:6px; height:100px; position:relative; overflow:hidden;">
+        <div style="position:relative; top:16px; left:16px; background:#9f7aea; color:#fff; font-size:0.72em; font-weight:bold; padding:6px 10px; border-radius:4px; display:inline-block;">top:16px left:16px</div>
+      </div>
+    </div>
+    <!-- absolute -->
+    <div>
+      <div style="font-size:0.8em; font-weight:bold; color:#553c9a; margin-bottom:4px; font-family:'Consolas','Monaco',monospace;">position: absolute</div>
+      <div style="background:#edf2f7; border:2px dashed #9f7aea; border-radius:6px; height:100px; position:relative; overflow:hidden;">
+        <div style="position:absolute; top:8px; right:8px; background:#e53e3e; color:#fff; font-size:0.72em; font-weight:bold; padding:6px 10px; border-radius:4px;">top:8px right:8px</div>
+        <div style="position:absolute; bottom:8px; left:8px; background:#9f7aea; color:#fff; font-size:0.72em; font-weight:bold; padding:6px 10px; border-radius:4px;">bottom:8px left:8px</div>
+      </div>
+    </div>
+    <!-- sticky -->
+    <div>
+      <div style="font-size:0.8em; font-weight:bold; color:#553c9a; margin-bottom:4px; font-family:'Consolas','Monaco',monospace;">position: sticky</div>
+      <div style="background:#edf2f7; border:2px dashed #9f7aea; border-radius:6px; height:100px; overflow-y:scroll;">
+        <div style="position:sticky; top:0; background:#9f7aea; color:#fff; font-size:0.72em; font-weight:bold; padding:6px 10px; z-index:1;">sticky top:0（↕スクロール）</div>
+        <div style="padding:8px; font-size:0.78em; color:#4a5568;">スクロールしても上部に固定されます。スクロールしても上部に固定されます。</div>
+      </div>
+    </div>
+  </div>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>値</th><th>基準</th><th>フローから外れる</th><th>スクロール追従</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>static</code></td><td>通常フロー（top等無効）</td><td>いいえ</td><td>—</td></tr>
+      <tr><td><code>relative</code></td><td>自身の通常位置</td><td>いいえ（スペース残る）</td><td>はい</td></tr>
+      <tr><td><code>absolute</code></td><td>最近の位置指定祖先</td><td>はい</td><td>はい</td></tr>
+      <tr><td><code>fixed</code></td><td>ビューポート</td><td>はい</td><td>いいえ（固定）</td></tr>
+      <tr><td><code>sticky</code></td><td>通常フロー＋閾値でfixed</td><td>いいえ</td><td>閾値まで追従</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 9. top / right / bottom / left / z-index -->
+<h2>⑨ top・right・bottom・left / z-index</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* position が static 以外のときに有効 */</span>
+<span class="prop">top</span>:    <span class="val">20px</span>;   <span class="comment">/* 上端からの距離 */</span>
+<span class="prop">right</span>:  <span class="val">20px</span>;   <span class="comment">/* 右端からの距離 */</span>
+<span class="prop">bottom</span>: <span class="val">20px</span>;   <span class="comment">/* 下端からの距離 */</span>
+<span class="prop">left</span>:   <span class="val">20px</span>;   <span class="comment">/* 左端からの距離 */</span>
+
+<span class="comment">/* 要素を親の中央に配置するテクニック */</span>
+<span class="selector">.center</span> {
+  <span class="prop">position</span>: <span class="val">absolute</span>;
+  <span class="prop">top</span>: <span class="val">50%</span>;
+  <span class="prop">left</span>: <span class="val">50%</span>;
+  <span class="prop">transform</span>: <span class="val">translate(-50%, -50%)</span>;
+}
+
+<span class="comment">/* z-index：重なり順を指定（数値が大きいほど前面） */</span>
+<span class="comment">/* position が static 以外のときに有効 */</span>
+<span class="prop">z-index</span>: <span class="val">1</span>;    <span class="comment">/* 通常 */</span>
+<span class="prop">z-index</span>: <span class="val">100</span>;  <span class="comment">/* 前面 */</span>
+<span class="prop">z-index</span>: <span class="val">-1</span>;   <span class="comment">/* 背面（親要素より後ろ） */</span>
+<span class="prop">z-index</span>: <span class="val">auto</span>; <span class="comment">/* デフォルト（親と同じ重なりコンテキスト） */</span>
+</pre>
+
+  <h3>z-index デモ</h3>
+  <div style="position:relative; height:120px; margin:14px 0; background:#edf2f7; border-radius:8px; border:2px dashed #9f7aea;">
+    <div style="position:absolute; top:20px; left:20px; width:100px; height:80px; background:#9f7aea; color:#fff; font-size:0.78em; font-weight:bold; border-radius:6px; display:flex; align-items:center; justify-content:center; z-index:1;">z-index: 1</div>
+    <div style="position:absolute; top:30px; left:60px; width:100px; height:80px; background:#f6ad55; color:#1a202c; font-size:0.78em; font-weight:bold; border-radius:6px; display:flex; align-items:center; justify-content:center; z-index:2;">z-index: 2</div>
+    <div style="position:absolute; top:40px; left:100px; width:100px; height:80px; background:#68d391; color:#1a202c; font-size:0.78em; font-weight:bold; border-radius:6px; display:flex; align-items:center; justify-content:center; z-index:3;">z-index: 3</div>
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ z-index の注意点</strong><br>
+    ・<code>z-index</code> は <code>position: static</code> の要素には効きません<br>
+    ・<code>opacity</code>・<code>transform</code>・<code>filter</code> などを指定すると
+    新しい<strong>重なりコンテキスト（Stacking Context）</strong>が作られ、
+    子要素の z-index は親の外に出られなくなります
+  </div>
+</div>
+
+
+<!-- 10. float / clear -->
+<h2>⑩ float / clear</h2>
+<div class="note">
+  <strong>ポイント</strong><br>
+  <code>float</code> は要素を左右に寄せ、後続のインライン要素（テキストなど）が
+  その周りに回り込みます。現在はレイアウトに Flexbox / Grid が主流ですが、
+  <strong>テキストの回り込み</strong>には今も使われます。
+</div>
+<div class="demo-box">
+<pre>
+<span class="prop">float</span>: <span class="val">left</span>;   <span class="comment">/* 左に寄せる（テキストが右に回り込む） */</span>
+<span class="prop">float</span>: <span class="val">right</span>;  <span class="comment">/* 右に寄せる（テキストが左に回り込む） */</span>
+<span class="prop">float</span>: <span class="val">none</span>;   <span class="comment">/* 回り込みなし（デフォルト） */</span>
+
+<span class="comment">/* clear：回り込みを解除する */</span>
+<span class="prop">clear</span>: <span class="val">left</span>;   <span class="comment">/* 左のfloatを解除 */</span>
+<span class="prop">clear</span>: <span class="val">right</span>;  <span class="comment">/* 右のfloatを解除 */</span>
+<span class="prop">clear</span>: <span class="val">both</span>;   <span class="comment">/* 両方のfloatを解除 */</span>
+<span class="prop">clear</span>: <span class="val">none</span>;   <span class="comment">/* 解除しない（デフォルト） */</span>
+
+<span class="comment">/* clearfix：floatによる親要素の高さ崩れを防ぐ */</span>
+<span class="selector">.clearfix::after</span> {
+  <span class="prop">content</span>: <span class="val">""</span>;
+  <span class="prop">display</span>: <span class="val">block</span>;
+  <span class="prop">clear</span>: <span class="val">both</span>;
+}
+</pre>
+
+  <h3>float: left のデモ</h3>
+  <div class="float-demo">
+    <div class="float-img-mock" style="float:left; margin:0 12px 8px 0;">float: left</div>
+    <p style="margin:0; font-size:0.88em; color:#4a5568;">
+      float: left を指定した要素の右側にテキストが回り込みます。
+      画像とテキストを並べるレイアウトに使われてきました。
+      現在は Flexbox や Grid が主流ですが、テキストの回り込みには今も有効です。
+      float を解除するには clear プロパティを使います。
+    </p>
+    <div style="clear:both;"></div>
+  </div>
+
+  <h3>float: right のデモ</h3>
+  <div class="float-demo">
+    <div class="float-img-mock" style="float:right; margin:0 0 8px 12px;">float: right</div>
+    <p style="margin:0; font-size:0.88em; color:#4a5568;">
+      float: right を指定した要素の左側にテキストが回り込みます。
+      clear: both を指定した要素は、float の影響を受けずに
+      float 要素の下に配置されます。
+    </p>
+    <div style="clear:both;"></div>
+  </div>
+</div>
+
+
+<!-- 11. display -->
+<h2>⑪ display（表示形式）</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* ブロック要素：幅100%・前後に改行 */</span>
+<span class="prop">display</span>: <span class="val">block</span>;
+
+<span class="comment">/* インライン要素：内容の幅・改行なし・width/height無効 */</span>
+<span class="prop">display</span>: <span class="val">inline</span>;
+
+<span class="comment">/* インラインブロック：改行なし・width/height有効 */</span>
+<span class="prop">display</span>: <span class="val">inline-block</span>;
+
+<span class="comment">/* フレックスコンテナ */</span>
+<span class="prop">display</span>: <span class="val">flex</span>;
+
+<span class="comment">/* グリッドコンテナ */</span>
+<span class="prop">display</span>: <span class="val">grid</span>;
+
+<span class="comment">/* 非表示（領域も消える） */</span>
+<span class="prop">display</span>: <span class="val">none</span>;
+
+<span class="comment">/* テーブル関連 */</span>
+<span class="prop">display</span>: <span class="val">table</span>;
+<span class="prop">display</span>: <span class="val">table-cell</span>;
+</pre>
+
+  <div class="display-demo">
+    <p style="margin:0 0 8px; font-size:0.85em; font-weight:bold; color:#553c9a;">▼ display の違いを確認</p>
+    <div style="margin-bottom:10px;">
+      <span style="font-size:0.78em; color:#718096; font-family:'Consolas','Monaco',monospace;">display: block（各要素が幅100%で縦に並ぶ）</span><br>
+      <div style="background:#9f7aea; color:#fff; padding:6px 12px; border-radius:4px; font-size:0.82em; font-weight:bold; margin:4px 0;">block 要素 A</div>
+      <div style="background:#b794f4; color:#fff; padding:6px 12px; border-radius:4px; font-size:0.82em; font-weight:bold; margin:4px 0;">block 要素 B</div>
+    </div>
+    <div style="margin-bottom:10px;">
+      <span style="font-size:0.78em; color:#718096; font-family:'Consolas','Monaco',monospace;">display: inline（内容の幅で横に並ぶ）</span><br>
+      <span style="background:#9f7aea; color:#fff; padding:4px 10px; border-radius:4px; font-size:0.82em; font-weight:bold; display:inline;">inline A</span>
+      <span style="background:#b794f4; color:#fff; padding:4px 10px; border-radius:4px; font-size:0.82em; font-weight:bold; display:inline;">inline B</span>
+      <span style="background:#d6bcfa; color:#553c9a; padding:4px 10px; border-radius:4px; font-size:0.82em; font-weight:bold; display:inline;">inline C</span>
+    </div>
+    <div>
+      <span style="font-size:0.78em; color:#718096; font-family:'Consolas','Monaco',monospace;">display: inline-block（横並び・width/height有効）</span><br>
+      <div style="display:inline-block; width:80px; height:50px; background:#9f7aea; color:#fff; border-radius:4px; font-size:0.78em; font-weight:bold; text-align:center; line-height:50px; margin:4px;">80×50px</div>
+      <div style="display:inline-block; width:80px; height:50px; background:#b794f4; color:#fff; border-radius:4px; font-size:0.78em; font-weight:bold; text-align:center; line-height:50px; margin:4px;">80×50px</div>
+      <div style="display:inline-block; width:80px; height:50px; background:#d6bcfa; color:#553c9a; border-radius:4px; font-size:0.78em; font-weight:bold; text-align:center; line-height:50px; margin:4px;">80×50px</div>
+    </div>
+  </div>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>値</th><th>幅</th><th>改行</th><th>width/height</th><th>主な要素</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>block</code></td><td>親要素いっぱい</td><td>前後に改行</td><td>有効</td><td>div, p, h1〜h6</td></tr>
+      <tr><td><code>inline</code></td><td>内容の幅</td><td>なし</td><td>無効</td><td>span, a, em</td></tr>
+      <tr><td><code>inline-block</code></td><td>内容の幅</td><td>なし</td><td>有効</td><td>img, button</td></tr>
+      <tr><td><code>none</code></td><td>—</td><td>—</td><td>—</td><td>非表示（領域消える）</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 12. visibility / overflow / clip -->
+<h2>⑫ visibility / overflow / clip</h2>
+<div class="demo-box">
+
+  <h3>visibility</h3>
+<pre>
+<span class="prop">visibility</span>: <span class="val">visible</span>;  <span class="comment">/* 表示（デフォルト） */</span>
+<span class="prop">visibility</span>: <span class="val">hidden</span>;   <span class="comment">/* 非表示（領域は残る） */</span>
+<span class="prop">visibility</span>: <span class="val">collapse</span>; <span class="comment">/* テーブル行・列を折りたたむ（非テーブルはhiddenと同じ） */</span>
+</pre>
+
+  <div class="visibility-demo">
+    <div>
+      <div class="vis-box" style="visibility:visible;">visible</div>
+      <div style="font-size:0.75em; color:#718096; text-align:center; margin-top:4px; font-family:'Consolas','Monaco',monospace;">visibility: visible</div>
+    </div>
+    <div>
+      <div class="vis-box" style="visibility:hidden;">hidden</div>
+      <div style="font-size:0.75em; color:#718096; text-align:center; margin-top:4px; font-family:'Consolas','Monaco',monospace;">visibility: hidden<br>（領域は残る）</div>
+    </div>
+    <div>
+      <div style="display:none; width:120px; height:60px; background:#9f7aea; border-radius:4px;"></div>
+      <div style="width:120px; height:60px; background:#edf2f7; border:2px dashed #9f7aea; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:0.75em; color:#9f7aea; font-weight:bold; font-family:'Consolas','Monaco',monospace;">display: none<br>（領域も消える）</div>
+      <div style="font-size:0.75em; color:#718096; text-align:center; margin-top:4px; font-family:'Consolas','Monaco',monospace;">display: none<br>（領域消える）</div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ visibility: hidden と display: none の違い</strong><br>
+    ・<code>visibility: hidden</code>：要素は見えないが<strong>領域は残る</strong><br>
+    ・<code>display: none</code>：要素が見えず<strong>領域も消える</strong>（レイアウトに影響する）
+  </div>
+
+  <h3>overflow</h3>
+<pre>
+<span class="prop">overflow</span>: <span class="val">visible</span>;  <span class="comment">/* はみ出しを表示（デフォルト） */</span>
+<span class="prop">overflow</span>: <span class="val">hidden</span>;   <span class="comment">/* はみ出しを非表示 */</span>
+<span class="prop">overflow</span>: <span class="val">scroll</span>;   <span class="comment">/* 常にスクロールバーを表示 */</span>
+<span class="prop">overflow</span>: <span class="val">auto</span>;     <span class="comment">/* はみ出した場合のみスクロールバーを表示 */</span>
+<span class="prop">overflow</span>: <span class="val">clip</span>;     <span class="comment">/* はみ出しを切り取り（スクロール不可） */</span>
+
+<span class="comment">/* 縦横個別指定 */</span>
+<span class="prop">overflow-x</span>: <span class="val">auto</span>;   <span class="comment">/* 横方向のみ */</span>
+<span class="prop">overflow-y</span>: <span class="val">scroll</span>; <span class="comment">/* 縦方向のみ */</span>
+</pre>
+
+  <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap:12px; margin:14px 0;">
+    <div>
+      <div style="font-size:0.78em; font-weight:bold; color:#553c9a; margin-bottom:4px; font-family:'Consolas','Monaco',monospace;">overflow: visible</div>
+      <div style="width:100%; height:70px; background:#edf2f7; border:2px solid #9f7aea; border-radius:4px; overflow:visible; position:relative;">
+        <div style="background:#9f7aea; color:#fff; font-size:0.72em; padding:6px 8px; white-space:nowrap; position:absolute; top:8px; left:8px;">はみ出したコンテンツが見える</div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:0.78em; font-weight:bold; color:#553c9a; margin-bottom:4px; font-family:'Consolas','Monaco',monospace;">overflow: hidden</div>
+      <div style="width:100%; height:70px; background:#edf2f7; border:2px solid #9f7aea; border-radius:4px; overflow:hidden; position:relative;">
+        <div style="background:#9f7aea; color:#fff; font-size:0.72em; padding:6px 8px; white-space:nowrap; position:absolute; top:8px; left:8px;">はみ出したコンテンツは切り取られる</div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:0.78em; font-weight:bold; color:#553c9a; margin-bottom:4px; font-family:'Consolas','Monaco',monospace;">overflow: scroll</div>
+      <div style="width:100%; height:70px; background:#edf2f7; border:2px solid #9f7aea; border-radius:4px; overflow:scroll;">
+        <div style="background:#9f7aea; color:#fff; font-size:0.72em; padding:6px 8px; white-space:nowrap;">スクロールバーが常に表示される長いコンテンツ</div>
+        <div style="background:#b794f4; color:#fff; font-size:0.72em; padding:6px 8px;">2行目のコンテンツ</div>
+        <div style="background:#d6bcfa; color:#553c9a; font-size:0.72em; padding:6px 8px;">3行目のコンテンツ</div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:0.78em; font-weight:bold; color:#553c9a; margin-bottom:4px; font-family:'Consolas','Monaco',monospace;">overflow: auto</div>
+      <div style="width:100%; height:70px; background:#edf2f7; border:2px solid #9f7aea; border-radius:4px; overflow:auto;">
+        <div style="background:#9f7aea; color:#fff; font-size:0.72em; padding:6px 8px; white-space:nowrap;">必要なときだけスクロールバーが表示される長いコンテンツ</div>
+        <div style="background:#b794f4; color:#fff; font-size:0.72em; padding:6px 8px;">2行目のコンテンツ</div>
+        <div style="background:#d6bcfa; color:#553c9a; font-size:0.72em; padding:6px 8px;">3行目のコンテンツ</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>clip（clip-path）</h3>
+  <div class="note">
+    <strong>注意</strong>：CSS2の <code>clip</code> プロパティは <code>position: absolute / fixed</code> の要素にのみ適用可能で、
+    <code>rect()</code> 関数で矩形を指定します。現在は <code>clip-path</code> が推奨されています。
+  </div>
+<pre>
+<span class="comment">/* clip（CSS2・非推奨・position:absolute/fixedのみ有効） */</span>
+<span class="prop">clip</span>: <span class="func">rect</span>(<span class="val">top, right, bottom, left</span>);
+<span class="prop">clip</span>: <span class="func">rect</span>(<span class="val">10px, 200px, 100px, 20px</span>); <span class="comment">/* 上・右・下・左 */</span>
+<span class="prop">clip</span>: <span class="val">auto</span>;  <span class="comment">/* クリッピングなし（デフォルト） */</span>
+
+<span class="comment">/* clip-path（現代的な方法・推奨） */</span>
+<span class="prop">clip-path</span>: <span class="func">inset</span>(<span class="val">10px 20px</span>);          <span class="comment">/* 矩形でクリップ */</span>
+<span class="prop">clip-path</span>: <span class="func">circle</span>(<span class="val">50%</span>);               <span class="comment">/* 円形でクリップ */</span>
+<span class="prop">clip-path</span>: <span class="func">polygon</span>(<span class="val">0 0, 100% 0, 50% 100%</span>); <span class="comment">/* 三角形でクリップ */</span>
+</pre>
+
+  <div style="display:flex; gap:16px; flex-wrap:wrap; margin:14px 0;">
+    <div style="text-align:center;">
+      <div style="width:80px; height:80px; background:linear-gradient(135deg,#9f7aea,#553c9a); clip-path:circle(50%); margin:0 auto;"></div>
+      <div style="font-size:0.75em; color:#718096; margin-top:6px; font-family:'Consolas','Monaco',monospace;">circle(50%)</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="width:80px; height:80px; background:linear-gradient(135deg,#9f7aea,#553c9a); clip-path:polygon(50% 0%, 100% 100%, 0% 100%); margin:0 auto;"></div>
+      <div style="font-size:0.75em; color:#718096; margin-top:6px; font-family:'Consolas','Monaco',monospace;">polygon（三角形）</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="width:80px; height:80px; background:linear-gradient(135deg,#9f7aea,#553c9a); clip-path:inset(10px 10px 10px 10px round 8px); margin:0 auto;"></div>
+      <div style="font-size:0.75em; color:#718096; margin-top:6px; font-family:'Consolas','Monaco',monospace;">inset（角丸矩形）</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="width:80px; height:80px; background:linear-gradient(135deg,#9f7aea,#553c9a); clip-path:polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); margin:0 auto;"></div>
+      <div style="font-size:0.75em; color:#718096; margin-top:6px; font-family:'Consolas','Monaco',monospace;">polygon（五角形）</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- 演習問題 -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      <code>box-sizing: border-box</code> を指定すると、
+      <code>width</code> で指定した値に <code>padding</code> と <code>border</code> が含まれるため、
+      <code>padding</code> を増やしても要素の外側の幅は変わらない。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn btn-purple" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'border-box では width = border + padding + content の合計になります。<br>' +
+            'padding を増やすとコンテンツ領域が縮みますが、要素全体の幅は変わりません。<br>' +
+            '一方、content-box（デフォルト）では padding を増やすと要素全体の幅も増えます。';
+        } else if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。border-box では width に border と padding が含まれるため、' +
+            'padding を増やしても要素全体の幅は変わりません（コンテンツ領域が縮む）。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合う値・プロパティ名を入力してください。</p>
+
+    <label>① border-radius: 50% を指定すると何の形になるか（日本語）：</label>
+    <input type="text" id="q2a" placeholder="形の名前">
+
+    <label>② box-shadow で内側に影を付けるキーワード：</label>
+    <input type="text" id="q2b" placeholder="キーワード">
+
+    <label>③ position の値のうち、ビューポートを基準に固定されるもの：</label>
+    <input type="text" id="q2c" placeholder="値">
+
+    <label>④ float の回り込みを解除するプロパティ名：</label>
+    <input type="text" id="q2d" placeholder="プロパティ名">
+
+    <label>⑤ 要素を非表示にするが「領域は残す」プロパティと値（プロパティ:値 の形式）：</label>
+    <input type="text" id="q2e" placeholder="例）display:none">
+
+    <label>⑥ 隣接するブロック要素の上下 margin が折りたたまれる現象の名前（日本語）：</label>
+    <input type="text" id="q2f" placeholder="〇〇の相殺">
+
+    <br>
+    <button class="btn btn-purple" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value.trim();
+        const b = document.getElementById('q2b').value.trim().toLowerCase();
+        const c = document.getElementById('q2c').value.trim().toLowerCase();
+        const d = document.getElementById('q2d').value.trim().toLowerCase();
+        const e = document.getElementById('q2e').value.trim().toLowerCase().replace(/\s/g,'');
+        const f = document.getElementById('q2f').value.trim();
+        const r = document.getElementById('q2-result');
+        const ca = a.includes('円') || a.includes('楕円') || a === '正円' || a === '円形';
+        const cb = b === 'inset';
+        const cc = c === 'fixed';
+        const cd = d === 'clear';
+        const ce = e === 'visibility:hidden';
+        const cf = f.includes('相殺') || f.includes('マージン') || f.includes('margin');
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！ボックスプロパティを完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `① ${ca?'✅':'❌ 正円（または円形・楕円）'}　` +
+            `② ${cb?'✅':'❌ inset'}　` +
+            `③ ${cc?'✅':'❌ fixed'}　` +
+            `④ ${cd?'✅':'❌ clear'}　` +
+            `⑤ ${ce?'✅':'❌ visibility:hidden'}　` +
+            `⑥ ${cf?'✅':'❌ マージンの相殺'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>
+      <code>border-radius: 8px 16px 24px 4px</code> の各角への適用順として正しいものはどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">左上 → 左下 → 右下 → 右上</option>
+      <option value="b">左上 → 右上 → 右下 → 左下</option>
+      <option value="c">上 → 右 → 下 → 左</option>
+      <option value="d">右上 → 右下 → 左下 → 左上</option>
+    </select>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'border-radius の4値指定は <strong>左上 → 右上 → 右下 → 左下</strong>（時計回り）です。<br>' +
+            'border-radius: 8px 16px 24px 4px<br>' +
+            '→ 左上:8px / 右上:16px / 右下:24px / 左下:4px<br><br>' +
+            'margin / padding と同じ時計回りの順番です。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。border-radius の4値指定は<br>' +
+            '<strong>左上 → 右上 → 右下 → 左下</strong>（時計回り）です。<br>' +
+            'margin / padding の4値指定（上→右→下→左）とは異なる点に注意してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 選択問題</h3>
+    <p>
+      <code>position: absolute</code> の要素は、どの要素を基準に配置されますか？
+    </p>
+    <select id="q4">
+      <option value="">-- 選択してください --</option>
+      <option value="a">常に body 要素を基準にする</option>
+      <option value="b">常にビューポートを基準にする</option>
+      <option value="c">最も近い「position: static 以外」の祖先要素を基準にする</option>
+      <option value="d">親要素の position に関わらず、常に直接の親要素を基準にする</option>
+    </select>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const v = document.getElementById('q4').value;
+        const r = document.getElementById('q4-result');
+        if (v === 'c') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'position: absolute は、<strong>最も近い「position: static 以外」の祖先要素</strong>を基準にします。<br>' +
+            '（relative / absolute / fixed / sticky のいずれかが指定された祖先要素）<br><br>' +
+            '位置指定された祖先要素がない場合は、最終的に <code>body</code>（または初期包含ブロック）が基準になります。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            'position: absolute は<strong>最も近い「position: static 以外」の祖先要素</strong>を基準にします。<br>' +
+            '親要素に position: relative を指定することで、その要素を基準に配置できます。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5a">
+      ① <code>border-radius: 50%</code> を指定すると正円（または楕円）になる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5b">
+      ② <code>text-shadow</code> には <code>inset</code>（内側の影）を指定できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5c">
+      ③ <code>box-shadow</code> の広がり半径（spread）は省略すると 0 として扱われる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5d">
+      ④ <code>z-index</code> は <code>position: static</code> の要素にも有効である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5e">
+      ⑤ <code>visibility: hidden</code> は要素が見えなくなるが、領域は残る
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5f">
+      ⑥ <code>margin</code> にはパーセント値を指定でき、その基準は親要素の<strong>幅</strong>である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5g">
+      ⑦ <code>padding</code> には負の値を指定できる
+    </label>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const r = document.getElementById('q5-result');
+        const checks = {
+          a: document.getElementById('q5a').checked,
+          b: document.getElementById('q5b').checked,
+          c: document.getElementById('q5c').checked,
+          d: document.getElementById('q5d').checked,
+          e: document.getElementById('q5e').checked,
+          f: document.getElementById('q5f').checked,
+          g: document.getElementById('q5g').checked,
+        };
+        // 正解：①③⑤⑥（a, c, e, f）
+        // ② text-shadow に inset はない
+        // ④ z-index は static には無効
+        // ⑦ padding に負の値は指定不可
+        const correct = { a:true, b:false, c:true, d:false, e:true, f:true, g:false };
+        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
+        const allCorrect = results.every(Boolean);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① border-radius: 50% → 正円・楕円 ✅<br>' +
+            '・③ box-shadow の spread 省略 → 0 ✅<br>' +
+            '・⑤ visibility: hidden → 領域は残る ✅<br>' +
+            '・⑥ margin の % → 親要素の幅が基準 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① border-radius: 50% → 正円・楕円<br>' +
+            '・③ box-shadow の spread 省略 → 0<br>' +
+            '・⑤ visibility: hidden → 領域は残る<br>' +
+            '・⑥ margin の % → 親要素の幅が基準（上下も幅基準）<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② text-shadow に inset はない（box-shadow のみ）<br>' +
+            '・④ z-index は position: static の要素には無効<br>' +
+            '・⑦ padding に負の値は指定不可（margin は可）';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. コード穴埋め問題</h3>
+    <p><code>__A__</code> 〜 <code>__F__</code> に適切な値・プロパティ名を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+/* A：幅・高さに border と padding を含める */
+box-sizing: __A__;
+
+/* B：border-radius で角を半径40pxの1/4円にする */
+border-radius: __B__;
+
+/* C：box-shadow で内側に影を付ける（水平0・垂直2px・ぼかし4px・黒20%） */
+box-shadow: __C__ 0 2px 4px rgba(0,0,0,0.2);
+
+/* D：position: absolute の要素を右上に配置 */
+position: absolute;
+top: __D__;
+right: 0;
+
+/* E：float の回り込みを両方向解除 */
+clear: __E__;
+
+/* F：overflow ではみ出したコンテンツを非表示にする */
+overflow: __F__;</pre>
+
+    <label>A（box-sizing の値）：</label>
+    <input type="text" id="q6a" placeholder="値">
+    <label>B（border-radius の値）：</label>
+    <input type="text" id="q6b" placeholder="値">
+    <label>C（内側の影を表すキーワード）：</label>
+    <input type="text" id="q6c" placeholder="キーワード">
+    <label>D（右上に配置するための top の値）：</label>
+    <input type="text" id="q6d" placeholder="値">
+    <label>E（clear の値）：</label>
+    <input type="text" id="q6e" placeholder="値">
+    <label>F（overflow の値）：</label>
+    <input type="text" id="q6f" placeholder="値">
+    <br>
+    <button class="btn btn-purple" onclick="checkQ6()">答え合わせ</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const a = document.getElementById('q6a').value.trim().toLowerCase().replace(/\s/g,'');
+        const b = document.getElementById('q6b').value.trim().toLowerCase().replace(/\s/g,'');
+        const c = document.getElementById('q6c').value.trim().toLowerCase();
+        const d = document.getElementById('q6d').value.trim().toLowerCase().replace(/\s/g,'');
+        const e = document.getElementById('q6e').value.trim().toLowerCase();
+        const f = document.getElementById('q6f').value.trim().toLowerCase();
+        const r = document.getElementById('q6-result');
+        const ca = a === 'border-box';
+        const cb = b === '40px';
+        const cc = c === 'inset';
+        const cd = d === '0' || d === '0px';
+        const ce = e === 'both';
+        const cf = f === 'hidden';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！ボックスプロパティの記述を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca?'✅':'❌ border-box'}　` +
+            `B: ${cb?'✅':'❌ 40px'}　` +
+            `C: ${cc?'✅':'❌ inset'}　` +
+            `D: ${cd?'✅':'❌ 0（または0px）'}　` +
+            `E: ${ce?'✅':'❌ both'}　` +
+            `F: ${cf?'✅':'❌ hidden'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q7 -->
+  <div class="quiz-block">
+    <h3>Q7. 記述問題</h3>
+    <p>
+      <code>box-shadow</code> と <code>text-shadow</code> の共通点と相違点を
+      指定値の構造に触れながら説明してください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q7" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ7()">模範解答を見る</button>
+    <div class="result-msg" id="q7-result"></div>
+    <script>
+      function checkQ7() {
+        const r = document.getElementById('q7-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<strong>【共通点】</strong><br>' +
+          '・どちらも「水平オフセット 垂直オフセット ぼかし半径 色」の順で指定する<br>' +
+          '・ぼかし半径と色は省略可能（省略時は 0 / 現在の color 値）<br>' +
+          '・カンマ区切りで複数の影を重ねて指定できる<br><br>' +
+          '<strong>【相違点】</strong><br>' +
+          '・box-shadow のみ「広がり半径（spread-radius）」を指定できる<br>' +
+          '　→ 書式：h-offset v-offset blur <strong>spread</strong> color<br>' +
+          '・box-shadow のみ「inset」キーワードで内側の影を指定できる<br>' +
+          '・text-shadow には spread と inset は存在しない<br><br>' +
+          '<strong>【まとめ】</strong><br>' +
+          'box-shadow: h v blur <u>spread</u> color / <u>inset</u> も指定可<br>' +
+          'text-shadow: h v blur color（spread・inset なし）';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 CSS ボックス プロパティ まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>プロパティ</th><th>主な値・書式</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>box-sizing</code></td>
+      <td><code>content-box</code> / <code>border-box</code></td>
+      <td>border-box は width に border・padding を含む。全要素に適用する慣習あり</td>
+    </tr>
+    <tr>
+      <td><code>margin</code></td>
+      <td>長さ / % / <code>auto</code> / 負の値</td>
+      <td>上下の隣接要素でマージンの相殺が発生。<code>0 auto</code> で水平中央揃え</td>
+    </tr>
+    <tr>
+      <td><code>padding</code></td>
+      <td>長さ / %</td>
+      <td>負の値は不可。背景色は padding 領域まで広がる。% は親要素の幅が基準</td>
+    </tr>
+    <tr>
+      <td><code>border</code></td>
+      <td><code>幅 スタイル 色</code></td>
+      <td>style は solid / dashed / dotted / double / none など</td>
+    </tr>
+    <tr>
+      <td><code>border-radius</code></td>
+      <td>長さ / %</td>
+      <td>角を 1/4 円の半径で指定。50% で正円。4値は左上→右上→右下→左下</td>
+    </tr>
+    <tr>
+      <td><code>box-shadow</code></td>
+      <td><code>h v blur spread color</code> / <code>inset</code></td>
+      <td>text-shadow との違い：spread と inset が追加で指定可能</td>
+    </tr>
+    <tr>
+      <td><code>text-shadow</code></td>
+      <td><code>h v blur color</code></td>
+      <td>spread・inset なし。カンマ区切りで複数指定可</td>
+    </tr>
+    <tr>
+      <td><code>position</code></td>
+      <td><code>static</code> / <code>relative</code> / <code>absolute</code> / <code>fixed</code> / <code>sticky</code></td>
+      <td>static 以外で top/right/bottom/left/z-index が有効になる</td>
+    </tr>
+    <tr>
+      <td><code>top / right / bottom / left</code></td>
+      <td>長さ / %</td>
+      <td>position: static 以外のときに有効。基準は position の種類による</td>
+    </tr>
+    <tr>
+      <td><code>z-index</code></td>
+      <td>整数 / <code>auto</code></td>
+      <td>position: static 以外のときに有効。大きい値が前面</td>
+    </tr>
+    <tr>
+      <td><code>float</code></td>
+      <td><code>left</code> / <code>right</code> / <code>none</code></td>
+      <td>要素を左右に寄せてテキストを回り込ませる</td>
+    </tr>
+    <tr>
+      <td><code>clear</code></td>
+      <td><code>left</code> / <code>right</code> / <code>both</code> / <code>none</code></td>
+      <td>float の回り込みを解除。clearfix で親要素の高さ崩れを防ぐ</td>
+    </tr>
+    <tr>
+      <td><code>display</code></td>
+      <td><code>block</code> / <code>inline</code> / <code>inline-block</code> / <code>flex</code> / <code>grid</code> / <code>none</code></td>
+      <td>none は領域ごと消える。inline は width/height 無効</td>
+    </tr>
+    <tr>
+      <td><code>visibility</code></td>
+      <td><code>visible</code> / <code>hidden</code> / <code>collapse</code></td>
+      <td>hidden は見えないが領域は残る（display: none との違い）</td>
+    </tr>
+    <tr>
+      <td><code>overflow</code></td>
+      <td><code>visible</code> / <code>hidden</code> / <code>scroll</code> / <code>auto</code> / <code>clip</code></td>
+      <td>auto ははみ出した場合のみスクロールバー表示</td>
+    </tr>
+    <tr>
+      <td><code>clip</code></td>
+      <td><code>rect()</code> / <code>auto</code></td>
+      <td>CSS2。position: absolute/fixed のみ有効。現在は clip-path を推奨</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
