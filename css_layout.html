@@ -1,0 +1,1654 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>CSS マルチカラム・フレキシブルボックス 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #9f7aea; padding-bottom: 10px; }
+    h2 { color: #553c9a; margin-top: 48px; border-left: 5px solid #9f7aea; padding-left: 12px; }
+    h3 { color: #276749; margin-top: 24px; }
+
+    code {
+      background: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment  { color: #68d391; }
+    pre .prop     { color: #90cdf4; }
+    pre .val      { color: #fc8181; }
+    pre .keyword  { color: #b794f4; }
+    pre .func     { color: #fbd38d; }
+    pre .selector { color: #f6ad55; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #b794f4;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #553c9a; }
+
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+
+    .demo-box {
+      background: #fff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* インタラクティブデモ共通 */
+    .interactive-demo {
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .slider-row label {
+      font-size: 0.85em;
+      font-weight: bold;
+      min-width: 160px;
+      color: #553c9a;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .slider-row input[type="range"] {
+      flex: 1;
+      min-width: 100px;
+      accent-color: #9f7aea;
+    }
+    .slider-row select {
+      border: 2px solid #e9d8fd;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.85em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #2d3748;
+      background: #fff;
+      cursor: pointer;
+    }
+    .slider-row select:focus { border-color: #9f7aea; outline: none; }
+    .val-display {
+      min-width: 64px;
+      text-align: right;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.85em;
+      color: #2d3748;
+    }
+    .color-code-display {
+      background: #1a202c;
+      color: #68d391;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.85em;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* マルチカラム デモ用テキスト */
+    .mc-demo-text {
+      font-size: 0.88em;
+      color: #4a5568;
+      line-height: 1.8;
+    }
+    .mc-demo-heading {
+      background: #9f7aea;
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.85em;
+      font-weight: bold;
+      margin: 0 0 8px;
+    }
+
+    /* フレックスアイテム デモ */
+    .flex-item {
+      background: #9f7aea;
+      color: #fff;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 0.82em;
+      font-weight: bold;
+      font-family: 'Consolas', 'Monaco', monospace;
+      text-align: center;
+      min-width: 60px;
+      transition: all 0.25s;
+    }
+    .flex-item:nth-child(2) { background: #805ad5; }
+    .flex-item:nth-child(3) { background: #6b46c1; }
+    .flex-item:nth-child(4) { background: #553c9a; }
+    .flex-item:nth-child(5) { background: #44337a; }
+
+    .flex-demo-wrap {
+      background: #edf2f7;
+      border: 2px dashed #9f7aea;
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 80px;
+      margin-bottom: 12px;
+      transition: all 0.25s;
+    }
+
+    /* justify-content / align-items 視覚デモ */
+    .jc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .jc-item {
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 8px;
+    }
+    .jc-label {
+      font-size: 0.72em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #553c9a;
+      font-weight: bold;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+    .jc-demo {
+      background: #edf2f7;
+      border-radius: 6px;
+      height: 52px;
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+    }
+    .jc-box {
+      background: #9f7aea;
+      border-radius: 4px;
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .jc-box.tall { height: 36px; }
+    .jc-box.short { height: 16px; }
+
+    /* flex-grow デモ */
+    .grow-demo {
+      background: #edf2f7;
+      border-radius: 8px;
+      padding: 8px;
+      display: flex;
+      gap: 6px;
+      margin: 8px 0;
+    }
+    .grow-box {
+      border-radius: 6px;
+      padding: 8px 6px;
+      font-size: 0.72em;
+      font-weight: bold;
+      font-family: 'Consolas', 'Monaco', monospace;
+      text-align: center;
+      color: #fff;
+      transition: all 0.25s;
+    }
+
+    table.ref-table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      margin: 14px 0;
+    }
+    table.ref-table th, table.ref-table td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.ref-table thead tr { background: #553c9a; color: #fff; }
+    table.ref-table tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 { margin-top: 0; color: #c05621; border-left-color: #f6ad55; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #fbd38d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #fbd38d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-purple { background: #9f7aea; color: #fff; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #e9d8fd; color: #553c9a; display: block; }
+
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.summary thead tr { background: #553c9a; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px 14px; }
+      .slider-row label { min-width: 120px; }
+      .jc-grid { grid-template-columns: repeat(2, 1fr); }
+      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.82em; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px 16px; }
+      .quiz-block { padding: 14px 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>🗂️ CSS マルチカラム・フレキシブルボックス 学習サンプル</h1>
+<p>新聞のような段組みレイアウトを実現する<strong>マルチカラム</strong>と、
+柔軟な一次元レイアウトを実現する<strong>フレキシブルボックス（Flexbox）</strong>を学びましょう。</p>
+
+
+<!-- ============================================================ -->
+<!-- PART 1：マルチカラムレイアウト -->
+<!-- ============================================================ -->
+<h2>【マルチカラムレイアウト】</h2>
+
+<!-- 1. マルチカラムとは -->
+<h2>① マルチカラムレイアウトとは</h2>
+<div class="note">
+  <strong>重要ポイント①：マルチカラムレイアウトとは、ボックスの内部を複数の段に分けるレイアウト</strong><br>
+  新聞・雑誌のような段組みをCSSだけで実現できます。
+  コンテナに <code>column-count</code> または <code>column-width</code> を指定するだけで、
+  子要素のコンテンツが自動的に複数の段に流し込まれます。
+</div>
+<div class="demo-box">
+
+  <h3>マルチカラムの仕組み</h3>
+  <div style="display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; margin:14px 0;">
+    <!-- 通常フロー -->
+    <div style="flex:1; min-width:200px;">
+      <div style="font-size:0.8em; font-weight:bold; color:#553c9a; margin-bottom:6px; font-family:'Consolas','Monaco',monospace;">通常フロー（1段）</div>
+      <div style="background:#edf2f7; border:2px dashed #9f7aea; border-radius:6px; padding:10px; font-size:0.78em; color:#4a5568; line-height:1.7;">
+        テキストは左から右、上から下へと流れます。段組みなしの通常のレイアウトです。テキストは左から右、上から下へと流れます。
+      </div>
+    </div>
+    <!-- 矢印 -->
+    <div style="display:flex; align-items:center; font-size:1.5em; color:#9f7aea; padding-top:20px;">→</div>
+    <!-- マルチカラム -->
+    <div style="flex:1; min-width:200px;">
+      <div style="font-size:0.8em; font-weight:bold; color:#553c9a; margin-bottom:6px; font-family:'Consolas','Monaco',monospace;">マルチカラム（3段）</div>
+      <div style="background:#edf2f7; border:2px dashed #9f7aea; border-radius:6px; padding:10px; font-size:0.78em; color:#4a5568; line-height:1.7; column-count:3; column-gap:10px;">
+        テキストは左から右、上から下へと流れます。段組みなしの通常のレイアウトです。テキストは左から右、上から下へと流れます。
+      </div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* マルチカラムの基本 */</span>
+<span class="selector">.container</span> {
+  <span class="prop">column-count</span>: <span class="val">3</span>;   <span class="comment">/* 3段組みにする */</span>
+}
+
+<span class="comment">/* これだけで内部コンテンツが3段に流し込まれる */</span>
+</pre>
+
+  <div class="good">
+    ✅ <strong>マルチカラムの特徴</strong><br>
+    ・コンテナに指定するだけで、子要素のテキストが自動的に複数段に流れる<br>
+    ・レスポンシブ対応が容易（<code>column-width</code> で自動段数調整）<br>
+    ・新聞・雑誌・辞書のような段組みレイアウトに最適
+  </div>
+</div>
+
+
+<!-- 2. column-count -->
+<h2>② column-count プロパティ</h2>
+<div class="note">
+  <strong>重要ポイント②：columns プロパティで段数を指定するだけで段組みになる</strong><br>
+  <code>column-count</code> は段の数を整数で指定します。
+  ブラウザが自動的に各段の幅を均等に計算します。
+</div>
+<div class="demo-box">
+<pre>
+<span class="prop">column-count</span>: <span class="val">1</span>;     <span class="comment">/* 1段（通常） */</span>
+<span class="prop">column-count</span>: <span class="val">2</span>;     <span class="comment">/* 2段組み */</span>
+<span class="prop">column-count</span>: <span class="val">3</span>;     <span class="comment">/* 3段組み */</span>
+<span class="prop">column-count</span>: <span class="val">auto</span>;  <span class="comment">/* column-widthに基づいて自動計算 */</span>
+</pre>
+
+  <h3>column-count インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <div class="slider-row">
+      <label>column-count</label>
+      <input type="range" id="cc-count" min="1" max="5" value="2" oninput="updateCC()">
+      <span class="val-display" id="cc-count-val">2</span>
+    </div>
+    <div id="cc-demo" style="column-count:2; column-gap:20px; background:#edf2f7; border-radius:8px; padding:14px; transition:all 0.3s;">
+      <p class="mc-demo-text" style="margin:0 0 8px;">
+        マルチカラムレイアウトは、ボックスの内部を複数の段に分けるレイアウト手法です。
+        新聞や雑誌のような段組みをCSSだけで実現できます。
+        column-countプロパティで段数を指定するだけで、テキストが自動的に複数の段に流し込まれます。
+        各段の幅はブラウザが均等に計算してくれます。
+        長いテキストも自然に次の段へと流れていきます。
+        これがマルチカラムレイアウトの基本的な動作です。
+      </p>
+    </div>
+    <div class="color-code-display" id="cc-code">column-count: 2;</div>
+  </div>
+  <script>
+    function updateCC() {
+      const v = document.getElementById('cc-count').value;
+      document.getElementById('cc-count-val').textContent = v;
+      document.getElementById('cc-demo').style.columnCount = v;
+      document.getElementById('cc-code').textContent = `column-count: ${v};`;
+    }
+  </script>
+</div>
+
+
+<!-- 3. column-width -->
+<h2>③ column-width プロパティ</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* 段の最小幅を指定する（段数は自動計算） */</span>
+<span class="prop">column-width</span>: <span class="val">200px</span>;  <span class="comment">/* 各段が最低200pxになるよう段数を自動調整 */</span>
+<span class="prop">column-width</span>: <span class="val">auto</span>;    <span class="comment">/* column-countに基づいて自動計算 */</span>
+
+<span class="comment">/* レスポンシブに段数が変わる例 */</span>
+<span class="selector">.container</span> {
+  <span class="prop">column-width</span>: <span class="val">250px</span>;
+  <span class="comment">/* 幅800px → 3段、幅500px → 2段、幅250px → 1段（自動） */</span>
+}
+</pre>
+
+  <div class="warn">
+    <strong>⚠️ column-width の注意点</strong><br>
+    <code>column-width</code> は「最小幅の目安」であり、
+    実際の段幅はコンテナ幅・段数・ギャップを考慮してブラウザが計算します。
+    <code>column-count</code> と同時に指定した場合、
+    <strong>段数の上限</strong>として <code>column-count</code> が機能します。
+  </div>
+
+  <h3>column-width インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <div class="slider-row">
+      <label>column-width</label>
+      <input type="range" id="cw-width" min="80" max="320" value="180" step="10" oninput="updateCW()">
+      <span class="val-display" id="cw-width-val">180px</span>
+    </div>
+    <div id="cw-demo" style="column-width:180px; column-gap:20px; background:#edf2f7; border-radius:8px; padding:14px; transition:all 0.3s;">
+      <p class="mc-demo-text" style="margin:0 0 8px;">
+        column-widthは段の最小幅を指定します。
+        コンテナの幅に応じて段数が自動的に変わります。
+        ウィンドウサイズを変えると段数が変化するレスポンシブな段組みが実現できます。
+        幅が狭くなると段数が減り、広くなると段数が増えます。
+        これがcolumn-widthの便利なところです。
+      </p>
+    </div>
+    <div class="color-code-display" id="cw-code">column-width: 180px;</div>
+  </div>
+  <script>
+    function updateCW() {
+      const v = document.getElementById('cw-width').value;
+      document.getElementById('cw-width-val').textContent = v + 'px';
+      document.getElementById('cw-demo').style.columnWidth = v + 'px';
+      document.getElementById('cw-code').textContent = `column-width: ${v}px;`;
+    }
+  </script>
+</div>
+
+
+<!-- 4. columns（ショートハンド） -->
+<h2>④ columns プロパティ（ショートハンド）</h2>
+<div class="note">
+  <strong>重要ポイント②（再掲）：columns プロパティで段数を指定するだけで段組みになる</strong><br>
+  <code>columns</code> は <code>column-width</code> と <code>column-count</code> を
+  まとめて指定できるショートハンドです。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* columns: column-width  column-count */</span>
+<span class="prop">columns</span>: <span class="val">3</span>;           <span class="comment">/* column-count: 3（段数のみ指定） */</span>
+<span class="prop">columns</span>: <span class="val">200px</span>;       <span class="comment">/* column-width: 200px（幅のみ指定） */</span>
+<span class="prop">columns</span>: <span class="val">200px 3</span>;    <span class="comment">/* column-width: 200px / column-count: 3（両方指定） */</span>
+<span class="prop">columns</span>: <span class="val">auto</span>;        <span class="comment">/* 両方 auto */</span>
+
+<span class="comment">/* 整数のみ → column-count として解釈 */</span>
+<span class="comment">/* 長さのみ → column-width として解釈 */</span>
+</pre>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>指定値の例</th><th>解釈</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>columns: 3</code></td><td>column-count: 3（段数3）</td></tr>
+      <tr><td><code>columns: 200px</code></td><td>column-width: 200px（最小幅200px）</td></tr>
+      <tr><td><code>columns: 200px 3</code></td><td>column-width: 200px かつ column-count: 3（上限3段）</td></tr>
+      <tr><td><code>columns: auto</code></td><td>column-width: auto / column-count: auto</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 5. column-gap -->
+<h2>⑤ column-gap プロパティ</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* 段と段の間隔（ガター）を指定 */</span>
+<span class="prop">column-gap</span>: <span class="val">normal</span>;  <span class="comment">/* ブラウザのデフォルト（通常1em程度） */</span>
+<span class="prop">column-gap</span>: <span class="val">20px</span>;    <span class="comment">/* 固定値 */</span>
+<span class="prop">column-gap</span>: <span class="val">2em</span>;     <span class="comment">/* フォントサイズ相対値 */</span>
+<span class="prop">column-gap</span>: <span class="val">5%</span>;      <span class="comment">/* コンテナ幅に対する割合 */</span>
+
+<span class="comment">/* gap プロパティ（Flexbox / Grid と共通） */</span>
+<span class="prop">gap</span>: <span class="val">20px</span>;  <span class="comment">/* column-gap と同じ効果（マルチカラムでは行方向は無視） */</span>
+</pre>
+
+  <h3>column-gap インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <div class="slider-row">
+      <label>column-gap</label>
+      <input type="range" id="cg-gap" min="0" max="60" value="20" oninput="updateCG()">
+      <span class="val-display" id="cg-gap-val">20px</span>
+    </div>
+    <div id="cg-demo" style="column-count:3; column-gap:20px; background:#edf2f7; border-radius:8px; padding:14px; transition:all 0.3s;">
+      <p class="mc-demo-text" style="margin:0;">
+        column-gapは段と段の間隔を指定します。
+        ガターとも呼ばれます。
+        適切な間隔を設けることで読みやすさが向上します。
+        広すぎると間延びし、狭すぎると読みにくくなります。
+        バランスの良い間隔を設定しましょう。
+      </p>
+    </div>
+    <div class="color-code-display" id="cg-code">column-count: 3;  column-gap: 20px;</div>
+  </div>
+  <script>
+    function updateCG() {
+      const v = document.getElementById('cg-gap').value;
+      document.getElementById('cg-gap-val').textContent = v + 'px';
+      document.getElementById('cg-demo').style.columnGap = v + 'px';
+      document.getElementById('cg-code').textContent =
+        `column-count: 3;  column-gap: ${v}px;`;
+    }
+  </script>
+</div>
+
+
+<!-- 6. column-rule -->
+<h2>⑥ column-rule プロパティ</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* 段と段の間に罫線を引く（border と同じ書式） */</span>
+<span class="prop">column-rule-width</span>: <span class="val">1px</span>;
+<span class="prop">column-rule-style</span>: <span class="val">solid</span>;   <span class="comment">/* none/solid/dashed/dotted/double など */</span>
+<span class="prop">column-rule-color</span>: <span class="val">#9f7aea</span>;
+
+<span class="comment">/* ショートハンド：幅 スタイル 色 */</span>
+<span class="prop">column-rule</span>: <span class="val">1px solid #9f7aea</span>;
+<span class="prop">column-rule</span>: <span class="val">2px dashed #b794f4</span>;
+<span class="prop">column-rule</span>: <span class="val">3px double #553c9a</span>;
+
+<span class="comment">/* 罫線なし */</span>
+<span class="prop">column-rule</span>: <span class="val">none</span>;
+</pre>
+
+  <h3>column-rule インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <div class="slider-row">
+      <label>column-rule-width</label>
+      <input type="range" id="cr-width" min="0" max="8" value="1" oninput="updateCR()">
+      <span class="val-display" id="cr-width-val">1px</span>
+    </div>
+    <div class="slider-row">
+      <label>column-rule-style</label>
+      <select id="cr-style" onchange="updateCR()">
+        <option value="solid">solid</option>
+        <option value="dashed">dashed</option>
+        <option value="dotted">dotted</option>
+        <option value="double">double</option>
+        <option value="groove">groove</option>
+        <option value="none">none</option>
+      </select>
+      <span class="val-display"></span>
+    </div>
+    <div id="cr-demo" style="column-count:3; column-gap:24px; column-rule:1px solid #9f7aea; background:#edf2f7; border-radius:8px; padding:14px; transition:all 0.3s;">
+      <p class="mc-demo-text" style="margin:0;">
+        column-ruleは段と段の間に罫線を引きます。
+        borderプロパティと同じ書式で指定できます。
+        幅・スタイル・色をショートハンドでまとめて指定できます。
+        罫線はcolumn-gapの中央に描画されます。
+        デザインのアクセントとして活用できます。
+      </p>
+    </div>
+    <div class="color-code-display" id="cr-code">column-rule: 1px solid #9f7aea;</div>
+  </div>
+  <script>
+    function updateCR() {
+      const w = document.getElementById('cr-width').value;
+      const s = document.getElementById('cr-style').value;
+      document.getElementById('cr-width-val').textContent = w + 'px';
+      const rule = s === 'none' ? 'none' : `${w}px ${s} #9f7aea`;
+      document.getElementById('cr-demo').style.columnRule = rule;
+      document.getElementById('cr-code').textContent = `column-rule: ${rule};`;
+    }
+  </script>
+
+  <div class="good">
+    ✅ <strong>column-rule の特徴</strong><br>
+    ・罫線は段と段の間（column-gap の中央）に描画される<br>
+    ・罫線の幅は column-gap の幅に影響しない（border と異なりスペースを占有しない）<br>
+    ・<code>border</code> と同じ style 値（solid / dashed / dotted / double など）が使える
+  </div>
+</div>
+
+
+<!-- 7. column-span -->
+<h2>⑦ column-span プロパティ</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* 段をまたいで表示する（見出しなどに使用） */</span>
+<span class="prop">column-span</span>: <span class="val">none</span>;  <span class="comment">/* 通常（段をまたがない・デフォルト） */</span>
+<span class="prop">column-span</span>: <span class="val">all</span>;   <span class="comment">/* すべての段にまたがって表示 */</span>
+
+<span class="comment">/* 使用例：段組みの中の見出しを全幅で表示 */</span>
+<span class="selector">.container</span> { <span class="prop">column-count</span>: <span class="val">3</span>; }
+<span class="selector">.container h2</span> { <span class="prop">column-span</span>: <span class="val">all</span>; }  <span class="comment">/* h2は全段にまたがる */</span>
+</pre>
+
+  <h3>column-span: all のデモ</h3>
+  <div style="column-count:3; column-gap:18px; background:#edf2f7; border-radius:8px; padding:14px; margin:14px 0; font-size:0.85em; color:#4a5568; line-height:1.7;">
+    <div class="mc-demo-heading" style="column-span:all; margin-bottom:10px;">
+      ▲ column-span: all（全段にまたがる見出し）
+    </div>
+    <p style="margin:0 0 6px;">
+      この見出しの下からテキストが3段に分かれて流れます。
+      column-span: all を指定した要素は全段にまたがって表示されます。
+    </p>
+    <p style="margin:0 0 6px;">
+      新聞のように大見出しが全幅で表示され、その下に段組みのテキストが続くレイアウトが作れます。
+    </p>
+    <p style="margin:0;">
+      column-span には none と all の2つの値しかなく、
+      特定の段数にまたがることはできません。
+    </p>
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ column-span の注意点</strong><br>
+    ・値は <code>none</code> と <code>all</code> の2つのみ（特定の段数指定は不可）<br>
+    ・<code>column-span: all</code> を指定した要素は、
+    前後のコンテンツの段組みを分断します<br>
+    ・<code>column-span: all</code> の要素自身には
+    <code>float</code> を指定できません
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 2：フレキシブルボックスレイアウト -->
+<!-- ============================================================ -->
+<h2>【フレキシブルボックスレイアウト（Flexbox）】</h2>
+
+<!-- 8. Flexboxとは -->
+<h2>⑧ フレキシブルボックスレイアウトとは</h2>
+<div class="note">
+  <strong>重要ポイント③：display: flex; を指定すると、その子要素は左から順に横に並ぶ</strong><br>
+  Flexbox は<strong>一次元</strong>（横または縦の一方向）のレイアウトシステムです。
+  コンテナに <code>display: flex</code> を指定するだけで、
+  直接の子要素（フレックスアイテム）が横に並びます。
+</div>
+<div class="demo-box">
+
+  <h3>Flexbox の基本構造</h3>
+  <div style="margin:14px 0;">
+    <div style="font-size:0.82em; font-weight:bold; color:#553c9a; margin-bottom:6px; font-family:'Consolas','Monaco',monospace;">display: flex（デフォルト：左から横に並ぶ）</div>
+    <div style="display:flex; gap:8px; background:#edf2f7; border:2px dashed #9f7aea; border-radius:8px; padding:12px;">
+      <div class="flex-item">Item 1</div>
+      <div class="flex-item">Item 2</div>
+      <div class="flex-item">Item 3</div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* フレックスコンテナの指定 */</span>
+<span class="selector">.container</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;  <span class="comment">/* 子要素が左から横に並ぶ */</span>
+}
+
+<span class="comment">/* display: inline-flex：インラインのフレックスコンテナ */</span>
+<span class="selector">.container</span> {
+  <span class="prop">display</span>: <span class="val">inline-flex</span>;
+}
+</pre>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>用語</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>フレックスコンテナ</strong></td><td><code>display: flex</code> を指定した要素</td></tr>
+      <tr><td><strong>フレックスアイテム</strong></td><td>フレックスコンテナの直接の子要素</td></tr>
+      <tr><td><strong>主軸（main axis）</strong></td><td>アイテムが並ぶ方向（デフォルトは横方向）</td></tr>
+      <tr><td><strong>交差軸（cross axis）</strong></td><td>主軸に垂直な方向（デフォルトは縦方向）</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 9. flex-direction / flex-wrap -->
+<h2>⑨ flex-direction / flex-wrap</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* flex-direction：主軸の方向を指定 */</span>
+<span class="prop">flex-direction</span>: <span class="val">row</span>;            <span class="comment">/* 左→右（デフォルト） */</span>
+<span class="prop">flex-direction</span>: <span class="val">row-reverse</span>;    <span class="comment">/* 右→左 */</span>
+<span class="prop">flex-direction</span>: <span class="val">column</span>;         <span class="comment">/* 上→下 */</span>
+<span class="prop">flex-direction</span>: <span class="val">column-reverse</span>; <span class="comment">/* 下→上 */</span>
+
+<span class="comment">/* flex-wrap：折り返しの設定 */</span>
+<span class="prop">flex-wrap</span>: <span class="val">nowrap</span>;       <span class="comment">/* 折り返さない（デフォルト） */</span>
+<span class="prop">flex-wrap</span>: <span class="val">wrap</span>;         <span class="comment">/* 折り返す（上→下） */</span>
+<span class="prop">flex-wrap</span>: <span class="val">wrap-reverse</span>; <span class="comment">/* 折り返す（下→上） */</span>
+
+<span class="comment">/* flex-flow：flex-direction と flex-wrap のショートハンド */</span>
+<span class="prop">flex-flow</span>: <span class="val">row wrap</span>;
+<span class="prop">flex-flow</span>: <span class="val">column nowrap</span>;
+</pre>
+
+  <h3>flex-direction / flex-wrap インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <div class="slider-row">
+      <label>flex-direction</label>
+      <select id="fd-dir" onchange="updateFD()">
+        <option value="row">row</option>
+        <option value="row-reverse">row-reverse</option>
+        <option value="column">column</option>
+        <option value="column-reverse">column-reverse</option>
+      </select>
+      <span class="val-display"></span>
+    </div>
+    <div class="slider-row">
+      <label>flex-wrap</label>
+      <select id="fd-wrap" onchange="updateFD()">
+        <option value="nowrap">nowrap</option>
+        <option value="wrap">wrap</option>
+        <option value="wrap-reverse">wrap-reverse</option>
+      </select>
+      <span class="val-display"></span>
+    </div>
+    <div class="flex-demo-wrap" id="fd-demo"
+         style="display:flex; flex-direction:row; flex-wrap:nowrap; gap:6px; min-height:100px;">
+      <div class="flex-item" style="min-width:60px;">Item 1</div>
+      <div class="flex-item" style="min-width:60px;">Item 2</div>
+      <div class="flex-item" style="min-width:60px;">Item 3</div>
+      <div class="flex-item" style="min-width:60px;">Item 4</div>
+      <div class="flex-item" style="min-width:60px;">Item 5</div>
+    </div>
+    <div class="color-code-display" id="fd-code">flex-direction: row;  flex-wrap: nowrap;</div>
+  </div>
+  <script>
+    function updateFD() {
+      const dir = document.getElementById('fd-dir').value;
+      const wrap = document.getElementById('fd-wrap').value;
+      const demo = document.getElementById('fd-demo');
+      demo.style.flexDirection = dir;
+      demo.style.flexWrap = wrap;
+      document.getElementById('fd-code').textContent =
+        `flex-direction: ${dir};  flex-wrap: ${wrap};`;
+    }
+  </script>
+</div>
+
+
+<!-- 10. justify-content / align-items / align-content -->
+<h2>⑩ justify-content / align-items / align-content</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* justify-content：主軸方向の揃え方 */</span>
+<span class="prop">justify-content</span>: <span class="val">flex-start</span>;    <span class="comment">/* 主軸の始点に揃える（デフォルト） */</span>
+<span class="prop">justify-content</span>: <span class="val">flex-end</span>;      <span class="comment">/* 主軸の終点に揃える */</span>
+<span class="prop">justify-content</span>: <span class="val">center</span>;        <span class="comment">/* 中央に揃える */</span>
+<span class="prop">justify-content</span>: <span class="val">space-between</span>; <span class="comment">/* 両端に配置・間隔均等 */</span>
+<span class="prop">justify-content</span>: <span class="val">space-around</span>;  <span class="comment">/* 各アイテムの両側に均等な余白 */</span>
+<span class="prop">justify-content</span>: <span class="val">space-evenly</span>;  <span class="comment">/* すべての間隔が均等 */</span>
+
+<span class="comment">/* align-items：交差軸方向の揃え方（1行） */</span>
+<span class="prop">align-items</span>: <span class="val">stretch</span>;     <span class="comment">/* 交差軸いっぱいに伸ばす（デフォルト） */</span>
+<span class="prop">align-items</span>: <span class="val">flex-start</span>;  <span class="comment">/* 交差軸の始点に揃える */</span>
+<span class="prop">align-items</span>: <span class="val">flex-end</span>;    <span class="comment">/* 交差軸の終点に揃える */</span>
+<span class="prop">align-items</span>: <span class="val">center</span>;      <span class="comment">/* 交差軸の中央に揃える */</span>
+<span class="prop">align-items</span>: <span class="val">baseline</span>;    <span class="comment">/* テキストのベースラインに揃える */</span>
+
+<span class="comment">/* align-content：複数行のときの交差軸方向の揃え方 */</span>
+<span class="prop">align-content</span>: <span class="val">flex-start</span>;    <span class="comment">/* 始点に揃える */</span>
+<span class="prop">align-content</span>: <span class="val">center</span>;        <span class="comment">/* 中央に揃える */</span>
+<span class="prop">align-content</span>: <span class="val">space-between</span>; <span class="comment">/* 両端に配置・間隔均等 */</span>
+<span class="prop">align-content</span>: <span class="val">stretch</span>;       <span class="comment">/* 伸ばす（デフォルト） */</span>
+</pre>
+
+  <h3>justify-content の視覚デモ</h3>
+  <div class="jc-grid">
+    <div class="jc-item">
+      <div class="jc-label">flex-start</div>
+      <div class="jc-demo" style="justify-content:flex-start; align-items:center;">
+        <div class="jc-box"></div><div class="jc-box"></div><div class="jc-box"></div>
+      </div>
+    </div>
+    <div class="jc-item">
+      <div class="jc-label">flex-end</div>
+      <div class="jc-demo" style="justify-content:flex-end; align-items:center;">
+        <div class="jc-box"></div><div class="jc-box"></div><div class="jc-box"></div>
+      </div>
+    </div>
+    <div class="jc-item">
+      <div class="jc-label">center</div>
+      <div class="jc-demo" style="justify-content:center; align-items:center;">
+        <div class="jc-box"></div><div class="jc-box"></div><div class="jc-box"></div>
+      </div>
+    </div>
+    <div class="jc-item">
+      <div class="jc-label">space-between</div>
+      <div class="jc-demo" style="justify-content:space-between; align-items:center;">
+        <div class="jc-box"></div><div class="jc-box"></div><div class="jc-box"></div>
+      </div>
+    </div>
+    <div class="jc-item">
+      <div class="jc-label">space-around</div>
+      <div class="jc-demo" style="justify-content:space-around; align-items:center;">
+        <div class="jc-box"></div><div class="jc-box"></div><div class="jc-box"></div>
+      </div>
+    </div>
+    <div class="jc-item">
+      <div class="jc-label">space-evenly</div>
+      <div class="jc-demo" style="justify-content:space-evenly; align-items:center;">
+        <div class="jc-box"></div><div class="jc-box"></div><div class="jc-box"></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>align-items の視覚デモ</h3>
+  <div class="jc-grid">
+    <div class="jc-item">
+      <div class="jc-label">stretch（デフォルト）</div>
+      <div class="jc-demo" style="align-items:stretch; gap:4px; padding:4px;">
+        <div class="jc-box" style="height:auto; align-self:stretch;"></div>
+        <div class="jc-box" style="height:auto; align-self:stretch;"></div>
+        <div class="jc-box" style="height:auto; align-self:stretch;"></div>
+      </div>
+    </div>
+    <div class="jc-item">
+      <div class="jc-label">flex-start</div>
+      <div class="jc-demo" style="align-items:flex-start; gap:4px; padding:4px;">
+        <div class="jc-box tall"></div><div class="jc-box"></div><div class="jc-box short"></div>
+      </div>
+    </div>
+    <div class="jc-item">
+      <div class="jc-label">flex-end</div>
+      <div class="jc-demo" style="align-items:flex-end; gap:4px; padding:4px;">
+        <div class="jc-box tall"></div><div class="jc-box"></div><div class="jc-box short"></div>
+      </div>
+    </div>
+    <div class="jc-item">
+      <div class="jc-label">center</div>
+      <div class="jc-demo" style="align-items:center; gap:4px; padding:4px;">
+        <div class="jc-box tall"></div><div class="jc-box"></div><div class="jc-box short"></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>justify-content / align-items インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <div class="slider-row">
+      <label>justify-content</label>
+      <select id="jc-jc" onchange="updateJC()">
+        <option value="flex-start">flex-start</option>
+        <option value="flex-end">flex-end</option>
+        <option value="center">center</option>
+        <option value="space-between">space-between</option>
+        <option value="space-around">space-around</option>
+        <option value="space-evenly">space-evenly</option>
+      </select>
+      <span class="val-display"></span>
+    </div>
+    <div class="slider-row">
+      <label>align-items</label>
+      <select id="jc-ai" onchange="updateJC()">
+        <option value="stretch">stretch</option>
+        <option value="flex-start">flex-start</option>
+        <option value="flex-end">flex-end</option>
+        <option value="center">center</option>
+        <option value="baseline">baseline</option>
+      </select>
+      <span class="val-display"></span>
+    </div>
+    <div class="flex-demo-wrap" id="jc-demo"
+         style="display:flex; justify-content:flex-start; align-items:stretch; gap:6px; height:100px;">
+      <div class="flex-item">Item 1</div>
+      <div class="flex-item" style="font-size:1.2em;">Item 2</div>
+      <div class="flex-item" style="font-size:0.7em;">Item 3</div>
+    </div>
+    <div class="color-code-display" id="jc-code">justify-content: flex-start;  align-items: stretch;</div>
+  </div>
+  <script>
+    function updateJC() {
+      const jc = document.getElementById('jc-jc').value;
+      const ai = document.getElementById('jc-ai').value;
+      const demo = document.getElementById('jc-demo');
+      demo.style.justifyContent = jc;
+      demo.style.alignItems = ai;
+      document.getElementById('jc-code').textContent =
+        `justify-content: ${jc};  align-items: ${ai};`;
+    }
+  </script>
+</div>
+
+
+<!-- 11. flex-grow / flex-shrink / flex-basis / flex -->
+<h2>⑪ flex-grow / flex-shrink / flex-basis / flex</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* flex-grow：余白をどの割合で伸びるか（デフォルト: 0） */</span>
+<span class="prop">flex-grow</span>: <span class="val">0</span>;  <span class="comment">/* 伸びない（デフォルト） */</span>
+<span class="prop">flex-grow</span>: <span class="val">1</span>;  <span class="comment">/* 余白を均等に分け合って伸びる */</span>
+<span class="prop">flex-grow</span>: <span class="val">2</span>;  <span class="comment">/* 他のgrow:1の要素の2倍の割合で伸びる */</span>
+
+<span class="comment">/* flex-shrink：余白が足りないときにどの割合で縮むか（デフォルト: 1） */</span>
+<span class="prop">flex-shrink</span>: <span class="val">1</span>;  <span class="comment">/* 均等に縮む（デフォルト） */</span>
+<span class="prop">flex-shrink</span>: <span class="val">0</span>;  <span class="comment">/* 縮まない */</span>
+<span class="prop">flex-shrink</span>: <span class="val">2</span>;  <span class="comment">/* 他の要素の2倍の割合で縮む */</span>
+
+<span class="comment">/* flex-basis：アイテムの基本サイズ（デフォルト: auto） */</span>
+<span class="prop">flex-basis</span>: <span class="val">auto</span>;   <span class="comment">/* widthまたはコンテンツサイズ */</span>
+<span class="prop">flex-basis</span>: <span class="val">200px</span>;  <span class="comment">/* 基本幅200px */</span>
+<span class="prop">flex-basis</span>: <span class="val">0</span>;      <span class="comment">/* 基本サイズ0（grow比率のみで分配） */</span>
+
+<span class="comment">/* flex ショートハンド：grow shrink basis */</span>
+<span class="prop">flex</span>: <span class="val">1</span>;          <span class="comment">/* flex: 1 1 0%（均等に伸縮） */</span>
+<span class="prop">flex</span>: <span class="val">auto</span>;       <span class="comment">/* flex: 1 1 auto */</span>
+<span class="prop">flex</span>: <span class="val">none</span>;       <span class="comment">/* flex: 0 0 auto（伸縮しない） */</span>
+<span class="prop">flex</span>: <span class="val">2 1 200px</span>;  <span class="comment">/* grow:2 shrink:1 basis:200px */</span>
+</pre>
+
+  <h3>flex-grow の視覚デモ</h3>
+  <div style="margin:14px 0;">
+    <div style="font-size:0.8em; color:#553c9a; font-weight:bold; margin-bottom:4px; font-family:'Consolas','Monaco',monospace;">grow: 0 / 1 / 2（余白の分配比率）</div>
+    <div class="grow-demo">
+      <div class="grow-box" style="background:#9f7aea; flex-grow:0; min-width:60px;">grow: 0</div>
+      <div class="grow-box" style="background:#805ad5; flex-grow:1;">grow: 1</div>
+      <div class="grow-box" style="background:#553c9a; flex-grow:2;">grow: 2</div>
+    </div>
+    <div style="font-size:0.8em; color:#553c9a; font-weight:bold; margin-bottom:4px; font-family:'Consolas','Monaco',monospace;">grow: 1 / 1 / 1（均等分配）</div>
+    <div class="grow-demo">
+      <div class="grow-box" style="background:#9f7aea; flex-grow:1;">grow: 1</div>
+      <div class="grow-box" style="background:#805ad5; flex-grow:1;">grow: 1</div>
+      <div class="grow-box" style="background:#553c9a; flex-grow:1;">grow: 1</div>
+    </div>
+  </div>
+
+  <h3>flex-grow インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <div class="slider-row">
+      <label>Item1 flex-grow</label>
+      <input type="range" id="fg-1" min="0" max="4" value="1" oninput="updateFG()">
+      <span class="val-display" id="fg-1-val">1</span>
+    </div>
+    <div class="slider-row">
+      <label>Item2 flex-grow</label>
+      <input type="range" id="fg-2" min="0" max="4" value="1" oninput="updateFG()">
+      <span class="val-display" id="fg-2-val">1</span>
+    </div>
+    <div class="slider-row">
+      <label>Item3 flex-grow</label>
+      <input type="range" id="fg-3" min="0" max="4" value="1" oninput="updateFG()">
+      <span class="val-display" id="fg-3-val">1</span>
+    </div>
+    <div style="display:flex; gap:6px; background:#edf2f7; border-radius:8px; padding:10px;">
+      <div id="fg-box1" class="flex-item" style="flex-grow:1; transition:all 0.25s;">Item 1<br><span id="fg-label1" style="font-size:0.85em;">grow:1</span></div>
+      <div id="fg-box2" class="flex-item" style="flex-grow:1; transition:all 0.25s;">Item 2<br><span id="fg-label2" style="font-size:0.85em;">grow:1</span></div>
+      <div id="fg-box3" class="flex-item" style="flex-grow:1; transition:all 0.25s;">Item 3<br><span id="fg-label3" style="font-size:0.85em;">grow:1</span></div>
+    </div>
+    <div class="color-code-display" id="fg-code">Item1: flex-grow: 1;  Item2: flex-grow: 1;  Item3: flex-grow: 1;</div>
+  </div>
+  <script>
+    function updateFG() {
+      const v1 = document.getElementById('fg-1').value;
+      const v2 = document.getElementById('fg-2').value;
+      const v3 = document.getElementById('fg-3').value;
+      document.getElementById('fg-1-val').textContent = v1;
+      document.getElementById('fg-2-val').textContent = v2;
+      document.getElementById('fg-3-val').textContent = v3;
+      document.getElementById('fg-box1').style.flexGrow = v1;
+      document.getElementById('fg-box2').style.flexGrow = v2;
+      document.getElementById('fg-box3').style.flexGrow = v3;
+      document.getElementById('fg-label1').textContent = `grow:${v1}`;
+      document.getElementById('fg-label2').textContent = `grow:${v2}`;
+      document.getElementById('fg-label3').textContent = `grow:${v3}`;
+      document.getElementById('fg-code').textContent =
+        `Item1: flex-grow: ${v1};  Item2: flex-grow: ${v2};  Item3: flex-grow: ${v3};`;
+    }
+  </script>
+</div>
+
+
+<!-- 12. order / align-self -->
+<h2>⑫ order / align-self</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* order：アイテムの表示順序（デフォルト: 0） */</span>
+<span class="comment">/* 数値が小さいほど先に表示される */</span>
+<span class="prop">order</span>: <span class="val">0</span>;   <span class="comment">/* デフォルト */</span>
+<span class="prop">order</span>: <span class="val">-1</span>;  <span class="comment">/* 先頭に移動 */</span>
+<span class="prop">order</span>: <span class="val">1</span>;   <span class="comment">/* 後ろに移動 */</span>
+<span class="prop">order</span>: <span class="val">999</span>; <span class="comment">/* 最後尾に移動 */</span>
+
+<span class="comment">/* align-self：個別アイテムの交差軸揃え（align-itemsを上書き） */</span>
+<span class="prop">align-self</span>: <span class="val">auto</span>;        <span class="comment">/* 親のalign-itemsに従う（デフォルト） */</span>
+<span class="prop">align-self</span>: <span class="val">flex-start</span>;  <span class="comment">/* 交差軸の始点に揃える */</span>
+<span class="prop">align-self</span>: <span class="val">flex-end</span>;    <span class="comment">/* 交差軸の終点に揃える */</span>
+<span class="prop">align-self</span>: <span class="val">center</span>;      <span class="comment">/* 交差軸の中央に揃える */</span>
+<span class="prop">align-self</span>: <span class="val">stretch</span>;     <span class="comment">/* 交差軸いっぱいに伸ばす */</span>
+<span class="prop">align-self</span>: <span class="val">baseline</span>;    <span class="comment">/* ベースラインに揃える */</span>
+</pre>
+
+  <h3>order のデモ</h3>
+  <div style="background:#edf2f7; border:2px dashed #9f7aea; border-radius:8px; padding:12px; display:flex; gap:8px; margin:14px 0;">
+    <div class="flex-item" style="order:3;">HTML順:1<br><small>order:3</small></div>
+    <div class="flex-item" style="order:1;">HTML順:2<br><small>order:1</small></div>
+    <div class="flex-item" style="order:2;">HTML順:3<br><small>order:2</small></div>
+  </div>
+  <div style="font-size:0.82em; color:#553c9a; margin-top:-8px; margin-bottom:14px;">
+    → 表示順：HTML順2（order:1）→ HTML順3（order:2）→ HTML順1（order:3）
+  </div>
+
+  <h3>align-self のデモ</h3>
+  <div style="background:#edf2f7; border:2px dashed #9f7aea; border-radius:8px; padding:12px; display:flex; gap:8px; height:100px; align-items:center; margin:14px 0;">
+    <div class="flex-item" style="align-self:flex-start;">flex-start</div>
+    <div class="flex-item" style="align-self:center;">center<br>(親と同じ)</div>
+    <div class="flex-item" style="align-self:flex-end;">flex-end</div>
+    <div class="flex-item" style="align-self:stretch; height:auto;">stretch</div>
+  </div>
+</div>
+
+
+<!-- 13. gap（Flexbox） -->
+<h2>⑬ gap（Flexbox のアイテム間隔）</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* gap：アイテム間の余白（row-gap と column-gap のショートハンド） */</span>
+<span class="prop">gap</span>: <span class="val">16px</span>;         <span class="comment">/* 縦横ともに16px */</span>
+<span class="prop">gap</span>: <span class="val">8px 16px</span>;     <span class="comment">/* 行間8px・列間16px */</span>
+<span class="prop">row-gap</span>: <span class="val">8px</span>;      <span class="comment">/* 行間のみ */</span>
+<span class="prop">column-gap</span>: <span class="val">16px</span>; <span class="comment">/* 列間のみ */</span>
+</pre>
+
+  <h3>gap インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <div class="slider-row">
+      <label>gap</label>
+      <input type="range" id="gap-v" min="0" max="40" value="8" oninput="updateGAP()">
+      <span class="val-display" id="gap-v-val">8px</span>
+    </div>
+    <div id="gap-demo"
+         style="display:flex; flex-wrap:wrap; gap:8px; background:#edf2f7; border-radius:8px; padding:12px;">
+      <div class="flex-item">Item 1</div>
+      <div class="flex-item">Item 2</div>
+      <div class="flex-item">Item 3</div>
+      <div class="flex-item">Item 4</div>
+      <div class="flex-item">Item 5</div>
+    </div>
+    <div class="color-code-display" id="gap-code">gap: 8px;</div>
+  </div>
+  <script>
+    function updateGAP() {
+      const v = document.getElementById('gap-v').value;
+      document.getElementById('gap-v-val').textContent = v + 'px';
+      document.getElementById('gap-demo').style.gap = v + 'px';
+      document.getElementById('gap-code').textContent = `gap: ${v}px;`;
+    }
+  </script>
+</div>
+
+
+<!-- 演習問題 -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      <code>column-rule</code> に指定した罫線の幅は、
+      <code>column-gap</code> の幅に影響し、
+      罫線が太くなるほど段間のスペースが広くなる。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn btn-purple" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'column-rule の罫線は column-gap の中央に描画されますが、<br>' +
+            '<strong>罫線の幅は column-gap のスペースに影響しません</strong>。<br>' +
+            'border と異なり、column-rule はスペースを占有しません。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。column-rule の罫線幅は column-gap に影響しません。' +
+            '罫線は column-gap の中央に描画されるだけで、スペースを占有しません。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合う値・プロパティ名を入力してください。</p>
+
+    <label>① column-count と column-width をまとめて指定できるショートハンドプロパティ名：</label>
+    <input type="text" id="q2a" placeholder="プロパティ名">
+
+    <label>② 段をすべての段にまたがって表示するための column-span の値：</label>
+    <input type="text" id="q2b" placeholder="値">
+
+    <label>③ display: flex を指定した要素の直接の子要素の呼び名（日本語）：</label>
+    <input type="text" id="q2c" placeholder="〇〇〇〇〇〇〇">
+
+    <label>④ フレックスアイテムが余白を分け合って伸びる割合を指定するプロパティ名：</label>
+    <input type="text" id="q2d" placeholder="プロパティ名">
+
+    <label>⑤ justify-content の値のうち、両端に配置して間隔を均等にするもの：</label>
+    <input type="text" id="q2e" placeholder="値">
+
+    <label>⑥ flex-direction のデフォルト値：</label>
+    <input type="text" id="q2f" placeholder="値">
+
+    <br>
+    <button class="btn btn-purple" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value.trim().toLowerCase().replace(/\s/g,'');
+        const b = document.getElementById('q2b').value.trim().toLowerCase();
+        const c = document.getElementById('q2c').value.trim();
+        const d = document.getElementById('q2d').value.trim().toLowerCase().replace(/\s/g,'');
+        const e = document.getElementById('q2e').value.trim().toLowerCase().replace(/\s/g,'');
+        const f = document.getElementById('q2f').value.trim().toLowerCase().replace(/\s/g,'');
+        const r = document.getElementById('q2-result');
+        const ca = a === 'columns';
+        const cb = b === 'all';
+        const cc = c.includes('フレックスアイテム') || c.includes('フレキシブルアイテム') || c.includes('アイテム');
+        const cd = d === 'flex-grow';
+        const ce = e === 'space-between';
+        const cf = f === 'row';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！マルチカラムとFlexboxを完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `① ${ca?'✅':'❌ columns'}　` +
+            `② ${cb?'✅':'❌ all'}　` +
+            `③ ${cc?'✅':'❌ フレックスアイテム'}　` +
+            `④ ${cd?'✅':'❌ flex-grow'}　` +
+            `⑤ ${ce?'✅':'❌ space-between'}　` +
+            `⑥ ${cf?'✅':'❌ row'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>
+      <code>columns: 200px 3</code> の意味として正しいものはどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">段の幅を200pxにして、最大3段まで表示する</option>
+      <option value="b">段数を200、幅を3pxにする</option>
+      <option value="c">段の幅を200px、段数を3段に固定する（どちらも厳密に守られる）</option>
+      <option value="d">200pxの段を3段作り、それ以上は折り返す</option>
+    </select>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'a') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            '<code>columns: 200px 3</code> は<br>' +
+            '・column-width: 200px（段の最小幅の目安）<br>' +
+            '・column-count: 3（段数の上限）<br>' +
+            'の両方を指定したショートハンドです。<br>' +
+            'コンテナが広くても最大3段、狭くなれば段幅200pxを目安に段数が減ります。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            '<code>columns: 200px 3</code> は<br>' +
+            '・column-width: 200px（段の最小幅の目安）<br>' +
+            '・column-count: 3（段数の上限）<br>' +
+            'を同時に指定したショートハンドです。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 選択問題</h3>
+    <p>
+      Flexbox で <code>justify-content: space-between</code> と
+      <code>justify-content: space-around</code> の違いとして正しいものはどれですか？
+    </p>
+    <select id="q4">
+      <option value="">-- 選択してください --</option>
+      <option value="a">space-between は両端に余白があり、space-around は両端に余白がない</option>
+      <option value="b">space-between は両端に余白がなく、space-around は両端にも余白がある</option>
+      <option value="c">space-between と space-around はまったく同じ効果をもたらす</option>
+      <option value="d">space-between は縦方向、space-around は横方向に適用される</option>
+    </select>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const v = document.getElementById('q4').value;
+        const r = document.getElementById('q4-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            '・<strong>space-between</strong>：最初と最後のアイテムが両端に配置され、間隔が均等<br>' +
+            '　→ 両端に余白なし<br>' +
+            '・<strong>space-around</strong>：各アイテムの両側に均等な余白が付く<br>' +
+            '　→ 両端の余白はアイテム間の余白の半分<br>' +
+            '・<strong>space-evenly</strong>：すべての間隔（両端含む）が完全に均等';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            '・space-between：両端に余白なし・アイテム間が均等<br>' +
+            '・space-around：各アイテムの両側に余白あり（両端は半分）<br>' +
+            '・space-evenly：すべての間隔が完全均等';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5a">
+      ① <code>column-span</code> の値は <code>none</code> と <code>all</code> の2つのみである
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5b">
+      ② <code>display: flex</code> を指定すると、子要素はデフォルトで縦に並ぶ
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5c">
+      ③ <code>flex-grow: 0</code> はデフォルト値であり、アイテムは余白があっても伸びない
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5d">
+      ④ <code>align-self</code> は個別のフレックスアイテムに指定し、<code>align-items</code> の設定を上書きできる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5e">
+      ⑤ <code>columns: 3</code> は <code>column-width: 3</code> と同じ意味である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5f">
+      ⑥ <code>flex-wrap: nowrap</code> はデフォルト値であり、アイテムは折り返さない
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5g">
+      ⑦ <code>order</code> プロパティの値が小さいほど先に表示される
+    </label>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const r = document.getElementById('q5-result');
+        const checks = {
+          a: document.getElementById('q5a').checked,
+          b: document.getElementById('q5b').checked,
+          c: document.getElementById('q5c').checked,
+          d: document.getElementById('q5d').checked,
+          e: document.getElementById('q5e').checked,
+          f: document.getElementById('q5f').checked,
+          g: document.getElementById('q5g').checked,
+        };
+        // 正解：①③④⑥⑦（a, c, d, f, g）
+        // ② display:flex のデフォルトは横並び（row）
+        // ⑤ columns: 3 は column-count: 3（整数 → column-count として解釈）
+        const correct = { a:true, b:false, c:true, d:true, e:false, f:true, g:true };
+        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
+        const allCorrect = results.every(Boolean);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① column-span は none と all のみ ✅<br>' +
+            '・③ flex-grow のデフォルトは 0（伸びない） ✅<br>' +
+            '・④ align-self で align-items を上書き可 ✅<br>' +
+            '・⑥ flex-wrap のデフォルトは nowrap ✅<br>' +
+            '・⑦ order は小さい値が先に表示 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① column-span は none と all のみ<br>' +
+            '・③ flex-grow のデフォルトは 0（余白があっても伸びない）<br>' +
+            '・④ align-self で個別アイテムの align-items を上書きできる<br>' +
+            '・⑥ flex-wrap のデフォルトは nowrap（折り返さない）<br>' +
+            '・⑦ order は値が小さいほど先に表示される<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② display: flex のデフォルトは横並び（flex-direction: row）<br>' +
+            '・⑤ columns: 3 の整数は column-count: 3 として解釈される（column-width ではない）';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. コード穴埋め問題</h3>
+    <p><code>__A__</code> 〜 <code>__F__</code> に適切な値・プロパティ名を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+/* A：3段組みにする（ショートハンドで段数のみ指定） */
+__A__: 3;
+
+/* B：段と段の間に「2px solid #9f7aea」の罫線を引く */
+column-rule: __B__;
+
+/* C：display: flex で子要素を縦方向（上から下）に並べる */
+flex-direction: __C__;
+
+/* D：フレックスアイテムを交差軸の中央に揃える（コンテナ側の指定） */
+__D__: center;
+
+/* E：アイテム2だけを交差軸の終点に揃える（アイテム側の個別指定） */
+align-self: __E__;
+
+/* F：フレックスアイテムが余白を均等に分け合って伸びるように設定 */
+flex-grow: __F__;</pre>
+
+    <label>A（段数指定のショートハンドプロパティ名）：</label>
+    <input type="text" id="q6a" placeholder="プロパティ名">
+    <label>B（column-rule の値）：</label>
+    <input type="text" id="q6b" placeholder="値">
+    <label>C（縦方向に並べる flex-direction の値）：</label>
+    <input type="text" id="q6c" placeholder="値">
+    <label>D（交差軸の揃えをコンテナ側で指定するプロパティ名）：</label>
+    <input type="text" id="q6d" placeholder="プロパティ名">
+    <label>E（交差軸の終点に揃える align-self の値）：</label>
+    <input type="text" id="q6e" placeholder="値">
+    <label>F（均等に伸びるための flex-grow の値）：</label>
+    <input type="text" id="q6f" placeholder="値">
+    <br>
+    <button class="btn btn-purple" onclick="checkQ6()">答え合わせ</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const a = document.getElementById('q6a').value.trim().toLowerCase().replace(/\s/g,'');
+        const b = document.getElementById('q6b').value.trim().toLowerCase().replace(/\s+/g,' ').trim();
+        const c = document.getElementById('q6c').value.trim().toLowerCase().replace(/\s/g,'');
+        const d = document.getElementById('q6d').value.trim().toLowerCase().replace(/\s/g,'');
+        const e = document.getElementById('q6e').value.trim().toLowerCase().replace(/\s/g,'');
+        const f = document.getElementById('q6f').value.trim();
+        const r = document.getElementById('q6-result');
+        const ca = a === 'columns';
+        const cb = b === '2px solid #9f7aea' || b === '2pxsolid#9f7aea';
+        const cc = c === 'column';
+        const cd = d === 'align-items';
+        const ce = e === 'flex-end';
+        const cf = f === '1';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！マルチカラムとFlexboxの記述を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca?'✅':'❌ columns'}　` +
+            `B: ${cb?'✅':'❌ 2px solid #9f7aea'}　` +
+            `C: ${cc?'✅':'❌ column'}　` +
+            `D: ${cd?'✅':'❌ align-items'}　` +
+            `E: ${ce?'✅':'❌ flex-end'}　` +
+            `F: ${cf?'✅':'❌ 1'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q7 -->
+  <div class="quiz-block">
+    <h3>Q7. 記述問題</h3>
+    <p>
+      <code>column-count</code> と <code>column-width</code> の違いと、
+      それぞれをどのような場面で使い分けるかを説明してください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q7" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ7()">模範解答を見る</button>
+    <div class="result-msg" id="q7-result"></div>
+    <script>
+      function checkQ7() {
+        const r = document.getElementById('q7-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<strong>column-count</strong><br>' +
+          '・段数を整数で直接指定する<br>' +
+          '・コンテナ幅が変わっても段数は変わらない（各段の幅が変化する）<br>' +
+          '・「必ず3段にしたい」など段数を固定したい場合に使う<br><br>' +
+          '<strong>column-width</strong><br>' +
+          '・各段の最小幅の目安を指定する（段数はブラウザが自動計算）<br>' +
+          '・コンテナ幅が広くなれば段数が増え、狭くなれば段数が減る<br>' +
+          '・レスポンシブデザインで「段の幅を一定に保ちつつ段数を自動調整したい」場合に使う<br><br>' +
+          '<strong>使い分けのポイント</strong><br>' +
+          '・固定段数 → column-count<br>' +
+          '・レスポンシブ段組み → column-width<br>' +
+          '・両方指定（columns ショートハンド）→ 幅の目安と段数の上限を同時に設定できる';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 マルチカラム・Flexbox プロパティ まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>プロパティ</th><th>主な値・書式</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td colspan="3" style="background:#f3e8ff; color:#553c9a; font-weight:bold; font-size:0.88em;">
+        ▼ マルチカラムレイアウト
+      </td>
+    </tr>
+    <tr>
+      <td><code>column-count</code></td>
+      <td>整数 / <code>auto</code></td>
+      <td>段数を直接指定。コンテナ幅が変わっても段数は固定</td>
+    </tr>
+    <tr>
+      <td><code>column-width</code></td>
+      <td>長さ / <code>auto</code></td>
+      <td>段の最小幅の目安。コンテナ幅に応じて段数が自動変化（レスポンシブ向き）</td>
+    </tr>
+    <tr>
+      <td><code>columns</code></td>
+      <td><code>column-width column-count</code></td>
+      <td>ショートハンド。整数のみ→column-count、長さのみ→column-width として解釈</td>
+    </tr>
+    <tr>
+      <td><code>column-gap</code></td>
+      <td>長さ / <code>normal</code></td>
+      <td>段と段の間隔（ガター）を指定</td>
+    </tr>
+    <tr>
+      <td><code>column-rule</code></td>
+      <td><code>幅 スタイル 色</code></td>
+      <td>段間に罫線を引く。border と同じ書式。罫線幅は column-gap に影響しない</td>
+    </tr>
+    <tr>
+      <td><code>column-span</code></td>
+      <td><code>none</code> / <code>all</code></td>
+      <td>all で全段にまたがって表示。値は2つのみ（特定段数指定は不可）</td>
+    </tr>
+    <tr>
+      <td colspan="3" style="background:#f3e8ff; color:#553c9a; font-weight:bold; font-size:0.88em;">
+        ▼ フレキシブルボックスレイアウト（コンテナ側）
+      </td>
+    </tr>
+    <tr>
+      <td><code>display: flex</code></td>
+      <td><code>flex</code> / <code>inline-flex</code></td>
+      <td>子要素がデフォルトで左から横に並ぶ（主軸: row）</td>
+    </tr>
+    <tr>
+      <td><code>flex-direction</code></td>
+      <td><code>row</code> / <code>row-reverse</code> / <code>column</code> / <code>column-reverse</code></td>
+      <td>主軸の方向を指定。デフォルトは row（左→右）</td>
+    </tr>
+    <tr>
+      <td><code>flex-wrap</code></td>
+      <td><code>nowrap</code> / <code>wrap</code> / <code>wrap-reverse</code></td>
+      <td>折り返しの設定。デフォルトは nowrap（折り返さない）</td>
+    </tr>
+    <tr>
+      <td><code>flex-flow</code></td>
+      <td><code>direction wrap</code></td>
+      <td>flex-direction と flex-wrap のショートハンド</td>
+    </tr>
+    <tr>
+      <td><code>justify-content</code></td>
+      <td><code>flex-start</code> / <code>center</code> / <code>space-between</code> など</td>
+      <td>主軸方向の揃え方。space-between は両端なし、space-around は両端に半分の余白</td>
+    </tr>
+    <tr>
+      <td><code>align-items</code></td>
+      <td><code>stretch</code> / <code>flex-start</code> / <code>center</code> など</td>
+      <td>交差軸方向の揃え方（1行）。デフォルトは stretch</td>
+    </tr>
+    <tr>
+      <td><code>align-content</code></td>
+      <td><code>flex-start</code> / <code>center</code> / <code>space-between</code> など</td>
+      <td>複数行のときの交差軸方向の揃え方</td>
+    </tr>
+    <tr>
+      <td><code>gap</code></td>
+      <td>長さ / <code>row-gap column-gap</code></td>
+      <td>アイテム間の余白。row-gap / column-gap を個別指定も可</td>
+    </tr>
+    <tr>
+      <td colspan="3" style="background:#f3e8ff; color:#553c9a; font-weight:bold; font-size:0.88em;">
+        ▼ フレキシブルボックスレイアウト（アイテム側）
+      </td>
+    </tr>
+    <tr>
+      <td><code>flex-grow</code></td>
+      <td>数値（デフォルト: 0）</td>
+      <td>余白を分け合って伸びる割合。0 は伸びない</td>
+    </tr>
+    <tr>
+      <td><code>flex-shrink</code></td>
+      <td>数値（デフォルト: 1）</td>
+      <td>余白が足りないときに縮む割合。0 は縮まない</td>
+    </tr>
+    <tr>
+      <td><code>flex-basis</code></td>
+      <td>長さ / <code>auto</code></td>
+      <td>アイテムの基本サイズ。デフォルトは auto</td>
+    </tr>
+    <tr>
+      <td><code>flex</code></td>
+      <td><code>grow shrink basis</code> / <code>1</code> / <code>auto</code> / <code>none</code></td>
+      <td>flex-grow / shrink / basis のショートハンド。flex: 1 は均等伸縮</td>
+    </tr>
+    <tr>
+      <td><code>order</code></td>
+      <td>整数（デフォルト: 0）</td>
+      <td>表示順序。小さい値が先に表示される</td>
+    </tr>
+    <tr>
+      <td><code>align-self</code></td>
+      <td><code>auto</code> / <code>flex-start</code> / <code>center</code> など</td>
+      <td>個別アイテムの交差軸揃え。align-items を上書きする</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>

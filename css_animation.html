@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>CSS アニメーション 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #9f7aea; padding-bottom: 10px; }
+    h2 { color: #553c9a; margin-top: 48px; border-left: 5px solid #9f7aea; padding-left: 12px; }
+    h3 { color: #276749; margin-top: 24px; }
+
+    code {
+      background: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment  { color: #68d391; }
+    pre .prop     { color: #90cdf4; }
+    pre .val      { color: #fc8181; }
+    pre .keyword  { color: #b794f4; }
+    pre .func     { color: #fbd38d; }
+    pre .selector { color: #f6ad55; }
+    pre .at       { color: #b794f4; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #b794f4;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #553c9a; }
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+    .demo-box {
+      background: #fff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* インタラクティブデモ共通 */
+    .interactive-demo {
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .slider-row label {
+      font-size: 0.85em;
+      font-weight: bold;
+      min-width: 180px;
+      color: #553c9a;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .slider-row input[type="range"] {
+      flex: 1;
+      min-width: 100px;
+      accent-color: #9f7aea;
+    }
+    .slider-row select {
+      border: 2px solid #e9d8fd;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.85em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #2d3748;
+      background: #fff;
+      cursor: pointer;
+      flex: 1;
+    }
+    .slider-row select:focus { border-color: #9f7aea; outline: none; }
+    .val-display {
+      min-width: 64px;
+      text-align: right;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.85em;
+      color: #2d3748;
+    }
+    .color-code-display {
+      background: #1a202c;
+      color: #68d391;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.84em;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* デモステージ共通 */
+    .stage {
+      background: repeating-linear-gradient(
+        45deg, #e2e8f0 0, #e2e8f0 8px, #fff 8px, #fff 16px
+      );
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .demo-target {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #9f7aea, #553c9a);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: bold;
+      font-size: 0.78em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* ===== transform デモ ===== */
+    .transform-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .tf-item {
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+    .tf-label {
+      font-size: 0.72em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #553c9a;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .tf-stage {
+      height: 80px;
+      background: #edf2f7;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .tf-box {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #9f7aea, #553c9a);
+      border-radius: 6px;
+    }
+
+    /* ===== timing-function デモ ===== */
+    .timing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+      margin: 14px 0;
+    }
+    .timing-item {
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+    .timing-label {
+      font-size: 0.72em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #553c9a;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .timing-track {
+      height: 24px;
+      background: #edf2f7;
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .timing-ball {
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, #9f7aea, #553c9a);
+      border-radius: 50%;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    /* アニメーション定義 */
+    @keyframes slide-ease        { 0%{left:0} 100%{left:calc(100% - 24px)} }
+    @keyframes slide-linear      { 0%{left:0} 100%{left:calc(100% - 24px)} }
+    @keyframes slide-ease-in     { 0%{left:0} 100%{left:calc(100% - 24px)} }
+    @keyframes slide-ease-out    { 0%{left:0} 100%{left:calc(100% - 24px)} }
+    @keyframes slide-ease-in-out { 0%{left:0} 100%{left:calc(100% - 24px)} }
+    @keyframes slide-step        { 0%{left:0} 100%{left:calc(100% - 24px)} }
+
+    .timing-ball.ease        { animation: slide-ease        2s ease        infinite alternate; }
+    .timing-ball.linear      { animation: slide-linear      2s linear      infinite alternate; }
+    .timing-ball.ease-in     { animation: slide-ease-in     2s ease-in     infinite alternate; }
+    .timing-ball.ease-out    { animation: slide-ease-out    2s ease-out    infinite alternate; }
+    .timing-ball.ease-in-out { animation: slide-ease-in-out 2s ease-in-out infinite alternate; }
+    .timing-ball.steps       { animation: slide-step        2s steps(4)    infinite alternate; }
+
+    /* ===== アニメーション デモ ===== */
+    @keyframes demo-bounce {
+      0%, 100% { transform: translateY(0);    background: linear-gradient(135deg,#9f7aea,#553c9a); }
+      50%       { transform: translateY(-40px); background: linear-gradient(135deg,#f6ad55,#c05621); }
+    }
+    @keyframes demo-spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    @keyframes demo-pulse {
+      0%, 100% { transform: scale(1);    opacity: 1; }
+      50%       { transform: scale(1.4); opacity: 0.6; }
+    }
+    @keyframes demo-slide {
+      0%   { transform: translateX(-60px); opacity: 0; }
+      20%  { transform: translateX(0);     opacity: 1; }
+      80%  { transform: translateX(0);     opacity: 1; }
+      100% { transform: translateX(60px);  opacity: 0; }
+    }
+    @keyframes demo-color {
+      0%   { background: linear-gradient(135deg,#9f7aea,#553c9a); }
+      33%  { background: linear-gradient(135deg,#f6ad55,#c05621); }
+      66%  { background: linear-gradient(135deg,#68d391,#276749); }
+      100% { background: linear-gradient(135deg,#9f7aea,#553c9a); }
+    }
+    @keyframes demo-shake {
+      0%,100%{ transform: translateX(0); }
+      20%    { transform: translateX(-8px); }
+      40%    { transform: translateX(8px); }
+      60%    { transform: translateX(-6px); }
+      80%    { transform: translateX(6px); }
+    }
+
+    .anim-bounce    { animation: demo-bounce 1.2s ease-in-out infinite; }
+    .anim-spin      { animation: demo-spin   1.5s linear infinite; }
+    .anim-pulse     { animation: demo-pulse  1.2s ease-in-out infinite; }
+    .anim-slide     { animation: demo-slide  2s ease-in-out infinite; }
+    .anim-color     { animation: demo-color  3s linear infinite; }
+    .anim-shake     { animation: demo-shake  0.6s ease-in-out infinite; }
+
+    .anim-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .anim-item {
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+    .anim-label {
+      font-size: 0.7em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #553c9a;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .anim-stage {
+      height: 90px;
+      background: #edf2f7;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .anim-box {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #9f7aea, #553c9a);
+      border-radius: 8px;
+    }
+
+    /* fill-mode デモ */
+    .fill-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px,1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .fill-item {
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .fill-label {
+      font-size: 0.72em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #553c9a;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .fill-desc {
+      font-size: 0.72em;
+      color: #718096;
+      margin-bottom: 8px;
+    }
+    .fill-track {
+      height: 28px;
+      background: #edf2f7;
+      border-radius: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    @keyframes fill-anim {
+      0%   { left: 0; background: #9f7aea; }
+      100% { left: calc(100% - 28px); background: #f6ad55; }
+    }
+    .fill-ball {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      position: absolute;
+      top: 0; left: 0;
+    }
+    .fill-none     { animation: fill-anim 2s ease 1s none     1 forwards; background:#9f7aea; }
+    .fill-forwards { animation: fill-anim 2s ease 1s forwards 1 forwards; background:#9f7aea; }
+    .fill-backwards{ animation: fill-anim 2s ease 1s backwards 1 forwards; background:#9f7aea; }
+    .fill-both     { animation: fill-anim 2s ease 1s both     1 forwards; background:#9f7aea; }
+
+    table.ref-table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      margin: 14px 0;
+    }
+    table.ref-table th, table.ref-table td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.ref-table thead tr { background: #553c9a; color: #fff; }
+    table.ref-table tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 { margin-top: 0; color: #c05621; border-left-color: #f6ad55; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #fbd38d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #fbd38d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-purple { background: #9f7aea; color: #fff; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #e9d8fd; color: #553c9a; display: block; }
+
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.summary thead tr { background: #553c9a; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px 14px; }
+      .slider-row label { min-width: 130px; }
+      .transform-grid { grid-template-columns: repeat(2, 1fr); }
+      .timing-grid    { grid-template-columns: repeat(2, 1fr); }
+      .anim-grid      { grid-template-columns: repeat(2, 1fr); }
+      .fill-grid      { grid-template-columns: 1fr; }
+      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.82em; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px 16px; }
+      .quiz-block { padding: 14px 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>✨ CSS アニメーション 学習サンプル</h1>
+<p>transform・transition・animation・@keyframes など、
+CSSで動きを表現するプロパティを学びましょう。</p>
+
+
+<!-- ============================================================ -->
+<!-- PART 1：transform -->
+<!-- ============================================================ -->
+
+<!-- 1. transformとは -->
+<h2>① transform プロパティ</h2>
+<div class="note">
+  <strong>重要ポイント①：transform 関連プロパティでは、ボックスの回転・拡大縮小・移動などを行う</strong><br>
+  <code>transform</code> は要素の<strong>見た目の変形</strong>を行います。
+  レイアウトには影響せず（周囲の要素は動かない）、
+  GPU アクセラレーションが効くため滑らかに動作します。
+</div>
+<div class="demo-box">
+
+  <h3>transform 関数の種類</h3>
+  <div class="transform-grid">
+    <div class="tf-item">
+      <div class="tf-label">rotate(45deg)</div>
+      <div class="tf-stage"><div class="tf-box" style="transform:rotate(45deg);"></div></div>
+    </div>
+    <div class="tf-item">
+      <div class="tf-label">scale(1.5)</div>
+      <div class="tf-stage"><div class="tf-box" style="transform:scale(1.5);"></div></div>
+    </div>
+    <div class="tf-item">
+      <div class="tf-label">scaleX(1.8)</div>
+      <div class="tf-stage"><div class="tf-box" style="transform:scaleX(1.8);"></div></div>
+    </div>
+    <div class="tf-item">
+      <div class="tf-label">translateX(20px)</div>
+      <div class="tf-stage"><div class="tf-box" style="transform:translateX(20px);"></div></div>
+    </div>
+    <div class="tf-item">
+      <div class="tf-label">translateY(-16px)</div>
+      <div class="tf-stage"><div class="tf-box" style="transform:translateY(-16px);"></div></div>
+    </div>
+    <div class="tf-item">
+      <div class="tf-label">skewX(20deg)</div>
+      <div class="tf-stage"><div class="tf-box" style="transform:skewX(20deg);"></div></div>
+    </div>
+    <div class="tf-item">
+      <div class="tf-label">skewY(20deg)</div>
+      <div class="tf-stage"><div class="tf-box" style="transform:skewY(20deg);"></div></div>
+    </div>
+    <div class="tf-item">
+      <div class="tf-label">rotate + scale</div>
+      <div class="tf-stage"><div class="tf-box" style="transform:rotate(30deg) scale(1.3);"></div></div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* 移動 */</span>
+<span class="prop">transform</span>: <span class="func">translateX</span>(<span class="val">20px</span>);          <span class="comment">/* X軸方向に20px移動 */</span>
+<span class="prop">transform</span>: <span class="func">translateY</span>(<span class="val">-30px</span>);         <span class="comment">/* Y軸方向に-30px移動（上へ） */</span>
+<span class="prop">transform</span>: <span class="func">translate</span>(<span class="val">20px, -30px</span>);   <span class="comment">/* X・Y同時指定 */</span>
+
+<span class="comment">/* 回転 */</span>
+<span class="prop">transform</span>: <span class="func">rotate</span>(<span class="val">45deg</span>);            <span class="comment">/* 時計回りに45度回転 */</span>
+<span class="prop">transform</span>: <span class="func">rotate</span>(<span class="val">-90deg</span>);           <span class="comment">/* 反時計回りに90度回転 */</span>
+<span class="prop">transform</span>: <span class="func">rotate</span>(<span class="val">0.5turn</span>);          <span class="comment">/* 半回転（180度） */</span>
+
+<span class="comment">/* 拡大縮小 */</span>
+<span class="prop">transform</span>: <span class="func">scale</span>(<span class="val">1.5</span>);              <span class="comment">/* 1.5倍に拡大 */</span>
+<span class="prop">transform</span>: <span class="func">scale</span>(<span class="val">0.8</span>);              <span class="comment">/* 0.8倍に縮小 */</span>
+<span class="prop">transform</span>: <span class="func">scaleX</span>(<span class="val">2</span>);               <span class="comment">/* 横方向のみ2倍 */</span>
+<span class="prop">transform</span>: <span class="func">scaleY</span>(<span class="val">0.5</span>);             <span class="comment">/* 縦方向のみ0.5倍 */</span>
+<span class="prop">transform</span>: <span class="func">scale</span>(<span class="val">1.2, 0.8</span>);         <span class="comment">/* X・Y個別指定 */</span>
+
+<span class="comment">/* 傾斜（スキュー） */</span>
+<span class="prop">transform</span>: <span class="func">skewX</span>(<span class="val">20deg</span>);            <span class="comment">/* X軸方向に傾ける */</span>
+<span class="prop">transform</span>: <span class="func">skewY</span>(<span class="val">10deg</span>);            <span class="comment">/* Y軸方向に傾ける */</span>
+<span class="prop">transform</span>: <span class="func">skew</span>(<span class="val">20deg, 10deg</span>);      <span class="comment">/* X・Y同時指定 */</span>
+
+<span class="comment">/* 複数の変形を同時指定（スペース区切り・左から順に適用） */</span>
+<span class="prop">transform</span>: <span class="func">rotate</span>(<span class="val">30deg</span>) <span class="func">scale</span>(<span class="val">1.3</span>);
+<span class="prop">transform</span>: <span class="func">translateX</span>(<span class="val">20px</span>) <span class="func">rotate</span>(<span class="val">45deg</span>);
+
+<span class="comment">/* 変形なし */</span>
+<span class="prop">transform</span>: <span class="val">none</span>;
+</pre>
+
+  <h3>transform インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <div class="slider-row">
+      <label>rotate（回転）</label>
+      <input type="range" id="tf-rotate" min="-180" max="180" value="0" oninput="updateTF()">
+      <span class="val-display" id="tf-rotate-val">0deg</span>
+    </div>
+    <div class="slider-row">
+      <label>scale（拡大縮小）</label>
+      <input type="range" id="tf-scale" min="20" max="200" value="100" oninput="updateTF()">
+      <span class="val-display" id="tf-scale-val">1.0</span>
+    </div>
+    <div class="slider-row">
+      <label>translateX（横移動）</label>
+      <input type="range" id="tf-tx" min="-80" max="80" value="0" oninput="updateTF()">
+      <span class="val-display" id="tf-tx-val">0px</span>
+    </div>
+    <div class="slider-row">
+      <label>translateY（縦移動）</label>
+      <input type="range" id="tf-ty" min="-60" max="60" value="0" oninput="updateTF()">
+      <span class="val-display" id="tf-ty-val">0px</span>
+    </div>
+    <div class="stage" style="height:160px;">
+      <div class="demo-target" id="tf-target">BOX</div>
+    </div>
+    <div class="color-code-display" id="tf-code">transform: none;</div>
+  </div>
+  <script>
+    function updateTF() {
+      const r  = document.getElementById('tf-rotate').value;
+      const s  = (document.getElementById('tf-scale').value / 100).toFixed(2);
+      const tx = document.getElementById('tf-tx').value;
+      const ty = document.getElementById('tf-ty').value;
+      document.getElementById('tf-rotate-val').textContent = r + 'deg';
+      document.getElementById('tf-scale-val').textContent  = s;
+      document.getElementById('tf-tx-val').textContent     = tx + 'px';
+      document.getElementById('tf-ty-val').textContent     = ty + 'px';
+      const tf = `rotate(${r}deg) scale(${s}) translate(${tx}px, ${ty}px)`;
+      document.getElementById('tf-target').style.transform = tf;
+      document.getElementById('tf-code').textContent = `transform: ${tf};`;
+    }
+  </script>
+
+  <div class="warn">
+    <strong>⚠️ transform の注意点</strong><br>
+    ・<code>transform</code> は要素の<strong>見た目だけ</strong>を変形し、
+    レイアウト上の位置・サイズは変わりません<br>
+    ・複数の変形を指定するときは<strong>スペース区切り</strong>で並べます
+    （カンマ区切りは不可）<br>
+    ・適用順序は<strong>左から右</strong>の順番で、順番によって結果が変わります
+  </div>
+</div>
+
+
+<!-- 2. transform-origin -->
+<h2>② transform-origin プロパティ</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* 変形の基点を指定（デフォルト: 50% 50% = 中心） */</span>
+<span class="prop">transform-origin</span>: <span class="val">50% 50%</span>;      <span class="comment">/* 中心（デフォルト） */</span>
+<span class="prop">transform-origin</span>: <span class="val">0 0</span>;           <span class="comment">/* 左上を基点に変形 */</span>
+<span class="prop">transform-origin</span>: <span class="val">100% 100%</span>;    <span class="comment">/* 右下を基点に変形 */</span>
+<span class="prop">transform-origin</span>: <span class="val">left top</span>;     <span class="comment">/* キーワードで指定 */</span>
+<span class="prop">transform-origin</span>: <span class="val">center bottom</span>; <span class="comment">/* 下辺中央を基点に */</span>
+<span class="prop">transform-origin</span>: <span class="val">20px 30px</span>;    <span class="comment">/* 固定値で指定 */</span>
+</pre>
+
+  <h3>transform-origin インタラクティブデモ（rotate で基点の違いを確認）</h3>
+  <div class="interactive-demo">
+    <div class="slider-row">
+      <label>transform-origin</label>
+      <select id="to-origin" onchange="updateTO()">
+        <option value="50% 50%">50% 50%（中心・デフォルト）</option>
+        <option value="0 0">0 0（左上）</option>
+        <option value="100% 0">100% 0（右上）</option>
+        <option value="0 100%">0 100%（左下）</option>
+        <option value="100% 100%">100% 100%（右下）</option>
+        <option value="50% 0">50% 0（上辺中央）</option>
+        <option value="50% 100%">50% 100%（下辺中央）</option>
+      </select>
+      <span class="val-display"></span>
+    </div>
+    <div class="slider-row">
+      <label>rotate（回転）</label>
+      <input type="range" id="to-rotate" min="-180" max="180" value="45" oninput="updateTO()">
+      <span class="val-display" id="to-rotate-val">45deg</span>
+    </div>
+    <div class="stage" style="height:160px;">
+      <div class="demo-target" id="to-target"
+           style="transform:rotate(45deg); transform-origin:50% 50%;">BOX</div>
+    </div>
+    <div class="color-code-display" id="to-code">transform: rotate(45deg);
+transform-origin: 50% 50%;</div>
+  </div>
+  <script>
+    function updateTO() {
+      const origin = document.getElementById('to-origin').value;
+      const r = document.getElementById('to-rotate').value;
+      document.getElementById('to-rotate-val').textContent = r + 'deg';
+      const el = document.getElementById('to-target');
+      el.style.transform = `rotate(${r}deg)`;
+      el.style.transformOrigin = origin;
+      document.getElementById('to-code').textContent =
+        `transform: rotate(${r}deg);\ntransform-origin: ${origin};`;
+    }
+  </script>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 2：トランジション -->
+<!-- ============================================================ -->
+
+<!-- 3. トランジションとは -->
+<h2>③ CSS トランジションとは</h2>
+<div class="note">
+  <strong>重要ポイント②：トランジションは、値の切り替わりをなめらかに連続した動きで見せる機能</strong><br>
+  例えば <code>:hover</code> で色が変わるとき、
+  瞬時に切り替わるのではなく<strong>指定した時間をかけてなめらかに変化</strong>させます。
+  「開始状態」と「終了状態」の2点間を補間するシンプルな仕組みです。
+</div>
+<div class="demo-box">
+
+  <div style="display:flex; gap:20px; flex-wrap:wrap; margin:14px 0;">
+    <div style="flex:1; min-width:180px; text-align:center;">
+      <div style="font-size:0.82em; color:#553c9a; font-weight:bold; margin-bottom:8px; font-family:'Consolas','Monaco',monospace;">transition なし（ホバーしてみて）</div>
+      <div style="background:#9f7aea; color:#fff; padding:14px 20px; border-radius:8px; font-weight:bold; font-size:0.9em; cursor:pointer; display:inline-block;"
+           onmouseover="this.style.background='#f6ad55'; this.style.transform='scale(1.1)'"
+           onmouseout="this.style.background='#9f7aea'; this.style.transform='scale(1)'">
+        ホバー
+      </div>
+    </div>
+    <div style="flex:1; min-width:180px; text-align:center;">
+      <div style="font-size:0.82em; color:#553c9a; font-weight:bold; margin-bottom:8px; font-family:'Consolas','Monaco',monospace;">transition あり（ホバーしてみて）</div>
+      <div style="background:#9f7aea; color:#fff; padding:14px 20px; border-radius:8px; font-weight:bold; font-size:0.9em; cursor:pointer; display:inline-block; transition: background 0.4s ease, transform 0.3s ease;"
+           onmouseover="this.style.background='#f6ad55'; this.style.transform='scale(1.1)'"
+           onmouseout="this.style.background='#9f7aea'; this.style.transform='scale(1)'">
+        ホバー
+      </div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* トランジションの基本 */</span>
+<span class="selector">.button</span> {
+  <span class="prop">background</span>: <span class="val">#9f7aea</span>;
+  <span class="prop">transition</span>: <span class="val">background 0.3s ease</span>;
+}
+<span class="selector">.button:hover</span> {
+  <span class="prop">background</span>: <span class="val">#f6ad55</span>;  <span class="comment">/* 0.3秒かけてなめらかに変化 */</span>
+}
+</pre>
+</div>
+
+
+<!-- 4. transition-property -->
+<h2>④ transition-property プロパティ</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* どのプロパティにトランジションを適用するか */</span>
+<span class="prop">transition-property</span>: <span class="val">all</span>;             <span class="comment">/* すべてのプロパティ */</span>
+<span class="prop">transition-property</span>: <span class="val">none</span>;            <span class="comment">/* トランジションなし */</span>
+<span class="prop">transition-property</span>: <span class="val">background-color</span>; <span class="comment">/* 背景色のみ */</span>
+<span class="prop">transition-property</span>: <span class="val">transform</span>;       <span class="comment">/* 変形のみ */</span>
+<span class="prop">transition-property</span>: <span class="val">background-color, transform, opacity</span>; <span class="comment">/* 複数指定 */</span>
+</pre>
+
+  <div class="good">
+    ✅ <strong>transition-property の使い分け</strong><br>
+    ・<code>all</code> は手軽ですが、意図しないプロパティにも適用されパフォーマンスに影響する場合があります<br>
+    ・<code>transform</code> と <code>opacity</code> は GPU アクセラレーションが効き、
+    最もパフォーマンスが良いプロパティです<br>
+    ・アニメーションさせたいプロパティを明示的に指定するのがベストプラクティスです
+  </div>
+</div>
+
+
+<!-- 5. transition-duration -->
+<h2>⑤ transition-duration プロパティ</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* トランジションにかける時間 */</span>
+<span class="prop">transition-duration</span>: <span class="val">0s</span>;     <span class="comment">/* 即時（デフォルト） */</span>
+<span class="prop">transition-duration</span>: <span class="val">0.3s</span>;   <span class="comment">/* 0.3秒 */</span>
+<span class="prop">transition-duration</span>: <span class="val">500ms</span>;  <span class="comment">/* 500ミリ秒（= 0.5s） */</span>
+<span class="prop">transition-duration</span>: <span class="val">2s</span>;     <span class="comment">/* 2秒 */</span>
+
+<span class="comment">/* 複数プロパティに異なる時間を指定 */</span>
+<span class="prop">transition-property</span>: <span class="val">background-color, transform</span>;
+<span class="prop">transition-duration</span>: <span class="val">0.3s, 0.5s</span>;  <span class="comment">/* background:0.3s / transform:0.5s */</span>
+</pre>
+</div>
+
+
+<!-- 6. transition-timing-function -->
+<h2>⑥ transition-timing-function プロパティ</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* 変化の速度カーブを指定 */</span>
+<span class="prop">transition-timing-function</span>: <span class="val">ease</span>;         <span class="comment">/* ゆっくり始まり→速く→ゆっくり終わる（デフォルト） */</span>
+<span class="prop">transition-timing-function</span>: <span class="val">linear</span>;       <span class="comment">/* 一定速度 */</span>
+<span class="prop">transition-timing-function</span>: <span class="val">ease-in</span>;      <span class="comment">/* ゆっくり始まり→速く終わる */</span>
+<span class="prop">transition-timing-function</span>: <span class="val">ease-out</span>;     <span class="comment">/* 速く始まり→ゆっくり終わる */</span>
+<span class="prop">transition-timing-function</span>: <span class="val">ease-in-out</span>;  <span class="comment">/* ゆっくり始まり→速く→ゆっくり終わる（easeより対称的） */</span>
+<span class="prop">transition-timing-function</span>: <span class="val">steps(4)</span>;     <span class="comment">/* 4段階でジャンプ */</span>
+<span class="prop">transition-timing-function</span>: <span class="func">cubic-bezier</span>(<span class="val">0.25, 0.1, 0.25, 1.0</span>); <span class="comment">/* カスタム曲線 */</span>
+</pre>
+
+  <h3>timing-function の違いをリアルタイムで確認</h3>
+  <div class="timing-grid">
+    <div class="timing-item">
+      <div class="timing-label">ease（デフォルト）</div>
+      <div class="timing-track"><div class="timing-ball ease"></div></div>
+    </div>
+    <div class="timing-item">
+      <div class="timing-label">linear</div>
+      <div class="timing-track"><div class="timing-ball linear"></div></div>
+    </div>
+    <div class="timing-item">
+      <div class="timing-label">ease-in</div>
+      <div class="timing-track"><div class="timing-ball ease-in"></div></div>
+    </div>
+    <div class="timing-item">
+      <div class="timing-label">ease-out</div>
+      <div class="timing-track"><div class="timing-ball ease-out"></div></div>
+    </div>
+    <div class="timing-item">
+      <div class="timing-label">ease-in-out</div>
+      <div class="timing-track"><div class="timing-ball ease-in-out"></div></div>
+    </div>
+    <div class="timing-item">
+      <div class="timing-label">steps(4)</div>
+      <div class="timing-track"><div class="timing-ball steps"></div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- 7. transition-delay -->
+<h2>⑦ transition-delay プロパティ</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* トランジション開始までの遅延時間 */</span>
+<span class="prop">transition-delay</span>: <span class="val">0s</span>;     <span class="comment">/* 遅延なし（デフォルト） */</span>
+<span class="prop">transition-delay</span>: <span class="val">0.5s</span>;   <span class="comment">/* 0.5秒後に開始 */</span>
+<span class="prop">transition-delay</span>: <span class="val">-0.2s</span>;  <span class="comment">/* 負の値：アニメーションの途中から開始 */</span>
+</pre>
+
+  <div class="warn">
+    <strong>⚠️ transition-delay の負の値</strong><br>
+    負の値を指定すると、アニメーションが途中から始まったように見えます。<br>
+    例：<code>duration: 1s</code>・<code>delay: -0.5s</code> → アニメーションの 0.5s 経過した時点から開始
+  </div>
+</div>
+
+
+<!-- 8. transition ショートハンド -->
+<h2>⑧ transition プロパティ（ショートハンド）</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* transition: property duration timing-function delay */</span>
+<span class="prop">transition</span>: <span class="val">all 0.3s ease 0s</span>;
+<span class="prop">transition</span>: <span class="val">background-color 0.3s ease</span>;
+<span class="prop">transition</span>: <span class="val">transform 0.5s ease-out 0.1s</span>;
+
+<span class="comment">/* 複数プロパティ：カンマ区切り */</span>
+<span class="prop">transition</span>:
+  <span class="val">background-color 0.3s ease</span>,
+  <span class="val">transform 0.5s ease-out 0.1s</span>,
+  <span class="val">opacity 0.3s linear</span>;
+</pre>
+
+  <h3>transition インタラクティブデモ（ホバーで確認）</h3>
+  <div class="interactive-demo">
+    <div class="slider-row">
+      <label>transition-duration</label>
+      <input type="range" id="tr-dur" min="0" max="200" value="30" oninput="updateTR()">
+      <span class="val-display" id="tr-dur-val">0.3s</span>
+    </div>
+    <div class="slider-row">
+      <label>transition-timing-function</label>
+      <select id="tr-timing" onchange="updateTR()">
+        <option value="ease">ease</option>
+        <option value="linear">linear</option>
+        <option value="ease-in">ease-in</option>
+        <option value="ease-out">ease-out</option>
+        <option value="ease-in-out">ease-in-out</option>
+      </select>
+      <span class="val-display"></span>
+    </div>
+    <div class="slider-row">
+      <label>transition-delay</label>
+      <input type="range" id="tr-delay" min="0" max="100" value="0" oninput="updateTR()">
+      <span class="val-display" id="tr-delay-val">0s</span>
+    </div>
+    <div style="text-align:center; margin:12px 0;">
+      <div id="tr-target"
+           style="display:inline-block; background:#9f7aea; color:#fff; padding:16px 32px; border-radius:8px; font-weight:bold; cursor:pointer; transition: background 0.3s ease 0s, transform 0.3s ease 0s;"
+           onmouseover="this.style.background='#f6ad55'; this.style.transform='scale(1.15) rotate(3deg)';"
+           onmouseout="this.style.background='#9f7aea'; this.style.transform='scale(1) rotate(0deg)';">
+        ここにホバー
+      </div>
+    </div>
+    <div class="color-code-display" id="tr-code">transition: background 0.3s ease 0s, transform 0.3s ease 0s;</div>
+  </div>
+  <script>
+    function updateTR() {
+      const dur   = (document.getElementById('tr-dur').value / 100).toFixed(2);
+      const timing = document.getElementById('tr-timing').value;
+      const delay  = (document.getElementById('tr-delay').value / 100).toFixed(2);
+      document.getElementById('tr-dur-val').textContent   = dur + 's';
+      document.getElementById('tr-delay-val').textContent = delay + 's';
+      const tr = `background ${dur}s ${timing} ${delay}s, transform ${dur}s ${timing} ${delay}s`;
+      document.getElementById('tr-target').style.transition = tr;
+      document.getElementById('tr-code').textContent = `transition: ${tr};`;
+    }
+  </script>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 3：アニメーション -->
+<!-- ============================================================ -->
+
+<!-- 9. アニメーションとは -->
+<h2>⑨ CSS アニメーションとは</h2>
+<div class="note">
+  <strong>重要ポイント③：アニメーションは、キーフレームでトランジションを連続実行させるようなもの</strong><br>
+  トランジションが「開始→終了」の2点間の変化なのに対し、
+  アニメーションは <code>@keyframes</code> で<strong>複数の中間状態（キーフレーム）</strong>を定義し、
+  それらをつなぎ合わせて連続した動きを作ります。
+  トリガー（ホバーなど）不要で自動再生でき、繰り返しも可能です。
+</div>
+<div class="demo-box">
+
+  <div style="display:flex; gap:20px; flex-wrap:wrap; margin:14px 0; align-items:flex-start;">
+    <div style="flex:1; min-width:200px; background:#faf5ff; border:1px solid #e9d8fd; border-radius:8px; padding:14px;">
+      <div style="font-size:0.82em; font-weight:bold; color:#553c9a; margin-bottom:8px;">トランジション</div>
+      <ul style="margin:0; padding-left:18px; font-size:0.85em; color:#4a5568; line-height:1.8;">
+        <li>開始・終了の2点間</li>
+        <li>トリガーが必要（:hover など）</li>
+        <li>自動繰り返し不可</li>
+        <li>逆再生は自動</li>
+      </ul>
+    </div>
+    <div style="display:flex; align-items:center; font-size:1.5em; color:#9f7aea; padding-top:20px;">→</div>
+    <div style="flex:1; min-width:200px; background:#faf5ff; border:1px solid #e9d8fd; border-radius:8px; padding:14px;">
+      <div style="font-size:0.82em; font-weight:bold; color:#553c9a; margin-bottom:8px;">アニメーション</div>
+      <ul style="margin:0; padding-left:18px; font-size:0.85em; color:#4a5568; line-height:1.8;">
+        <li>複数のキーフレームを定義</li>
+        <li>トリガー不要（自動再生）</li>
+        <li>繰り返し・無限ループ可能</li>
+        <li>再生方向・一時停止も制御可</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>アニメーションのサンプル集</h3>
+  <div class="anim-grid">
+    <div class="anim-item">
+      <div class="anim-label">bounce</div>
+      <div class="anim-stage"><div class="anim-box anim-bounce"></div></div>
+    </div>
+    <div class="anim-item">
+      <div class="anim-label">spin</div>
+      <div class="anim-stage"><div class="anim-box anim-spin"></div></div>
+    </div>
+    <div class="anim-item">
+      <div class="anim-label">pulse</div>
+      <div class="anim-stage"><div class="anim-box anim-pulse"></div></div>
+    </div>
+    <div class="anim-item">
+      <div class="anim-label">slide</div>
+      <div class="anim-stage"><div class="anim-box anim-slide"></div></div>
+    </div>
+    <div class="anim-item">
+      <div class="anim-label">color change</div>
+      <div class="anim-stage"><div class="anim-box anim-color"></div></div>
+    </div>
+    <div class="anim-item">
+      <div class="anim-label">shake</div>
+      <div class="anim-stage"><div class="anim-box anim-shake"></div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- 10. @keyframes -->
+<h2>⑩ @keyframes</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* @keyframes：アニメーションの各時点の状態を定義 */</span>
+<span class="at">@keyframes</span> <span class="keyword">アニメーション名</span> {
+  <span class="val">from</span> { <span class="prop">transform</span>: <span class="func">translateX</span>(<span class="val">0</span>); }    <span class="comment">/* 開始（= 0%） */</span>
+  <span class="val">to</span>   { <span class="prop">transform</span>: <span class="func">translateX</span>(<span class="val">100px</span>); } <span class="comment">/* 終了（= 100%） */</span>
+}
+
+<span class="comment">/* パーセントで中間状態を細かく定義 */</span>
+<span class="at">@keyframes</span> <span class="keyword">bounce</span> {
+  <span class="val">0%</span>   { <span class="prop">transform</span>: <span class="func">translateY</span>(<span class="val">0</span>); }
+  <span class="val">50%</span>  { <span class="prop">transform</span>: <span class="func">translateY</span>(<span class="val">-40px</span>); }
+  <span class="val">100%</span> { <span class="prop">transform</span>: <span class="func">translateY</span>(<span class="val">0</span>); }
+}
+
+<span class="comment">/* 複数のプロパティを同時に変化させる */</span>
+<span class="at">@keyframes</span> <span class="keyword">fadeIn</span> {
+  <span class="val">from</span> {
+    <span class="prop">opacity</span>: <span class="val">0</span>;
+    <span class="prop">transform</span>: <span class="func">translateY</span>(<span class="val">20px</span>);
+  }
+  <span class="val">to</span> {
+    <span class="prop">opacity</span>: <span class="val">1</span>;
+    <span class="prop">transform</span>: <span class="func">translateY</span>(<span class="val">0</span>);
+  }
+}
+
+<span class="comment">/* 複数のキーフレームを同じ状態にまとめる */</span>
+<span class="at">@keyframes</span> <span class="keyword">flash</span> {
+  <span class="val">0%, 100%</span> { <span class="prop">opacity</span>: <span class="val">1</span>; }
+  <span class="val">50%</span>       { <span class="prop">opacity</span>: <span class="val">0</span>; }
+}
+</pre>
+</div>
+
+
+<!-- 11. animation-name / animation-duration -->
+<h2>⑪ animation-name / animation-duration</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* animation-name：@keyframes の名前を指定 */</span>
+<span class="prop">animation-name</span>: <span class="val">bounce</span>;        <span class="comment">/* @keyframes bounce を適用 */</span>
+<span class="prop">animation-name</span>: <span class="val">none</span>;          <span class="comment">/* アニメーションなし */</span>
+<span class="prop">animation-name</span>: <span class="val">bounce, spin</span>;  <span class="comment">/* 複数のアニメーションを同時に適用 */</span>
+
+<span class="comment">/* animation-duration：1サイクルにかける時間 */</span>
+<span class="prop">animation-duration</span>: <span class="val">0s</span>;     <span class="comment">/* 即時（デフォルト・実質アニメーションなし） */</span>
+<span class="prop">animation-duration</span>: <span class="val">1s</span>;     <span class="comment">/* 1秒 */</span>
+<span class="prop">animation-duration</span>: <span class="val">500ms</span>;  <span class="comment">/* 500ミリ秒 */</span>
+<span class="prop">animation-duration</span>: <span class="val">3s</span>;     <span class="comment">/* 3秒 */</span>
+</pre>
+</div>
+
+
+<!-- 12. animation-timing-function / animation-delay -->
+<h2>⑫ animation-timing-function / animation-delay</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* animation-timing-function：速度カーブ（transition と同じ値） */</span>
+<span class="prop">animation-timing-function</span>: <span class="val">ease</span>;         <span class="comment">/* デフォルト */</span>
+<span class="prop">animation-timing-function</span>: <span class="val">linear</span>;
+<span class="prop">animation-timing-function</span>: <span class="val">ease-in</span>;
+<span class="prop">animation-timing-function</span>: <span class="val">ease-out</span>;
+<span class="prop">animation-timing-function</span>: <span class="val">ease-in-out</span>;
+<span class="prop">animation-timing-function</span>: <span class="func">steps</span>(<span class="val">4, end</span>); <span class="comment">/* 4段階でジャンプ */</span>
+<span class="prop">animation-timing-function</span>: <span class="func">cubic-bezier</span>(<span class="val">0.68, -0.55, 0.27, 1.55</span>); <span class="comment">/* バウンス */</span>
+
+<span class="comment">/* animation-delay：開始までの遅延時間 */</span>
+<span class="prop">animation-delay</span>: <span class="val">0s</span>;     <span class="comment">/* 遅延なし（デフォルト） */</span>
+<span class="prop">animation-delay</span>: <span class="val">1s</span>;     <span class="comment">/* 1秒後に開始 */</span>
+<span class="prop">animation-delay</span>: <span class="val">-0.5s</span>;  <span class="comment">/* アニメーションの0.5s経過した時点から開始 */</span>
+</pre>
+</div>
+
+
+<!-- 13. animation-iteration-count / animation-direction -->
+<h2>⑬ animation-iteration-count / animation-direction</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* animation-iteration-count：繰り返し回数 */</span>
+<span class="prop">animation-iteration-count</span>: <span class="val">1</span>;        <span class="comment">/* 1回（デフォルト） */</span>
+<span class="prop">animation-iteration-count</span>: <span class="val">3</span>;        <span class="comment">/* 3回繰り返す */</span>
+<span class="prop">animation-iteration-count</span>: <span class="val">infinite</span>; <span class="comment">/* 無限ループ */</span>
+<span class="prop">animation-iteration-count</span>: <span class="val">2.5</span>;      <span class="comment">/* 2.5回（小数も可） */</span>
+
+<span class="comment">/* animation-direction：再生方向 */</span>
+<span class="prop">animation-direction</span>: <span class="val">normal</span>;            <span class="comment">/* 順方向（デフォルト）: 0%→100% */</span>
+<span class="prop">animation-direction</span>: <span class="val">reverse</span>;           <span class="comment">/* 逆方向: 100%→0% */</span>
+<span class="prop">animation-direction</span>: <span class="val">alternate</span>;         <span class="comment">/* 交互: 順→逆→順→逆… */</span>
+<span class="prop">animation-direction</span>: <span class="val">alternate-reverse</span>; <span class="comment">/* 交互（逆から）: 逆→順→逆→順… */</span>
+</pre>
+
+  <h3>animation-direction の違いを視覚で確認</h3>
+  <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; margin:14px 0;">
+    <div style="background:#faf5ff; border:1px solid #e9d8fd; border-radius:8px; padding:10px; text-align:center;">
+      <div style="font-size:0.75em; font-weight:bold; color:#553c9a; margin-bottom:8px; font-family:'Consolas','Monaco',monospace;">normal（0%→100%）</div>
+      <div style="height:28px; background:#edf2f7; border-radius:14px; position:relative; overflow:hidden;">
+        <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#9f7aea,#553c9a); position:absolute; animation:slide-linear 2s linear infinite normal;"></div>
+      </div>
+    </div>
+    <div style="background:#faf5ff; border:1px solid #e9d8fd; border-radius:8px; padding:10px; text-align:center;">
+      <div style="font-size:0.75em; font-weight:bold; color:#553c9a; margin-bottom:8px; font-family:'Consolas','Monaco',monospace;">reverse（100%→0%）</div>
+      <div style="height:28px; background:#edf2f7; border-radius:14px; position:relative; overflow:hidden;">
+        <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#f6ad55,#c05621); position:absolute; animation:slide-linear 2s linear infinite reverse;"></div>
+      </div>
+    </div>
+    <div style="background:#faf5ff; border:1px solid #e9d8fd; border-radius:8px; padding:10px; text-align:center;">
+      <div style="font-size:0.75em; font-weight:bold; color:#553c9a; margin-bottom:8px; font-family:'Consolas','Monaco',monospace;">alternate（順↔逆）</div>
+      <div style="height:28px; background:#edf2f7; border-radius:14px; position:relative; overflow:hidden;">
+        <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#68d391,#276749); position:absolute; animation:slide-linear 2s linear infinite alternate;"></div>
+      </div>
+    </div>
+    <div style="background:#faf5ff; border:1px solid #e9d8fd; border-radius:8px; padding:10px; text-align:center;">
+      <div style="font-size:0.75em; font-weight:bold; color:#553c9a; margin-bottom:8px; font-family:'Consolas','Monaco',monospace;">alternate-reverse</div>
+      <div style="height:28px; background:#edf2f7; border-radius:14px; position:relative; overflow:hidden;">
+        <div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#fc8181,#9b2335); position:absolute; animation:slide-linear 2s linear infinite alternate-reverse;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- 14. animation-play-state / animation-fill-mode -->
+<h2>⑭ animation-play-state / animation-fill-mode</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* animation-play-state：再生・一時停止 */</span>
+<span class="prop">animation-play-state</span>: <span class="val">running</span>; <span class="comment">/* 再生中（デフォルト） */</span>
+<span class="prop">animation-play-state</span>: <span class="val">paused</span>;  <span class="comment">/* 一時停止 */</span>
+
+<span class="comment">/* ホバーで一時停止する例 */</span>
+<span class="selector">.box</span>        { <span class="prop">animation</span>: <span class="val">spin 2s linear infinite</span>; }
+<span class="selector">.box:hover</span>  { <span class="prop">animation-play-state</span>: <span class="val">paused</span>; }
+
+<span class="comment">/* animation-fill-mode：アニメーション前後のスタイルを指定 */</span>
+<span class="prop">animation-fill-mode</span>: <span class="val">none</span>;      <span class="comment">/* 前後ともアニメーション外のスタイル（デフォルト） */</span>
+<span class="prop">animation-fill-mode</span>: <span class="val">forwards</span>;  <span class="comment">/* 終了後：最後のキーフレームのスタイルを維持 */</span>
+<span class="prop">animation-fill-mode</span>: <span class="val">backwards</span>; <span class="comment">/* 開始前（delay中）：最初のキーフレームのスタイルを適用 */</span>
+<span class="prop">animation-fill-mode</span>: <span class="val">both</span>;      <span class="comment">/* forwards と backwards の両方 */</span>
+</pre>
+
+  <h3>animation-play-state デモ（ホバーで一時停止）</h3>
+  <div style="text-align:center; margin:14px 0;">
+    <div style="display:inline-block; width:60px; height:60px; background:linear-gradient(135deg,#9f7aea,#553c9a); border-radius:10px; animation:demo-spin 2s linear infinite; cursor:pointer;"
+         onmouseover="this.style.animationPlayState='paused'"
+         onmouseout="this.style.animationPlayState='running'">
+    </div>
+    <div style="font-size:0.82em; color:#553c9a; margin-top:8px; font-family:'Consolas','Monaco',monospace;">
+      ホバーで animation-play-state: paused
+    </div>
+  </div>
+
+  <h3>animation-fill-mode の違い</h3>
+  <div class="fill-grid">
+    <div class="fill-item">
+      <div class="fill-label">none（デフォルト）</div>
+      <div class="fill-desc">前後ともアニメーション外のスタイル</div>
+      <div class="fill-track">
+        <div class="fill-ball" style="background:#9f7aea; animation:fill-anim 2s ease 1s none 1 normal;"></div>
+      </div>
+    </div>
+    <div class="fill-item">
+      <div class="fill-label">forwards</div>
+      <div class="fill-desc">終了後：最後のキーフレームを維持</div>
+      <div class="fill-track">
+        <div class="fill-ball" style="background:#9f7aea; animation:fill-anim 2s ease 1s forwards 1 normal;"></div>
+      </div>
+    </div>
+    <div class="fill-item">
+      <div class="fill-label">backwards</div>
+      <div class="fill-desc">delay中：最初のキーフレームを適用</div>
+      <div class="fill-track">
+        <div class="fill-ball" style="background:#9f7aea; animation:fill-anim 2s ease 1s backwards 1 normal;"></div>
+      </div>
+    </div>
+    <div class="fill-item">
+      <div class="fill-label">both</div>
+      <div class="fill-desc">forwards + backwards の両方</div>
+      <div class="fill-track">
+        <div class="fill-ball" style="background:#9f7aea; animation:fill-anim 2s ease 1s both 1 normal;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- 15. animation ショートハンド -->
+<h2>⑮ animation プロパティ（ショートハンド）</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* animation: name duration timing-function delay iteration-count direction fill-mode play-state */</span>
+<span class="prop">animation</span>: <span class="val">bounce 1s ease 0s infinite normal none running</span>;
+
+<span class="comment">/* よく使う省略形 */</span>
+<span class="prop">animation</span>: <span class="val">bounce 1s ease infinite</span>;
+<span class="prop">animation</span>: <span class="val">spin 2s linear infinite</span>;
+<span class="prop">animation</span>: <span class="val">fadeIn 0.5s ease-out forwards</span>;
+<span class="prop">animation</span>: <span class="val">pulse 1.2s ease-in-out infinite alternate</span>;
+
+<span class="comment">/* 複数のアニメーションを同時に適用（カンマ区切り） */</span>
+<span class="prop">animation</span>:
+  <span class="val">spin   2s linear   infinite</span>,
+  <span class="val">color  3s ease     infinite</span>;
+</pre>
+
+  <h3>animation ショートハンド インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <div class="slider-row">
+      <label>@keyframes</label>
+      <select id="an-name" onchange="updateAN()">
+        <option value="demo-bounce">bounce（上下）</option>
+        <option value="demo-spin">spin（回転）</option>
+        <option value="demo-pulse">pulse（拡大縮小）</option>
+        <option value="demo-slide">slide（スライド）</option>
+        <option value="demo-color">color（色変化）</option>
+        <option value="demo-shake">shake（振動）</option>
+      </select>
+      <span class="val-display"></span>
+    </div>
+    <div class="slider-row">
+      <label>animation-duration</label>
+      <input type="range" id="an-dur" min="2" max="40" value="12" oninput="updateAN()">
+      <span class="val-display" id="an-dur-val">1.2s</span>
+    </div>
+    <div class="slider-row">
+      <label>animation-timing-function</label>
+      <select id="an-timing" onchange="updateAN()">
+        <option value="ease">ease</option>
+        <option value="linear">linear</option>
+        <option value="ease-in">ease-in</option>
+        <option value="ease-out">ease-out</option>
+        <option value="ease-in-out">ease-in-out</option>
+      </select>
+      <span class="val-display"></span>
+    </div>
+    <div class="slider-row">
+      <label>animation-iteration-count</label>
+      <select id="an-iter" onchange="updateAN()">
+        <option value="infinite">infinite</option>
+        <option value="1">1</option>
+        <option value="3">3</option>
+      </select>
+      <span class="val-display"></span>
+    </div>
+    <div class="slider-row">
+      <label>animation-direction</label>
+      <select id="an-dir" onchange="updateAN()">
+        <option value="normal">normal</option>
+        <option value="reverse">reverse</option>
+        <option value="alternate">alternate</option>
+        <option value="alternate-reverse">alternate-reverse</option>
+      </select>
+      <span class="val-display"></span>
+    </div>
+    <div class="stage" style="height:160px;">
+      <div id="an-target" class="demo-target"
+           style="animation: demo-bounce 1.2s ease infinite normal;">BOX</div>
+    </div>
+    <div class="color-code-display" id="an-code">animation: demo-bounce 1.2s ease infinite normal;</div>
+  </div>
+  <script>
+    function updateAN() {
+      const name   = document.getElementById('an-name').value;
+      const dur    = (document.getElementById('an-dur').value / 10).toFixed(1);
+      const timing = document.getElementById('an-timing').value;
+      const iter   = document.getElementById('an-iter').value;
+      const dir    = document.getElementById('an-dir').value;
+      document.getElementById('an-dur-val').textContent = dur + 's';
+      const anim = `${name} ${dur}s ${timing} ${iter} ${dir}`;
+      document.getElementById('an-target').style.animation = anim;
+      document.getElementById('an-code').textContent = `animation: ${anim};`;
+    }
+  </script>
+</div>
+
+
+<!-- 演習問題 -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      <code>transform</code> プロパティで要素を移動させると、
+      周囲の要素のレイアウトも影響を受けて再配置される。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn btn-purple" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'transform は要素の<strong>見た目だけ</strong>を変形します。<br>' +
+            'レイアウト上の位置・サイズは変わらないため、<br>' +
+            '周囲の要素への影響はありません。<br>' +
+            '（position: relative で top/left を変えた場合も同様）';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。transform は見た目だけを変形し、' +
+            'レイアウトには影響しません。周囲の要素は動きません。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合う値・プロパティ名を入力してください。</p>
+
+    <label>① transform で要素を時計回りに90度回転させる記述：</label>
+    <input type="text" id="q2a" placeholder="transform: 〇〇〇(〇〇〇)">
+
+    <label>② transform-origin のデフォルト値：</label>
+    <input type="text" id="q2b" placeholder="値">
+
+    <label>③ transition のショートハンドの指定順（4つ）：</label>
+    <input type="text" id="q2c" placeholder="〇〇〇 〇〇〇 〇〇〇 〇〇〇">
+
+    <label>④ アニメーションを無限ループさせる animation-iteration-count の値：</label>
+    <input type="text" id="q2d" placeholder="値">
+
+    <label>⑤ アニメーション終了後に最後のキーフレームのスタイルを維持する animation-fill-mode の値：</label>
+    <input type="text" id="q2e" placeholder="値">
+
+    <label>⑥ アニメーションを一時停止する animation-play-state の値：</label>
+    <input type="text" id="q2f" placeholder="値">
+
+    <br>
+    <button class="btn btn-purple" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value.trim().toLowerCase().replace(/\s/g,'');
+        const b = document.getElementById('q2b').value.trim().toLowerCase().replace(/\s/g,'');
+        const c = document.getElementById('q2c').value.trim().toLowerCase().replace(/\s+/g,' ');
+        const d = document.getElementById('q2d').value.trim().toLowerCase();
+        const e = document.getElementById('q2e').value.trim().toLowerCase();
+        const f = document.getElementById('q2f').value.trim().toLowerCase();
+        const r = document.getElementById('q2-result');
+        const ca = a === 'transform:rotate(90deg)' || a === 'rotate(90deg)';
+        const cb = b === '50%50%' || b === '5050' || b === 'centercenter' || b === '50%50';
+        const cc = c.includes('property') && c.includes('duration') && c.includes('timing') && c.includes('delay')
+                || c === 'property duration timing-function delay'
+                || c === 'プロパティ 時間 タイミング 遅延';
+        const cd = d === 'infinite';
+        const ce = e === 'forwards';
+        const cf = f === 'paused';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！アニメーションプロパティを完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `① ${ca?'✅':'❌ transform: rotate(90deg)'}　` +
+            `② ${cb?'✅':'❌ 50% 50%'}　` +
+            `③ ${cc?'✅':'❌ property duration timing-function delay'}　` +
+            `④ ${cd?'✅':'❌ infinite'}　` +
+            `⑤ ${ce?'✅':'❌ forwards'}　` +
+            `⑥ ${cf?'✅':'❌ paused'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>
+      トランジションとアニメーションの違いとして<strong>正しいもの</strong>はどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">トランジションは複数のキーフレームを定義でき、アニメーションは2点間のみ</option>
+      <option value="b">トランジションは :hover などのトリガーが必要で自動再生できないが、アニメーションはトリガー不要で自動再生・無限ループが可能</option>
+      <option value="c">トランジションは transform にのみ使え、アニメーションはすべてのプロパティに使える</option>
+      <option value="d">トランジションとアニメーションはまったく同じ機能で、書き方が違うだけである</option>
+    </select>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br><br>' +
+            '<strong>トランジション</strong><br>' +
+            '・開始・終了の2点間の変化<br>' +
+            '・:hover などのトリガーが必要<br>' +
+            '・自動繰り返し不可<br><br>' +
+            '<strong>アニメーション（@keyframes）</strong><br>' +
+            '・複数のキーフレームで細かく状態を定義可能<br>' +
+            '・トリガー不要で自動再生<br>' +
+            '・infinite で無限ループ、direction で再生方向も制御可能';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            'トランジションは :hover などのトリガーが必要で2点間の変化のみ。<br>' +
+            'アニメーションは @keyframes で複数の中間状態を定義でき、<br>' +
+            'トリガー不要・無限ループ・再生方向制御なども可能です。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 選択問題</h3>
+    <p>
+      <code>animation-direction: alternate</code> の動作として正しいものはどれですか？
+    </p>
+    <select id="q4">
+      <option value="">-- 選択してください --</option>
+      <option value="a">常に 0% → 100% の順方向で再生する</option>
+      <option value="b">常に 100% → 0% の逆方向で再生する</option>
+      <option value="c">奇数回目は順方向（0%→100%）、偶数回目は逆方向（100%→0%）で再生する</option>
+      <option value="d">奇数回目は逆方向（100%→0%）、偶数回目は順方向（0%→100%）で再生する</option>
+    </select>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const v = document.getElementById('q4').value;
+        const r = document.getElementById('q4-result');
+        if (v === 'c') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            '<code>alternate</code>：奇数回目は順方向（0%→100%）、偶数回目は逆方向（100%→0%）<br>' +
+            '→ 行って戻ってを繰り返す動き（バウンスなどに便利）<br><br>' +
+            '<code>alternate-reverse</code>：奇数回目が逆方向（100%→0%）、偶数回目が順方向（0%→100%）';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            '<code>alternate</code> は奇数回目が順方向（0%→100%）、偶数回目が逆方向（100%→0%）です。<br>' +
+            '行って戻ってを繰り返す動きになります。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5a">
+      ① <code>transform</code> で複数の変形を指定するときはスペース区切りで並べる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5b">
+      ② <code>transform-origin</code> のデフォルト値は <code>0 0</code>（左上）である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5c">
+      ③ <code>transition-timing-function: linear</code> は一定速度で変化する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5d">
+      ④ <code>animation-fill-mode: forwards</code> はアニメーション終了後に最後のキーフレームのスタイルを維持する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5e">
+      ⑤ <code>@keyframes</code> では <code>from</code> と <code>to</code> の2点しか定義できない
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5f">
+      ⑥ <code>animation-play-state: paused</code> でアニメーションを一時停止できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5g">
+      ⑦ <code>transition-delay</code> に負の値を指定すると、アニメーションの途中から開始したように見える
+    </label>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const r = document.getElementById('q5-result');
+        const checks = {
+          a: document.getElementById('q5a').checked,
+          b: document.getElementById('q5b').checked,
+          c: document.getElementById('q5c').checked,
+          d: document.getElementById('q5d').checked,
+          e: document.getElementById('q5e').checked,
+          f: document.getElementById('q5f').checked,
+          g: document.getElementById('q5g').checked,
+        };
+        // 正解：①③④⑥⑦（a, c, d, f, g）
+        // ② transform-origin のデフォルトは 50% 50%（中心）
+        // ⑤ @keyframes はパーセントで複数の中間状態を定義できる
+        const correct = { a:true, b:false, c:true, d:true, e:false, f:true, g:true };
+        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
+        const allCorrect = results.every(Boolean);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① transform の複数指定はスペース区切り ✅<br>' +
+            '・③ linear は一定速度 ✅<br>' +
+            '・④ fill-mode: forwards → 最後のキーフレームを維持 ✅<br>' +
+            '・⑥ play-state: paused → 一時停止 ✅<br>' +
+            '・⑦ delay の負の値 → 途中から開始 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① transform の複数指定はスペース区切り<br>' +
+            '・③ linear は一定速度で変化<br>' +
+            '・④ animation-fill-mode: forwards → 終了後に最後のキーフレームを維持<br>' +
+            '・⑥ animation-play-state: paused → 一時停止<br>' +
+            '・⑦ transition-delay の負の値 → 途中から開始したように見える<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② transform-origin のデフォルトは 50% 50%（中心）であり、0 0（左上）ではない<br>' +
+            '・⑤ @keyframes はパーセント（%）で複数の中間状態を自由に定義できる';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. コード穴埋め問題</h3>
+    <p><code>__A__</code> 〜 <code>__F__</code> に適切な値・記述を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+/* A：要素を左上を基点に45度回転させる */
+transform: rotate(45deg);
+transform-origin: __A__;
+
+/* B：背景色の変化を0.4秒・ease-outでなめらかに変化させる */
+transition: background-color __B__ ease-out;
+
+/* C：アニメーションを定義するアットルールの名前 */
+__C__ fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* D：fadeInアニメーションを0.5秒・終了後スタイル維持で1回再生 */
+animation: fadeIn 0.5s ease __D__;
+
+/* E：アニメーションを交互（順→逆→順）に再生する direction の値 */
+animation-direction: __E__;
+
+/* F：ホバー時にアニメーションを一時停止する */
+.box:hover { animation-play-state: __F__; }</pre>
+
+    <label>A（transform-origin の値）：</label>
+    <input type="text" id="q6a" placeholder="値">
+    <label>B（transition-duration の値）：</label>
+    <input type="text" id="q6b" placeholder="値">
+    <label>C（アットルールのキーワード）：</label>
+    <input type="text" id="q6c" placeholder="@〇〇〇〇〇〇〇〇〇">
+    <label>D（animation-fill-mode の値）：</label>
+    <input type="text" id="q6d" placeholder="値">
+    <label>E（animation-direction の値）：</label>
+    <input type="text" id="q6e" placeholder="値">
+    <label>F（animation-play-state の値）：</label>
+    <input type="text" id="q6f" placeholder="値">
+    <br>
+    <button class="btn btn-purple" onclick="checkQ6()">答え合わせ</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const a = document.getElementById('q6a').value.trim().toLowerCase().replace(/\s/g,'');
+        const b = document.getElementById('q6b').value.trim().toLowerCase().replace(/\s/g,'');
+        const c = document.getElementById('q6c').value.trim().toLowerCase().replace(/\s/g,'');
+        const d = document.getElementById('q6d').value.trim().toLowerCase();
+        const e = document.getElementById('q6e').value.trim().toLowerCase().replace(/\s/g,'');
+        const f = document.getElementById('q6f').value.trim().toLowerCase();
+        const r = document.getElementById('q6-result');
+        const ca = a === '00' || a === 'lefttop' || a === '0%0%' || a === 'topleft';
+        const cb = b === '0.4s' || b === '400ms';
+        const cc = c === '@keyframes' || c === 'keyframes';
+        const cd = d === 'forwards';
+        const ce = e === 'alternate';
+        const cf = f === 'paused';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！アニメーションの記述を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca?'✅':'❌ 0 0（または left top）'}　` +
+            `B: ${cb?'✅':'❌ 0.4s（または400ms）'}　` +
+            `C: ${cc?'✅':'❌ @keyframes'}　` +
+            `D: ${cd?'✅':'❌ forwards'}　` +
+            `E: ${ce?'✅':'❌ alternate'}　` +
+            `F: ${cf?'✅':'❌ paused'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q7 -->
+  <div class="quiz-block">
+    <h3>Q7. 記述問題</h3>
+    <p>
+      <code>animation-fill-mode</code> の4つの値（<code>none</code>・<code>forwards</code>・
+      <code>backwards</code>・<code>both</code>）の違いを、
+      「アニメーション開始前（delay中）」と「アニメーション終了後」の
+      2つの観点から説明してください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q7" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ7()">模範解答を見る</button>
+    <div class="result-msg" id="q7-result"></div>
+    <script>
+      function checkQ7() {
+        const r = document.getElementById('q7-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<table style="border-collapse:collapse; width:100%; font-size:0.88em;">' +
+          '<thead><tr style="background:#553c9a; color:#fff;">' +
+          '<th style="padding:8px; border:1px solid #e9d8fd;">値</th>' +
+          '<th style="padding:8px; border:1px solid #e9d8fd;">delay中（開始前）</th>' +
+          '<th style="padding:8px; border:1px solid #e9d8fd;">終了後</th>' +
+          '</tr></thead><tbody>' +
+          '<tr><td style="padding:8px; border:1px solid #e9d8fd;"><code>none</code>（デフォルト）</td>' +
+          '<td style="padding:8px; border:1px solid #e9d8fd;">通常のスタイル</td>' +
+          '<td style="padding:8px; border:1px solid #e9d8fd;">通常のスタイルに戻る</td></tr>' +
+          '<tr style="background:#faf5ff;"><td style="padding:8px; border:1px solid #e9d8fd;"><code>forwards</code></td>' +
+          '<td style="padding:8px; border:1px solid #e9d8fd;">通常のスタイル</td>' +
+          '<td style="padding:8px; border:1px solid #e9d8fd;">最後のキーフレームを維持</td></tr>' +
+          '<tr><td style="padding:8px; border:1px solid #e9d8fd;"><code>backwards</code></td>' +
+          '<td style="padding:8px; border:1px solid #e9d8fd;">最初のキーフレームを適用</td>' +
+          '<td style="padding:8px; border:1px solid #e9d8fd;">通常のスタイルに戻る</td></tr>' +
+          '<tr style="background:#faf5ff;"><td style="padding:8px; border:1px solid #e9d8fd;"><code>both</code></td>' +
+          '<td style="padding:8px; border:1px solid #e9d8fd;">最初のキーフレームを適用</td>' +
+          '<td style="padding:8px; border:1px solid #e9d8fd;">最後のキーフレームを維持</td></tr>' +
+          '</tbody></table><br>' +
+          '💡 <strong>よく使うのは forwards</strong>：フェードインなどで「表示したまま止める」ために使います。';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 CSS アニメーション プロパティ まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>プロパティ</th><th>主な値</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td colspan="3" style="background:#f3e8ff; color:#553c9a; font-weight:bold; font-size:0.88em;">▼ transform</td>
+    </tr>
+    <tr>
+      <td><code>transform</code></td>
+      <td><code>rotate() / scale() / translate() / skew() / none</code></td>
+      <td>見た目だけを変形。レイアウトに影響しない。複数指定はスペース区切り</td>
+    </tr>
+    <tr>
+      <td><code>transform-origin</code></td>
+      <td>位置キーワード / % / 長さ</td>
+      <td>変形の基点。デフォルトは <code>50% 50%</code>（中心）</td>
+    </tr>
+    <tr>
+      <td colspan="3" style="background:#f3e8ff; color:#553c9a; font-weight:bold; font-size:0.88em;">▼ トランジション</td>
+    </tr>
+    <tr>
+      <td><code>transition-property</code></td>
+      <td><code>all / none / プロパティ名</code></td>
+      <td>トランジションを適用するプロパティを指定</td>
+    </tr>
+    <tr>
+      <td><code>transition-duration</code></td>
+      <td>秒（s）/ ミリ秒（ms）</td>
+      <td>変化にかける時間。デフォルトは 0s</td>
+    </tr>
+    <tr>
+      <td><code>transition-timing-function</code></td>
+      <td><code>ease / linear / ease-in / ease-out / ease-in-out / steps() / cubic-bezier()</code></td>
+      <td>速度カーブ。デフォルトは ease</td>
+    </tr>
+    <tr>
+      <td><code>transition-delay</code></td>
+      <td>秒（s）/ ミリ秒（ms）</td>
+      <td>開始までの遅延。負の値で途中から開始</td>
+    </tr>
+    <tr>
+      <td><code>transition</code></td>
+      <td><code>property duration timing delay</code></td>
+      <td>ショートハンド。カンマ区切りで複数指定可</td>
+    </tr>
+    <tr>
+      <td colspan="3" style="background:#f3e8ff; color:#553c9a; font-weight:bold; font-size:0.88em;">▼ アニメーション</td>
+    </tr>
+    <tr>
+      <td><code>@keyframes</code></td>
+      <td><code>from / to / 0%〜100%</code></td>
+      <td>アニメーションの各時点の状態を定義。パーセントで中間状態も指定可</td>
+    </tr>
+    <tr>
+      <td><code>animation-name</code></td>
+      <td>@keyframes の名前 / <code>none</code></td>
+      <td>適用する @keyframes を指定</td>
+    </tr>
+    <tr>
+      <td><code>animation-duration</code></td>
+      <td>秒（s）/ ミリ秒（ms）</td>
+      <td>1サイクルの時間。デフォルトは 0s</td>
+    </tr>
+    <tr>
+      <td><code>animation-timing-function</code></td>
+      <td><code>ease / linear / steps() など</code></td>
+      <td>transition-timing-function と同じ値が使える</td>
+    </tr>
+    <tr>
+      <td><code>animation-delay</code></td>
+      <td>秒（s）/ ミリ秒（ms）</td>
+      <td>開始までの遅延。負の値で途中から開始</td>
+    </tr>
+    <tr>
+      <td><code>animation-iteration-count</code></td>
+      <td>整数 / <code>infinite</code></td>
+      <td>繰り返し回数。infinite で無限ループ</td>
+    </tr>
+    <tr>
+      <td><code>animation-direction</code></td>
+      <td><code>normal / reverse / alternate / alternate-reverse</code></td>
+      <td>alternate：奇数回目が順方向・偶数回目が逆方向</td>
+    </tr>
+    <tr>
+      <td><code>animation-play-state</code></td>
+      <td><code>running / paused</code></td>
+      <td>再生・一時停止の切り替え。:hover と組み合わせて使う</td>
+    </tr>
+    <tr>
+      <td><code>animation-fill-mode</code></td>
+      <td><code>none / forwards / backwards / both</code></td>
+      <td>forwards：終了後に最後のキーフレームを維持。backwards：delay中に最初を適用</td>
+    </tr>
+    <tr>
+      <td><code>animation</code></td>
+      <td><code>name duration timing delay count direction fill-mode play-state</code></td>
+      <td>ショートハンド。カンマ区切りで複数アニメーション同時指定可</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
