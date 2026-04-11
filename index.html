@@ -76,14 +76,8 @@
       margin: 40px 0 20px;
       letter-spacing: 0.04em;
     }
-    .section-title.css {
-      color: #553c9a;
-      border-left-color: #9f7aea;
-    }
-    .section-title.resp {
-      color: #276749;
-      border-left-color: #38a169;
-    }
+    .section-title.css  { color: #553c9a; border-left-color: #9f7aea; }
+    .section-title.resp { color: #276749; border-left-color: #38a169; }
 
     /* ===== カードグリッド ===== */
     .card-grid {
@@ -92,7 +86,7 @@
       gap: 22px;
     }
 
-    /* ===== カード（公開済み・HTML編） ===== */
+    /* ===== カード（HTML編） ===== */
     .card {
       background: #fff;
       border: 1px solid #bee3f8;
@@ -111,53 +105,24 @@
       box-shadow: 0 8px 24px rgba(66,153,225,0.18);
     }
 
-    /* ===== カード（公開済み・CSS編） ===== */
-    .card.css-card {
-      border-color: #e9d8fd;
-    }
-    .card.css-card:hover {
-      box-shadow: 0 8px 24px rgba(159,122,234,0.18);
-    }
+    /* ===== カード（CSS編） ===== */
+    .card.css-card { border-color: #e9d8fd; }
+    .card.css-card:hover { box-shadow: 0 8px 24px rgba(159,122,234,0.18); }
     .card.css-card .card-title { color: #553c9a; }
-    .card.css-card .tag {
-      background: #faf5ff;
-      color: #553c9a;
-      border-color: #e9d8fd;
-    }
+    .card.css-card .tag { background: #faf5ff; color: #553c9a; border-color: #e9d8fd; }
     .card.css-card .card-footer { border-top-color: #faf5ff; }
 
-    /* ===== カード（公開済み・第3編） ===== */
-    .card.resp-card {
-      border-color: #c6f6d5;
-    }
-    .card.resp-card:hover {
-      box-shadow: 0 8px 24px rgba(56,161,105,0.18);
-    }
+    /* ===== カード（第3編） ===== */
+    .card.resp-card { border-color: #c6f6d5; }
+    .card.resp-card:hover { box-shadow: 0 8px 24px rgba(56,161,105,0.18); }
     .card.resp-card .card-title { color: #276749; }
-    .card.resp-card .tag {
-      background: #f0fff4;
-      color: #276749;
-      border-color: #c6f6d5;
-    }
+    .card.resp-card .tag { background: #f0fff4; color: #276749; border-color: #c6f6d5; }
     .card.resp-card .card-footer { border-top-color: #f0fff4; }
 
     .card-icon { font-size: 2em; line-height: 1; }
-    .card-title {
-      font-size: 1.08em;
-      font-weight: bold;
-      color: #2b6cb0;
-    }
-    .card-desc {
-      font-size: 0.9em;
-      color: #4a5568;
-      flex: 1;
-    }
-    .card-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 4px;
-    }
+    .card-title { font-size: 1.08em; font-weight: bold; color: #2b6cb0; }
+    .card-desc  { font-size: 0.9em; color: #4a5568; flex: 1; }
+    .card-tags  { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
     .tag {
       background: #ebf8ff;
       color: #2b6cb0;
@@ -175,34 +140,6 @@
       margin-top: 4px;
     }
 
-    /* ===== カード（準備中） ===== */
-    .card-coming {
-      background: #f7fafc;
-      border: 1px dashed #cbd5e0;
-      border-radius: 12px;
-      padding: 24px 22px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      opacity: 0.75;
-    }
-    .card-coming .card-title { color: #718096; }
-    .card-coming .tag {
-      background: #edf2f7;
-      color: #718096;
-      border-color: #e2e8f0;
-    }
-    .coming-badge {
-      display: inline-block;
-      background: #edf2f7;
-      color: #718096;
-      border-radius: 20px;
-      padding: 2px 10px;
-      font-size: 0.78em;
-      font-weight: bold;
-      width: fit-content;
-    }
-
     /* ===== 進捗バー ===== */
     .progress-section {
       background: #fff;
@@ -212,11 +149,7 @@
       margin-bottom: 36px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     }
-    .progress-section h2 {
-      margin: 0 0 16px;
-      font-size: 1em;
-      color: #2b6cb0;
-    }
+    .progress-section h2 { margin: 0 0 16px; font-size: 1em; color: #2b6cb0; }
     .progress-bar-wrap {
       background: #ebf8ff;
       border-radius: 99px;
@@ -230,25 +163,11 @@
       background: linear-gradient(90deg, #4299e1, #48bb78);
       transition: width 1s ease;
     }
-    .progress-bar-wrap.css {
-      background: #faf5ff;
-      margin-top: 12px;
-    }
-    .progress-bar.css {
-      background: linear-gradient(90deg, #9f7aea, #ed64a6);
-    }
-    .progress-bar-wrap.resp {
-      background: #f0fff4;
-      margin-top: 12px;
-    }
-    .progress-bar.resp {
-      background: linear-gradient(90deg, #38a169, #68d391);
-    }
-    .progress-label {
-      font-size: 0.85em;
-      color: #718096;
-      text-align: right;
-    }
+    .progress-bar-wrap.css  { background: #faf5ff; margin-top: 12px; }
+    .progress-bar.css       { background: linear-gradient(90deg, #9f7aea, #ed64a6); }
+    .progress-bar-wrap.resp { background: #f0fff4; margin-top: 12px; }
+    .progress-bar.resp      { background: linear-gradient(90deg, #38a169, #68d391); }
+    .progress-label { font-size: 0.85em; color: #718096; text-align: right; }
 
     /* ===== 試験情報バナー ===== */
     .info-banner {
@@ -290,22 +209,21 @@
       header .badge { font-size: 0.72em; padding: 3px 12px; }
       .header-meta { font-size: 0.78em; margin-top: 14px; }
       main { padding: 20px 12px 40px; }
-      .info-banner { flex-direction: column; gap: 8px; padding: 14px 14px; }
+      .info-banner { flex-direction: column; gap: 8px; padding: 14px; }
       .info-banner .icon { font-size: 1.5em; }
       .info-banner h2 { font-size: 0.9em; }
       .info-banner p { font-size: 0.8em; }
-      .progress-section { padding: 14px 14px; }
+      .progress-section { padding: 14px; }
       .progress-section h2 { font-size: 0.88em; }
       .progress-label { font-size: 0.78em; }
       .section-title { font-size: 0.92em; margin: 28px 0 14px; }
       .card-grid { grid-template-columns: 1fr; gap: 14px; }
-      .card, .card-coming { padding: 16px 14px; gap: 7px; }
+      .card { padding: 16px 14px; gap: 7px; }
       .card-icon { font-size: 1.5em; }
       .card-title { font-size: 0.92em; }
       .card-desc { font-size: 0.78em; }
       .tag { font-size: 0.68em; padding: 1px 8px; }
       .card-footer { font-size: 0.72em; }
-      .coming-badge { font-size: 0.7em; }
       footer { padding: 20px 14px; font-size: 0.78em; }
     }
     @media (max-height: 500px) and (orientation: landscape) {
@@ -316,7 +234,7 @@
       header .badge { font-size: 0.7em; margin-bottom: 8px; }
       main { padding: 16px 20px 32px; }
       .card-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
-      .card, .card-coming { padding: 12px 12px; }
+      .card { padding: 12px; }
       .card-title { font-size: 0.88em; }
       .card-desc { font-size: 0.76em; }
       .tag { font-size: 0.66em; }
@@ -365,33 +283,33 @@
       🟦 HTML編
     </div>
     <div class="progress-bar-wrap">
-      <div class="progress-bar" style="width: 100%;"></div>
+      <div class="progress-bar" style="width:100%;"></div>
     </div>
     <div class="progress-label">HTML編 10 / 10 ページ完了 🎉</div>
 
     <!-- CSS編 -->
-    <div style="font-size:0.85em; color:#553c9a; font-weight:bold; margin: 14px 0 4px;">
+    <div style="font-size:0.85em; color:#553c9a; font-weight:bold; margin:14px 0 4px;">
       🟪 CSS編
     </div>
     <div class="progress-bar-wrap css">
-      <div class="progress-bar css" style="width: 100%;"></div>
+      <div class="progress-bar css" style="width:100%;"></div>
     </div>
     <div class="progress-label">CSS編 11 / 11 ページ完了 🎉</div>
 
     <!-- 第3編 -->
-    <div style="font-size:0.85em; color:#276749; font-weight:bold; margin: 14px 0 4px;">
+    <div style="font-size:0.85em; color:#276749; font-weight:bold; margin:14px 0 4px;">
       🟩 レスポンシブWebデザイン編
     </div>
     <div class="progress-bar-wrap resp">
-      <!-- 1/4ページ = 25% -->
-      <div class="progress-bar resp" style="width: 25%;"></div>
+      <!-- ✅ 更新：4/4 = 100% -->
+      <div class="progress-bar resp" style="width:100%;"></div>
     </div>
-    <div class="progress-label">レスポンシブ編 1 / 4 ページ公開済み（順次追加中）</div>
+    <div class="progress-label">レスポンシブ編 4 / 4 ページ完了 🎉</div>
 
   </div><!-- /progress-section -->
 
 
-  <!-- HTML編 公開済みページ -->
+  <!-- ===== HTML編 ===== -->
   <div class="section-title">✅ HTML編 ― 公開済み（全10ページ）</div>
   <div class="card-grid">
 
@@ -578,10 +496,10 @@
       <div class="card-footer">📁 table_elements.html</div>
     </a>
 
-  </div><!-- /card-grid -->
+  </div><!-- /card-grid HTML編 -->
 
 
-  <!-- CSS編 公開済みページ -->
+  <!-- ===== CSS編 ===== -->
   <div class="section-title css">✅ CSS編 ― 公開済み（全11ページ）</div>
   <div class="card-grid">
 
@@ -802,14 +720,15 @@
       <div class="card-footer">📁 css_etc.html</div>
     </a>
 
-  </div><!-- /card-grid -->
+  </div><!-- /card-grid CSS編 -->
 
 
-  <!-- 第3編 公開済みページ -->
-  <div class="section-title resp">✅ レスポンシブWebデザイン編 ― 公開済み（1ページ）</div>
+  <!-- ===== 第3編 ===== -->
+  <!-- ✅ 更新：全4ページ完了 -->
+  <div class="section-title resp">✅ レスポンシブWebデザイン編 ― 公開済み（全4ページ）</div>
   <div class="card-grid">
 
-    <!-- ✅ 新規追加：resp_web_techs.html -->
+    <!-- resp_web_techs.html -->
     <a class="card resp-card" href="resp_web_techs.html">
       <div class="card-icon">📱</div>
       <div class="card-title">レスポンシブWebデザインと関連技術</div>
@@ -830,49 +749,72 @@
       <div class="card-footer">📁 resp_web_techs.html</div>
     </a>
 
-  </div><!-- /card-grid -->
-
-  <!-- 第3編 準備中 -->
-  <div class="section-title resp">🚧 レスポンシブWebデザイン編 ― 順次追加予定</div>
-  <div class="card-grid">
-
-    <div class="card-coming">
+    <!-- ✅ 新規追加：media_queries.htm -->
+    <a class="card resp-card" href="media_queries.htm">
       <div class="card-icon">📡</div>
-      <div class="card-title">メディアクエリ</div>
-      <div class="card-desc">@media の書式・メディアタイプ・メディア特性・ブレークポイントの設定など</div>
+      <div class="card-title">メディアクエリ（Media Queries）</div>
+      <div class="card-desc">
+        メディアクエリの2つの指定方法（HTML media 属性 / CSS @media）・
+        メディア型（screen / print / all）・メディア特性（width / orientation /
+        resolution / prefers-color-scheme など）・
+        論理演算子（and / not / only / カンマ）を学びます。
+        ブレークポイント別4段階シミュレーター付き。
+      </div>
       <div class="card-tags">
         <span class="tag">@media</span>
+        <span class="tag">screen / print</span>
         <span class="tag">min-width</span>
-        <span class="tag">max-width</span>
+        <span class="tag">orientation</span>
+        <span class="tag">prefers-color-scheme</span>
+        <span class="tag">and / not</span>
       </div>
-      <span class="coming-badge">🚧 準備中</span>
-    </div>
+      <div class="card-footer">📁 media_queries.htm</div>
+    </a>
 
-    <div class="card-coming">
-      <div class="card-icon">📐</div>
-      <div class="card-title">viewportとFluid Grid</div>
-      <div class="card-desc">viewportメタタグの詳細・相対単位（%・rem・vw・vh）・可変グリッドの実装など</div>
+    <!-- ✅ 新規追加：resp_other_techs.html -->
+    <a class="card resp-card" href="resp_other_techs.html">
+      <div class="card-icon">🔧</div>
+      <div class="card-title">その他のレスポンシブWebデザイン関連技術</div>
+      <div class="card-desc">
+        Fluid Grid（可変グリッド・相対単位）・Fluid Image（可変イメージ・
+        max-width:100%）・ビューポート（viewport メタタグ・vw / vh）・
+        リセットCSS（Eric Meyer's Reset / Normalize.css）を学びます。
+        コンテナ幅・画像サイズのインタラクティブデモ付き。
+      </div>
       <div class="card-tags">
+        <span class="tag">Fluid Grid</span>
+        <span class="tag">max-width:100%</span>
         <span class="tag">viewport</span>
         <span class="tag">vw / vh</span>
-        <span class="tag">rem</span>
+        <span class="tag">リセットCSS</span>
+        <span class="tag">Normalize.css</span>
       </div>
-      <span class="coming-badge">🚧 準備中</span>
-    </div>
+      <div class="card-footer">📁 resp_other_techs.html</div>
+    </a>
 
-    <div class="card-coming">
-      <div class="card-icon">🖼️</div>
-      <div class="card-title">レスポンシブ画像と実践</div>
-      <div class="card-desc">picture要素・srcset属性・sizes属性・Flexible Imagesの実装パターンなど</div>
+    <!-- ✅ 新規追加：multi_device.html -->
+    <a class="card resp-card" href="multi_device.html">
+      <div class="card-icon">📲</div>
+      <div class="card-title">その他マルチデバイス対応関連技術</div>
+      <div class="card-desc">
+        CSSスプライト（background-position による画像切り替え）・
+        高解像度画面対応（Retina / DPR / srcset）・
+        ホーム画面ショートカットアイコン・スタンドアローンモード・
+        a 要素での電話発信（tel: / sms:）・
+        async 属性 / defer 属性の違いを学びます。
+      </div>
       <div class="card-tags">
-        <span class="tag">picture</span>
-        <span class="tag">srcset</span>
-        <span class="tag">sizes</span>
+        <span class="tag">CSSスプライト</span>
+        <span class="tag">Retina / DPR</span>
+        <span class="tag">apple-touch-icon</span>
+        <span class="tag">tel:</span>
+        <span class="tag">async</span>
+        <span class="tag">defer</span>
       </div>
-      <span class="coming-badge">🚧 準備中</span>
-    </div>
+      <div class="card-footer">📁 multi_device.html</div>
+    </a>
 
-  </div><!-- /card-grid -->
+  </div><!-- /card-grid 第3編 -->
 
 </main>
 
