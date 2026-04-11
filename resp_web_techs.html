@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>レスポンシブWebデザインと関連技術 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+
+    /* ===== 第3編カラーテーマ：緑系 ===== */
+    h1 { color: #1a202c; border-bottom: 4px solid #38a169; padding-bottom: 10px; }
+    h2 { color: #276749; margin-top: 48px; border-left: 5px solid #38a169; padding-left: 12px; }
+    h3 { color: #2b6cb0; margin-top: 24px; }
+
+    code {
+      background: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment  { color: #68d391; }
+    pre .prop     { color: #90cdf4; }
+    pre .val      { color: #fc8181; }
+    pre .keyword  { color: #b794f4; }
+    pre .tag      { color: #90cdf4; }
+    pre .attr     { color: #fbd38d; }
+    pre .value    { color: #68d391; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #68d391;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #276749; }
+
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+
+    .demo-box {
+      background: #fff;
+      border: 1px solid #c6f6d5;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* ===== デバイス図解 ===== */
+    .device-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 14px;
+      margin: 16px 0;
+    }
+    .device-item {
+      background: #f0fff4;
+      border: 1px solid #c6f6d5;
+      border-radius: 10px;
+      padding: 14px 10px;
+      text-align: center;
+    }
+    .device-icon { font-size: 2.2em; margin-bottom: 6px; }
+    .device-name {
+      font-size: 0.82em;
+      font-weight: bold;
+      color: #276749;
+      margin-bottom: 4px;
+    }
+    .device-size {
+      font-size: 0.72em;
+      color: #718096;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    /* ===== RWD 概念図 ===== */
+    .rwd-concept {
+      display: flex;
+      gap: 0;
+      align-items: stretch;
+      margin: 16px 0;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .rwd-html {
+      background: #2b6cb0;
+      color: #fff;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 90px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 0.85em;
+      gap: 6px;
+    }
+    .rwd-arrow {
+      background: #edf2f7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 8px;
+      font-size: 1.4em;
+      color: #38a169;
+    }
+    .rwd-devices {
+      flex: 1;
+      background: #f0fff4;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .rwd-device-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      border: 1px solid #c6f6d5;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.82em;
+    }
+    .rwd-device-row .icon { font-size: 1.3em; flex-shrink: 0; }
+    .rwd-device-row .label { font-weight: bold; color: #276749; min-width: 80px; }
+    .rwd-device-row .layout {
+      flex: 1;
+      height: 20px;
+      border-radius: 4px;
+      background: #c6f6d5;
+      position: relative;
+      overflow: hidden;
+    }
+    .rwd-device-row .layout-inner {
+      height: 100%;
+      background: #38a169;
+      border-radius: 4px;
+    }
+
+    /* ===== 従来手法 vs RWD 比較 ===== */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 14px 0;
+    }
+    .compare-item {
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .compare-item.old {
+      background: #fff5f5;
+      border: 1px solid #fed7d7;
+    }
+    .compare-item.new {
+      background: #f0fff4;
+      border: 1px solid #c6f6d5;
+    }
+    .compare-title {
+      font-weight: bold;
+      font-size: 0.9em;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid currentColor;
+    }
+    .compare-item.old .compare-title { color: #c53030; }
+    .compare-item.new .compare-title { color: #276749; }
+    .compare-item ul {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 0.85em;
+      color: #4a5568;
+      line-height: 1.9;
+    }
+
+    /* ===== メリット・デメリット ===== */
+    .merit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 14px 0;
+    }
+    .merit-item {
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .merit-item.merit {
+      background: #f0fff4;
+      border: 1px solid #c6f6d5;
+    }
+    .merit-item.demerit {
+      background: #fffaf0;
+      border: 1px solid #fbd38d;
+    }
+    .merit-title {
+      font-weight: bold;
+      font-size: 0.92em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .merit-item.merit .merit-title { color: #276749; }
+    .merit-item.demerit .merit-title { color: #c05621; }
+    .merit-item ul {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 0.85em;
+      color: #4a5568;
+      line-height: 1.9;
+    }
+
+    /* ===== 技術カード ===== */
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin: 14px 0;
+    }
+    .tech-card {
+      background: #fff;
+      border: 1px solid #c6f6d5;
+      border-radius: 10px;
+      padding: 16px 14px;
+      border-top: 4px solid #38a169;
+    }
+    .tech-icon { font-size: 1.8em; margin-bottom: 8px; }
+    .tech-name {
+      font-weight: bold;
+      font-size: 0.9em;
+      color: #276749;
+      margin-bottom: 6px;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .tech-desc {
+      font-size: 0.82em;
+      color: #4a5568;
+      line-height: 1.7;
+    }
+
+    /* ===== インタラクティブデモ ===== */
+    .interactive-demo {
+      background: #f0fff4;
+      border: 1px solid #c6f6d5;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .slider-row label {
+      font-size: 0.85em;
+      font-weight: bold;
+      min-width: 140px;
+      color: #276749;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .slider-row input[type="range"] {
+      flex: 1;
+      min-width: 100px;
+      accent-color: #38a169;
+    }
+    .val-display {
+      min-width: 64px;
+      text-align: right;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.85em;
+      color: #2d3748;
+    }
+    .color-code-display {
+      background: #1a202c;
+      color: #68d391;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.84em;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* ===== ブレークポイント デモ ===== */
+    .bp-demo-wrap {
+      border: 2px solid #c6f6d5;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 12px 0;
+      background: #fff;
+    }
+    .bp-demo-inner {
+      transition: all 0.3s ease;
+    }
+    .bp-bar {
+      height: 8px;
+      background: linear-gradient(90deg, #38a169, #68d391);
+      transition: width 0.3s ease;
+    }
+    .bp-layout {
+      display: flex;
+      gap: 6px;
+      padding: 10px;
+      transition: all 0.3s ease;
+      flex-wrap: wrap;
+    }
+    .bp-col {
+      background: #c6f6d5;
+      border-radius: 4px;
+      height: 40px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72em;
+      font-weight: bold;
+      color: #276749;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .bp-label {
+      font-size: 0.78em;
+      font-weight: bold;
+      color: #276749;
+      padding: 6px 10px;
+      background: #f0fff4;
+      border-top: 1px solid #c6f6d5;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    table.ref-table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      margin: 14px 0;
+    }
+    table.ref-table th, table.ref-table td {
+      border: 1px solid #c6f6d5;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.ref-table thead tr { background: #276749; color: #fff; }
+    table.ref-table tbody tr:nth-child(even) { background: #f0fff4; }
+
+    /* ===== 演習問題 ===== */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 {
+      margin-top: 0;
+      color: #c05621;
+      border-left-color: #f6ad55;
+    }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #fbd38d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #fbd38d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-green { background: #38a169; color: #fff; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #e9d8fd; color: #553c9a; display: block; }
+
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #c6f6d5;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.summary thead tr { background: #276749; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #f0fff4; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px 14px; }
+      .device-grid { grid-template-columns: repeat(3, 1fr); }
+      .compare-grid { grid-template-columns: 1fr; }
+      .merit-grid { grid-template-columns: 1fr; }
+      .tech-grid { grid-template-columns: 1fr; }
+      .rwd-concept { flex-direction: column; }
+      .rwd-arrow { padding: 8px 0; transform: rotate(90deg); }
+      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.82em; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px 16px; }
+      .quiz-block { padding: 14px 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .merit-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>📱 レスポンシブWebデザインと関連技術</h1>
+<p>多様なデバイスに対応するWebデザインの考え方と、
+それを実現するために必要な技術の全体像を学びましょう。</p>
+
+
+<!-- 1. レスポンシブWebデザインとは -->
+<h2>① レスポンシブWebデザインとは</h2>
+<div class="note">
+  <strong>重要ポイント①：多種多様なデバイスが存在する現状では、画面サイズなどのデバイス特性や変化する通信状況に適用できる画面作成スキルが求められる</strong><br>
+  スマートフォン・タブレット・PC・スマートTV など、
+  Webにアクセスするデバイスは多様化しています。
+  それぞれ画面サイズ・解像度・通信速度・入力方法が異なるため、
+  すべてのデバイスで快適に使えるWebサイトを作る技術が必要です。
+</div>
+<div class="demo-box">
+
+  <h3>Webにアクセスする主なデバイスの多様性</h3>
+  <div class="device-grid">
+    <div class="device-item">
+      <div class="device-icon">📱</div>
+      <div class="device-name">スマートフォン</div>
+      <div class="device-size">320px〜480px</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon">📟</div>
+      <div class="device-name">タブレット</div>
+      <div class="device-size">600px〜1024px</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon">💻</div>
+      <div class="device-name">ノートPC</div>
+      <div class="device-size">1024px〜1440px</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon">🖥️</div>
+      <div class="device-name">デスクトップ</div>
+      <div class="device-size">1440px〜</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon">📺</div>
+      <div class="device-name">スマートTV</div>
+      <div class="device-size">1920px〜</div>
+    </div>
+    <div class="device-item">
+      <div class="device-icon">⌚</div>
+      <div class="device-name">スマートウォッチ</div>
+      <div class="device-size">〜320px</div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>重要ポイント②：レスポンシブWebデザインでは、1つのHTMLで、デバイスの特性に応じてレイアウトやデザインを変更する手法</strong><br>
+    「Responsive Web Design（RWD）」は、2010年に Ethan Marcotte が提唱した概念です。
+    <strong>1つのHTMLファイル</strong>を維持しながら、
+    CSSによってデバイスの画面サイズに応じてレイアウトを変化させます。
+  </div>
+
+  <h3>1つのHTMLで複数デバイスに対応する仕組み</h3>
+  <div class="rwd-concept">
+    <div class="rwd-html">
+      <div style="font-size:1.6em;">📄</div>
+      <div>1つの<br>HTML</div>
+    </div>
+    <div class="rwd-arrow">→</div>
+    <div class="rwd-devices">
+      <div class="rwd-device-row">
+        <div class="icon">🖥️</div>
+        <div class="label">PC（広い）</div>
+        <div class="layout">
+          <div class="layout-inner" style="width:100%; display:flex; gap:2px; padding:2px;">
+            <div style="flex:1; background:#38a169; border-radius:2px; height:16px;"></div>
+            <div style="flex:1; background:#38a169; border-radius:2px; height:16px;"></div>
+            <div style="flex:1; background:#38a169; border-radius:2px; height:16px;"></div>
+          </div>
+        </div>
+        <div style="font-size:0.72em; color:#718096; white-space:nowrap;">3カラム</div>
+      </div>
+      <div class="rwd-device-row">
+        <div class="icon">📟</div>
+        <div class="label">タブレット</div>
+        <div class="layout">
+          <div class="layout-inner" style="width:70%; display:flex; gap:2px; padding:2px;">
+            <div style="flex:1; background:#48bb78; border-radius:2px; height:16px;"></div>
+            <div style="flex:1; background:#48bb78; border-radius:2px; height:16px;"></div>
+          </div>
+        </div>
+        <div style="font-size:0.72em; color:#718096; white-space:nowrap;">2カラム</div>
+      </div>
+      <div class="rwd-device-row">
+        <div class="icon">📱</div>
+        <div class="label">スマホ</div>
+        <div class="layout">
+          <div class="layout-inner" style="width:40%; display:flex; gap:2px; padding:2px;">
+            <div style="flex:1; background:#68d391; border-radius:2px; height:16px;"></div>
+          </div>
+        </div>
+        <div style="font-size:0.72em; color:#718096; white-space:nowrap;">1カラム</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>従来の手法との比較</h3>
+  <div class="compare-grid">
+    <div class="compare-item old">
+      <div class="compare-title">❌ 従来の手法（複数サイト）</div>
+      <ul>
+        <li>PC用・スマホ用など<strong>複数のHTMLを用意</strong></li>
+        <li>URLを分けることが多い（例：<code>m.example.com</code>）</li>
+        <li>コンテンツの二重管理が発生</li>
+        <li>更新作業が複数箇所に及ぶ</li>
+        <li>デバイス判定ロジックが必要</li>
+        <li>新しいデバイスへの対応が遅れる</li>
+      </ul>
+    </div>
+    <div class="compare-item new">
+      <div class="compare-title">✅ レスポンシブWebデザイン</div>
+      <ul>
+        <li><strong>1つのHTMLで</strong>すべてのデバイスに対応</li>
+        <li>URLは1つ（SEOに有利）</li>
+        <li>コンテンツの管理が一元化</li>
+        <li>更新は1箇所のみ</li>
+        <li>CSSのみでレイアウトを制御</li>
+        <li>新しいデバイスにも柔軟に対応</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- 2. メリットとデメリット -->
+<h2>② レスポンシブWebデザインのメリットとデメリット</h2>
+<div class="demo-box">
+
+  <div class="merit-grid">
+    <div class="merit-item merit">
+      <div class="merit-title">✅ メリット</div>
+      <ul>
+        <li><strong>管理コストの削減</strong><br>
+          <span style="font-size:0.9em;">HTMLが1つなので更新・修正が一箇所で済む</span>
+        </li>
+        <li><strong>SEO（検索エンジン最適化）に有利</strong><br>
+          <span style="font-size:0.9em;">URLが1つなのでリンクの評価が分散しない。Googleも推奨</span>
+        </li>
+        <li><strong>新しいデバイスへの対応が容易</strong><br>
+          <span style="font-size:0.9em;">CSSを調整するだけで新しい画面サイズに対応できる</span>
+        </li>
+        <li><strong>ユーザー体験の向上</strong><br>
+          <span style="font-size:0.9em;">どのデバイスでも最適な表示が得られる</span>
+        </li>
+        <li><strong>SNSシェアのURL統一</strong><br>
+          <span style="font-size:0.9em;">PCでもスマホでも同じURLでアクセスできる</span>
+        </li>
+      </ul>
+    </div>
+    <div class="merit-item demerit">
+      <div class="merit-title">⚠️ デメリット</div>
+      <ul>
+        <li><strong>設計・実装の複雑さ</strong><br>
+          <span style="font-size:0.9em;">複数のブレークポイントを考慮した設計が必要</span>
+        </li>
+        <li><strong>パフォーマンスへの影響</strong><br>
+          <span style="font-size:0.9em;">PC用の大きな画像をスマホでも読み込む場合がある</span>
+        </li>
+        <li><strong>デバイス固有の最適化が難しい</strong><br>
+          <span style="font-size:0.9em;">スマホ専用の操作性（スワイプなど）の作り込みに限界</span>
+        </li>
+        <li><strong>テストコストの増加</strong><br>
+          <span style="font-size:0.9em;">多数のデバイス・ブラウザでの動作確認が必要</span>
+        </li>
+        <li><strong>古いブラウザへの対応</strong><br>
+          <span style="font-size:0.9em;">メディアクエリ非対応の古いブラウザでは崩れる場合がある</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="good">
+    ✅ <strong>現在のベストプラクティス</strong><br>
+    Googleは「レスポンシブWebデザイン」を推奨しており、
+    モバイルフレンドリーなサイトは検索順位でも優遇されます。
+    現代のWebサイト制作では、レスポンシブWebデザインが<strong>デファクトスタンダード</strong>となっています。
+  </div>
+</div>
+
+
+<!-- 3. 必要な技術 -->
+<h2>③ レスポンシブWebデザインに必要な技術</h2>
+<div class="note">
+  <strong>重要ポイント③：レスポンシブWebデザインには、Fluid Grid（可変グリッド）やメディアクエリなどの複数の技術が必要となる</strong><br>
+  Ethan Marcotte が提唱したレスポンシブWebデザインの3つの柱は、
+  <strong>①Fluid Grid（可変グリッド）</strong>・
+  <strong>②Flexible Images（可変画像）</strong>・
+  <strong>③Media Queries（メディアクエリ）</strong>です。
+  これらを組み合わせることで完全なレスポンシブ対応が実現できます。
+</div>
+<div class="demo-box">
+
+  <div class="tech-grid">
+    <div class="tech-card">
+      <div class="tech-icon">📐</div>
+      <div class="tech-name">① Fluid Grid<br>（可変グリッド）</div>
+      <div class="tech-desc">
+        固定幅（px）ではなく<strong>相対単位（%・em・rem・fr）</strong>でレイアウトを組む手法。
+        コンテナの幅に応じてカラム幅が自動的に変化する。
+      </div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">🖼️</div>
+      <div class="tech-name">② Flexible Images<br>（可変画像）</div>
+      <div class="tech-desc">
+        画像に <code>max-width: 100%</code> を指定することで、
+        コンテナの幅を超えずに<strong>自動的にリサイズ</strong>される画像の扱い方。
+      </div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">📡</div>
+      <div class="tech-name">③ Media Queries<br>（メディアクエリ）</div>
+      <div class="tech-desc">
+        画面幅・解像度・向きなどの<strong>デバイス特性に応じてCSSを切り替える</strong>仕組み。
+        ブレークポイントを設定してレイアウトを変化させる。
+      </div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">📏</div>
+      <div class="tech-name">④ viewport<br>メタタグ</div>
+      <div class="tech-desc">
+        スマートフォンのブラウザに<strong>表示領域の幅を指示</strong>するメタタグ。
+        これがないとスマホでPC表示になってしまう。
+      </div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">📦</div>
+      <div class="tech-name">⑤ Flexbox / Grid<br>（柔軟なレイアウト）</div>
+      <div class="tech-desc">
+        CSS Flexbox や CSS Grid を使って、
+        <strong>画面サイズに応じて柔軟に変化するレイアウト</strong>を実現する。
+      </div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">🔢</div>
+      <div class="tech-name">⑥ 相対単位<br>（rem / em / vw / vh）</div>
+      <div class="tech-desc">
+        フォントサイズ・余白・幅などを<strong>相対単位</strong>で指定することで、
+        デバイスに応じて自動的にスケールする。
+      </div>
+    </div>
+  </div>
+
+  <h3>3つの柱の関係図</h3>
+  <div style="background:#f0fff4; border:1px solid #c6f6d5; border-radius:8px; padding:20px; margin:14px 0; text-align:center;">
+    <div style="font-size:0.9em; color:#276749; font-weight:bold; margin-bottom:16px;">
+      レスポンシブWebデザイン = 以下の3技術の組み合わせ
+    </div>
+    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+      <div style="background:#38a169; color:#fff; border-radius:8px; padding:12px 16px; font-size:0.85em; font-weight:bold; min-width:120px;">
+        📐 Fluid Grid<br><span style="font-size:0.85em; opacity:0.9;">可変グリッド</span>
+      </div>
+      <div style="display:flex; align-items:center; font-size:1.4em; color:#38a169;">+</div>
+      <div style="background:#48bb78; color:#fff; border-radius:8px; padding:12px 16px; font-size:0.85em; font-weight:bold; min-width:120px;">
+        🖼️ Flexible Images<br><span style="font-size:0.85em; opacity:0.9;">可変画像</span>
+      </div>
+      <div style="display:flex; align-items:center; font-size:1.4em; color:#38a169;">+</div>
+      <div style="background:#68d391; color:#276749; border-radius:8px; padding:12px 16px; font-size:0.85em; font-weight:bold; min-width:120px;">
+        📡 Media Queries<br><span style="font-size:0.85em; opacity:0.8;">メディアクエリ</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>各技術のコード例</h3>
+<pre>
+<span class="comment">/* ① Fluid Grid：%で幅を指定 */</span>
+<span class="prop">.container</span> { <span class="prop">width</span>: <span class="val">100%</span>; <span class="prop">max-width</span>: <span class="val">960px</span>; }
+<span class="prop">.column</span>    { <span class="prop">width</span>: <span class="val">33.333%</span>; <span class="prop">float</span>: <span class="val">left</span>; }
+
+<span class="comment">/* ② Flexible Images：max-widthで可変に */</span>
+<span class="prop">img</span> {
+  <span class="prop">max-width</span>: <span class="val">100%</span>;  <span class="comment">/* コンテナ幅を超えない */</span>
+  <span class="prop">height</span>: <span class="val">auto</span>;     <span class="comment">/* 縦横比を維持 */</span>
+}
+
+<span class="comment">/* ③ Media Queries：画面幅に応じてCSSを切り替え */</span>
+<span class="prop">@media</span> (<span class="prop">max-width</span>: <span class="val">600px</span>) {
+  <span class="prop">.column</span> { <span class="prop">width</span>: <span class="val">100%</span>; }  <span class="comment">/* スマホでは1カラム */</span>
+}
+
+<span class="comment">/* ④ viewport メタタグ（HTMLのhead内に記述） */</span>
+<span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="value">"viewport"</span> <span class="attr">content</span>=<span class="value">"width=device-width, initial-scale=1.0"</span><span class="tag">&gt;</span>
+</pre>
+
+  <h3>ブレークポイントとレイアウト変化のインタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="margin:0 0 10px; font-size:0.88em; color:#276749; font-weight:bold;">
+      スライダーで「画面幅」を変えて、レイアウトがどう変化するか確認しましょう
+    </p>
+    <div class="slider-row">
+      <label>画面幅（シミュレーション）</label>
+      <input type="range" id="bp-width" min="280" max="960" value="600" oninput="updateBP()">
+      <span class="val-display" id="bp-width-val">600px</span>
+    </div>
+    <div class="bp-demo-wrap">
+      <div class="bp-bar" id="bp-bar" style="width:62.5%;"></div>
+      <div class="bp-layout" id="bp-layout">
+        <div class="bp-col" id="bp-col1" style="flex:1;">col 1</div>
+        <div class="bp-col" id="bp-col2" style="flex:1;">col 2</div>
+        <div class="bp-col" id="bp-col3" style="flex:1;">col 3</div>
+      </div>
+      <div class="bp-label" id="bp-label">タブレット（601px〜768px）：2カラム</div>
+    </div>
+    <div class="color-code-display" id="bp-code">/* 601px〜768px */
+@media (min-width: 601px) and (max-width: 768px) {
+  .column { width: 50%; }  /* 2カラム */
+}</div>
+  </div>
+  <script>
+    function updateBP() {
+      const w = parseInt(document.getElementById('bp-width').value);
+      document.getElementById('bp-width-val').textContent = w + 'px';
+      const maxW = 960;
+      document.getElementById('bp-bar').style.width = (w / maxW * 100) + '%';
+      const col1 = document.getElementById('bp-col1');
+      const col2 = document.getElementById('bp-col2');
+      const col3 = document.getElementById('bp-col3');
+      const layout = document.getElementById('bp-layout');
+      const label = document.getElementById('bp-label');
+      const code = document.getElementById('bp-code');
+      if (w <= 600) {
+        layout.style.flexDirection = 'column';
+        col1.style.flex = '1'; col1.style.display = 'flex';
+        col2.style.flex = '1'; col2.style.display = 'flex';
+        col3.style.flex = '1'; col3.style.display = 'flex';
+        col1.style.width = '100%'; col2.style.width = '100%'; col3.style.width = '100%';
+        label.textContent = 'スマートフォン（〜600px）：1カラム';
+        code.textContent = '/* 〜600px */\n@media (max-width: 600px) {\n  .column { width: 100%; }  /* 1カラム */\n}';
+      } else if (w <= 768) {
+        layout.style.flexDirection = 'row';
+        col1.style.flex = '1'; col1.style.width = '';
+        col2.style.flex = '1'; col2.style.width = '';
+        col3.style.flex = '0'; col3.style.display = 'none';
+        col3.style.width = '0';
+        label.textContent = 'タブレット（601px〜768px）：2カラム';
+        code.textContent = '/* 601px〜768px */\n@media (min-width: 601px) and (max-width: 768px) {\n  .column { width: 50%; }  /* 2カラム */\n}';
+      } else {
+        layout.style.flexDirection = 'row';
+        col1.style.flex = '1'; col1.style.display = 'flex'; col1.style.width = '';
+        col2.style.flex = '1'; col2.style.display = 'flex'; col2.style.width = '';
+        col3.style.flex = '1'; col3.style.display = 'flex'; col3.style.width = '';
+        label.textContent = 'PC（769px〜）：3カラム';
+        code.textContent = '/* 769px以上 */\n.column { width: 33.333%; }  /* 3カラム（デフォルト） */';
+      }
+    }
+  </script>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>技術</th><th>役割</th><th>主なプロパティ・要素</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Fluid Grid</strong></td>
+        <td>相対単位でレイアウトを組む</td>
+        <td><code>width: %</code> / <code>max-width</code> / <code>fr</code></td>
+      </tr>
+      <tr>
+        <td><strong>Flexible Images</strong></td>
+        <td>画像を可変サイズにする</td>
+        <td><code>max-width: 100%</code> / <code>height: auto</code></td>
+      </tr>
+      <tr>
+        <td><strong>Media Queries</strong></td>
+        <td>デバイス特性でCSSを切り替える</td>
+        <td><code>@media</code> / <code>min-width</code> / <code>max-width</code></td>
+      </tr>
+      <tr>
+        <td><strong>viewport メタタグ</strong></td>
+        <td>スマホの表示幅を制御する</td>
+        <td><code>&lt;meta name="viewport"&gt;</code></td>
+      </tr>
+      <tr>
+        <td><strong>Flexbox / Grid</strong></td>
+        <td>柔軟なレイアウトを実現する</td>
+        <td><code>display: flex</code> / <code>display: grid</code></td>
+      </tr>
+      <tr>
+        <td><strong>相対単位</strong></td>
+        <td>フォント・余白を可変にする</td>
+        <td><code>rem</code> / <code>em</code> / <code>vw</code> / <code>vh</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- 4. モバイルファーストとデスクトップファースト -->
+<h2>④ モバイルファーストとデスクトップファースト</h2>
+<div class="demo-box">
+  <p>レスポンシブWebデザインを実装する際のアプローチには2種類あります。</p>
+
+<pre>
+<span class="comment">/* ===== デスクトップファースト ===== */</span>
+<span class="comment">/* まずPC向けのスタイルを書き、max-widthで小さい画面に対応 */</span>
+<span class="prop">.column</span> { <span class="prop">width</span>: <span class="val">33.333%</span>; }  <span class="comment">/* デフォルト：PC（3カラム） */</span>
+
+<span class="prop">@media</span> (<span class="prop">max-width</span>: <span class="val">768px</span>) {
+  <span class="prop">.column</span> { <span class="prop">width</span>: <span class="val">50%</span>; }    <span class="comment">/* タブレット：2カラム */</span>
+}
+<span class="prop">@media</span> (<span class="prop">max-width</span>: <span class="val">600px</span>) {
+  <span class="prop">.column</span> { <span class="prop">width</span>: <span class="val">100%</span>; }   <span class="comment">/* スマホ：1カラム */</span>
+}
+
+<span class="comment">/* ===== モバイルファースト ===== */</span>
+<span class="comment">/* まずスマホ向けのスタイルを書き、min-widthで大きい画面に対応 */</span>
+<span class="prop">.column</span> { <span class="prop">width</span>: <span class="val">100%</span>; }    <span class="comment">/* デフォルト：スマホ（1カラム） */</span>
+
+<span class="prop">@media</span> (<span class="prop">min-width</span>: <span class="val">601px</span>) {
+  <span class="prop">.column</span> { <span class="prop">width</span>: <span class="val">50%</span>; }    <span class="comment">/* タブレット：2カラム */</span>
+}
+<span class="prop">@media</span> (<span class="prop">min-width</span>: <span class="val">769px</span>) {
+  <span class="prop">.column</span> { <span class="prop">width</span>: <span class="val">33.333%</span>; } <span class="comment">/* PC：3カラム */</span>
+}
+</pre>
+
+  <div class="compare-grid">
+    <div class="compare-item old">
+      <div class="compare-title">🖥️ デスクトップファースト</div>
+      <ul>
+        <li>PC向けを基本に設計</li>
+        <li><code>max-width</code> で縮小方向に対応</li>
+        <li>既存サイトのリニューアルに多い</li>
+        <li>PC表示の作り込みが優先される</li>
+      </ul>
+    </div>
+    <div class="compare-item new">
+      <div class="compare-title">📱 モバイルファースト</div>
+      <ul>
+        <li>スマホ向けを基本に設計</li>
+        <li><code>min-width</code> で拡大方向に対応</li>
+        <li>Googleが推奨する現代的なアプローチ</li>
+        <li>パフォーマンスが最適化されやすい</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="good">
+    ✅ <strong>現在はモバイルファーストが主流</strong><br>
+    スマートフォンからのWebアクセスがPCを上回っている現在、
+    Googleもモバイルファーストインデックス（MFI）を採用しており、
+    モバイル版のコンテンツを基準に検索順位を決定しています。
+    新規サイト制作では<strong>モバイルファーストで設計する</strong>ことが推奨されます。
+  </div>
+</div>
+
+
+<!-- 演習問題 -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      レスポンシブWebデザインでは、デバイスごとに異なるHTMLファイルを用意し、
+      ユーザーのデバイスを判定して適切なHTMLを配信する手法である。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn btn-green" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'レスポンシブWebデザインは<strong>1つのHTMLファイル</strong>を使い、<br>' +
+            'CSSのメディアクエリなどによってデバイスの特性に応じてレイアウトを変化させる手法です。<br>' +
+            'デバイスごとに異なるHTMLを用意するのは「動的配信」や「別URL方式」と呼ばれる手法です。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。レスポンシブWebデザインは1つのHTMLファイルを使い、' +
+            'CSSでデバイスに応じてレイアウトを変化させる手法です。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合う用語・値を入力してください。</p>
+
+    <label>① レスポンシブWebデザインの3つの柱のうち、相対単位でレイアウトを組む技術の名称（英語）：</label>
+    <input type="text" id="q2a" placeholder="Fluid 〇〇〇〇">
+
+    <label>② 画像を可変サイズにするために指定するプロパティと値（プロパティ:値）：</label>
+    <input type="text" id="q2b" placeholder="例）display:none">
+
+    <label>③ スマートフォンの表示幅を制御するために &lt;head&gt; 内に記述するメタタグの name 属性の値：</label>
+    <input type="text" id="q2c" placeholder="値">
+
+    <label>④ モバイルファーストで設計するときに使うメディアクエリの条件キーワード（大きい方向に拡大）：</label>
+    <input type="text" id="q2d" placeholder="min-〇〇〇〇〇">
+
+    <label>⑤ レスポンシブWebデザインという概念を2010年に提唱した人物の名前：</label>
+    <input type="text" id="q2e" placeholder="名前">
+
+    <br>
+    <button class="btn btn-green" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value.trim().toLowerCase().replace(/\s/g,'');
+        const b = document.getElementById('q2b').value.trim().toLowerCase().replace(/\s/g,'');
+        const c = document.getElementById('q2c').value.trim().toLowerCase().replace(/\s/g,'');
+        const d = document.getElementById('q2d').value.trim().toLowerCase().replace(/\s/g,'');
+        const e = document.getElementById('q2e').value.trim().toLowerCase().replace(/\s/g,'');
+        const r = document.getElementById('q2-result');
+        const ca = a === 'fluidgrid' || a === 'fluid grid' || a === 'fluidgrids';
+        const cb = b === 'max-width:100%' || b === 'max-width:100';
+        const cc = c === 'viewport';
+        const cd = d === 'min-width';
+        const ce = e.includes('marcotte') || e.includes('マルコット') || e.includes('ethanmarcotte');
+        const count = [ca,cb,cc,cd,ce].filter(Boolean).length;
+        if (count === 5) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！レスポンシブWebデザインの基礎を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/5 問正解。<br>` +
+            `① ${ca?'✅':'❌ Fluid Grid（可変グリッド）'}　` +
+            `② ${cb?'✅':'❌ max-width:100%'}　` +
+            `③ ${cc?'✅':'❌ viewport'}　` +
+            `④ ${cd?'✅':'❌ min-width'}　` +
+            `⑤ ${ce?'✅':'❌ Ethan Marcotte（イーサン・マルコット）'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>
+      レスポンシブWebデザインのメリットとして<strong>正しくないもの</strong>はどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">URLが1つになるためSEOに有利である</option>
+      <option value="b">HTMLが1つなのでコンテンツの管理が一元化できる</option>
+      <option value="c">デバイス固有の操作性（スワイプなど）を完全に最適化できる</option>
+      <option value="d">新しいデバイスへの対応がCSSの調整だけで済む</option>
+    </select>
+    <br>
+    <button class="btn btn-green" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'c') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'レスポンシブWebデザインのデメリットの1つとして、<br>' +
+            '<strong>デバイス固有の操作性（スワイプ・タップなど）の作り込みに限界がある</strong>点があります。<br>' +
+            'スマホ専用アプリのような高度なUXを実現するには、<br>' +
+            'ネイティブアプリや専用のJavaScriptが必要になる場合があります。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            '選択肢a・b・dはレスポンシブWebデザインの正しいメリットです。<br>' +
+            '「デバイス固有の操作性を完全に最適化できる」は誤りで、これはデメリットの1つです。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 選択問題</h3>
+    <p>
+      「モバイルファースト」アプローチの説明として正しいものはどれですか？
+    </p>
+    <select id="q4">
+      <option value="">-- 選択してください --</option>
+      <option value="a">まずPC向けのスタイルを書き、max-widthのメディアクエリで小さい画面に対応する</option>
+      <option value="b">まずスマホ向けのスタイルを書き、min-widthのメディアクエリで大きい画面に対応する</option>
+      <option value="c">スマホ専用のHTMLを別途用意して、デバイス判定で切り替える</option>
+      <option value="d">スマホとPCで同じレイアウトを使い、デバイスによる変化を行わない</option>
+    </select>
+    <br>
+    <button class="btn btn-green" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const v = document.getElementById('q4').value;
+        const r = document.getElementById('q4-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            '<strong>モバイルファースト</strong>：スマホ向けを基本に設計し、<code>min-width</code> で大きい画面に対応<br>' +
+            '<strong>デスクトップファースト</strong>：PC向けを基本に設計し、<code>max-width</code> で小さい画面に対応<br><br>' +
+            '現在はGoogleもモバイルファーストインデックスを採用しており、<br>' +
+            'モバイルファーストが推奨されるアプローチです。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            'モバイルファーストは「まずスマホ向けのスタイルを書き、<br>' +
+            'min-widthのメディアクエリで大きい画面に対応する」アプローチです。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5a">
+      ① レスポンシブWebデザインは1つのHTMLで複数のデバイスに対応する手法である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5b">
+      ② Fluid Grid とは、固定幅（px）でレイアウトを組む手法のことである
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5c">
+      ③ <code>img { max-width: 100%; height: auto; }</code> は Flexible Images の基本的な実装である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5d">
+      ④ viewport メタタグがないと、スマートフォンでPC用の幅で表示されてしまう場合がある
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5e">
+      ⑤ レスポンシブWebデザインではSEO上のデメリットとして、URLが複数に分散する問題がある
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5f">
+      ⑥ モバイルファーストでは <code>min-width</code> を使ったメディアクエリが中心になる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5g">
+      ⑦ Googleはモバイルファーストインデックス（MFI）を採用しており、モバイル版のコンテンツを基準に検索順位を決定している
+    </label>
+    <br>
+    <button class="btn btn-green" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const r = document.getElementById('q5-result');
+        const checks = {
+          a: document.getElementById('q5a').checked,
+          b: document.getElementById('q5b').checked,
+          c: document.getElementById('q5c').checked,
+          d: document.getElementById('q5d').checked,
+          e: document.getElementById('q5e').checked,
+          f: document.getElementById('q5f').checked,
+          g: document.getElementById('q5g').checked,
+        };
+        // 正解：①③④⑥⑦（a, c, d, f, g）
+        // ② Fluid Grid は相対単位（%など）でレイアウトを組む手法
+        // ⑤ RWDはURLが1つなのでSEOに有利（URLが分散するのは別URL方式のデメリット）
+        const correct = { a:true, b:false, c:true, d:true, e:false, f:true, g:true };
+        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
+        const allCorrect = results.every(Boolean);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① RWDは1つのHTMLで複数デバイスに対応 ✅<br>' +
+            '・③ max-width:100% / height:auto が Flexible Images の基本 ✅<br>' +
+            '・④ viewport メタタグなしではPC幅で表示される ✅<br>' +
+            '・⑥ モバイルファーストは min-width が中心 ✅<br>' +
+            '・⑦ GoogleはMFIを採用 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① RWDは1つのHTMLで複数デバイスに対応する手法<br>' +
+            '・③ img { max-width: 100%; height: auto; } が Flexible Images の基本<br>' +
+            '・④ viewport メタタグがないとスマホでPC幅で表示される場合がある<br>' +
+            '・⑥ モバイルファーストでは min-width のメディアクエリが中心<br>' +
+            '・⑦ GoogleはMFIを採用しモバイル版を基準に検索順位を決定<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② Fluid Grid は相対単位（%など）でレイアウトを組む手法（固定幅pxではない）<br>' +
+            '・⑤ RWDはURLが1つなのでSEOに有利。URLが分散するのは別URL方式のデメリット';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. 記述問題</h3>
+    <p>
+      レスポンシブWebデザインが必要とされる背景と、
+      それを実現するために必要な3つの主要技術について説明してください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q6" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn btn-green" onclick="checkQ6()">模範解答を見る</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const r = document.getElementById('q6-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<strong>【必要とされる背景】</strong><br>' +
+          'スマートフォン・タブレット・PC・スマートTV など、Webにアクセスするデバイスが多様化し、<br>' +
+          '画面サイズ・解像度・通信速度・入力方法がそれぞれ異なる。<br>' +
+          'すべてのデバイスで快適に使えるWebサイトを効率的に管理するために、<br>' +
+          '1つのHTMLでデバイスに応じてレイアウトを変化させる技術が求められるようになった。<br><br>' +
+          '<strong>【3つの主要技術】</strong><br>' +
+          '① <strong>Fluid Grid（可変グリッド）</strong><br>' +
+          '　固定幅（px）ではなく相対単位（%・em・rem）でレイアウトを組む。<br>' +
+          '　コンテナの幅に応じてカラム幅が自動的に変化する。<br><br>' +
+          '② <strong>Flexible Images（可変画像）</strong><br>' +
+          '　img に max-width: 100%; height: auto; を指定することで、<br>' +
+          '　コンテナの幅を超えずに自動的にリサイズされる。<br><br>' +
+          '③ <strong>Media Queries（メディアクエリ）</strong><br>' +
+          '　@media ルールで画面幅・解像度・向きなどのデバイス特性に応じてCSSを切り替える。<br>' +
+          '　ブレークポイントを設定してレイアウトを変化させる。';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 レスポンシブWebデザイン まとめ</h2>
+<table class="summary">
+  <thead>
+    <tr><th>項目</th><th>内容</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>定義</strong></td>
+      <td>1つのHTMLで、デバイスの特性に応じてレイアウトやデザインを変更する手法</td>
+    </tr>
+    <tr>
+      <td><strong>提唱者</strong></td>
+      <td>Ethan Marcotte（2010年）</td>
+    </tr>
+    <tr>
+      <td><strong>3つの柱</strong></td>
+      <td>① Fluid Grid（可変グリッド）<br>② Flexible Images（可変画像）<br>③ Media Queries（メディアクエリ）</td>
+    </tr>
+    <tr>
+      <td><strong>主なメリット</strong></td>
+      <td>管理コスト削減・SEO有利・新デバイス対応が容易・URL統一</td>
+    </tr>
+    <tr>
+      <td><strong>主なデメリット</strong></td>
+      <td>設計・実装の複雑さ・パフォーマンスへの影響・デバイス固有最適化の限界</td>
+    </tr>
+    <tr>
+      <td><strong>モバイルファースト</strong></td>
+      <td>スマホ向けを基本に設計し、<code>min-width</code> で大きい画面に対応。Googleが推奨</td>
+    </tr>
+    <tr>
+      <td><strong>デスクトップファースト</strong></td>
+      <td>PC向けを基本に設計し、<code>max-width</code> で小さい画面に対応</td>
+    </tr>
+    <tr>
+      <td><strong>viewport メタタグ</strong></td>
+      <td><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code></td>
+    </tr>
+    <tr>
+      <td><strong>Flexible Images</strong></td>
+      <td><code>img { max-width: 100%; height: auto; }</code></td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
