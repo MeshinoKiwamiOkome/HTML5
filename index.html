@@ -158,34 +158,6 @@
       margin-top: 4px;
     }
 
-    /* ===== カード（準備中） ===== */
-    .card-coming {
-      background: #f7fafc;
-      border: 1px dashed #cbd5e0;
-      border-radius: 12px;
-      padding: 24px 22px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      opacity: 0.75;
-    }
-    .card-coming .card-title { color: #718096; }
-    .card-coming .tag {
-      background: #edf2f7;
-      color: #718096;
-      border-color: #e2e8f0;
-    }
-    .coming-badge {
-      display: inline-block;
-      background: #edf2f7;
-      color: #718096;
-      border-radius: 20px;
-      padding: 2px 10px;
-      font-size: 0.78em;
-      font-weight: bold;
-      width: fit-content;
-    }
-
     /* ===== 進捗バー ===== */
     .progress-section {
       background: #fff;
@@ -275,13 +247,12 @@
       .progress-label { font-size: 0.78em; }
       .section-title { font-size: 0.92em; margin: 28px 0 14px; }
       .card-grid { grid-template-columns: 1fr; gap: 14px; }
-      .card, .card-coming { padding: 16px 14px; gap: 7px; }
+      .card { padding: 16px 14px; gap: 7px; }
       .card-icon { font-size: 1.5em; }
       .card-title { font-size: 0.92em; }
       .card-desc { font-size: 0.78em; }
       .tag { font-size: 0.68em; padding: 1px 8px; }
       .card-footer { font-size: 0.72em; }
-      .coming-badge { font-size: 0.7em; }
       footer { padding: 20px 14px; font-size: 0.78em; }
     }
     @media (max-height: 500px) and (orientation: landscape) {
@@ -292,7 +263,7 @@
       header .badge { font-size: 0.7em; margin-bottom: 8px; }
       main { padding: 16px 20px 32px; }
       .card-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
-      .card, .card-coming { padding: 12px 12px; }
+      .card { padding: 12px 12px; }
       .card-title { font-size: 0.88em; }
       .card-desc { font-size: 0.76em; }
       .tag { font-size: 0.66em; }
@@ -350,10 +321,10 @@
       🟪 CSS編
     </div>
     <div class="progress-bar-wrap css">
-      <!-- ✅ 更新：10/10ページ = 100% -->
+      <!-- ✅ 更新：11/11ページ = 100% -->
       <div class="progress-bar css" style="width: 100%;"></div>
     </div>
-    <div class="progress-label">CSS編 10 / 10 ページ完了 🎉</div>
+    <div class="progress-label">CSS編 11 / 11 ページ完了 🎉</div>
 
   </div><!-- /progress-section -->
 
@@ -557,8 +528,8 @@
   </div><!-- /card-grid -->
 
   <!-- CSS編 公開済みページ -->
-  <!-- ✅ 更新：10ページ完了 -->
-  <div class="section-title css">✅ CSS編 ― 公開済み（全10ページ）</div>
+  <!-- ✅ 更新：11ページ完了 -->
+  <div class="section-title css">✅ CSS編 ― 公開済み（全11ページ）</div>
   <div class="card-grid">
 
     <!-- css_basics.html -->
@@ -723,7 +694,7 @@
       <div class="card-footer">📁 css_box.html</div>
     </a>
 
-    <!-- ✅ 新規追加：css_layout.html -->
+    <!-- css_layout.html -->
     <a class="card css-card" href="css_layout.html">
       <div class="card-icon">🗂️</div>
       <div class="card-title">CSSレイアウト</div>
@@ -745,7 +716,7 @@
       <div class="card-footer">📁 css_layout.html</div>
     </a>
 
-    <!-- ✅ 新規追加：css_animation.html -->
+    <!-- css_animation.html -->
     <a class="card css-card" href="css_animation.html">
       <div class="card-icon">✨</div>
       <div class="card-title">CSSアニメーション</div>
@@ -767,24 +738,27 @@
       <div class="card-footer">📁 css_animation.html</div>
     </a>
 
-  </div><!-- /card-grid -->
-
-  <!-- CSS編 準備中 -->
-  <!-- ✅ 残り1ページのみ -->
-  <div class="section-title css">🚧 CSS編 ― 順次追加予定</div>
-  <div class="card-grid">
-
-    <div class="card-coming">
-      <div class="card-icon">♿</div>
-      <div class="card-title">アクセシビリティ・WAI-ARIA</div>
-      <div class="card-desc">role属性・aria-*属性・スクリーンリーダー対応の基礎</div>
-      <div class="card-tags">
-        <span class="tag">role</span>
-        <span class="tag">aria-label</span>
-        <span class="tag">alt</span>
+    <!-- ✅ 新規追加：css_etc.html -->
+    <a class="card css-card" href="css_etc.html">
+      <div class="card-icon">🎨</div>
+      <div class="card-title">CSSその他</div>
+      <div class="card-desc">
+        直線状・放射状グラデーション（linear-gradient / radial-gradient）・
+        リスト関連（list-style-type / position / image）・
+        テーブル関連（border-collapse / border-spacing / caption-side / empty-cells）・
+        内容追加（content / quotes / counter）を学びます。
+        インタラクティブデモ付き。
       </div>
-      <span class="coming-badge">🚧 準備中</span>
-    </div>
+      <div class="card-tags">
+        <span class="tag">linear-gradient</span>
+        <span class="tag">radial-gradient</span>
+        <span class="tag">list-style</span>
+        <span class="tag">border-collapse</span>
+        <span class="tag">content</span>
+        <span class="tag">quotes</span>
+      </div>
+      <div class="card-footer">📁 css_etc.html</div>
+    </a>
 
   </div><!-- /card-grid -->
 

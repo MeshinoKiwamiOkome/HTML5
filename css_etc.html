@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>CSS グラデーション・リスト・テーブル・content 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #9f7aea; padding-bottom: 10px; }
+    h2 { color: #553c9a; margin-top: 48px; border-left: 5px solid #9f7aea; padding-left: 12px; }
+    h3 { color: #276749; margin-top: 24px; }
+
+    code {
+      background: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment  { color: #68d391; }
+    pre .prop     { color: #90cdf4; }
+    pre .val      { color: #fc8181; }
+    pre .keyword  { color: #b794f4; }
+    pre .func     { color: #fbd38d; }
+    pre .selector { color: #f6ad55; }
+    pre .at       { color: #b794f4; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #b794f4;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #553c9a; }
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+    .demo-box {
+      background: #fff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* インタラクティブデモ共通 */
+    .interactive-demo {
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .slider-row label {
+      font-size: 0.85em;
+      font-weight: bold;
+      min-width: 160px;
+      color: #553c9a;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .slider-row input[type="range"] {
+      flex: 1;
+      min-width: 100px;
+      accent-color: #9f7aea;
+    }
+    .slider-row input[type="color"] {
+      width: 44px;
+      height: 32px;
+      border: 2px solid #e9d8fd;
+      border-radius: 6px;
+      cursor: pointer;
+      padding: 2px;
+      background: #fff;
+    }
+    .slider-row select {
+      border: 2px solid #e9d8fd;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.85em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #2d3748;
+      background: #fff;
+      cursor: pointer;
+      flex: 1;
+    }
+    .slider-row select:focus { border-color: #9f7aea; outline: none; }
+    .val-display {
+      min-width: 64px;
+      text-align: right;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.85em;
+      color: #2d3748;
+    }
+    .color-code-display {
+      background: #1a202c;
+      color: #68d391;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.84em;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* グラデーション スウォッチグリッド */
+    .grad-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .grad-item {
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    }
+    .grad-swatch {
+      height: 70px;
+      width: 100%;
+    }
+    .grad-label {
+      background: #fff;
+      padding: 6px 10px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.72em;
+      color: #553c9a;
+      font-weight: bold;
+      border-top: 1px solid #edf2f7;
+      word-break: break-all;
+    }
+
+    /* グラデーション プレビュー */
+    .grad-preview {
+      width: 100%;
+      height: 100px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border: 1px solid #e9d8fd;
+      transition: background 0.2s;
+    }
+
+    /* リスト デモ */
+    .list-demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .list-demo-item {
+      background: #faf5ff;
+      border: 1px solid #e9d8fd;
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+    .list-demo-label {
+      font-size: 0.72em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #553c9a;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .list-demo-item ul,
+    .list-demo-item ol {
+      margin: 0;
+      padding-left: 22px;
+      font-size: 0.85em;
+      color: #4a5568;
+    }
+
+    /* テーブル デモ */
+    .table-demo {
+      width: 100%;
+      font-size: 0.88em;
+      margin: 14px 0;
+    }
+    .table-demo th {
+      background: #553c9a;
+      color: #fff;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .table-demo td {
+      padding: 8px 12px;
+      color: #2d3748;
+    }
+
+    /* content デモ */
+    /* ::before / ::after デモ用 */
+    .content-demo-list {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0;
+    }
+    .content-demo-list li {
+      padding: 6px 0 6px 28px;
+      position: relative;
+      font-size: 0.9em;
+      color: #4a5568;
+      border-bottom: 1px solid #edf2f7;
+    }
+    .content-demo-list li::before {
+      content: "✦";
+      position: absolute;
+      left: 0;
+      color: #9f7aea;
+      font-size: 1em;
+    }
+
+    .content-counter-demo {
+      counter-reset: step-counter;
+      list-style: none;
+      padding: 0;
+      margin: 12px 0;
+    }
+    .content-counter-demo li {
+      counter-increment: step-counter;
+      padding: 8px 0 8px 44px;
+      position: relative;
+      font-size: 0.9em;
+      color: #4a5568;
+      border-bottom: 1px solid #edf2f7;
+    }
+    .content-counter-demo li::before {
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      width: 28px;
+      height: 28px;
+      background: #9f7aea;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82em;
+      font-weight: bold;
+      top: 6px;
+    }
+
+    /* quotes デモ */
+    .quotes-demo {
+      font-size: 0.9em;
+      color: #4a5568;
+      margin: 10px 0;
+      padding: 10px 14px;
+      background: #faf5ff;
+      border-left: 4px solid #9f7aea;
+      border-radius: 0 6px 6px 0;
+    }
+
+    table.ref-table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      margin: 14px 0;
+    }
+    table.ref-table th, table.ref-table td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.ref-table thead tr { background: #553c9a; color: #fff; }
+    table.ref-table tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 { margin-top: 0; color: #c05621; border-left-color: #f6ad55; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #fbd38d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #fbd38d;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-purple { background: #9f7aea; color: #fff; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #e9d8fd; color: #553c9a; display: block; }
+
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #e9d8fd;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.summary thead tr { background: #553c9a; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #faf5ff; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px 14px; }
+      .slider-row label { min-width: 120px; }
+      .grad-grid { grid-template-columns: repeat(2, 1fr); }
+      .list-demo-grid { grid-template-columns: 1fr; }
+      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.82em; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px 16px; }
+      .quiz-block { padding: 14px 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>🎨 CSS グラデーション・リスト・テーブル・content 学習サンプル</h1>
+<p>直線状・放射状グラデーション、リスト関連プロパティ、テーブル関連プロパティ、
+content プロパティによるコンテンツ追加を学びましょう。</p>
+
+
+<!-- ============================================================ -->
+<!-- PART 1：グラデーション -->
+<!-- ============================================================ -->
+
+<!-- 1. 直線状グラデーション -->
+<h2>① 直線状のグラデーション（linear-gradient）</h2>
+<div class="note">
+  <strong>重要ポイント①：グラデーション指定の基本形は、方向または中心位置と色を2色指定すればOK</strong><br>
+  <code>linear-gradient(方向, 色1, 色2)</code> の形が基本です。
+  方向を省略すると<strong>上から下</strong>へのグラデーションになります。
+  <code>background-image</code> プロパティの値として指定します。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* 基本形：方向と2色を指定 */</span>
+<span class="prop">background-image</span>: <span class="func">linear-gradient</span>(<span class="val">to right, #9f7aea, #4299e1</span>);
+
+<span class="comment">/* 方向の指定方法 */</span>
+<span class="prop">background-image</span>: <span class="func">linear-gradient</span>(<span class="val">to bottom, #9f7aea, #4299e1</span>);  <span class="comment">/* 上→下（デフォルト） */</span>
+<span class="prop">background-image</span>: <span class="func">linear-gradient</span>(<span class="val">to right, #9f7aea, #4299e1</span>);   <span class="comment">/* 左→右 */</span>
+<span class="prop">background-image</span>: <span class="func">linear-gradient</span>(<span class="val">to top right, #9f7aea, #4299e1</span>); <span class="comment">/* 左下→右上 */</span>
+<span class="prop">background-image</span>: <span class="func">linear-gradient</span>(<span class="val">45deg, #9f7aea, #4299e1</span>);       <span class="comment">/* 45度 */</span>
+<span class="prop">background-image</span>: <span class="func">linear-gradient</span>(<span class="val">135deg, #9f7aea, #4299e1</span>);      <span class="comment">/* 135度 */</span>
+
+<span class="comment">/* 3色以上のグラデーション */</span>
+<span class="prop">background-image</span>: <span class="func">linear-gradient</span>(<span class="val">to right, #9f7aea, #4299e1, #68d391</span>);
+
+<span class="comment">/* 色停止点（カラーストップ）を指定 */</span>
+<span class="prop">background-image</span>: <span class="func">linear-gradient</span>(<span class="val">to right,
+  #9f7aea 0%,
+  #4299e1 50%,
+  #68d391 100%</span>);
+
+<span class="comment">/* 透明を使ったグラデーション */</span>
+<span class="prop">background-image</span>: <span class="func">linear-gradient</span>(<span class="val">to right, transparent, #9f7aea</span>);
+
+<span class="comment">/* 繰り返しグラデーション */</span>
+<span class="prop">background-image</span>: <span class="func">repeating-linear-gradient</span>(<span class="val">45deg,
+  #9f7aea 0px, #9f7aea 10px,
+  #e9d8fd 10px, #e9d8fd 20px</span>);
+</pre>
+
+  <h3>linear-gradient サンプル集</h3>
+  <div class="grad-grid">
+    <div class="grad-item">
+      <div class="grad-swatch" style="background-image:linear-gradient(to right,#9f7aea,#4299e1);"></div>
+      <div class="grad-label">to right<br>#9f7aea → #4299e1</div>
+    </div>
+    <div class="grad-item">
+      <div class="grad-swatch" style="background-image:linear-gradient(to bottom,#9f7aea,#4299e1);"></div>
+      <div class="grad-label">to bottom（デフォルト）</div>
+    </div>
+    <div class="grad-item">
+      <div class="grad-swatch" style="background-image:linear-gradient(45deg,#9f7aea,#f6ad55);"></div>
+      <div class="grad-label">45deg<br>#9f7aea → #f6ad55</div>
+    </div>
+    <div class="grad-item">
+      <div class="grad-swatch" style="background-image:linear-gradient(to right,#9f7aea,#4299e1,#68d391);"></div>
+      <div class="grad-label">3色グラデーション</div>
+    </div>
+    <div class="grad-item">
+      <div class="grad-swatch" style="background-image:linear-gradient(to right,transparent,#9f7aea);"></div>
+      <div class="grad-label">transparent → #9f7aea</div>
+    </div>
+    <div class="grad-item">
+      <div class="grad-swatch" style="background-image:repeating-linear-gradient(45deg,#9f7aea 0px,#9f7aea 10px,#e9d8fd 10px,#e9d8fd 20px);"></div>
+      <div class="grad-label">repeating-linear-gradient（ストライプ）</div>
+    </div>
+  </div>
+
+  <h3>linear-gradient インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <div class="slider-row">
+      <label>方向（角度）</label>
+      <input type="range" id="lg-angle" min="0" max="360" value="90" oninput="updateLG()">
+      <span class="val-display" id="lg-angle-val">90deg</span>
+    </div>
+    <div class="slider-row">
+      <label>色1</label>
+      <input type="color" id="lg-c1" value="#9f7aea" oninput="updateLG()">
+      <span class="val-display" id="lg-c1-val">#9f7aea</span>
+    </div>
+    <div class="slider-row">
+      <label>色1 停止点</label>
+      <input type="range" id="lg-s1" min="0" max="100" value="0" oninput="updateLG()">
+      <span class="val-display" id="lg-s1-val">0%</span>
+    </div>
+    <div class="slider-row">
+      <label>色2</label>
+      <input type="color" id="lg-c2" value="#4299e1" oninput="updateLG()">
+      <span class="val-display" id="lg-c2-val">#4299e1</span>
+    </div>
+    <div class="slider-row">
+      <label>色2 停止点</label>
+      <input type="range" id="lg-s2" min="0" max="100" value="100" oninput="updateLG()">
+      <span class="val-display" id="lg-s2-val">100%</span>
+    </div>
+    <div class="grad-preview" id="lg-preview"
+         style="background-image:linear-gradient(90deg,#9f7aea 0%,#4299e1 100%);"></div>
+    <div class="color-code-display" id="lg-code">background-image: linear-gradient(90deg, #9f7aea 0%, #4299e1 100%);</div>
+  </div>
+  <script>
+    function updateLG() {
+      const angle = document.getElementById('lg-angle').value;
+      const c1    = document.getElementById('lg-c1').value;
+      const s1    = document.getElementById('lg-s1').value;
+      const c2    = document.getElementById('lg-c2').value;
+      const s2    = document.getElementById('lg-s2').value;
+      document.getElementById('lg-angle-val').textContent = angle + 'deg';
+      document.getElementById('lg-c1-val').textContent    = c1;
+      document.getElementById('lg-c2-val').textContent    = c2;
+      document.getElementById('lg-s1-val').textContent    = s1 + '%';
+      document.getElementById('lg-s2-val').textContent    = s2 + '%';
+      const val = `linear-gradient(${angle}deg, ${c1} ${s1}%, ${c2} ${s2}%)`;
+      document.getElementById('lg-preview').style.backgroundImage = val;
+      document.getElementById('lg-code').textContent = `background-image: ${val};`;
+    }
+  </script>
+
+  <div class="warn">
+    <strong>⚠️ linear-gradient の注意点</strong><br>
+    ・<code>linear-gradient()</code> は <code>background-image</code> の値として指定します
+    （<code>background-color</code> には使えません）<br>
+    ・角度の <code>0deg</code> は<strong>下から上</strong>（時計回りで増加）です<br>
+    ・<code>to right</code> = <code>90deg</code>、<code>to bottom</code> = <code>180deg</code>
+  </div>
+</div>
+
+
+<!-- 2. 放射状グラデーション -->
+<h2>② 放射状のグラデーション（radial-gradient）</h2>
+<div class="note">
+  <strong>重要ポイント①（再掲）：中心位置と色を2色指定すればOK</strong><br>
+  <code>radial-gradient(形状 at 中心位置, 色1, 色2)</code> の形が基本です。
+  形状・中心位置を省略すると<strong>楕円形・中央</strong>からのグラデーションになります。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* 基本形：中心から外側へ */</span>
+<span class="prop">background-image</span>: <span class="func">radial-gradient</span>(<span class="val">#9f7aea, #4299e1</span>);
+
+<span class="comment">/* 形状の指定 */</span>
+<span class="prop">background-image</span>: <span class="func">radial-gradient</span>(<span class="val">circle, #9f7aea, #4299e1</span>);   <span class="comment">/* 円形 */</span>
+<span class="prop">background-image</span>: <span class="func">radial-gradient</span>(<span class="val">ellipse, #9f7aea, #4299e1</span>);  <span class="comment">/* 楕円形（デフォルト） */</span>
+
+<span class="comment">/* 中心位置の指定（at キーワード） */</span>
+<span class="prop">background-image</span>: <span class="func">radial-gradient</span>(<span class="val">circle at center, #9f7aea, #4299e1</span>);
+<span class="prop">background-image</span>: <span class="func">radial-gradient</span>(<span class="val">circle at top left, #9f7aea, #4299e1</span>);
+<span class="prop">background-image</span>: <span class="func">radial-gradient</span>(<span class="val">circle at 30% 70%, #9f7aea, #4299e1</span>);
+
+<span class="comment">/* サイズキーワード */</span>
+<span class="prop">background-image</span>: <span class="func">radial-gradient</span>(<span class="val">circle closest-side at center, #9f7aea, #4299e1</span>);
+<span class="prop">background-image</span>: <span class="func">radial-gradient</span>(<span class="val">circle farthest-corner at center, #9f7aea, #4299e1</span>);
+
+<span class="comment">/* 3色・色停止点あり */</span>
+<span class="prop">background-image</span>: <span class="func">radial-gradient</span>(<span class="val">circle at center,
+  #fff 0%,
+  #9f7aea 50%,
+  #553c9a 100%</span>);
+
+<span class="comment">/* 繰り返し放射状グラデーション */</span>
+<span class="prop">background-image</span>: <span class="func">repeating-radial-gradient</span>(<span class="val">circle,
+  #9f7aea 0px, #9f7aea 10px,
+  #e9d8fd 10px, #e9d8fd 20px</span>);
+</pre>
+
+  <h3>radial-gradient サンプル集</h3>
+  <div class="grad-grid">
+    <div class="grad-item">
+      <div class="grad-swatch" style="background-image:radial-gradient(circle at center,#9f7aea,#4299e1);"></div>
+      <div class="grad-label">circle at center</div>
+    </div>
+    <div class="grad-item">
+      <div class="grad-swatch" style="background-image:radial-gradient(ellipse at center,#9f7aea,#4299e1);"></div>
+      <div class="grad-label">ellipse（デフォルト）</div>
+    </div>
+    <div class="grad-item">
+      <div class="grad-swatch" style="background-image:radial-gradient(circle at top left,#9f7aea,#4299e1);"></div>
+      <div class="grad-label">circle at top left</div>
+    </div>
+    <div class="grad-item">
+      <div class="grad-swatch" style="background-image:radial-gradient(circle at center,#fff 0%,#9f7aea 50%,#553c9a 100%);"></div>
+      <div class="grad-label">3色・色停止点あり</div>
+    </div>
+    <div class="grad-item">
+      <div class="grad-swatch" style="background-image:radial-gradient(circle at center,#f6ad55,transparent);"></div>
+      <div class="grad-label">→ transparent（スポットライト）</div>
+    </div>
+    <div class="grad-item">
+      <div class="grad-swatch" style="background-image:repeating-radial-gradient(circle,#9f7aea 0px,#9f7aea 8px,#e9d8fd 8px,#e9d8fd 16px);"></div>
+      <div class="grad-label">repeating-radial-gradient（同心円）</div>
+    </div>
+  </div>
+
+  <h3>radial-gradient インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <div class="slider-row">
+      <label>形状</label>
+      <select id="rg-shape" onchange="updateRG()">
+        <option value="circle">circle（円形）</option>
+        <option value="ellipse">ellipse（楕円形）</option>
+      </select>
+      <span class="val-display"></span>
+    </div>
+    <div class="slider-row">
+      <label>中心X位置</label>
+      <input type="range" id="rg-x" min="0" max="100" value="50" oninput="updateRG()">
+      <span class="val-display" id="rg-x-val">50%</span>
+    </div>
+    <div class="slider-row">
+      <label>中心Y位置</label>
+      <input type="range" id="rg-y" min="0" max="100" value="50" oninput="updateRG()">
+      <span class="val-display" id="rg-y-val">50%</span>
+    </div>
+    <div class="slider-row">
+      <label>色1（中心）</label>
+      <input type="color" id="rg-c1" value="#9f7aea" oninput="updateRG()">
+      <span class="val-display" id="rg-c1-val">#9f7aea</span>
+    </div>
+    <div class="slider-row">
+      <label>色2（外側）</label>
+      <input type="color" id="rg-c2" value="#4299e1" oninput="updateRG()">
+      <span class="val-display" id="rg-c2-val">#4299e1</span>
+    </div>
+    <div class="grad-preview" id="rg-preview"
+         style="background-image:radial-gradient(circle at 50% 50%,#9f7aea,#4299e1);"></div>
+    <div class="color-code-display" id="rg-code">background-image: radial-gradient(circle at 50% 50%, #9f7aea, #4299e1);</div>
+  </div>
+  <script>
+    function updateRG() {
+      const shape = document.getElementById('rg-shape').value;
+      const x     = document.getElementById('rg-x').value;
+      const y     = document.getElementById('rg-y').value;
+      const c1    = document.getElementById('rg-c1').value;
+      const c2    = document.getElementById('rg-c2').value;
+      document.getElementById('rg-x-val').textContent  = x + '%';
+      document.getElementById('rg-y-val').textContent  = y + '%';
+      document.getElementById('rg-c1-val').textContent = c1;
+      document.getElementById('rg-c2-val').textContent = c2;
+      const val = `radial-gradient(${shape} at ${x}% ${y}%, ${c1}, ${c2})`;
+      document.getElementById('rg-preview').style.backgroundImage = val;
+      document.getElementById('rg-code').textContent = `background-image: ${val};`;
+    }
+  </script>
+
+  <table class="ref-table">
+    <thead>
+      <tr><th>比較</th><th>linear-gradient</th><th>radial-gradient</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>形状</td><td>直線状</td><td>円形または楕円形</td></tr>
+      <tr><td>方向指定</td><td>角度（deg）または to キーワード</td><td>形状（circle/ellipse）+ at 中心位置</td></tr>
+      <tr><td>デフォルト</td><td>上から下（to bottom = 180deg）</td><td>楕円形・中央（ellipse at center）</td></tr>
+      <tr><td>繰り返し</td><td>repeating-linear-gradient()</td><td>repeating-radial-gradient()</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 2：リスト関連プロパティ -->
+<!-- ============================================================ -->
+
+<!-- 3. リスト関連プロパティ -->
+<h2>③ リスト関連のプロパティ</h2>
+<div class="demo-box">
+<pre>
+<span class="comment">/* list-style-type：リストマーカーの種類 */</span>
+<span class="prop">list-style-type</span>: <span class="val">disc</span>;         <span class="comment">/* 黒丸（ulのデフォルト） */</span>
+<span class="prop">list-style-type</span>: <span class="val">circle</span>;       <span class="comment">/* 白丸 */</span>
+<span class="prop">list-style-type</span>: <span class="val">square</span>;       <span class="comment">/* 黒四角 */</span>
+<span class="prop">list-style-type</span>: <span class="val">decimal</span>;      <span class="comment">/* 数字（olのデフォルト） */</span>
+<span class="prop">list-style-type</span>: <span class="val">decimal-leading-zero</span>; <span class="comment">/* 01, 02, 03... */</span>
+<span class="prop">list-style-type</span>: <span class="val">lower-roman</span>;  <span class="comment">/* i, ii, iii... */</span>
+<span class="prop">list-style-type</span>: <span class="val">upper-roman</span>;  <span class="comment">/* I, II, III... */</span>
+<span class="prop">list-style-type</span>: <span class="val">lower-alpha</span>;  <span class="comment">/* a, b, c... */</span>
+<span class="prop">list-style-type</span>: <span class="val">upper-alpha</span>;  <span class="comment">/* A, B, C... */</span>
+<span class="prop">list-style-type</span>: <span class="val">hiragana</span>;     <span class="comment">/* あ, い, う... */</span>
+<span class="prop">list-style-type</span>: <span class="val">katakana</span>;     <span class="comment">/* ア, イ, ウ... */</span>
+<span class="prop">list-style-type</span>: <span class="val">none</span>;         <span class="comment">/* マーカーなし */</span>
+
+<span class="comment">/* list-style-position：マーカーの位置 */</span>
+<span class="prop">list-style-position</span>: <span class="val">outside</span>; <span class="comment">/* テキストの外側（デフォルト） */</span>
+<span class="prop">list-style-position</span>: <span class="val">inside</span>;  <span class="comment">/* テキストの内側（折り返しがインデントされない） */</span>
+
+<span class="comment">/* list-style-image：画像をマーカーに使用 */</span>
+<span class="prop">list-style-image</span>: <span class="func">url</span>(<span class="val">'marker.png'</span>);
+<span class="prop">list-style-image</span>: <span class="val">none</span>;
+
+<span class="comment">/* list-style ショートハンド：type position image */</span>
+<span class="prop">list-style</span>: <span class="val">disc outside none</span>;
+<span class="prop">list-style</span>: <span class="val">square inside</span>;
+<span class="prop">list-style</span>: <span class="val">none</span>;  <span class="comment">/* マーカーを完全に消す */</span>
+</pre>
+
+  <h3>list-style-type の種類</h3>
+  <div class="list-demo-grid">
+    <div class="list-demo-item">
+      <div class="list-demo-label">disc（デフォルト）</div>
+      <ul style="list-style-type:disc;"><li>項目A</li><li>項目B</li><li>項目C</li></ul>
+    </div>
+    <div class="list-demo-item">
+      <div class="list-demo-label">circle</div>
+      <ul style="list-style-type:circle;"><li>項目A</li><li>項目B</li><li>項目C</li></ul>
+    </div>
+    <div class="list-demo-item">
+      <div class="list-demo-label">square</div>
+      <ul style="list-style-type:square;"><li>項目A</li><li>項目B</li><li>項目C</li></ul>
+    </div>
+    <div class="list-demo-item">
+      <div class="list-demo-label">decimal</div>
+      <ol style="list-style-type:decimal;"><li>項目A</li><li>項目B</li><li>項目C</li></ol>
+    </div>
+    <div class="list-demo-item">
+      <div class="list-demo-label">lower-roman</div>
+      <ol style="list-style-type:lower-roman;"><li>項目A</li><li>項目B</li><li>項目C</li></ol>
+    </div>
+    <div class="list-demo-item">
+      <div class="list-demo-label">upper-alpha</div>
+      <ol style="list-style-type:upper-alpha;"><li>項目A</li><li>項目B</li><li>項目C</li></ol>
+    </div>
+    <div class="list-demo-item">
+      <div class="list-demo-label">hiragana</div>
+      <ol style="list-style-type:hiragana;"><li>項目A</li><li>項目B</li><li>項目C</li></ol>
+    </div>
+    <div class="list-demo-item">
+      <div class="list-demo-label">none</div>
+      <ul style="list-style-type:none; padding-left:0;"><li>項目A</li><li>項目B</li><li>項目C</li></ul>
+    </div>
+  </div>
+
+  <h3>list-style-position の違い</h3>
+  <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; margin:14px 0;">
+    <div style="background:#faf5ff; border:1px solid #e9d8fd; border-radius:8px; padding:12px;">
+      <div style="font-size:0.78em; font-weight:bold; color:#553c9a; margin-bottom:8px; font-family:'Consolas','Monaco',monospace;">outside（デフォルト）</div>
+      <ul style="list-style-position:outside; background:#edf2f7; padding:8px 8px 8px 28px; border-radius:4px; font-size:0.85em; margin:0;">
+        <li>マーカーがテキストの外側に配置されます。折り返し行はインデントされます。</li>
+      </ul>
+    </div>
+    <div style="background:#faf5ff; border:1px solid #e9d8fd; border-radius:8px; padding:12px;">
+      <div style="font-size:0.78em; font-weight:bold; color:#553c9a; margin-bottom:8px; font-family:'Consolas','Monaco',monospace;">inside</div>
+      <ul style="list-style-position:inside; background:#edf2f7; padding:8px; border-radius:4px; font-size:0.85em; margin:0;">
+        <li>マーカーがテキストの内側に配置されます。折り返し行はインデントされません。</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 3：テーブル関連プロパティ -->
+<!-- ============================================================ -->
+
+<!-- 4. テーブル関連プロパティ -->
+<h2>④ テーブル関連のプロパティ</h2>
+<div class="note">
+  <strong>重要ポイント②：セルのボーダーを1本にするには border-collapse: collapse; を指定する</strong><br>
+  デフォルト（<code>separate</code>）では隣接するセルのボーダーが2本になります。
+  <code>collapse</code> を指定すると隣接するボーダーが1本に折りたたまれます。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* border-collapse：ボーダーの折りたたみ */</span>
+<span class="prop">border-collapse</span>: <span class="val">separate</span>;  <span class="comment">/* 隣接ボーダーを分離（デフォルト） */</span>
+<span class="prop">border-collapse</span>: <span class="val">collapse</span>;  <span class="comment">/* 隣接ボーダーを1本に折りたたむ */</span>
+
+<span class="comment">/* border-spacing：セル間の間隔（separate のときのみ有効） */</span>
+<span class="prop">border-spacing</span>: <span class="val">4px</span>;        <span class="comment">/* 縦横ともに4px */</span>
+<span class="prop">border-spacing</span>: <span class="val">8px 4px</span>;    <span class="comment">/* 横8px・縦4px */</span>
+
+<span class="comment">/* caption-side：キャプションの位置 */</span>
+<span class="prop">caption-side</span>: <span class="val">top</span>;     <span class="comment">/* テーブルの上（デフォルト） */</span>
+<span class="prop">caption-side</span>: <span class="val">bottom</span>;  <span class="comment">/* テーブルの下 */</span>
+
+<span class="comment">/* empty-cells：空セルのボーダー・背景の表示 */</span>
+<span class="prop">empty-cells</span>: <span class="val">show</span>;  <span class="comment">/* 表示する（デフォルト） */</span>
+<span class="prop">empty-cells</span>: <span class="val">hide</span>;  <span class="comment">/* 非表示（separate のときのみ有効） */</span>
+
+<span class="comment">/* table-layout：テーブルの幅の計算方法 */</span>
+<span class="prop">table-layout</span>: <span class="val">auto</span>;   <span class="comment">/* コンテンツに応じて自動計算（デフォルト） */</span>
+<span class="prop">table-layout</span>: <span class="val">fixed</span>;  <span class="comment">/* 最初の行の幅で固定（高速レンダリング） */</span>
+</pre>
+
+  <h3>border-collapse の違いを視覚で確認</h3>
+  <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; margin:14px 0;">
+    <div>
+      <div style="font-size:0.82em; font-weight:bold; color:#553c9a; margin-bottom:6px; font-family:'Consolas','Monaco',monospace;">border-collapse: separate（デフォルト）</div>
+      <table class="table-demo" style="border-collapse:separate; border-spacing:4px;">
+        <thead><tr><th>名前</th><th>科目</th><th>点数</th></tr></thead>
+        <tbody>
+          <tr style="background:#faf5ff;"><td style="border:2px solid #9f7aea;">田中</td><td style="border:2px solid #9f7aea;">数学</td><td style="border:2px solid #9f7aea;">85</td></tr>
+          <tr><td style="border:2px solid #9f7aea;">鈴木</td><td style="border:2px solid #9f7aea;">英語</td><td style="border:2px solid #9f7aea;">92</td></tr>
+          <tr style="background:#faf5ff;"><td style="border:2px solid #9f7aea;">佐藤</td><td style="border:2px solid #9f7aea;">理科</td><td style="border:2px solid #9f7aea;"></td></tr>
+        </tbody>
+      </table>
+      <div style="font-size:0.78em; color:#718096; margin-top:4px;">ボーダーが2本になる・border-spacing が有効</div>
+    </div>
+    <div>
+      <div style="font-size:0.82em; font-weight:bold; color:#553c9a; margin-bottom:6px; font-family:'Consolas','Monaco',monospace;">border-collapse: collapse</div>
+      <table class="table-demo" style="border-collapse:collapse;">
+        <thead><tr><th style="border:2px solid #553c9a;">名前</th><th style="border:2px solid #553c9a;">科目</th><th style="border:2px solid #553c9a;">点数</th></tr></thead>
+        <tbody>
+          <tr style="background:#faf5ff;"><td style="border:2px solid #9f7aea;">田中</td><td style="border:2px solid #9f7aea;">数学</td><td style="border:2px solid #9f7aea;">85</td></tr>
+          <tr><td style="border:2px solid #9f7aea;">鈴木</td><td style="border:2px solid #9f7aea;">英語</td><td style="border:2px solid #9f7aea;">92</td></tr>
+          <tr style="background:#faf5ff;"><td style="border:2px solid #9f7aea;">佐藤</td><td style="border:2px solid #9f7aea;">理科</td><td style="border:2px solid #9f7aea;"></td></tr>
+        </tbody>
+      </table>
+      <div style="font-size:0.78em; color:#718096; margin-top:4px;">ボーダーが1本に折りたたまれる</div>
+    </div>
+  </div>
+
+  <h3>border-collapse インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <div class="slider-row">
+      <label>border-collapse</label>
+      <select id="bc-collapse" onchange="updateBC()">
+        <option value="separate">separate（デフォルト）</option>
+        <option value="collapse">collapse</option>
+      </select>
+      <span class="val-display"></span>
+    </div>
+    <div class="slider-row" id="bc-spacing-row">
+      <label>border-spacing</label>
+      <input type="range" id="bc-spacing" min="0" max="16" value="4" oninput="updateBC()">
+      <span class="val-display" id="bc-spacing-val">4px</span>
+    </div>
+    <div class="slider-row">
+      <label>empty-cells</label>
+      <select id="bc-empty" onchange="updateBC()">
+        <option value="show">show（デフォルト）</option>
+        <option value="hide">hide</option>
+      </select>
+      <span class="val-display"></span>
+    </div>
+    <div style="overflow-x:auto; margin:10px 0;">
+      <table id="bc-table" style="border-collapse:separate; border-spacing:4px; empty-cells:show; width:100%; font-size:0.88em;">
+        <thead>
+          <tr>
+            <th style="background:#553c9a; color:#fff; padding:8px 12px; border:2px solid #553c9a;">名前</th>
+            <th style="background:#553c9a; color:#fff; padding:8px 12px; border:2px solid #553c9a;">科目</th>
+            <th style="background:#553c9a; color:#fff; padding:8px 12px; border:2px solid #553c9a;">点数</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:#faf5ff;">
+            <td style="padding:8px 12px; border:2px solid #9f7aea;">田中</td>
+            <td style="padding:8px 12px; border:2px solid #9f7aea;">数学</td>
+            <td style="padding:8px 12px; border:2px solid #9f7aea;">85</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 12px; border:2px solid #9f7aea;">鈴木</td>
+            <td style="padding:8px 12px; border:2px solid #9f7aea;">英語</td>
+            <td style="padding:8px 12px; border:2px solid #9f7aea;">92</td>
+          </tr>
+          <tr style="background:#faf5ff;">
+            <td style="padding:8px 12px; border:2px solid #9f7aea;">佐藤</td>
+            <td style="padding:8px 12px; border:2px solid #9f7aea;">理科</td>
+            <td style="padding:8px 12px; border:2px solid #9f7aea;"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="color-code-display" id="bc-code">border-collapse: separate;  border-spacing: 4px;  empty-cells: show;</div>
+  </div>
+  <script>
+    function updateBC() {
+      const collapse = document.getElementById('bc-collapse').value;
+      const spacing  = document.getElementById('bc-spacing').value;
+      const empty    = document.getElementById('bc-empty').value;
+      document.getElementById('bc-spacing-val').textContent = spacing + 'px';
+      const spacingRow = document.getElementById('bc-spacing-row');
+      spacingRow.style.opacity = collapse === 'collapse' ? '0.4' : '1';
+      const t = document.getElementById('bc-table');
+      t.style.borderCollapse = collapse;
+      t.style.borderSpacing  = spacing + 'px';
+      t.style.emptyCells     = empty;
+      document.getElementById('bc-code').textContent =
+        `border-collapse: ${collapse};  border-spacing: ${spacing}px;  empty-cells: ${empty};`;
+    }
+  </script>
+
+  <div class="warn">
+    <strong>⚠️ テーブルプロパティの注意点</strong><br>
+    ・<code>border-spacing</code> と <code>empty-cells</code> は
+    <code>border-collapse: separate</code> のときのみ有効です<br>
+    ・<code>border-collapse: collapse</code> を指定すると
+    <code>border-spacing</code> は無視されます<br>
+    ・<code>caption-side</code> は <code>table</code> 要素に指定します
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 4：内容を追加するプロパティ -->
+<!-- ============================================================ -->
+
+<!-- 5. contentプロパティ -->
+<h2>⑤ 内容を追加するプロパティ（content）</h2>
+<div class="note">
+  <strong>重要ポイント③：q要素で指定される引用符の種類は quotes プロパティで設定する</strong><br>
+  <code>content</code> プロパティは <code>::before</code> / <code>::after</code> 擬似要素と
+  組み合わせて使い、要素の前後にコンテンツを挿入します。
+  また <code>quotes</code> プロパティで <code>&lt;q&gt;</code> 要素の引用符を変更できます。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* content プロパティの値 */</span>
+
+<span class="comment">/* 文字列を挿入 */</span>
+<span class="selector">.required::after</span> {
+  <span class="prop">content</span>: <span class="val">" *"</span>;
+  <span class="prop">color</span>: <span class="val">red</span>;
+}
+
+<span class="comment">/* 属性値を挿入 */</span>
+<span class="selector">a::after</span> {
+  <span class="prop">content</span>: <span class="val">" ("</span> <span class="func">attr</span>(<span class="val">href</span>) <span class="val">")"</span>;  <span class="comment">/* リンクURLを表示 */</span>
+}
+
+<span class="comment">/* 画像を挿入 */</span>
+<span class="selector">.icon::before</span> {
+  <span class="prop">content</span>: <span class="func">url</span>(<span class="val">'icon.png'</span>);
+}
+
+<span class="comment">/* カウンターを挿入 */</span>
+<span class="selector">ol</span> { <span class="prop">counter-reset</span>: <span class="val">my-counter</span>; }
+<span class="selector">li</span> { <span class="prop">counter-increment</span>: <span class="val">my-counter</span>; }
+<span class="selector">li::before</span> {
+  <span class="prop">content</span>: <span class="func">counter</span>(<span class="val">my-counter</span>) <span class="val">". "</span>;
+}
+
+<span class="comment">/* 引用符を挿入（open-quote / close-quote） */</span>
+<span class="selector">q::before</span> { <span class="prop">content</span>: <span class="val">open-quote</span>; }
+<span class="selector">q::after</span>  { <span class="prop">content</span>: <span class="val">close-quote</span>; }
+
+<span class="comment">/* 空文字（clearfixなどに使用） */</span>
+<span class="selector">.clearfix::after</span> {
+  <span class="prop">content</span>: <span class="val">""</span>;
+  <span class="prop">display</span>: <span class="val">block</span>;
+  <span class="prop">clear</span>: <span class="val">both</span>;
+}
+
+<span class="comment">/* none：擬似要素を非表示 */</span>
+<span class="selector">::before</span> { <span class="prop">content</span>: <span class="val">none</span>; }
+</pre>
+
+  <h3>content の使用例デモ</h3>
+
+  <h3 style="margin-top:16px;">① 文字列の挿入（::before / ::after）</h3>
+  <ul class="content-demo-list">
+    <li>リスト項目1（::before で ✦ を挿入）</li>
+    <li>リスト項目2</li>
+    <li>リスト項目3</li>
+  </ul>
+
+  <h3>② カウンターの自動採番</h3>
+  <ol class="content-counter-demo">
+    <li>はじめに</li>
+    <li>準備するもの</li>
+    <li>手順の説明</li>
+    <li>まとめ</li>
+  </ol>
+
+  <h3>③ 属性値の挿入（attr()）</h3>
+  <style>
+    .attr-demo a::after {
+      content: " [" attr(href) "]";
+      font-size: 0.78em;
+      color: #9f7aea;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+  </style>
+  <div class="attr-demo" style="background:#faf5ff; border:1px solid #e9d8fd; border-radius:6px; padding:12px 16px; font-size:0.9em;">
+    <a href="https://html5exam.jp/" target="_blank" style="color:#553c9a;">HTML5試験公式サイト</a>
+    <br>
+    <a href="https://developer.mozilla.org/ja/" target="_blank" style="color:#553c9a;">MDN Web Docs</a>
+  </div>
+  <div style="font-size:0.78em; color:#718096; margin-top:4px; font-family:'Consolas','Monaco',monospace;">
+    a::after { content: " [" attr(href) "]"; }
+  </div>
+</div>
+
+
+<!-- 6. quotesプロパティ -->
+<h2>⑥ quotes プロパティ</h2>
+<div class="note">
+  <strong>重要ポイント③（再掲）：q要素で指定される引用符の種類は quotes プロパティで設定する</strong><br>
+  <code>quotes</code> プロパティで <code>&lt;q&gt;</code> 要素の
+  開始引用符・終了引用符のペアを指定します。
+  ネストされた <code>&lt;q&gt;</code> 要素には2番目以降のペアが使われます。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* quotes: "開始引用符" "終了引用符" ["ネスト開始" "ネスト終了" ...] */</span>
+
+<span class="comment">/* 日本語の引用符（「」） */</span>
+<span class="selector">:lang(ja)</span> {
+  <span class="prop">quotes</span>: <span class="val">"「" "」" "『" "』"</span>;
+}
+
+<span class="comment">/* 英語の引用符（" "） */</span>
+<span class="selector">:lang(en)</span> {
+  <span class="prop">quotes</span>: <span class="val">'"' '"' "'" "'"</span>;
+}
+
+<span class="comment">/* フランス語のギュメ（« »） */</span>
+<span class="selector">:lang(fr)</span> {
+  <span class="prop">quotes</span>: <span class="val">"«" "»" "‹" "›"</span>;
+}
+
+<span class="comment">/* カスタム引用符 */</span>
+<span class="selector">.custom-quote</span> {
+  <span class="prop">quotes</span>: <span class="val">"【" "】"</span>;
+}
+
+<span class="comment">/* content と組み合わせて使用 */</span>
+<span class="selector">q::before</span> { <span class="prop">content</span>: <span class="val">open-quote</span>; }
+<span class="selector">q::after</span>  { <span class="prop">content</span>: <span class="val">close-quote</span>; }
+</pre>
+
+  <h3>quotes のデモ</h3>
+  <style>
+    .q-ja    { quotes: "「" "」" "『" "』"; }
+    .q-en    { quotes: '"' '"' "'" "'"; }
+    .q-fr    { quotes: "«\00A0" "\00A0»" "‹\00A0" "\00A0›"; }
+    .q-custom{ quotes: "【" "】" "〔" "〕"; }
+    .q-ja q::before, .q-en q::before, .q-fr q::before, .q-custom q::before { content: open-quote; }
+    .q-ja q::after,  .q-en q::after,  .q-fr q::after,  .q-custom q::after  { content: close-quote; }
+  </style>
+
+  <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; margin:14px 0;">
+    <div class="quotes-demo q-ja">
+      <div style="font-size:0.75em; font-weight:bold; color:#553c9a; margin-bottom:6px; font-family:'Consolas','Monaco',monospace;">日本語（「」『』）</div>
+      <q>これは引用文です。<q>ネストされた引用</q>も使えます。</q>
+    </div>
+    <div class="quotes-demo q-en">
+      <div style="font-size:0.75em; font-weight:bold; color:#553c9a; margin-bottom:6px; font-family:'Consolas','Monaco',monospace;">英語（" " ' '）</div>
+      <q>This is a quote. <q>Nested quote</q> here.</q>
+    </div>
+    <div class="quotes-demo q-fr">
+      <div style="font-size:0.75em; font-weight:bold; color:#553c9a; margin-bottom:6px; font-family:'Consolas','Monaco',monospace;">フランス語（« »）</div>
+      <q>C'est une citation. <q>Citation imbriquée</q>.</q>
+    </div>
+    <div class="quotes-demo q-custom">
+      <div style="font-size:0.75em; font-weight:bold; color:#553c9a; margin-bottom:6px; font-family:'Consolas','Monaco',monospace;">カスタム（【】〔〕）</div>
+      <q>カスタム引用符です。<q>ネスト引用</q>も変わります。</q>
+    </div>
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ quotes プロパティの注意点</strong><br>
+    ・<code>quotes</code> プロパティを指定しただけでは引用符は表示されません<br>
+    ・<code>q::before { content: open-quote; }</code> と
+    <code>q::after { content: close-quote; }</code> の指定が必要です<br>
+    ・ブラウザのデフォルトスタイルシートに <code>q</code> 要素の引用符スタイルが含まれているため、
+    通常は自動的に表示されます
+  </div>
+
+  <h3>counter-reset / counter-increment（カウンター関連）</h3>
+<pre>
+<span class="comment">/* カウンターの定義と使用 */</span>
+<span class="selector">.chapter-list</span> {
+  <span class="prop">counter-reset</span>: <span class="val">chapter</span>;     <span class="comment">/* カウンターを0にリセット */</span>
+  <span class="prop">list-style</span>: <span class="val">none</span>;
+}
+<span class="selector">.chapter-list li</span> {
+  <span class="prop">counter-increment</span>: <span class="val">chapter</span>; <span class="comment">/* カウンターを1増やす */</span>
+}
+<span class="selector">.chapter-list li::before</span> {
+  <span class="prop">content</span>: <span class="val">"第"</span> <span class="func">counter</span>(<span class="val">chapter</span>) <span class="val">"章 "</span>;
+  <span class="prop">font-weight</span>: <span class="val">bold</span>;
+  <span class="prop">color</span>: <span class="val">#9f7aea</span>;
+}
+
+<span class="comment">/* counter-reset の初期値を指定 */</span>
+<span class="prop">counter-reset</span>: <span class="val">chapter 0</span>;   <span class="comment">/* 0から開始（デフォルト） */</span>
+<span class="prop">counter-reset</span>: <span class="val">chapter 4</span>;   <span class="comment">/* 4から開始（次の li で5になる） */</span>
+
+<span class="comment">/* counter-increment の増分を指定 */</span>
+<span class="prop">counter-increment</span>: <span class="val">chapter 2</span>; <span class="comment">/* 2ずつ増やす */</span>
+</pre>
+
+  <h3>カウンターデモ（第〇章）</h3>
+  <style>
+    .chapter-list { counter-reset: chapter; list-style: none; padding: 0; margin: 12px 0; }
+    .chapter-list li { counter-increment: chapter; padding: 8px 0 8px 8px; border-bottom: 1px solid #edf2f7; font-size: 0.9em; color: #4a5568; }
+    .chapter-list li::before { content: "第" counter(chapter) "章　"; font-weight: bold; color: #9f7aea; font-size: 0.95em; }
+  </style>
+  <ol class="chapter-list">
+    <li>HTMLの基礎</li>
+    <li>CSSの基礎</li>
+    <li>レイアウト技術</li>
+    <li>アニメーション</li>
+  </ol>
+</div>
+
+
+<!-- 演習問題 -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      <code>linear-gradient()</code> は <code>background-color</code> プロパティの値として指定できる。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn btn-purple" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            '<code>linear-gradient()</code> は <strong>background-image</strong> プロパティの値として指定します。<br>' +
+            '<code>background-color</code> には指定できません。<br>' +
+            'ただし <code>background</code> ショートハンドには指定できます（background-image として解釈されます）。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。linear-gradient() は background-image の値として指定します。' +
+            'background-color には指定できません。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合う値・プロパティ名を入力してください。</p>
+
+    <label>① linear-gradient() で方向を省略したときのデフォルトの方向：</label>
+    <input type="text" id="q2a" placeholder="to 〇〇〇〇〇">
+
+    <label>② radial-gradient() の形状のデフォルト値：</label>
+    <input type="text" id="q2b" placeholder="値">
+
+    <label>③ テーブルの隣接するセルのボーダーを1本にするプロパティと値（プロパティ:値）：</label>
+    <input type="text" id="q2c" placeholder="例）display:none">
+
+    <label>④ border-collapse: separate のときのみ有効な、セル間の間隔を指定するプロパティ名：</label>
+    <input type="text" id="q2d" placeholder="プロパティ名">
+
+    <label>⑤ q要素の引用符の種類を設定するプロパティ名：</label>
+    <input type="text" id="q2e" placeholder="プロパティ名">
+
+    <label>⑥ content プロパティで属性値を挿入するときに使う関数名：</label>
+    <input type="text" id="q2f" placeholder="関数名()">
+
+    <br>
+    <button class="btn btn-purple" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value.trim().toLowerCase().replace(/\s/g,'');
+        const b = document.getElementById('q2b').value.trim().toLowerCase();
+        const c = document.getElementById('q2c').value.trim().toLowerCase().replace(/\s/g,'');
+        const d = document.getElementById('q2d').value.trim().toLowerCase().replace(/\s/g,'');
+        const e = document.getElementById('q2e').value.trim().toLowerCase().replace(/\s/g,'');
+        const f = document.getElementById('q2f').value.trim().toLowerCase().replace(/[\s()]/g,'');
+        const r = document.getElementById('q2-result');
+        const ca = a === 'tobottom' || a === '180deg' || a === 'bottom';
+        const cb = b === 'ellipse';
+        const cc = c === 'border-collapse:collapse';
+        const cd = d === 'border-spacing';
+        const ce = e === 'quotes';
+        const cf = f === 'attr';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！グラデーション・テーブル・contentを完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `① ${ca?'✅':'❌ to bottom（= 180deg）'}　` +
+            `② ${cb?'✅':'❌ ellipse'}　` +
+            `③ ${cc?'✅':'❌ border-collapse:collapse'}　` +
+            `④ ${cd?'✅':'❌ border-spacing'}　` +
+            `⑤ ${ce?'✅':'❌ quotes'}　` +
+            `⑥ ${cf?'✅':'❌ attr()'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>
+      <code>linear-gradient(45deg, #9f7aea, #4299e1)</code> の説明として正しいものはどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">左上から右下へ向かうグラデーション（45度は左上→右下）</option>
+      <option value="b">左下から右上へ向かうグラデーション（45度は左下→右上）</option>
+      <option value="c">右上から左下へ向かうグラデーション</option>
+      <option value="d">上から下へのグラデーション（45degはデフォルトと同じ）</option>
+    </select>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'linear-gradient の角度は<strong>時計回り</strong>で、<strong>0deg が下から上</strong>です。<br>' +
+            '・0deg = 下→上（to top）<br>' +
+            '・90deg = 左→右（to right）<br>' +
+            '・180deg = 上→下（to bottom・デフォルト）<br>' +
+            '・<strong>45deg = 左下→右上</strong>（to top right に近い）<br>' +
+            '・135deg = 左上→右下（to bottom right に近い）';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            'linear-gradient の角度は時計回りで、0deg が下から上です。<br>' +
+            '45deg は左下から右上へのグラデーションです。<br>' +
+            '（0deg=下→上、90deg=左→右、180deg=上→下）';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 選択問題</h3>
+    <p>
+      <code>list-style-position: inside</code> と <code>outside</code>（デフォルト）の
+      違いとして正しいものはどれですか？
+    </p>
+    <select id="q4">
+      <option value="">-- 選択してください --</option>
+      <option value="a">inside はマーカーをリストの外側に配置し、outside は内側に配置する</option>
+      <option value="b">outside はマーカーをテキストの外側に配置し折り返し行がインデントされる。inside はマーカーがテキストの内側に入り折り返し行がインデントされない</option>
+      <option value="c">inside と outside はまったく同じ見た目になる</option>
+      <option value="d">outside はマーカーを非表示にし、inside は表示する</option>
+    </select>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const v = document.getElementById('q4').value;
+        const r = document.getElementById('q4-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            '・<strong>outside</strong>（デフォルト）：マーカーはテキストの外側。折り返し行はマーカーの右端に揃ってインデントされる<br>' +
+            '・<strong>inside</strong>：マーカーはテキストの内側（最初の文字の前）。折り返し行はインデントされず左端に揃う';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            '・outside（デフォルト）：マーカーがテキストの外側・折り返し行はインデントされる<br>' +
+            '・inside：マーカーがテキストの内側・折り返し行はインデントされない';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5a">
+      ① <code>radial-gradient()</code> のデフォルトの形状は <code>ellipse</code>（楕円形）である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5b">
+      ② <code>border-spacing</code> は <code>border-collapse: collapse</code> のときも有効である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5c">
+      ③ <code>content</code> プロパティは <code>::before</code> / <code>::after</code> 擬似要素で使用する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5d">
+      ④ <code>list-style: none</code> でリストマーカーを完全に消すことができる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5e">
+      ⑤ <code>quotes</code> プロパティを指定するだけで、<code>q</code> 要素に引用符が自動的に追加される
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5f">
+      ⑥ <code>caption-side: bottom</code> でテーブルのキャプションをテーブルの下に表示できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5g">
+      ⑦ <code>repeating-linear-gradient()</code> でストライプ模様を作ることができる
+    </label>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const r = document.getElementById('q5-result');
+        const checks = {
+          a: document.getElementById('q5a').checked,
+          b: document.getElementById('q5b').checked,
+          c: document.getElementById('q5c').checked,
+          d: document.getElementById('q5d').checked,
+          e: document.getElementById('q5e').checked,
+          f: document.getElementById('q5f').checked,
+          g: document.getElementById('q5g').checked,
+        };
+        // 正解：①③④⑥⑦（a, c, d, f, g）
+        // ② border-spacing は collapse のときは無効
+        // ⑤ quotes だけでは不十分。content: open-quote / close-quote も必要
+        const correct = { a:true, b:false, c:true, d:true, e:false, f:true, g:true };
+        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
+        const allCorrect = results.every(Boolean);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① radial-gradient のデフォルトは ellipse ✅<br>' +
+            '・③ content は ::before / ::after で使用 ✅<br>' +
+            '・④ list-style: none でマーカーを消せる ✅<br>' +
+            '・⑥ caption-side: bottom でキャプションを下に ✅<br>' +
+            '・⑦ repeating-linear-gradient でストライプ ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① radial-gradient のデフォルト形状は ellipse（楕円形）<br>' +
+            '・③ content プロパティは ::before / ::after 擬似要素で使用する<br>' +
+            '・④ list-style: none でリストマーカーを完全に消せる<br>' +
+            '・⑥ caption-side: bottom でキャプションをテーブルの下に配置できる<br>' +
+            '・⑦ repeating-linear-gradient() でストライプ模様が作れる<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② border-spacing は border-collapse: collapse のときは無効（separate のときのみ有効）<br>' +
+            '・⑤ quotes プロパティだけでは不十分。q::before { content: open-quote; } と q::after { content: close-quote; } の指定も必要';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. コード穴埋め問題</h3>
+    <p><code>__A__</code> 〜 <code>__F__</code> に適切な値・記述を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+/* A：左から右へ紫→青のグラデーション */
+background-image: linear-gradient(__A__, #9f7aea, #4299e1);
+
+/* B：円形の放射状グラデーション（中央から） */
+background-image: radial-gradient(__B__ at center, #9f7aea, #4299e1);
+
+/* C：テーブルのセルボーダーを1本にする */
+border-collapse: __C__;
+
+/* D：リストマーカーを非表示にする */
+list-style-type: __D__;
+
+/* E：::before 擬似要素で「★ 」という文字列を挿入する */
+.item::before { content: __E__; }
+
+/* F：q要素の引用符を「【」「】」に設定する */
+q { quotes: __F__; }
+q::before { content: open-quote; }
+q::after  { content: close-quote; }</pre>
+
+    <label>A（グラデーションの方向）：</label>
+    <input type="text" id="q6a" placeholder="値">
+    <label>B（radial-gradient の形状）：</label>
+    <input type="text" id="q6b" placeholder="値">
+    <label>C（border-collapse の値）：</label>
+    <input type="text" id="q6c" placeholder="値">
+    <label>D（list-style-type の値）：</label>
+    <input type="text" id="q6d" placeholder="値">
+    <label>E（content の値・引用符付きで）：</label>
+    <input type="text" id="q6e" placeholder='"★ "'>
+    <label>F（quotes の値・引用符付きで）：</label>
+    <input type="text" id="q6f" placeholder='"【" "】"'>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ6()">答え合わせ</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const a = document.getElementById('q6a').value.trim().toLowerCase().replace(/\s/g,'');
+        const b = document.getElementById('q6b').value.trim().toLowerCase();
+        const c = document.getElementById('q6c').value.trim().toLowerCase();
+        const d = document.getElementById('q6d').value.trim().toLowerCase();
+        const e = document.getElementById('q6e').value.trim().replace(/\s/g,'');
+        const f = document.getElementById('q6f').value.trim().replace(/\s/g,'');
+        const r = document.getElementById('q6-result');
+        const ca = a === 'toright' || a === '90deg';
+        const cb = b === 'circle';
+        const cc = c === 'collapse';
+        const cd = d === 'none';
+        const ce = e === '"★"' || e === '"★ "' || e === "'★'" || e === "'★ '";
+        const cf = f.includes('【') && f.includes('】');
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！グラデーション・テーブル・contentの記述を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca?'✅':'❌ to right（または90deg）'}　` +
+            `B: ${cb?'✅':'❌ circle'}　` +
+            `C: ${cc?'✅':'❌ collapse'}　` +
+            `D: ${cd?'✅':'❌ none'}　` +
+            `E: ${ce?'✅':'❌ "★ "（引用符付き文字列）'}　` +
+            `F: ${cf?'✅':'❌ "【" "】"'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q7 -->
+  <div class="quiz-block">
+    <h3>Q7. 記述問題</h3>
+    <p>
+      CSS の <code>content</code> プロパティでできることを、
+      使用できる値の種類（文字列・attr()・counter()・open-quote など）を挙げながら説明してください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q7" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn btn-purple" onclick="checkQ7()">模範解答を見る</button>
+    <div class="result-msg" id="q7-result"></div>
+    <script>
+      function checkQ7() {
+        const r = document.getElementById('q7-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<strong>content プロパティの概要</strong><br>' +
+          '::before / ::after 擬似要素と組み合わせて、要素の前後にコンテンツを挿入するプロパティ。<br><br>' +
+          '<strong>指定できる値の種類</strong><br>' +
+          '① <strong>文字列</strong>：<code>content: "★ ";</code><br>' +
+          '　→ 指定した文字列をそのまま挿入する<br><br>' +
+          '② <strong>attr(属性名)</strong>：<code>content: attr(href);</code><br>' +
+          '　→ 要素の属性値を取得して挿入する（印刷時にURLを表示するなど）<br><br>' +
+          '③ <strong>counter(カウンター名)</strong>：<code>content: counter(step);</code><br>' +
+          '　→ counter-reset / counter-increment と組み合わせて自動採番を実現する<br><br>' +
+          '④ <strong>open-quote / close-quote</strong>：<code>content: open-quote;</code><br>' +
+          '　→ quotes プロパティで設定した引用符を挿入する<br><br>' +
+          '⑤ <strong>url(画像パス)</strong>：<code>content: url("icon.png");</code><br>' +
+          '　→ 画像を挿入する<br><br>' +
+          '⑥ <strong>""（空文字列）</strong>：<code>content: "";</code><br>' +
+          '　→ clearfix など、表示はしないが擬似要素を生成したい場合に使用する<br><br>' +
+          '⑦ <strong>none</strong>：<code>content: none;</code><br>' +
+          '　→ 擬似要素を非表示にする';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 グラデーション・リスト・テーブル・content プロパティ まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>プロパティ / 関数</th><th>主な値・書式</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td colspan="3" style="background:#f3e8ff; color:#553c9a; font-weight:bold; font-size:0.88em;">▼ グラデーション</td>
+    </tr>
+    <tr>
+      <td><code>linear-gradient()</code></td>
+      <td><code>方向, 色1, 色2[, ...]</code></td>
+      <td>background-image の値として指定。方向省略時は to bottom（180deg）。0deg = 下→上</td>
+    </tr>
+    <tr>
+      <td><code>radial-gradient()</code></td>
+      <td><code>[形状] [at 位置], 色1, 色2</code></td>
+      <td>デフォルトは ellipse at center。circle で円形。at で中心位置を指定</td>
+    </tr>
+    <tr>
+      <td><code>repeating-linear-gradient()</code></td>
+      <td>linear-gradient と同じ</td>
+      <td>色停止点を繰り返してストライプ模様などを作れる</td>
+    </tr>
+    <tr>
+      <td><code>repeating-radial-gradient()</code></td>
+      <td>radial-gradient と同じ</td>
+      <td>同心円模様などを作れる</td>
+    </tr>
+    <tr>
+      <td colspan="3" style="background:#f3e8ff; color:#553c9a; font-weight:bold; font-size:0.88em;">▼ リスト関連</td>
+    </tr>
+    <tr>
+      <td><code>list-style-type</code></td>
+      <td><code>disc / circle / square / decimal / lower-roman / hiragana / none</code> など</td>
+      <td>リストマーカーの種類。none でマーカーを非表示</td>
+    </tr>
+    <tr>
+      <td><code>list-style-position</code></td>
+      <td><code>outside</code>（デフォルト）/ <code>inside</code></td>
+      <td>outside は折り返し行がインデントされる。inside はインデントされない</td>
+    </tr>
+    <tr>
+      <td><code>list-style-image</code></td>
+      <td><code>url() / none</code></td>
+      <td>画像をマーカーに使用</td>
+    </tr>
+    <tr>
+      <td><code>list-style</code></td>
+      <td><code>type position image</code></td>
+      <td>ショートハンド。<code>none</code> でマーカーを完全に消せる</td>
+    </tr>
+    <tr>
+      <td colspan="3" style="background:#f3e8ff; color:#553c9a; font-weight:bold; font-size:0.88em;">▼ テーブル関連</td>
+    </tr>
+    <tr>
+      <td><code>border-collapse</code></td>
+      <td><code>separate</code>（デフォルト）/ <code>collapse</code></td>
+      <td>collapse でセルのボーダーを1本に折りたたむ</td>
+    </tr>
+    <tr>
+      <td><code>border-spacing</code></td>
+      <td>長さ / <code>水平 垂直</code></td>
+      <td>separate のときのみ有効。collapse では無視される</td>
+    </tr>
+    <tr>
+      <td><code>caption-side</code></td>
+      <td><code>top</code>（デフォルト）/ <code>bottom</code></td>
+      <td>テーブルのキャプション位置</td>
+    </tr>
+    <tr>
+      <td><code>empty-cells</code></td>
+      <td><code>show</code>（デフォルト）/ <code>hide</code></td>
+      <td>空セルのボーダー・背景の表示。separate のときのみ有効</td>
+    </tr>
+    <tr>
+      <td><code>table-layout</code></td>
+      <td><code>auto</code>（デフォルト）/ <code>fixed</code></td>
+      <td>fixed は最初の行の幅で固定し高速レンダリング</td>
+    </tr>
+    <tr>
+      <td colspan="3" style="background:#f3e8ff; color:#553c9a; font-weight:bold; font-size:0.88em;">▼ 内容を追加するプロパティ</td>
+    </tr>
+    <tr>
+      <td><code>content</code></td>
+      <td><code>"文字列" / attr() / counter() / open-quote / url() / "" / none</code></td>
+      <td>::before / ::after 擬似要素と組み合わせて使用</td>
+    </tr>
+    <tr>
+      <td><code>quotes</code></td>
+      <td><code>"開始" "終了" ["ネスト開始" "ネスト終了"]</code></td>
+      <td>q要素の引用符を設定。content: open-quote / close-quote と組み合わせて使用</td>
+    </tr>
+    <tr>
+      <td><code>counter-reset</code></td>
+      <td><code>カウンター名 [初期値]</code></td>
+      <td>カウンターを初期化。デフォルト初期値は 0</td>
+    </tr>
+    <tr>
+      <td><code>counter-increment</code></td>
+      <td><code>カウンター名 [増分]</code></td>
+      <td>カウンターを増加。content: counter() で値を挿入</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
