@@ -80,6 +80,10 @@
       color: #553c9a;
       border-left-color: #9f7aea;
     }
+    .section-title.resp {
+      color: #276749;
+      border-left-color: #38a169;
+    }
 
     /* ===== カードグリッド ===== */
     .card-grid {
@@ -120,9 +124,22 @@
       color: #553c9a;
       border-color: #e9d8fd;
     }
-    .card.css-card .card-footer {
-      border-top-color: #faf5ff;
+    .card.css-card .card-footer { border-top-color: #faf5ff; }
+
+    /* ===== カード（公開済み・第3編） ===== */
+    .card.resp-card {
+      border-color: #c6f6d5;
     }
+    .card.resp-card:hover {
+      box-shadow: 0 8px 24px rgba(56,161,105,0.18);
+    }
+    .card.resp-card .card-title { color: #276749; }
+    .card.resp-card .tag {
+      background: #f0fff4;
+      color: #276749;
+      border-color: #c6f6d5;
+    }
+    .card.resp-card .card-footer { border-top-color: #f0fff4; }
 
     .card-icon { font-size: 2em; line-height: 1; }
     .card-title {
@@ -158,6 +175,34 @@
       margin-top: 4px;
     }
 
+    /* ===== カード（準備中） ===== */
+    .card-coming {
+      background: #f7fafc;
+      border: 1px dashed #cbd5e0;
+      border-radius: 12px;
+      padding: 24px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      opacity: 0.75;
+    }
+    .card-coming .card-title { color: #718096; }
+    .card-coming .tag {
+      background: #edf2f7;
+      color: #718096;
+      border-color: #e2e8f0;
+    }
+    .coming-badge {
+      display: inline-block;
+      background: #edf2f7;
+      color: #718096;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 0.78em;
+      font-weight: bold;
+      width: fit-content;
+    }
+
     /* ===== 進捗バー ===== */
     .progress-section {
       background: #fff;
@@ -191,6 +236,13 @@
     }
     .progress-bar.css {
       background: linear-gradient(90deg, #9f7aea, #ed64a6);
+    }
+    .progress-bar-wrap.resp {
+      background: #f0fff4;
+      margin-top: 12px;
+    }
+    .progress-bar.resp {
+      background: linear-gradient(90deg, #38a169, #68d391);
     }
     .progress-label {
       font-size: 0.85em;
@@ -247,12 +299,13 @@
       .progress-label { font-size: 0.78em; }
       .section-title { font-size: 0.92em; margin: 28px 0 14px; }
       .card-grid { grid-template-columns: 1fr; gap: 14px; }
-      .card { padding: 16px 14px; gap: 7px; }
+      .card, .card-coming { padding: 16px 14px; gap: 7px; }
       .card-icon { font-size: 1.5em; }
       .card-title { font-size: 0.92em; }
       .card-desc { font-size: 0.78em; }
       .tag { font-size: 0.68em; padding: 1px 8px; }
       .card-footer { font-size: 0.72em; }
+      .coming-badge { font-size: 0.7em; }
       footer { padding: 20px 14px; font-size: 0.78em; }
     }
     @media (max-height: 500px) and (orientation: landscape) {
@@ -263,7 +316,7 @@
       header .badge { font-size: 0.7em; margin-bottom: 8px; }
       main { padding: 16px 20px 32px; }
       .card-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
-      .card { padding: 12px 12px; }
+      .card, .card-coming { padding: 12px 12px; }
       .card-title { font-size: 0.88em; }
       .card-desc { font-size: 0.76em; }
       .tag { font-size: 0.66em; }
@@ -321,18 +374,27 @@
       🟪 CSS編
     </div>
     <div class="progress-bar-wrap css">
-      <!-- ✅ 更新：11/11ページ = 100% -->
       <div class="progress-bar css" style="width: 100%;"></div>
     </div>
     <div class="progress-label">CSS編 11 / 11 ページ完了 🎉</div>
 
+    <!-- 第3編 -->
+    <div style="font-size:0.85em; color:#276749; font-weight:bold; margin: 14px 0 4px;">
+      🟩 レスポンシブWebデザイン編
+    </div>
+    <div class="progress-bar-wrap resp">
+      <!-- 1/4ページ = 25% -->
+      <div class="progress-bar resp" style="width: 25%;"></div>
+    </div>
+    <div class="progress-label">レスポンシブ編 1 / 4 ページ公開済み（順次追加中）</div>
+
   </div><!-- /progress-section -->
+
 
   <!-- HTML編 公開済みページ -->
   <div class="section-title">✅ HTML編 ― 公開済み（全10ページ）</div>
   <div class="card-grid">
 
-    <!-- basics.html -->
     <a class="card" href="basics.html">
       <div class="card-icon">📄</div>
       <div class="card-title">基本構文・文書構造</div>
@@ -350,7 +412,6 @@
       <div class="card-footer">📁 basics.html</div>
     </a>
 
-    <!-- semantic.html -->
     <a class="card" href="semantic.html">
       <div class="card-icon">🧩</div>
       <div class="card-title">セマンティック・インタラクティブ要素</div>
@@ -369,7 +430,6 @@
       <div class="card-footer">📁 semantic.html</div>
     </a>
 
-    <!-- meta_structure.html -->
     <a class="card" href="meta_structure.html">
       <div class="card-icon">⚙️</div>
       <div class="card-title">全体構造・メタ情報</div>
@@ -388,7 +448,6 @@
       <div class="card-footer">📁 meta_structure.html</div>
     </a>
 
-    <!-- section_structure.html -->
     <a class="card" href="section_structure.html">
       <div class="card-icon">🏛️</div>
       <div class="card-title">セクション・基本構造</div>
@@ -407,7 +466,6 @@
       <div class="card-footer">📁 section_structure.html</div>
     </a>
 
-    <!-- media.html -->
     <a class="card" href="media.html">
       <div class="card-icon">🖼️</div>
       <div class="card-title">画像・動画・音声</div>
@@ -426,7 +484,6 @@
       <div class="card-footer">📁 media.html</div>
     </a>
 
-    <!-- global_attributes.html -->
     <a class="card" href="global_attributes.html">
       <div class="card-icon">🏷️</div>
       <div class="card-title">グローバル属性</div>
@@ -446,7 +503,6 @@
       <div class="card-footer">📁 global_attributes.html</div>
     </a>
 
-    <!-- text_elements.html -->
     <a class="card" href="text_elements.html">
       <div class="card-icon">📝</div>
       <div class="card-title">テキスト要素</div>
@@ -466,7 +522,6 @@
       <div class="card-footer">📁 text_elements.html</div>
     </a>
 
-    <!-- list_elements.html -->
     <a class="card" href="list_elements.html">
       <div class="card-icon">📋</div>
       <div class="card-title">リスト要素</div>
@@ -485,7 +540,6 @@
       <div class="card-footer">📁 list_elements.html</div>
     </a>
 
-    <!-- form_elements.html -->
     <a class="card" href="form_elements.html">
       <div class="card-icon">🖊️</div>
       <div class="card-title">フォーム要素</div>
@@ -505,7 +559,6 @@
       <div class="card-footer">📁 form_elements.html</div>
     </a>
 
-    <!-- table_elements.html -->
     <a class="card" href="table_elements.html">
       <div class="card-icon">📊</div>
       <div class="card-title">テーブル要素</div>
@@ -527,12 +580,11 @@
 
   </div><!-- /card-grid -->
 
+
   <!-- CSS編 公開済みページ -->
-  <!-- ✅ 更新：11ページ完了 -->
   <div class="section-title css">✅ CSS編 ― 公開済み（全11ページ）</div>
   <div class="card-grid">
 
-    <!-- css_basics.html -->
     <a class="card css-card" href="css_basics.html">
       <div class="card-icon">🎨</div>
       <div class="card-title">CSS基礎知識</div>
@@ -552,7 +604,6 @@
       <div class="card-footer">📁 css_basics.html</div>
     </a>
 
-    <!-- css_selectors.html -->
     <a class="card css-card" href="css_selectors.html">
       <div class="card-icon">🎯</div>
       <div class="card-title">CSSセレクタ</div>
@@ -572,7 +623,6 @@
       <div class="card-footer">📁 css_selectors.html</div>
     </a>
 
-    <!-- css_priority.html -->
     <a class="card css-card" href="css_priority.html">
       <div class="card-icon">⚖️</div>
       <div class="card-title">CSS適用の優先順位</div>
@@ -592,7 +642,6 @@
       <div class="card-footer">📁 css_priority.html</div>
     </a>
 
-    <!-- css_font.html -->
     <a class="card css-card" href="css_font.html">
       <div class="card-icon">🔤</div>
       <div class="card-title">CSSフォント</div>
@@ -612,7 +661,6 @@
       <div class="card-footer">📁 css_font.html</div>
     </a>
 
-    <!-- css_text.html -->
     <a class="card css-card" href="css_text.html">
       <div class="card-icon">✍️</div>
       <div class="card-title">CSSテキスト</div>
@@ -633,7 +681,6 @@
       <div class="card-footer">📁 css_text.html</div>
     </a>
 
-    <!-- css_background.html -->
     <a class="card css-card" href="css_background.html">
       <div class="card-icon">🖼️</div>
       <div class="card-title">CSS背景</div>
@@ -654,7 +701,6 @@
       <div class="card-footer">📁 css_background.html</div>
     </a>
 
-    <!-- css_colors.html -->
     <a class="card css-card" href="css_colors.html">
       <div class="card-icon">🌈</div>
       <div class="card-title">CSS色</div>
@@ -674,7 +720,6 @@
       <div class="card-footer">📁 css_colors.html</div>
     </a>
 
-    <!-- css_box.html -->
     <a class="card css-card" href="css_box.html">
       <div class="card-icon">📦</div>
       <div class="card-title">CSSボックス</div>
@@ -694,7 +739,6 @@
       <div class="card-footer">📁 css_box.html</div>
     </a>
 
-    <!-- css_layout.html -->
     <a class="card css-card" href="css_layout.html">
       <div class="card-icon">🗂️</div>
       <div class="card-title">CSSレイアウト</div>
@@ -716,7 +760,6 @@
       <div class="card-footer">📁 css_layout.html</div>
     </a>
 
-    <!-- css_animation.html -->
     <a class="card css-card" href="css_animation.html">
       <div class="card-icon">✨</div>
       <div class="card-title">CSSアニメーション</div>
@@ -738,7 +781,6 @@
       <div class="card-footer">📁 css_animation.html</div>
     </a>
 
-    <!-- ✅ 新規追加：css_etc.html -->
     <a class="card css-card" href="css_etc.html">
       <div class="card-icon">🎨</div>
       <div class="card-title">CSSその他</div>
@@ -759,6 +801,76 @@
       </div>
       <div class="card-footer">📁 css_etc.html</div>
     </a>
+
+  </div><!-- /card-grid -->
+
+
+  <!-- 第3編 公開済みページ -->
+  <div class="section-title resp">✅ レスポンシブWebデザイン編 ― 公開済み（1ページ）</div>
+  <div class="card-grid">
+
+    <!-- ✅ 新規追加：resp_web_techs.html -->
+    <a class="card resp-card" href="resp_web_techs.html">
+      <div class="card-icon">📱</div>
+      <div class="card-title">レスポンシブWebデザインと関連技術</div>
+      <div class="card-desc">
+        多様なデバイスへの対応が求められる背景・レスポンシブWebデザインの定義・
+        メリットとデメリット・Fluid Grid / Flexible Images / メディアクエリの3つの柱・
+        モバイルファーストとデスクトップファーストの違いを学びます。
+        ブレークポイントシミュレーターデモ付き。
+      </div>
+      <div class="card-tags">
+        <span class="tag">Fluid Grid</span>
+        <span class="tag">メディアクエリ</span>
+        <span class="tag">viewport</span>
+        <span class="tag">モバイルファースト</span>
+        <span class="tag">ブレークポイント</span>
+        <span class="tag">RWD</span>
+      </div>
+      <div class="card-footer">📁 resp_web_techs.html</div>
+    </a>
+
+  </div><!-- /card-grid -->
+
+  <!-- 第3編 準備中 -->
+  <div class="section-title resp">🚧 レスポンシブWebデザイン編 ― 順次追加予定</div>
+  <div class="card-grid">
+
+    <div class="card-coming">
+      <div class="card-icon">📡</div>
+      <div class="card-title">メディアクエリ</div>
+      <div class="card-desc">@media の書式・メディアタイプ・メディア特性・ブレークポイントの設定など</div>
+      <div class="card-tags">
+        <span class="tag">@media</span>
+        <span class="tag">min-width</span>
+        <span class="tag">max-width</span>
+      </div>
+      <span class="coming-badge">🚧 準備中</span>
+    </div>
+
+    <div class="card-coming">
+      <div class="card-icon">📐</div>
+      <div class="card-title">viewportとFluid Grid</div>
+      <div class="card-desc">viewportメタタグの詳細・相対単位（%・rem・vw・vh）・可変グリッドの実装など</div>
+      <div class="card-tags">
+        <span class="tag">viewport</span>
+        <span class="tag">vw / vh</span>
+        <span class="tag">rem</span>
+      </div>
+      <span class="coming-badge">🚧 準備中</span>
+    </div>
+
+    <div class="card-coming">
+      <div class="card-icon">🖼️</div>
+      <div class="card-title">レスポンシブ画像と実践</div>
+      <div class="card-desc">picture要素・srcset属性・sizes属性・Flexible Imagesの実装パターンなど</div>
+      <div class="card-tags">
+        <span class="tag">picture</span>
+        <span class="tag">srcset</span>
+        <span class="tag">sizes</span>
+      </div>
+      <span class="coming-badge">🚧 準備中</span>
+    </div>
 
   </div><!-- /card-grid -->
 
