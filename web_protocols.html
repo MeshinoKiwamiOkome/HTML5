@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>HTTP・HTTPSプロトコル 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #00b5d8; padding-bottom: 10px; }
+    h2 { color: #086f83; margin-top: 48px; border-left: 5px solid #00b5d8; padding-left: 12px; }
+    h3 { color: #065666; margin-top: 24px; }
+
+    code {
+      background: #e6fffa;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment  { color: #68d391; }
+    pre .prop     { color: #90cdf4; }
+    pre .val      { color: #fc8181; }
+    pre .keyword  { color: #b794f4; }
+    pre .func     { color: #fbd38d; }
+    pre .attr     { color: #fbd38d; }
+    pre .value    { color: #68d391; }
+    pre .header   { color: #90cdf4; }
+    pre .status   { color: #f6ad55; }
+    pre .method   { color: #68d391; }
+    pre .url      { color: #fc8181; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #00b5d8;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #086f83; }
+    .warn {
+      background: #e6fffa;
+      border: 1px solid #00b5d8;
+      border-left: 5px solid #00b5d8;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #065666;
+      margin: 14px 0;
+    }
+    .warn strong { color: #086f83; }
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+    .demo-box {
+      background: #fff;
+      border: 1px solid #b2f5ea;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .interactive-demo {
+      background: #e6fffa;
+      border: 1px solid #b2f5ea;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .slider-row label {
+      font-size: 0.85em;
+      font-weight: bold;
+      min-width: 180px;
+      color: #086f83;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .slider-row select {
+      border: 2px solid #b2f5ea;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.85em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #2d3748;
+      background: #fff;
+      cursor: pointer;
+      flex: 1;
+    }
+    .slider-row select:focus { border-color: #00b5d8; outline: none; }
+    .slider-row input[type="range"] {
+      flex: 1; min-width: 100px;
+      accent-color: #00b5d8;
+    }
+    .val-display {
+      min-width: 64px;
+      text-align: right;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.85em;
+      color: #2d3748;
+    }
+    .color-code-display {
+      background: #1a202c;
+      color: #68d391;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.84em;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      min-height: 48px;
+    }
+
+    /* HTTPメッセージ表示 */
+    .http-msg {
+      background: #1a202c;
+      border-radius: 8px;
+      padding: 16px 18px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.86em;
+      line-height: 1.8;
+      margin: 12px 0;
+    }
+    .http-msg .req-line  { color: #68d391; font-weight: bold; }
+    .http-msg .res-line  { color: #f6ad55; font-weight: bold; }
+    .http-msg .hdr-name  { color: #90cdf4; }
+    .http-msg .hdr-val   { color: #e2e8f0; }
+    .http-msg .body-line { color: #fc8181; }
+    .http-msg .comment   { color: #4a5568; font-style: italic; }
+
+    /* ステータスコードバッジ */
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .status-card {
+      border-radius: 8px;
+      padding: 12px 14px;
+      border: 1px solid;
+    }
+    .status-card.s1xx { background: #e6fffa; border-color: #b2f5ea; }
+    .status-card.s2xx { background: #f0fff4; border-color: #c6f6d5; }
+    .status-card.s3xx { background: #ebf8ff; border-color: #bee3f8; }
+    .status-card.s4xx { background: #fffaf0; border-color: #feebc8; }
+    .status-card.s5xx { background: #fff5f5; border-color: #fed7d7; }
+    .status-card-code {
+      font-size: 1.1em;
+      font-weight: bold;
+      font-family: 'Consolas', 'Monaco', monospace;
+      margin-bottom: 4px;
+    }
+    .status-card.s1xx .status-card-code { color: #086f83; }
+    .status-card.s2xx .status-card-code { color: #276749; }
+    .status-card.s3xx .status-card-code { color: #2b6cb0; }
+    .status-card.s4xx .status-card-code { color: #c05621; }
+    .status-card.s5xx .status-card-code { color: #9b2335; }
+    .status-card-desc { font-size: 0.82em; color: #4a5568; line-height: 1.5; }
+
+    /* メソッドカード */
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .method-card {
+      background: #e6fffa;
+      border: 1px solid #b2f5ea;
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+    .method-card-name {
+      font-size: 1em;
+      font-weight: bold;
+      color: #086f83;
+      font-family: 'Consolas', 'Monaco', monospace;
+      margin-bottom: 4px;
+    }
+    .method-card-desc {
+      font-size: 0.82em;
+      color: #4a5568;
+      line-height: 1.5;
+    }
+
+    /* フロー図 */
+    .flow-diagram {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 14px 0;
+      padding: 14px;
+      background: #e6fffa;
+      border: 1px solid #b2f5ea;
+      border-radius: 8px;
+    }
+    .flow-box {
+      background: #fff;
+      border: 2px solid #00b5d8;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 0.82em;
+      font-weight: bold;
+      color: #086f83;
+      text-align: center;
+      font-family: 'Consolas', 'Monaco', monospace;
+      white-space: nowrap;
+    }
+    .flow-arrow {
+      font-size: 1.2em;
+      color: #00b5d8;
+      font-weight: bold;
+    }
+
+    /* APIカードグリッド */
+    .api-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin: 14px 0;
+    }
+    .api-card {
+      background: #e6fffa;
+      border: 1px solid #b2f5ea;
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .api-card-title {
+      font-size: 0.88em;
+      font-weight: bold;
+      color: #086f83;
+      margin-bottom: 6px;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .api-card-desc {
+      font-size: 0.82em;
+      color: #4a5568;
+      line-height: 1.6;
+    }
+
+    /* テーブル */
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #b2f5ea;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.summary thead tr { background: #086f83; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #e6fffa; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #e6fffa;
+      border-left: 6px solid #00b5d8;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 { margin-top: 0; color: #086f83; border-left-color: #00b5d8; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #b2f5ea;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #065666; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #b2f5ea;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #00b5d8; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn-quiz {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+      background: #00b5d8;
+      color: #fff;
+    }
+    .btn-quiz:hover { opacity: 0.85; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #b2f5ea; color: #065666; display: block; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px; }
+      .slider-row label { min-width: 120px; }
+      .method-grid { grid-template-columns: 1fr; }
+      .status-grid { grid-template-columns: repeat(2, 1fr); }
+      .api-grid { grid-template-columns: 1fr; }
+      .flow-diagram { flex-direction: column; align-items: flex-start; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px; }
+      .quiz-block { padding: 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+      .method-grid { grid-template-columns: repeat(2, 1fr); }
+      .status-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<h1>🌐 HTTP・HTTPSプロトコル 学習サンプル</h1>
+<p>
+  WebブラウザとWebサーバーの間の通信を担う HTTP・HTTPS プロトコルの
+  仕組み・メッセージ構造・メソッド・ステータスコード・HTTP/2 を学びましょう。
+</p>
+
+
+<!-- ============================================================ -->
+<!-- PART 1：HTTPプロトコルとは -->
+<!-- ============================================================ -->
+<h2>① HTTPプロトコルとは</h2>
+<div class="note">
+  <strong>重要ポイント：HTTPはWebブラウザとWebサーバーの間でデータをやり取りするプロトコルである</strong><br>
+  HTTP（HyperText Transfer Protocol）は、
+  WebブラウザがWebサーバーにリソースを要求（リクエスト）し、
+  サーバーが応答（レスポンス）を返すための<strong>アプリケーション層のプロトコル</strong>です。
+  <strong>ステートレス</strong>（状態を保持しない）な設計で、
+  各リクエストは独立して処理されます。
+</div>
+<div class="demo-box">
+
+  <h3>HTTP通信の基本フロー</h3>
+  <div class="flow-diagram">
+    <div class="flow-box">ブラウザ<br>（クライアント）</div>
+    <div class="flow-arrow">→ HTTPリクエスト →</div>
+    <div class="flow-box">Webサーバー</div>
+    <div class="flow-arrow">← HTTPレスポンス ←</div>
+    <div class="flow-box">ブラウザ<br>（表示）</div>
+  </div>
+
+  <h3>HTTP のバージョン比較</h3>
+  <table class="summary">
+    <thead>
+      <tr><th>バージョン</th><th>主な特徴</th><th>接続方式</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>HTTP/1.0</strong></td>
+        <td>リクエストごとにTCP接続を確立・切断</td>
+        <td>都度接続（非持続接続）</td>
+      </tr>
+      <tr>
+        <td><strong>HTTP/1.1</strong></td>
+        <td>持続接続（Keep-Alive）・パイプライン化</td>
+        <td>持続接続（デフォルト）</td>
+      </tr>
+      <tr>
+        <td><strong>HTTP/2</strong></td>
+        <td>TCP接続を共有・リクエストの多重化・ヘッダー圧縮・サーバープッシュ</td>
+        <td>多重化（1つのTCP接続で並列処理）</td>
+      </tr>
+      <tr>
+        <td><strong>HTTP/3</strong></td>
+        <td>TCPではなくUDP上のQUICプロトコルを使用</td>
+        <td>QUIC（UDP）</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 2：HTTPSプロトコル -->
+<!-- ============================================================ -->
+<h2>② HTTPSプロトコル</h2>
+<div class="note">
+  <strong>重要ポイント：HTTPSはHTTPにTLS/SSLによる暗号化を加えたセキュアなプロトコルである</strong><br>
+  HTTPS（HTTP Secure）は、HTTP通信を
+  <strong>TLS（Transport Layer Security）</strong>または
+  SSL（Secure Sockets Layer）で暗号化したプロトコルです。
+  通信内容の<strong>盗聴・改ざん・なりすましを防止</strong>します。
+  現代のWebでは標準的に使用され、ブラウザは HTTP サイトに「保護されていない通信」と表示します。
+</div>
+<div class="demo-box">
+
+  <h3>HTTP vs HTTPS の比較</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>項目</th><th>HTTP</th><th>HTTPS</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>ポート番号</td><td>80</td><td><strong>443</strong></td></tr>
+      <tr><td>暗号化</td><td>なし（平文）</td><td><strong>TLS/SSL で暗号化</strong></td></tr>
+      <tr><td>盗聴対策</td><td>なし</td><td><strong>あり</strong></td></tr>
+      <tr><td>改ざん検知</td><td>なし</td><td><strong>あり</strong></td></tr>
+      <tr><td>サーバー認証</td><td>なし</td><td><strong>SSL証明書で認証</strong></td></tr>
+      <tr><td>SEO</td><td>不利</td><td><strong>有利（Googleが優遇）</strong></td></tr>
+      <tr><td>必須の場面</td><td>—</td><td>Geolocation / getUserMedia / Service Worker 等</td></tr>
+    </tbody>
+  </table>
+
+  <h3>TLS ハンドシェイクの流れ</h3>
+  <div class="flow-diagram" style="flex-direction:column; align-items:flex-start; gap:8px;">
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <div class="flow-box">① ClientHello<br><span style="font-size:0.8em;">対応暗号スイートを送信</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">② ServerHello<br><span style="font-size:0.8em;">暗号スイート選択・証明書送信</span></div>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <div class="flow-box">④ 暗号化通信開始</div>
+      <div class="flow-arrow">←</div>
+      <div class="flow-box">③ 鍵交換・Finished</div>
+    </div>
+  </div>
+
+  <div class="good">
+    ✅ <strong>試験でのポイント</strong><br>
+    ・HTTPS のデフォルトポートは <strong>443</strong>（HTTP は 80）<br>
+    ・暗号化には <strong>TLS</strong>（Transport Layer Security）を使用する<br>
+    ・SSL証明書はサーバーの<strong>正当性を証明</strong>する
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 3：HTTPのメッセージ構造 -->
+<!-- ============================================================ -->
+<h2>③ HTTPのメッセージ構造</h2>
+<div class="note">
+  <strong>重要ポイント：HTTPメッセージはスタートライン・ヘッダー・空行・ボディの4つで構成される</strong><br>
+  HTTPのリクエスト・レスポンスはどちらも同じ基本構造を持ちます。
+  <strong>スタートライン</strong>（リクエストライン or ステータスライン）・
+  <strong>ヘッダーフィールド</strong>・<strong>空行</strong>・<strong>メッセージボディ</strong>
+  の順で構成されます。
+</div>
+<div class="demo-box">
+
+  <h3>リクエストメッセージの構造</h3>
+  <div class="http-msg">
+    <div class="req-line">POST /api/users HTTP/1.1          ← リクエストライン（メソッド・URI・バージョン）</div>
+    <div><span class="hdr-name">Host:</span>            <span class="hdr-val">www.example.com              ← ヘッダーフィールド</span></div>
+    <div><span class="hdr-name">Content-Type:</span>    <span class="hdr-val">application/json</span></div>
+    <div><span class="hdr-name">Content-Length:</span>  <span class="hdr-val">27</span></div>
+    <div><span class="hdr-name">Authorization:</span>   <span class="hdr-val">Bearer eyJhbGci...</span></div>
+    <div class="comment">                                   ← 空行（ヘッダーとボディの区切り）</div>
+    <div class="body-line">{"name":"Alice","age":30}        ← メッセージボディ</div>
+  </div>
+
+  <h3>レスポンスメッセージの構造</h3>
+  <div class="http-msg">
+    <div class="res-line">HTTP/1.1 200 OK                   ← ステータスライン（バージョン・ステータスコード・フレーズ）</div>
+    <div><span class="hdr-name">Content-Type:</span>    <span class="hdr-val">application/json; charset=UTF-8  ← ヘッダーフィールド</span></div>
+    <div><span class="hdr-name">Content-Length:</span>  <span class="hdr-val">45</span></div>
+    <div><span class="hdr-name">Cache-Control:</span>   <span class="hdr-val">max-age=3600</span></div>
+    <div><span class="hdr-name">Set-Cookie:</span>      <span class="hdr-val">session=abc123; HttpOnly; Secure</span></div>
+    <div class="comment">                                   ← 空行</div>
+    <div class="body-line">{"id":1,"name":"Alice","age":30} ← メッセージボディ</div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 4：HTTPのリクエストメソッド -->
+<!-- ============================================================ -->
+<h2>④ HTTPのリクエストメソッド（8種類）</h2>
+<div class="note">
+  <strong>重要ポイント②：HTTPのリクエストメッセージで利用可能なメソッドには、GET・POSTなど8種類ある</strong><br>
+  HTTPメソッドはリクエストの<strong>目的・操作の種類</strong>を示します。
+  HTTP/1.1 では <strong>GET・POST・PUT・DELETE・HEAD・OPTIONS・PATCH・TRACE・CONNECT</strong>
+  が定義されています。
+  試験では特に <strong>GET・POST・PUT・DELETE・HEAD・OPTIONS</strong> の違いが重要です。
+</div>
+<div class="demo-box">
+
+  <div class="method-grid">
+    <div class="method-card">
+      <div class="method-card-name">GET</div>
+      <div class="method-card-desc">
+        リソースの取得。ボディなし。
+        URLにパラメータを付与（クエリ文字列）。
+        <strong>べき等・安全</strong>
+      </div>
+    </div>
+    <div class="method-card">
+      <div class="method-card-name">POST</div>
+      <div class="method-card-desc">
+        リソースの新規作成・データ送信。
+        ボディにデータを含む。
+        <strong>べき等でない</strong>
+      </div>
+    </div>
+    <div class="method-card">
+      <div class="method-card-name">PUT</div>
+      <div class="method-card-desc">
+        リソースの置き換え（全体更新）。
+        指定URIにリソースを作成または完全置換。
+        <strong>べき等</strong>
+      </div>
+    </div>
+    <div class="method-card">
+      <div class="method-card-name">PATCH</div>
+      <div class="method-card-desc">
+        リソースの部分更新。
+        PUTが全体置換なのに対し、PATCHは差分のみ送信。
+      </div>
+    </div>
+    <div class="method-card">
+      <div class="method-card-name">DELETE</div>
+      <div class="method-card-desc">
+        リソースの削除。
+        指定URIのリソースを削除する。
+        <strong>べき等</strong>
+      </div>
+    </div>
+    <div class="method-card">
+      <div class="method-card-name">HEAD</div>
+      <div class="method-card-desc">
+        GETと同じだがボディなし。
+        ヘッダー情報のみ取得。
+        ファイルサイズ確認などに使用。
+        <strong>べき等・安全</strong>
+      </div>
+    </div>
+    <div class="method-card">
+      <div class="method-card-name">OPTIONS</div>
+      <div class="method-card-desc">
+        サーバーが対応するメソッドを確認。
+        CORSプリフライトリクエストに使用。
+        <strong>べき等・安全</strong>
+      </div>
+    </div>
+    <div class="method-card">
+      <div class="method-card-name">TRACE</div>
+      <div class="method-card-desc">
+        リクエストのループバックテスト。
+        経路上のプロキシを確認するために使用。
+        セキュリティ上の理由で無効化されることが多い。
+      </div>
+    </div>
+    <div class="method-card">
+      <div class="method-card-name">CONNECT</div>
+      <div class="method-card-desc">
+        プロキシサーバーを通じたトンネル確立。
+        HTTPS通信のプロキシ経由接続に使用。
+      </div>
+    </div>
+  </div>
+
+  <h3>メソッドの性質</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>メソッド</th><th>安全（副作用なし）</th><th>べき等（何度実行しても同じ結果）</th><th>ボディ</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>GET</code></td><td>✅ 安全</td><td>✅ べき等</td><td>なし</td></tr>
+      <tr><td><code>HEAD</code></td><td>✅ 安全</td><td>✅ べき等</td><td>なし</td></tr>
+      <tr><td><code>OPTIONS</code></td><td>✅ 安全</td><td>✅ べき等</td><td>任意</td></tr>
+      <tr><td><code>PUT</code></td><td>❌</td><td>✅ べき等</td><td>あり</td></tr>
+      <tr><td><code>DELETE</code></td><td>❌</td><td>✅ べき等</td><td>任意</td></tr>
+      <tr><td><code>POST</code></td><td>❌</td><td>❌</td><td>あり</td></tr>
+      <tr><td><code>PATCH</code></td><td>❌</td><td>❌（実装依存）</td><td>あり</td></tr>
+    </tbody>
+  </table>
+
+  <h3>メソッド インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#065666; margin:0 0 10px;">
+      メソッドを選択すると、対応するリクエストメッセージの例を確認できます。
+    </p>
+    <div class="slider-row">
+      <label>HTTPメソッド</label>
+      <select id="method-sel" onchange="updateMethodDemo()">
+        <option value="GET">GET</option>
+        <option value="POST">POST</option>
+        <option value="PUT">PUT</option>
+        <option value="PATCH">PATCH</option>
+        <option value="DELETE">DELETE</option>
+        <option value="HEAD">HEAD</option>
+        <option value="OPTIONS">OPTIONS</option>
+      </select>
+    </div>
+    <div class="color-code-display" id="method-demo"></div>
+  </div>
+  <script>
+    const methodExamples = {
+      GET:     `GET /api/users/1 HTTP/1.1\nHost: api.example.com\nAccept: application/json\n\n← ボディなし（パラメータはURLに含める）\n← 用途：リソースの取得`,
+      POST:    `POST /api/users HTTP/1.1\nHost: api.example.com\nContent-Type: application/json\nContent-Length: 27\n\n{"name":"Alice","age":30}\n← 用途：リソースの新規作成`,
+      PUT:     `PUT /api/users/1 HTTP/1.1\nHost: api.example.com\nContent-Type: application/json\nContent-Length: 35\n\n{"id":1,"name":"Alice","age":31}\n← 用途：リソースの完全置換（全体更新）`,
+      PATCH:   `PATCH /api/users/1 HTTP/1.1\nHost: api.example.com\nContent-Type: application/json\nContent-Length: 14\n\n{"age":31}\n← 用途：リソースの部分更新（差分のみ）`,
+      DELETE:  `DELETE /api/users/1 HTTP/1.1\nHost: api.example.com\nAuthorization: Bearer eyJhbGci...\n\n← ボディなし（任意）\n← 用途：リソースの削除`,
+      HEAD:    `HEAD /api/users/1 HTTP/1.1\nHost: api.example.com\nAccept: application/json\n\n← ボディなし\n← 用途：ヘッダー情報のみ取得（ファイルサイズ確認など）`,
+      OPTIONS: `OPTIONS /api/users HTTP/1.1\nHost: api.example.com\nOrigin: https://app.example.com\nAccess-Control-Request-Method: POST\n\n← 用途：CORSプリフライトリクエスト・対応メソッドの確認`,
+    };
+    function updateMethodDemo() {
+      const m = document.getElementById('method-sel').value;
+      document.getElementById('method-demo').textContent = methodExamples[m];
+    }
+    updateMethodDemo();
+  </script>
+
+  <div class="warn">
+    <strong>⚠️ GET と POST の主な違い</strong><br>
+    ・<strong>GET</strong>：パラメータをURLに含める（クエリ文字列）。ブックマーク・キャッシュ可能。
+    ボディなし。べき等・安全<br>
+    ・<strong>POST</strong>：データをボディに含める。URLに表示されない。
+    キャッシュされない。べき等でない
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 5：HTTPのレスポンスメッセージ・ステータスコード -->
+<!-- ============================================================ -->
+<h2>⑤ HTTPのレスポンスメッセージ・ステータスコード</h2>
+<div class="note">
+  <strong>重要ポイント③：HTTPのレスポンスメッセージには、レスポンスの状態を3桁の数字で表したステータスコードが含まれる</strong><br>
+  HTTPレスポンスの先頭行（ステータスライン）には
+  <strong>3桁のステータスコード</strong>と理由フレーズが含まれます。
+  先頭の数字によって<strong>5つのクラス</strong>に分類されます。
+</div>
+<div class="demo-box">
+
+  <h3>ステータスコードの分類</h3>
+  <div class="status-grid">
+    <div class="status-card s1xx">
+      <div class="status-card-code">1xx 情報</div>
+      <div class="status-card-desc">リクエストを受信中。処理継続を示す</div>
+    </div>
+    <div class="status-card s2xx">
+      <div class="status-card-code">2xx 成功</div>
+      <div class="status-card-desc">リクエストが正常に処理された</div>
+    </div>
+    <div class="status-card s3xx">
+      <div class="status-card-code">3xx リダイレクト</div>
+      <div class="status-card-desc">別のURLへの転送が必要</div>
+    </div>
+    <div class="status-card s4xx">
+      <div class="status-card-code">4xx クライアントエラー</div>
+      <div class="status-card-desc">クライアント側のリクエストに問題がある</div>
+    </div>
+    <div class="status-card s5xx">
+      <div class="status-card-code">5xx サーバーエラー</div>
+      <div class="status-card-desc">サーバー側で処理に失敗した</div>
+    </div>
+  </div>
+
+  <h3>主要なステータスコード一覧</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>コード</th><th>フレーズ</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr style="background:#e6fffa;"><td colspan="3" style="font-weight:bold; color:#086f83; font-size:0.88em;">▼ 1xx 情報</td></tr>
+      <tr><td><code>100</code></td><td>Continue</td><td>リクエストの続きを送信してよい</td></tr>
+      <tr><td><code>101</code></td><td>Switching Protocols</td><td>プロトコルを切り替える（WebSocketのUpgradeなど）</td></tr>
+      <tr style="background:#e6fffa;"><td colspan="3" style="font-weight:bold; color:#086f83; font-size:0.88em;">▼ 2xx 成功</td></tr>
+      <tr><td><code>200</code></td><td>OK</td><td>リクエスト成功。レスポンスボディにデータが含まれる</td></tr>
+      <tr><td><code>201</code></td><td>Created</td><td>リソースの作成成功（POSTの結果など）</td></tr>
+      <tr><td><code>204</code></td><td>No Content</td><td>成功したがレスポンスボディなし（DELETEの結果など）</td></tr>
+      <tr style="background:#e6fffa;"><td colspan="3" style="font-weight:bold; color:#086f83; font-size:0.88em;">▼ 3xx リダイレクト</td></tr>
+      <tr><td><code>301</code></td><td>Moved Permanently</td><td>恒久的なリダイレクト。URLが永久に変更された</td></tr>
+      <tr><td><code>302</code></td><td>Found</td><td>一時的なリダイレクト</td></tr>
+      <tr><td><code>304</code></td><td>Not Modified</td><td>キャッシュが有効。ボディなしでキャッシュを使用</td></tr>
+      <tr style="background:#e6fffa;"><td colspan="3" style="font-weight:bold; color:#086f83; font-size:0.88em;">▼ 4xx クライアントエラー</td></tr>
+      <tr><td><code>400</code></td><td>Bad Request</td><td>リクエストの構文が不正</td></tr>
+      <tr><td><code>401</code></td><td>Unauthorized</td><td>認証が必要（未認証）</td></tr>
+      <tr><td><code>403</code></td><td>Forbidden</td><td>アクセス禁止（認証済みでも権限なし）</td></tr>
+      <tr><td><code>404</code></td><td>Not Found</td><td>リソースが見つからない</td></tr>
+      <tr><td><code>405</code></td><td>Method Not Allowed</td><td>そのメソッドは許可されていない</td></tr>
+      <tr><td><code>429</code></td><td>Too Many Requests</td><td>レート制限超過</td></tr>
+      <tr style="background:#e6fffa;"><td colspan="3" style="font-weight:bold; color:#086f83; font-size:0.88em;">▼ 5xx サーバーエラー</td></tr>
+      <tr><td><code>500</code></td><td>Internal Server Error</td><td>サーバー内部エラー</td></tr>
+      <tr><td><code>502</code></td><td>Bad Gateway</td><td>ゲートウェイ・プロキシが不正なレスポンスを受信</td></tr>
+      <tr><td><code>503</code></td><td>Service Unavailable</td><td>サーバーが一時的に利用不可（過負荷・メンテナンス）</td></tr>
+    </tbody>
+  </table>
+
+  <h3>ステータスコード インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <div class="slider-row">
+      <label>ステータスコード</label>
+      <select id="status-sel" onchange="updateStatusDemo()">
+        <option value="200">200 OK</option>
+        <option value="201">201 Created</option>
+        <option value="204">204 No Content</option>
+        <option value="301">301 Moved Permanently</option>
+        <option value="304">304 Not Modified</option>
+        <option value="400">400 Bad Request</option>
+        <option value="401">401 Unauthorized</option>
+        <option value="403">403 Forbidden</option>
+        <option value="404">404 Not Found</option>
+        <option value="500">500 Internal Server Error</option>
+        <option value="503">503 Service Unavailable</option>
+      </select>
+    </div>
+    <div class="color-code-display" id="status-demo"></div>
+  </div>
+  <script>
+    const statusExamples = {
+      200: `HTTP/1.1 200 OK\nContent-Type: application/json\nContent-Length: 45\n\n{"id":1,"name":"Alice"}\n\n→ リクエスト成功。ボディにデータが含まれる`,
+      201: `HTTP/1.1 201 Created\nContent-Type: application/json\nLocation: /api/users/42\n\n{"id":42,"name":"Alice"}\n\n→ リソース作成成功。Locationヘッダーに新リソースのURLが入る`,
+      204: `HTTP/1.1 204 No Content\n\n（ボディなし）\n\n→ 処理成功。ボディなし（DELETEの結果など）`,
+      301: `HTTP/1.1 301 Moved Permanently\nLocation: https://new.example.com/page\n\n→ 恒久的リダイレクト。Locationヘッダーの新URLに転送`,
+      304: `HTTP/1.1 304 Not Modified\nETag: "abc123"\n\n（ボディなし）\n→ キャッシュが有効。ブラウザのキャッシュを使用`,
+      400: `HTTP/1.1 400 Bad Request\nContent-Type: application/json\n\n{"error":"Invalid JSON format"}\n\n→ クライアントのリクエストが不正`,
+      401: `HTTP/1.1 401 Unauthorized\nWWW-Authenticate: Bearer realm="api"\n\n{"error":"Authentication required"}\n\n→ 認証が必要（未ログイン）`,
+      403: `HTTP/1.1 403 Forbidden\n\n{"error":"Access denied"}\n\n→ 認証済みでもアクセス権限なし`,
+      404: `HTTP/1.1 404 Not Found\n\n{"error":"Resource not found"}\n\n→ 指定したリソースが存在しない`,
+      500: `HTTP/1.1 500 Internal Server Error\n\n{"error":"Unexpected server error"}\n\n→ サーバー内部でエラーが発生`,
+      503: `HTTP/1.1 503 Service Unavailable\nRetry-After: 120\n\n{"error":"Service temporarily unavailable"}\n\n→ サーバーが一時的に利用不可。Retry-Afterで再試行時間を示す`,
+    };
+    function updateStatusDemo() {
+      const s = document.getElementById('status-sel').value;
+      document.getElementById('status-demo').textContent = statusExamples[s];
+    }
+    updateStatusDemo();
+  </script>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 6：HTTPのヘッダーフィールド -->
+<!-- ============================================================ -->
+<h2>⑥ HTTPのヘッダーフィールド</h2>
+<div class="demo-box">
+
+  <h3>主なリクエストヘッダー</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>ヘッダー名</th><th>説明</th><th>例</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Host</code></td><td>リクエスト先のホスト名（<strong>必須</strong>）</td><td><code>www.example.com</code></td></tr>
+      <tr><td><code>Accept</code></td><td>クライアントが受け入れられるメディアタイプ</td><td><code>application/json, text/html</code></td></tr>
+      <tr><td><code>Accept-Language</code></td><td>受け入れられる言語</td><td><code>ja, en;q=0.9</code></td></tr>
+      <tr><td><code>Accept-Encoding</code></td><td>受け入れられる圧縮形式</td><td><code>gzip, deflate, br</code></td></tr>
+      <tr><td><code>Content-Type</code></td><td>リクエストボディのメディアタイプ</td><td><code>application/json</code></td></tr>
+      <tr><td><code>Content-Length</code></td><td>リクエストボディのバイト数</td><td><code>27</code></td></tr>
+      <tr><td><code>Authorization</code></td><td>認証情報</td><td><code>Bearer eyJhbGci...</code></td></tr>
+      <tr><td><code>Cookie</code></td><td>サーバーに送信するCookie</td><td><code>session=abc123</code></td></tr>
+      <tr><td><code>User-Agent</code></td><td>クライアントのブラウザ・OS情報</td><td><code>Mozilla/5.0 ...</code></td></tr>
+      <tr><td><code>Referer</code></td><td>リクエスト元のURL</td><td><code>https://example.com/page</code></td></tr>
+      <tr><td><code>Origin</code></td><td>リクエスト元のオリジン（CORSで使用）</td><td><code>https://app.example.com</code></td></tr>
+      <tr><td><code>If-Modified-Since</code></td><td>指定日時以降に変更があれば取得</td><td><code>Wed, 01 Jan 2025 00:00:00 GMT</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>主なレスポンスヘッダー</h3>
+  <table class="summary">
+    <thead>
+      <tr><th>ヘッダー名</th><th>説明</th><th>例</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Content-Type</code></td><td>レスポンスボディのメディアタイプ</td><td><code>text/html; charset=UTF-8</code></td></tr>
+      <tr><td><code>Content-Length</code></td><td>レスポンスボディのバイト数</td><td><code>1024</code></td></tr>
+      <tr><td><code>Content-Encoding</code></td><td>ボディの圧縮形式</td><td><code>gzip</code></td></tr>
+      <tr><td><code>Cache-Control</code></td><td>キャッシュの制御</td><td><code>max-age=3600, no-cache</code></td></tr>
+      <tr><td><code>Location</code></td><td>リダイレクト先のURL（3xx・201で使用）</td><td><code>https://new.example.com/</code></td></tr>
+      <tr><td><code>Set-Cookie</code></td><td>クライアントにCookieをセット</td><td><code>session=abc; HttpOnly; Secure</code></td></tr>
+      <tr><td><code>ETag</code></td><td>リソースのバージョン識別子（キャッシュ検証）</td><td><code>"abc123"</code></td></tr>
+      <tr><td><code>Last-Modified</code></td><td>リソースの最終更新日時</td><td><code>Wed, 01 Jan 2025 00:00:00 GMT</code></td></tr>
+      <tr><td><code>Access-Control-Allow-Origin</code></td><td>CORSで許可するオリジン</td><td><code>https://app.example.com</code></td></tr>
+      <tr><td><code>Strict-Transport-Security</code></td><td>HTTPS強制（HSTS）</td><td><code>max-age=31536000</code></td></tr>
+      <tr><td><code>WWW-Authenticate</code></td><td>認証方式の通知（401レスポンスで使用）</td><td><code>Bearer realm="api"</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 7：HTTPでの認証 -->
+<!-- ============================================================ -->
+<h2>⑦ HTTPでの認証</h2>
+<div class="demo-box">
+
+  <h3>主なHTTP認証方式</h3>
+  <div class="api-grid">
+    <div class="api-card">
+      <div class="api-card-title">Basic認証</div>
+      <div class="api-card-desc">
+        ユーザー名とパスワードをBase64エンコードして送信。
+        HTTPS必須（Base64は暗号化ではない）。
+        <code>Authorization: Basic dXNlcjpwYXNz</code>
+      </div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">Digest認証</div>
+      <div class="api-card-desc">
+        パスワードをハッシュ化して送信。
+        Basic認証より安全だが、現在はBearerトークンが主流。
+      </div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">Bearer認証（トークン）</div>
+      <div class="api-card-desc">
+        JWTなどのトークンをAuthorizationヘッダーで送信。
+        REST APIで最も広く使われる方式。
+        <code>Authorization: Bearer eyJhbGci...</code>
+      </div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">OAuth 2.0</div>
+      <div class="api-card-desc">
+        第三者サービスへの認可を委譲する仕組み。
+        「Googleでログイン」などに使用。
+        アクセストークンを発行して利用。
+      </div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* Basic認証のリクエスト例 */</span>
+<span class="method">GET</span> <span class="url">/protected</span> HTTP/1.1
+<span class="header">Host:</span>          api.example.com
+<span class="header">Authorization:</span> Basic dXNlcjpwYXNzd29yZA==
+<span class="comment">/* "user:password" を Base64 エンコードした値 */</span>
+
+<span class="comment">/* Bearer認証（JWT）のリクエスト例 */</span>
+<span class="method">GET</span> <span class="url">/api/users/me</span> HTTP/1.1
+<span class="header">Host:</span>          api.example.com
+<span class="header">Authorization:</span> Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+<span class="comment">/* 401 Unauthorized レスポンス（認証要求） */</span>
+HTTP/1.1 <span class="status">401</span> Unauthorized
+<span class="header">WWW-Authenticate:</span> Bearer realm="api", charset="UTF-8"
+</pre>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 8：HTTP Cookie -->
+<!-- ============================================================ -->
+<h2>⑧ HTTP Cookie（クッキー）</h2>
+<div class="note">
+  <strong>重要ポイント：CookieはHTTPのステートレスな性質を補い、セッション管理などに使われる</strong><br>
+  HTTPはステートレスなため、リクエストをまたいで状態を保持できません。
+  Cookie はサーバーが <code>Set-Cookie</code> ヘッダーでブラウザに保存させ、
+  以降のリクエストで自動的に <code>Cookie</code> ヘッダーとして送信される仕組みです。
+  <strong>セッション管理・ユーザー設定の保存・トラッキング</strong>などに使われます。
+</div>
+<div class="demo-box">
+
+  <h3>Cookie の属性</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>属性</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Expires</code> / <code>Max-Age</code></td><td>有効期限。指定なしはセッションCookie（ブラウザを閉じると消える）</td></tr>
+      <tr><td><code>Domain</code></td><td>Cookieを送信するドメイン</td></tr>
+      <tr><td><code>Path</code></td><td>Cookieを送信するパス</td></tr>
+      <tr><td><code>Secure</code></td><td><strong>HTTPS接続時のみ</strong>送信される</td></tr>
+      <tr><td><code>HttpOnly</code></td><td><strong>JavaScriptからアクセス不可</strong>（XSS対策）</td></tr>
+      <tr><td><code>SameSite</code></td><td>クロスサイトリクエストでの送信制御（CSRF対策）<br><code>Strict</code>：同一サイトのみ / <code>Lax</code>：一部許可 / <code>None</code>：制限なし</td></tr>
+    </tbody>
+  </table>
+
+<pre>
+<span class="comment">/* サーバーからのSet-Cookieヘッダー */</span>
+HTTP/1.1 200 OK
+<span class="header">Set-Cookie:</span> session=abc123; <span class="val">HttpOnly</span>; <span class="val">Secure</span>; <span class="val">SameSite=Strict</span>; Max-Age=3600
+<span class="header">Set-Cookie:</span> theme=dark; Path=/; Max-Age=2592000
+
+<span class="comment">/* 以降のリクエストでは自動的にCookieが送信される */</span>
+<span class="method">GET</span> <span class="url">/dashboard</span> HTTP/1.1
+<span class="header">Host:</span>   www.example.com
+<span class="header">Cookie:</span> session=abc123; theme=dark
+
+<span class="comment">/* JavaScriptからのCookie操作（HttpOnlyでない場合のみ） */</span>
+document.<span class="prop">cookie</span> = <span class="val">"username=Alice; max-age=3600; path=/"</span>;
+console.<span class="func">log</span>(document.<span class="prop">cookie</span>); <span class="comment">/* "username=Alice; theme=dark" */</span>
+</pre>
+
+  <div class="warn">
+    <strong>⚠️ Cookie のセキュリティ</strong><br>
+    ・<strong>HttpOnly</strong>：JavaScriptからのアクセスを禁止 → <strong>XSS攻撃でのCookie窃取を防ぐ</strong><br>
+    ・<strong>Secure</strong>：HTTPS接続時のみ送信 → 通信経路での盗聴を防ぐ<br>
+    ・<strong>SameSite=Strict</strong>：クロスサイトリクエストでの送信を禁止 → <strong>CSRF攻撃を防ぐ</strong>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 9：HTTP/2 -->
+<!-- ============================================================ -->
+<h2>⑨ HTTP/2</h2>
+<div class="note">
+  <strong>重要ポイント①：HTTP/2はTCP接続を共有しリクエストを多重化するなど効率化を図っている</strong><br>
+  HTTP/2 は HTTP/1.1 の性能上の問題を解決するために策定されたバージョンです。
+  <strong>1つのTCP接続でリクエストを多重化</strong>（並列送受信）することで、
+  HTTP/1.1 で問題だった「Head-of-Line Blocking」を解消し、
+  Webページの読み込みを大幅に高速化します。
+</div>
+<div class="demo-box">
+
+  <h3>HTTP/1.1 vs HTTP/2 の主な違い</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>機能</th><th>HTTP/1.1</th><th>HTTP/2</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>TCP接続</strong></td>
+        <td>リクエストごとに接続（または持続接続で順次処理）</td>
+        <td><strong>1つのTCP接続を共有</strong></td>
+      </tr>
+      <tr>
+        <td><strong>多重化</strong></td>
+        <td>不可（パイプライン化は問題あり）</td>
+        <td><strong>複数リクエストを並列送受信（ストリーム）</strong></td>
+      </tr>
+      <tr>
+        <td><strong>ヘッダー圧縮</strong></td>
+        <td>なし（毎回全ヘッダーを送信）</td>
+        <td><strong>HPACK圧縮</strong>（差分のみ送信）</td>
+      </tr>
+      <tr>
+        <td><strong>サーバープッシュ</strong></td>
+        <td>なし</td>
+        <td><strong>サーバーが先読みしてリソースを送信可能</strong></td>
+      </tr>
+      <tr>
+        <td><strong>プロトコル形式</strong></td>
+        <td>テキスト形式</td>
+        <td><strong>バイナリ形式</strong>（フレーム単位）</td>
+      </tr>
+      <tr>
+        <td><strong>優先度制御</strong></td>
+        <td>なし</td>
+        <td><strong>ストリームに優先度を設定可能</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>HTTP/2 の多重化（Multiplexing）の仕組み</h3>
+  <div class="flow-diagram" style="flex-direction:column; align-items:flex-start; gap:10px;">
+    <div style="font-size:0.85em; font-weight:bold; color:#086f83; margin-bottom:4px;">HTTP/1.1（順次処理）</div>
+    <div style="display:flex; gap:4px; flex-wrap:wrap;">
+      <div class="flow-box" style="background:#fff5f5; border-color:#fc8181;">リクエスト1</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="background:#fff5f5; border-color:#fc8181;">レスポンス1</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="background:#fffaf0; border-color:#f6ad55;">リクエスト2</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="background:#fffaf0; border-color:#f6ad55;">レスポンス2</div>
+    </div>
+    <div style="font-size:0.85em; font-weight:bold; color:#086f83; margin:8px 0 4px;">HTTP/2（多重化）</div>
+    <div style="background:#fff; border:1px solid #b2f5ea; border-radius:8px; padding:10px 14px; font-size:0.82em; font-family:'Consolas','Monaco',monospace; color:#065666;">
+      1つのTCP接続上で複数のストリームが並列動作：<br>
+      ストリーム1: ─── リクエスト1 ─── レスポンス1 ───<br>
+      ストリーム2: ─── リクエスト2 ─── レスポンス2 ───<br>
+      ストリーム3: ─── リクエスト3 ─── レスポンス3 ───
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* HTTP/2 はブラウザとサーバーが自動的にネゴシエーション */</span>
+<span class="comment">/* 開発者が意識して書くコードはほぼ不要 */</span>
+<span class="comment">/* ただし HTTPS（TLS）が実質的に必須 */</span>
+
+<span class="comment">/* HTTP/2 の主な特徴 */</span>
+<span class="comment">/* 1. 多重化（Multiplexing）：1つのTCP接続で複数リクエストを並列処理 */</span>
+<span class="comment">/* 2. ヘッダー圧縮（HPACK）：重複ヘッダーを差分のみ送信 */</span>
+<span class="comment">/* 3. サーバープッシュ：リクエスト前にサーバーがリソースを送信 */</span>
+<span class="comment">/* 4. バイナリフレーム：テキストではなくバイナリ形式で効率的に転送 */</span>
+<span class="comment">/* 5. ストリーム優先度：重要なリソースを優先して転送 */</span>
+
+<span class="comment">/* Node.js での HTTP/2 サーバー例（概要） */</span>
+<span class="keyword">const</span> http2 = <span class="func">require</span>(<span class="val">'http2'</span>);
+<span class="keyword">const</span> server = http2.<span class="func">createSecureServer</span>({ key, cert });
+server.<span class="prop">on</span>(<span class="val">'stream'</span>, (stream, headers) => {
+  stream.<span class="func">respond</span>({ <span class="val">':status'</span>: <span class="val">200</span> });
+  stream.<span class="func">end</span>(<span class="val">'Hello HTTP/2!'</span>);
+});
+</pre>
+
+  <div class="good">
+    ✅ <strong>試験でのポイント</strong><br>
+    ・HTTP/2 は<strong>1つのTCP接続を共有</strong>し、リクエストを<strong>多重化</strong>する<br>
+    ・<strong>ヘッダー圧縮（HPACK）</strong>により毎回のヘッダー送信量を削減<br>
+    ・<strong>サーバープッシュ</strong>でリクエスト前にリソースを先送りできる<br>
+    ・テキスト形式（HTTP/1.1）から<strong>バイナリ形式</strong>に変更<br>
+    ・実質的に<strong>HTTPS必須</strong>（主要ブラウザはHTTP/2をHTTPSのみで実装）
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 演習問題 -->
+<!-- ============================================================ -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      HTTP/2 では、複数のリクエストを処理するために複数のTCP接続を確立する必要がある。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn-quiz" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'HTTP/2 は<strong>1つのTCP接続を共有</strong>し、<br>' +
+            '複数のリクエストを<strong>多重化（ストリーム）</strong>して並列処理します。<br>' +
+            'HTTP/1.1 では複数のTCP接続が必要でしたが、HTTP/2 ではその必要がありません。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。HTTP/2 は1つのTCP接続でリクエストを多重化します。' +
+            '複数のTCP接続は不要です。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合うメソッド名・ステータスコード・値を入力してください。</p>
+
+    <label>① リソースの取得に使うHTTPメソッド（最も基本的なもの）：</label>
+    <input type="text" id="q2a" placeholder="メソッド名">
+
+    <label>② リソースの新規作成に使うHTTPメソッド：</label>
+    <input type="text" id="q2b" placeholder="メソッド名">
+
+    <label>③ リクエスト成功を示すステータスコード：</label>
+    <input type="text" id="q2c" placeholder="数値">
+
+    <label>④ リソースが見つからない場合のステータスコード：</label>
+    <input type="text" id="q2d" placeholder="数値">
+
+    <label>⑤ HTTPS のデフォルトポート番号：</label>
+    <input type="text" id="q2e" placeholder="数値">
+
+    <label>⑥ CookieのJavaScriptからのアクセスを禁止する属性名：</label>
+    <input type="text" id="q2f" placeholder="属性名">
+
+    <br>
+    <button class="btn-quiz" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value.trim().toUpperCase();
+        const b = document.getElementById('q2b').value.trim().toUpperCase();
+        const c = document.getElementById('q2c').value.trim();
+        const d = document.getElementById('q2d').value.trim();
+        const e = document.getElementById('q2e').value.trim();
+        const f = document.getElementById('q2f').value.trim().toLowerCase().replace(/\s/g,'');
+        const r = document.getElementById('q2-result');
+        const ca = a === 'GET';
+        const cb = b === 'POST';
+        const cc = c === '200';
+        const cd = d === '404';
+        const ce = e === '443';
+        const cf = f === 'httponly';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！HTTP・HTTPSプロトコルを完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `① ${ca?'✅':'❌ GET'}　` +
+            `② ${cb?'✅':'❌ POST'}　` +
+            `③ ${cc?'✅':'❌ 200'}　` +
+            `④ ${cd?'✅':'❌ 404'}　` +
+            `⑤ ${ce?'✅':'❌ 443'}　` +
+            `⑥ ${cf?'✅':'❌ HttpOnly'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>
+      HTTP/2 の特徴として<strong>正しいもの</strong>はどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">HTTP/2 はTCPではなくUDPを使用する</option>
+      <option value="b">HTTP/2 は1つのTCP接続を共有してリクエストを多重化し、ヘッダー圧縮やサーバープッシュなどで効率化を図っている</option>
+      <option value="c">HTTP/2 ではテキスト形式のメッセージを使用し、HTTP/1.1 との後方互換性を完全に維持している</option>
+      <option value="d">HTTP/2 では各リクエストに別々のTCP接続を使用することで並列処理を実現している</option>
+    </select>
+    <br>
+    <button class="btn-quiz" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'HTTP/2 の主な特徴：<br>' +
+            '・<strong>1つのTCP接続を共有</strong>してリクエストを多重化<br>' +
+            '・<strong>ヘッダー圧縮（HPACK）</strong>で通信量を削減<br>' +
+            '・<strong>サーバープッシュ</strong>でリクエスト前にリソースを送信<br>' +
+            '・<strong>バイナリフレーム</strong>形式（テキストではない）';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            '・UDPを使うのは<strong>HTTP/3（QUIC）</strong>です<br>' +
+            '・HTTP/2 は<strong>バイナリ形式</strong>（テキスト形式ではない）<br>' +
+            '・HTTP/2 は<strong>1つのTCP接続</strong>で多重化します（複数接続ではない）';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 選択問題</h3>
+    <p>
+      HTTPステータスコードの分類として<strong>正しいもの</strong>はどれですか？
+    </p>
+    <select id="q4">
+      <option value="">-- 選択してください --</option>
+      <option value="a">301 は「リクエスト成功」を示す</option>
+      <option value="b">401 は「サーバー内部エラー」を示す</option>
+      <option value="c">200 は「リクエスト成功」、404 は「リソースが見つからない」、500 は「サーバー内部エラー」を示す</option>
+      <option value="d">403 は「認証が必要（未認証）」を示す</option>
+    </select>
+    <br>
+    <button class="btn-quiz" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const v = document.getElementById('q4').value;
+        const r = document.getElementById('q4-result');
+        if (v === 'c') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            '・<strong>200 OK</strong>：リクエスト成功<br>' +
+            '・<strong>404 Not Found</strong>：リソースが見つからない<br>' +
+            '・<strong>500 Internal Server Error</strong>：サーバー内部エラー<br><br>' +
+            '混同しやすいポイント：<br>' +
+            '・<strong>401</strong>：Unauthorized（未認証・認証が必要）<br>' +
+            '・<strong>403</strong>：Forbidden（認証済みでもアクセス禁止）<br>' +
+            '・<strong>301</strong>：Moved Permanently（恒久的リダイレクト）';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            '・301 は<strong>恒久的リダイレクト</strong>（3xx）<br>' +
+            '・401 は<strong>Unauthorized（未認証）</strong>（4xx クライアントエラー）<br>' +
+            '・403 は<strong>Forbidden（アクセス禁止）</strong>（認証済みでも権限なし）<br>' +
+            '・200・404・500 の組み合わせが正しい';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5a">
+      ① HTTP の GET メソッドはリソースの取得に使い、べき等かつ安全なメソッドである
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5b">
+      ② HTTP の POST メソッドはべき等である（何度実行しても同じ結果になる）
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5c">
+      ③ HTTPS のデフォルトポート番号は 443 である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5d">
+      ④ HTTP/2 は1つのTCP接続でリクエストを多重化できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5e">
+      ⑤ Cookie の HttpOnly 属性を設定すると、JavaScript から Cookie にアクセスできなくなる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5f">
+      ⑥ ステータスコード 401 は「アクセス禁止（権限なし）」を意味する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5g">
+      ⑦ HTTP/2 ではヘッダー圧縮（HPACK）によりヘッダーの送信量を削減できる
+    </label>
+    <br>
+    <button class="btn-quiz" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const r = document.getElementById('q5-result');
+        const checks = {
+          a: document.getElementById('q5a').checked,
+          b: document.getElementById('q5b').checked,
+          c: document.getElementById('q5c').checked,
+          d: document.getElementById('q5d').checked,
+          e: document.getElementById('q5e').checked,
+          f: document.getElementById('q5f').checked,
+          g: document.getElementById('q5g').checked,
+        };
+        // 正解：①③④⑤⑦（a, c, d, e, g）
+        // ② POST はべき等でない → ×
+        // ⑥ 401 は Unauthorized（未認証）、アクセス禁止は 403 → ×
+        const correct = { a:true, b:false, c:true, d:true, e:true, f:false, g:true };
+        const allCorrect = Object.keys(correct).every(k => checks[k] === correct[k]);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① GET はべき等・安全 ✅<br>' +
+            '・③ HTTPS のポートは 443 ✅<br>' +
+            '・④ HTTP/2 は多重化 ✅<br>' +
+            '・⑤ HttpOnly で JS からアクセス不可 ✅<br>' +
+            '・⑦ HTTP/2 は HPACK でヘッダー圧縮 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① GET はべき等かつ安全（副作用なし）<br>' +
+            '・③ HTTPS のデフォルトポートは 443<br>' +
+            '・④ HTTP/2 は1つのTCP接続でリクエストを多重化<br>' +
+            '・⑤ HttpOnly 属性で JavaScript からの Cookie アクセスを禁止<br>' +
+            '・⑦ HTTP/2 は HPACK によるヘッダー圧縮に対応<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② POST は<strong>べき等でない</strong>（実行するたびに新しいリソースが作成される）<br>' +
+            '・⑥ 401 は<strong>Unauthorized（未認証）</strong>。アクセス禁止（権限なし）は <strong>403 Forbidden</strong>';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. コード穴埋め問題</h3>
+    <p><code>__A__</code> 〜 <code>__F__</code> に適切な値・記述を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+/* A：リソース取得のHTTPメソッド */
+__A__ /api/users/1 HTTP/1.1
+
+/* B：リクエスト成功のステータスコード */
+HTTP/1.1 __B__ OK
+
+/* C：リソースが見つからないステータスコード */
+HTTP/1.1 __C__ Not Found
+
+/* D：HTTPS のデフォルトポート番号 */
+https://www.example.com:__D__/
+
+/* E：Cookie を JavaScript からアクセス不可にする属性 */
+Set-Cookie: session=abc123; __E__; Secure
+
+/* F：HTTP/2 でリクエストを並列処理する機能の名称 */
+HTTP/2 の __F__ により、1つのTCP接続で複数リクエストを並列処理できる</pre>
+
+    <label>A（HTTPメソッド）：</label>
+    <input type="text" id="q6a" placeholder="メソッド名">
+    <label>B（成功ステータスコード）：</label>
+    <input type="text" id="q6b" placeholder="数値">
+    <label>C（Not Foundのコード）：</label>
+    <input type="text" id="q6c" placeholder="数値">
+    <label>D（HTTPSポート番号）：</label>
+    <input type="text" id="q6d" placeholder="数値">
+    <label>E（Cookie属性）：</label>
+    <input type="text" id="q6e" placeholder="属性名">
+    <label>F（HTTP/2の機能名）：</label>
+    <input type="text" id="q6f" placeholder="機能名">
+    <br>
+    <button class="btn-quiz" onclick="checkQ6()">答え合わせ</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const a = document.getElementById('q6a').value.trim().toUpperCase();
+        const b = document.getElementById('q6b').value.trim();
+        const c = document.getElementById('q6c').value.trim();
+        const d = document.getElementById('q6d').value.trim();
+        const e = document.getElementById('q6e').value.trim().toLowerCase().replace(/\s/g,'');
+        const f = document.getElementById('q6f').value.trim().toLowerCase().replace(/\s/g,'');
+        const r = document.getElementById('q6-result');
+        const ca = a === 'GET';
+        const cb = b === '200';
+        const cc = c === '404';
+        const cd = d === '443';
+        const ce = e === 'httponly';
+        const cf = f.includes('多重化') || f.includes('multiplexing') || f.includes('マルチプレックス');
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！HTTP・HTTPSプロトコルの記述を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca?'✅':'❌ GET'}　` +
+            `B: ${cb?'✅':'❌ 200'}　` +
+            `C: ${cc?'✅':'❌ 404'}　` +
+            `D: ${cd?'✅':'❌ 443'}　` +
+            `E: ${ce?'✅':'❌ HttpOnly'}　` +
+            `F: ${cf?'✅':'❌ 多重化（Multiplexing）'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q7 -->
+  <div class="quiz-block">
+    <h3>Q7. 記述問題</h3>
+    <p>
+      HTTP/1.1 と HTTP/2 の違いを、「TCP接続の共有」「多重化」「ヘッダー圧縮」
+      「サーバープッシュ」「データ形式」の5つの観点から説明してください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q7" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn-quiz" onclick="checkQ7()">模範解答を見る</button>
+    <div class="result-msg" id="q7-result"></div>
+    <script>
+      function checkQ7() {
+        const r = document.getElementById('q7-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<table style="border-collapse:collapse; width:100%; font-size:0.88em;">' +
+          '<thead><tr style="background:#086f83; color:#fff;">' +
+          '<th style="padding:8px; border:1px solid #b2f5ea;">観点</th>' +
+          '<th style="padding:8px; border:1px solid #b2f5ea;">HTTP/1.1</th>' +
+          '<th style="padding:8px; border:1px solid #b2f5ea;">HTTP/2</th>' +
+          '</tr></thead><tbody>' +
+          '<tr><td style="padding:8px; border:1px solid #b2f5ea;">TCP接続</td>' +
+          '<td style="padding:8px; border:1px solid #b2f5ea;">リクエストごとに接続または持続接続で順次処理</td>' +
+          '<td style="padding:8px; border:1px solid #b2f5ea;"><strong>1つのTCP接続を共有</strong></td></tr>' +
+          '<tr style="background:#e6fffa;"><td style="padding:8px; border:1px solid #b2f5ea;">多重化</td>' +
+          '<td style="padding:8px; border:1px solid #b2f5ea;">不可（順次処理）</td>' +
+          '<td style="padding:8px; border:1px solid #b2f5ea;"><strong>複数リクエストを並列送受信</strong></td></tr>' +
+          '<tr><td style="padding:8px; border:1px solid #b2f5ea;">ヘッダー圧縮</td>' +
+          '<td style="padding:8px; border:1px solid #b2f5ea;">なし（毎回全ヘッダー送信）</td>' +
+          '<td style="padding:8px; border:1px solid #b2f5ea;"><strong>HPACK圧縮</strong>（差分のみ送信）</td></tr>' +
+          '<tr style="background:#e6fffa;"><td style="padding:8px; border:1px solid #b2f5ea;">サーバープッシュ</td>' +
+          '<td style="padding:8px; border:1px solid #b2f5ea;">なし</td>' +
+          '<td style="padding:8px; border:1px solid #b2f5ea;"><strong>リクエスト前にリソースを先送り可能</strong></td></tr>' +
+          '<tr><td style="padding:8px; border:1px solid #b2f5ea;">データ形式</td>' +
+          '<td style="padding:8px; border:1px solid #b2f5ea;">テキスト形式</td>' +
+          '<td style="padding:8px; border:1px solid #b2f5ea;"><strong>バイナリフレーム形式</strong></td></tr>' +
+          '</tbody></table><br>' +
+          '💡 <strong>試験のポイント</strong>：<br>' +
+          'HTTP/2 のキーワードは「<strong>TCP接続の共有・多重化・ヘッダー圧縮・サーバープッシュ・バイナリ</strong>」の5つです。';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 HTTP・HTTPSプロトコル まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>項目</th><th>内容</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>HTTP</strong></td>
+      <td>WebブラウザとWebサーバー間の通信プロトコル</td>
+      <td>ステートレス。ポート80。リクエスト/レスポンス型</td>
+    </tr>
+    <tr>
+      <td><strong>HTTPS</strong></td>
+      <td>TLS/SSLで暗号化したHTTP</td>
+      <td><strong>ポート443</strong>。盗聴・改ざん・なりすまし防止</td>
+    </tr>
+    <tr>
+      <td><strong>HTTPメソッド（8種）</strong></td>
+      <td>GET / POST / PUT / PATCH / DELETE / HEAD / OPTIONS / TRACE / CONNECT</td>
+      <td><strong>GET・HEAD・OPTIONS</strong>は安全。<strong>GET・PUT・DELETE</strong>はべき等</td>
+    </tr>
+    <tr>
+      <td><strong>ステータスコード</strong></td>
+      <td>1xx情報 / 2xx成功 / 3xxリダイレクト / 4xxクライアントエラー / 5xxサーバーエラー</td>
+      <td>200 OK / 404 Not Found / 401 Unauthorized / 403 Forbidden / 500 Internal Server Error</td>
+    </tr>
+    <tr>
+      <td><strong>Cookie</strong></td>
+      <td>サーバーがブラウザに保存させる小さなデータ</td>
+      <td><strong>HttpOnly</strong>（XSS対策）/ <strong>Secure</strong>（HTTPS限定）/ <strong>SameSite</strong>（CSRF対策）</td>
+    </tr>
+    <tr>
+      <td><strong>HTTP/2</strong></td>
+      <td>HTTP/1.1 の性能改善版</td>
+      <td><strong>TCP接続共有・多重化・HPACK圧縮・サーバープッシュ・バイナリ形式</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
