@@ -139,7 +139,7 @@
     .card.web-card .tag { background: #e6fffa; color: #086f83; border-color: #b2f5ea; }
     .card.web-card .card-footer { border-top-color: #e6fffa; }
 
-    .card-icon { font-size: 2em; line-height: 1; }
+    .card-icon  { font-size: 2em; line-height: 1; }
     .card-title { font-size: 1.08em; font-weight: bold; color: #2b6cb0; }
     .card-desc  { font-size: 0.9em; color: #4a5568; flex: 1; }
     .card-tags  { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
@@ -350,9 +350,9 @@
       🟧 API概要編
     </div>
     <div class="progress-bar-wrap api">
-      <div class="progress-bar api" style="width:25%;"></div>
+      <div class="progress-bar api" style="width:100%;"></div>
     </div>
-    <div class="progress-label">API概要編 1 / 4 ページ完了</div>
+    <div class="progress-label">API概要編 4 / 4 ページ完了 🎉</div>
 
     <!-- 第5編 -->
     <div style="font-size:0.85em; color:#086f83; font-weight:bold; margin:14px 0 4px;">
@@ -871,7 +871,7 @@
 
 
   <!-- ===== 第4編：API概要 ===== -->
-  <div class="section-title api">🔶 API概要編 ― 公開済み（1 / 4ページ）</div>
+  <div class="section-title api">✅ API概要編 ― 公開済み（全4ページ）</div>
   <div class="card-grid">
 
     <a class="card api-card" href="api_multimedia.html">
@@ -894,58 +894,67 @@
       <div class="card-footer">📁 api_multimedia.html</div>
     </a>
 
-    <!-- 作成予定カード：api_deviceaccess.html -->
-    <div class="card api-card" style="opacity:0.55; cursor:default; pointer-events:none;">
+    <a class="card api-card" href="api_deviceaccess.html">
       <div class="card-icon">📡</div>
-      <div class="card-title">デバイスアクセスAPI <span class="wip-badge">✏️ 作成中</span></div>
+      <div class="card-title">デバイスアクセスAPI</div>
       <div class="card-desc">
-        Geolocation API・DeviceOrientation / DeviceMotion・
-        getUserMedia（カメラ・マイク）・Vibration API などを学びます。
+        Geolocation API（位置情報・精度・方角・速度）・
+        DeviceOrientation / DeviceMotion（傾き・加速度・回転速度）・
+        Touch Events・Pointer Events（タッチ・ペン・マウスの統一処理）・
+        DOM3 Events・Generic Sensor API を学びます。
       </div>
       <div class="card-tags">
         <span class="tag">Geolocation</span>
         <span class="tag">DeviceOrientation</span>
-        <span class="tag">getUserMedia</span>
-        <span class="tag">Vibration</span>
+        <span class="tag">Touch Events</span>
+        <span class="tag">Pointer Events</span>
+        <span class="tag">pointerType</span>
+        <span class="tag">Generic Sensor</span>
       </div>
       <div class="card-footer">📁 api_deviceaccess.html</div>
-    </div>
+    </a>
 
-    <!-- 作成予定カード：api_onlinestorage.html -->
-    <div class="card api-card" style="opacity:0.55; cursor:default; pointer-events:none;">
+    <a class="card api-card" href="api_onlinestorage.html">
       <div class="card-icon">💾</div>
-      <div class="card-title">オンラインストレージAPI <span class="wip-badge">✏️ 作成中</span></div>
+      <div class="card-title">オフライン・ストレージAPI</div>
       <div class="card-desc">
         Web Storage（localStorage / sessionStorage）・
-        IndexedDB・Cookie との違い・
-        ストレージの容量・スコープを学びます。
+        IndexedDB（大容量NoSQL型DB）・
+        Web Workers（並列処理）・
+        Service Workers・Push API・Fetch API を学びます。
+        実際に動くストレージデモ・Workerデモ付き。
       </div>
       <div class="card-tags">
         <span class="tag">localStorage</span>
-        <span class="tag">sessionStorage</span>
         <span class="tag">IndexedDB</span>
-        <span class="tag">Cookie</span>
+        <span class="tag">Web Workers</span>
+        <span class="tag">Service Workers</span>
+        <span class="tag">Push API</span>
+        <span class="tag">Fetch API</span>
       </div>
       <div class="card-footer">📁 api_onlinestorage.html</div>
-    </div>
+    </a>
 
-    <!-- 作成予定カード：api_communications.html -->
-    <div class="card api-card" style="opacity:0.55; cursor:default; pointer-events:none;">
+    <a class="card api-card" href="api_communications.html">
       <div class="card-icon">🔌</div>
-      <div class="card-title">通信系API <span class="wip-badge">✏️ 作成中</span></div>
+      <div class="card-title">通信系API</div>
       <div class="card-desc">
-        XMLHttpRequest・Fetch API・WebSocket・
-        Server-Sent Events・Cross-Origin Resource Sharing（CORS）を学びます。
+        XMLHttpRequest（readyState・onprogress）・Fetch API・
+        WebSocket（ws:// / wss:// 双方向通信）・
+        Server-Sent Events（一方向・自動再接続）・
+        WebRTC（P2Pビデオ通話・SDP・ICE）を学びます。
+        各APIの動作シミュレーターデモ付き。
       </div>
       <div class="card-tags">
-        <span class="tag">Fetch API</span>
+        <span class="tag">XHR</span>
         <span class="tag">WebSocket</span>
         <span class="tag">SSE</span>
-        <span class="tag">CORS</span>
-        <span class="tag">XHR</span>
+        <span class="tag">WebRTC</span>
+        <span class="tag">P2P</span>
+        <span class="tag">EventSource</span>
       </div>
       <div class="card-footer">📁 api_communications.html</div>
-    </div>
+    </a>
 
   </div><!-- /card-grid 第4編 -->
 
