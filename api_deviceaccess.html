@@ -1,0 +1,1766 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>デバイスアクセスAPI 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #f6ad55; padding-bottom: 10px; }
+    h2 { color: #c05621; margin-top: 48px; border-left: 5px solid #f6ad55; padding-left: 12px; }
+    h3 { color: #744210; margin-top: 24px; }
+
+    code {
+      background: #feebc8;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment  { color: #68d391; }
+    pre .prop     { color: #90cdf4; }
+    pre .val      { color: #fc8181; }
+    pre .keyword  { color: #b794f4; }
+    pre .func     { color: #fbd38d; }
+    pre .attr     { color: #fbd38d; }
+    pre .value    { color: #68d391; }
+    pre .selector { color: #f6ad55; }
+    pre .at       { color: #b794f4; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #c05621; }
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+    .demo-box {
+      background: #fff;
+      border: 1px solid #feebc8;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .interactive-demo {
+      background: #fffaf0;
+      border: 1px solid #feebc8;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .slider-row label {
+      font-size: 0.85em;
+      font-weight: bold;
+      min-width: 200px;
+      color: #c05621;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .slider-row input[type="range"] {
+      flex: 1;
+      min-width: 100px;
+      accent-color: #f6ad55;
+    }
+    .slider-row select {
+      border: 2px solid #feebc8;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.85em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #2d3748;
+      background: #fff;
+      cursor: pointer;
+      flex: 1;
+    }
+    .slider-row select:focus { border-color: #f6ad55; outline: none; }
+    .val-display {
+      min-width: 72px;
+      text-align: right;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.85em;
+      color: #2d3748;
+    }
+    .color-code-display {
+      background: #1a202c;
+      color: #68d391;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.84em;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* APIカードグリッド */
+    .api-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin: 14px 0;
+    }
+    .api-card {
+      background: #fffaf0;
+      border: 1px solid #feebc8;
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .api-card-title {
+      font-size: 0.88em;
+      font-weight: bold;
+      color: #c05621;
+      margin-bottom: 6px;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .api-card-desc {
+      font-size: 0.82em;
+      color: #4a5568;
+      line-height: 1.6;
+    }
+
+    /* デバイスシミュレーター */
+    .device-sim {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .device-frame {
+      width: 120px;
+      height: 200px;
+      background: #2d3748;
+      border-radius: 16px;
+      border: 3px solid #4a5568;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: transform 0.1s;
+    }
+    .device-screen {
+      width: 90px;
+      height: 160px;
+      background: linear-gradient(135deg, #1a202c, #2d3748);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-size: 0.7em;
+      color: #68d391;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    /* タッチデモ */
+    .touch-area {
+      width: 100%;
+      height: 160px;
+      background: linear-gradient(135deg, #fffaf0, #feebc8);
+      border: 2px dashed #f6ad55;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9em;
+      color: #c05621;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+      touch-action: none;
+    }
+    .touch-dot {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #f6ad55, #c05621);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      opacity: 0.85;
+      transition: opacity 0.3s;
+    }
+
+    /* ポインターイベントデモ */
+    .pointer-area {
+      width: 100%;
+      height: 120px;
+      background: #fffaf0;
+      border: 2px solid #feebc8;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.88em;
+      color: #744210;
+      cursor: crosshair;
+      position: relative;
+      overflow: hidden;
+    }
+    .pointer-cursor {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #f6ad55;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      transition: background 0.15s;
+    }
+
+    /* イベント比較テーブル */
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #feebc8;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.summary thead tr { background: #c05621; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #fffaf0; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 { margin-top: 0; color: #c05621; border-left-color: #f6ad55; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #feebc8;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #feebc8;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn-quiz {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+      background: #f6ad55;
+      color: #fff;
+    }
+    .btn-quiz:hover { opacity: 0.85; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #feebc8; color: #744210; display: block; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px; }
+      .slider-row label { min-width: 130px; }
+      .api-grid { grid-template-columns: 1fr; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px; }
+      .quiz-block { padding: 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+      .api-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<h1>📡 デバイスアクセスAPI 学習サンプル</h1>
+<p>
+  HTML5で追加されたデバイスアクセス系APIの概要と使い方を学びましょう。
+  位置情報・デバイスの傾き・タッチ・ポインター・各種入力イベントを扱います。
+</p>
+
+
+<!-- ============================================================ -->
+<!-- PART 1：Geolocation API -->
+<!-- ============================================================ -->
+<h2>① Geolocation API</h2>
+<div class="note">
+  <strong>重要ポイント①：Geolocation APIではユーザーの位置情報・精度・方角・速度などを取得できる</strong><br>
+  Geolocation APIは <code>navigator.geolocation</code> を通じて利用します。
+  GPS・Wi-Fi・基地局などを組み合わせてユーザーの現在地を取得し、
+  <strong>緯度・経度・精度・高度・方角・速度</strong>などの情報を
+  <code>GeolocationCoordinates</code> オブジェクトとして返します。
+  プライバシー保護のため、<strong>ユーザーの許可が必須</strong>です。
+</div>
+<div class="demo-box">
+
+  <h3>取得できる位置情報の種類</h3>
+  <div class="api-grid">
+    <div class="api-card">
+      <div class="api-card-title">latitude</div>
+      <div class="api-card-desc">緯度（度）。北緯がプラス、南緯がマイナス</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">longitude</div>
+      <div class="api-card-desc">経度（度）。東経がプラス、西経がマイナス</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">accuracy</div>
+      <div class="api-card-desc">位置の精度（メートル）。値が小さいほど高精度</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">altitude</div>
+      <div class="api-card-desc">高度（メートル）。取得できない場合は null</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">heading</div>
+      <div class="api-card-desc">方角（度）。真北が0°、時計回りに増加。取得できない場合は null</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">speed</div>
+      <div class="api-card-desc">速度（m/s）。取得できない場合は null</div>
+    </div>
+  </div>
+
+  <h3>主なメソッド</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>メソッド</th><th>説明</th><th>備考</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>getCurrentPosition(success, error, options)</code></td>
+        <td>現在位置を1回だけ取得する</td>
+        <td>非同期。成功時に success コールバックが呼ばれる</td>
+      </tr>
+      <tr>
+        <td><code>watchPosition(success, error, options)</code></td>
+        <td>位置の変化を継続的に監視する</td>
+        <td>監視IDを返す。移動中のリアルタイム追跡に使用</td>
+      </tr>
+      <tr>
+        <td><code>clearWatch(id)</code></td>
+        <td>watchPosition の監視を停止する</td>
+        <td>watchPosition が返した ID を渡す</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>options オブジェクトのプロパティ</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>プロパティ</th><th>型</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>enableHighAccuracy</code></td>
+        <td>boolean</td>
+        <td>true にするとGPSなどを使い高精度な位置情報を要求する（消費電力増）</td>
+      </tr>
+      <tr>
+        <td><code>timeout</code></td>
+        <td>number（ms）</td>
+        <td>位置情報取得のタイムアウト時間。超過するとエラーコールバックが呼ばれる</td>
+      </tr>
+      <tr>
+        <td><code>maximumAge</code></td>
+        <td>number（ms）</td>
+        <td>キャッシュされた位置情報の最大有効期間。0 は常に最新を取得</td>
+      </tr>
+    </tbody>
+  </table>
+
+<pre>
+<span class="comment">/* Geolocation APIの利用可否チェック */</span>
+<span class="keyword">if</span> (<span class="val">'geolocation'</span> <span class="keyword">in</span> navigator) {
+
+  <span class="comment">/* 現在位置を1回取得 */</span>
+  navigator.<span class="prop">geolocation</span>.<span class="func">getCurrentPosition</span>(
+    <span class="comment">/* 成功コールバック */</span>
+    (position) => {
+      <span class="keyword">const</span> coords = position.<span class="prop">coords</span>;
+      console.<span class="func">log</span>(<span class="val">'緯度:'</span>,   coords.<span class="prop">latitude</span>);   <span class="comment">/* 緯度 */</span>
+      console.<span class="func">log</span>(<span class="val">'経度:'</span>,   coords.<span class="prop">longitude</span>);  <span class="comment">/* 経度 */</span>
+      console.<span class="func">log</span>(<span class="val">'精度:'</span>,   coords.<span class="prop">accuracy</span>);   <span class="comment">/* 精度（m） */</span>
+      console.<span class="func">log</span>(<span class="val">'高度:'</span>,   coords.<span class="prop">altitude</span>);   <span class="comment">/* 高度（m）または null */</span>
+      console.<span class="func">log</span>(<span class="val">'方角:'</span>,   coords.<span class="prop">heading</span>);    <span class="comment">/* 方角（度）または null */</span>
+      console.<span class="func">log</span>(<span class="val">'速度:'</span>,   coords.<span class="prop">speed</span>);      <span class="comment">/* 速度（m/s）または null */</span>
+      console.<span class="func">log</span>(<span class="val">'取得時刻:'</span>, position.<span class="prop">timestamp</span>); <span class="comment">/* タイムスタンプ（ms） */</span>
+    },
+    <span class="comment">/* エラーコールバック */</span>
+    (error) => {
+      <span class="keyword">switch</span> (error.<span class="prop">code</span>) {
+        <span class="keyword">case</span> error.<span class="prop">PERMISSION_DENIED</span>:     <span class="comment">/* ユーザーが拒否 */</span>
+        <span class="keyword">case</span> error.<span class="prop">POSITION_UNAVAILABLE</span>:  <span class="comment">/* 位置情報取得不可 */</span>
+        <span class="keyword">case</span> error.<span class="prop">TIMEOUT</span>:              <span class="comment">/* タイムアウト */</span>
+      }
+    },
+    <span class="comment">/* オプション */</span>
+    {
+      <span class="prop">enableHighAccuracy</span>: <span class="val">true</span>,   <span class="comment">/* 高精度モード */</span>
+      <span class="prop">timeout</span>:            <span class="val">10000</span>,  <span class="comment">/* 10秒でタイムアウト */</span>
+      <span class="prop">maximumAge</span>:         <span class="val">0</span>       <span class="comment">/* キャッシュ不使用 */</span>
+    }
+  );
+
+  <span class="comment">/* 位置の変化を継続監視 */</span>
+  <span class="keyword">const</span> watchId = navigator.<span class="prop">geolocation</span>.<span class="func">watchPosition</span>(
+    (position) => { console.<span class="func">log</span>(position.<span class="prop">coords</span>); }
+  );
+
+  <span class="comment">/* 監視を停止 */</span>
+  navigator.<span class="prop">geolocation</span>.<span class="func">clearWatch</span>(watchId);
+}
+</pre>
+
+  <h3>Geolocation シミュレーターデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#744210; margin:0 0 12px;">
+      スライダーで位置情報の各値を変化させて、取得されるデータを確認しましょう。
+    </p>
+    <div class="slider-row">
+      <label>latitude（緯度）</label>
+      <input type="range" id="geo-lat" min="-90" max="90" value="34.7" step="0.1" oninput="updateGeo()">
+      <span class="val-display" id="geo-lat-val">34.7°</span>
+    </div>
+    <div class="slider-row">
+      <label>longitude（経度）</label>
+      <input type="range" id="geo-lng" min="-180" max="180" value="135.5" step="0.1" oninput="updateGeo()">
+      <span class="val-display" id="geo-lng-val">135.5°</span>
+    </div>
+    <div class="slider-row">
+      <label>accuracy（精度 m）</label>
+      <input type="range" id="geo-acc" min="1" max="1000" value="20" oninput="updateGeo()">
+      <span class="val-display" id="geo-acc-val">20 m</span>
+    </div>
+    <div class="slider-row">
+      <label>heading（方角 °）</label>
+      <input type="range" id="geo-head" min="0" max="359" value="90" oninput="updateGeo()">
+      <span class="val-display" id="geo-head-val">90°（東）</span>
+    </div>
+    <div class="slider-row">
+      <label>speed（速度 m/s）</label>
+      <input type="range" id="geo-spd" min="0" max="50" value="5" oninput="updateGeo()">
+      <span class="val-display" id="geo-spd-val">5 m/s</span>
+    </div>
+    <div class="color-code-display" id="geo-code">position.coords.latitude   = 34.7
+position.coords.longitude  = 135.5
+position.coords.accuracy   = 20 m
+position.coords.heading    = 90° (東)
+position.coords.speed      = 5 m/s</div>
+  </div>
+  <script>
+    function updateGeo() {
+      const lat  = parseFloat(document.getElementById('geo-lat').value).toFixed(1);
+      const lng  = parseFloat(document.getElementById('geo-lng').value).toFixed(1);
+      const acc  = document.getElementById('geo-acc').value;
+      const head = document.getElementById('geo-head').value;
+      const spd  = document.getElementById('geo-spd').value;
+      const dirs = ['北','北北東','北東','東北東','東','東南東','南東','南南東',
+                    '南','南南西','南西','西南西','西','西北西','北西','北北西'];
+      const dirLabel = dirs[Math.round(head / 22.5) % 16];
+      document.getElementById('geo-lat-val').textContent  = lat + '°';
+      document.getElementById('geo-lng-val').textContent  = lng + '°';
+      document.getElementById('geo-acc-val').textContent  = acc + ' m';
+      document.getElementById('geo-head-val').textContent = head + '°（' + dirLabel + '）';
+      document.getElementById('geo-spd-val').textContent  = spd + ' m/s';
+      document.getElementById('geo-code').textContent =
+        `position.coords.latitude   = ${lat}\n` +
+        `position.coords.longitude  = ${lng}\n` +
+        `position.coords.accuracy   = ${acc} m\n` +
+        `position.coords.heading    = ${head}° (${dirLabel})\n` +
+        `position.coords.speed      = ${spd} m/s`;
+    }
+    updateGeo();
+  </script>
+
+  <div class="warn">
+    <strong>⚠️ Geolocation API の注意点</strong><br>
+    ・<strong>ユーザーの許可が必須</strong>です。許可なしに位置情報を取得することはできません<br>
+    ・<strong>HTTPS（セキュアコンテキスト）</strong>でのみ動作します（HTTP では利用不可）<br>
+    ・<code>altitude</code>・<code>heading</code>・<code>speed</code> はデバイスが対応していない場合 <code>null</code> になります<br>
+    ・<code>heading</code> は移動中でないと取得できない場合があります（静止時は <code>null</code> または <code>NaN</code>）
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 2：DeviceOrientation / DeviceMotion API -->
+<!-- ============================================================ -->
+<h2>② DeviceOrientation / DeviceMotion API</h2>
+<div class="note">
+  <strong>重要ポイント②：Device Orientation Eventでデバイスの傾き・方角・加速度・回転速度などを取得できる</strong><br>
+  <code>deviceorientation</code> イベントはデバイスの<strong>傾き（alpha / beta / gamma）</strong>と
+  <strong>方角</strong>を、
+  <code>devicemotion</code> イベントは<strong>加速度</strong>と<strong>回転速度（ジャイロスコープ）</strong>を
+  取得します。スマートフォン・タブレットのセンサーを利用します。
+</div>
+<div class="demo-box">
+
+  <h3>deviceorientation イベントのプロパティ</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>プロパティ</th><th>説明</th><th>範囲</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>alpha</code></td>
+        <td>Z軸周りの回転角（コンパス方位）。真北が0°</td>
+        <td>0° 〜 360°</td>
+      </tr>
+      <tr>
+        <td><code>beta</code></td>
+        <td>X軸周りの回転角（前後の傾き）。水平が0°、前傾きがプラス</td>
+        <td>-180° 〜 180°</td>
+      </tr>
+      <tr>
+        <td><code>gamma</code></td>
+        <td>Y軸周りの回転角（左右の傾き）。水平が0°、右傾きがプラス</td>
+        <td>-90° 〜 90°</td>
+      </tr>
+      <tr>
+        <td><code>absolute</code></td>
+        <td>地球の座標系に対する絶対角度かどうか（true/false）</td>
+        <td>boolean</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>devicemotion イベントのプロパティ</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>プロパティ</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>acceleration</code></td>
+        <td>重力を除いた加速度（x / y / z 軸、m/s²）</td>
+      </tr>
+      <tr>
+        <td><code>accelerationIncludingGravity</code></td>
+        <td>重力を含む加速度（x / y / z 軸、m/s²）</td>
+      </tr>
+      <tr>
+        <td><code>rotationRate</code></td>
+        <td>回転速度（alpha / beta / gamma 軸、deg/s）。ジャイロスコープの値</td>
+      </tr>
+      <tr>
+        <td><code>interval</code></td>
+        <td>イベントの発火間隔（ms）</td>
+      </tr>
+    </tbody>
+  </table>
+
+<pre>
+<span class="comment">/* deviceorientation：デバイスの傾き・方角を取得 */</span>
+window.<span class="func">addEventListener</span>(<span class="val">'deviceorientation'</span>, (event) => {
+  console.<span class="func">log</span>(<span class="val">'alpha（方位）:'</span>, event.<span class="prop">alpha</span>);  <span class="comment">/* 0〜360° コンパス方位 */</span>
+  console.<span class="func">log</span>(<span class="val">'beta（前後傾き）:'</span>, event.<span class="prop">beta</span>);   <span class="comment">/* -180〜180° */</span>
+  console.<span class="func">log</span>(<span class="val">'gamma（左右傾き）:'</span>, event.<span class="prop">gamma</span>); <span class="comment">/* -90〜90° */</span>
+  console.<span class="func">log</span>(<span class="val">'絶対角度:'</span>, event.<span class="prop">absolute</span>);         <span class="comment">/* true/false */</span>
+});
+
+<span class="comment">/* devicemotion：加速度・回転速度を取得 */</span>
+window.<span class="func">addEventListener</span>(<span class="val">'devicemotion'</span>, (event) => {
+  <span class="keyword">const</span> acc = event.<span class="prop">acceleration</span>;
+  console.<span class="func">log</span>(<span class="val">'加速度 X:'</span>, acc.<span class="prop">x</span>);  <span class="comment">/* m/s² */</span>
+  console.<span class="func">log</span>(<span class="val">'加速度 Y:'</span>, acc.<span class="prop">y</span>);
+  console.<span class="func">log</span>(<span class="val">'加速度 Z:'</span>, acc.<span class="prop">z</span>);
+
+  <span class="keyword">const</span> rot = event.<span class="prop">rotationRate</span>;
+  console.<span class="func">log</span>(<span class="val">'回転速度 alpha:'</span>, rot.<span class="prop">alpha</span>); <span class="comment">/* deg/s */</span>
+  console.<span class="func">log</span>(<span class="val">'回転速度 beta:'</span>,  rot.<span class="prop">beta</span>);
+  console.<span class="func">log</span>(<span class="val">'回転速度 gamma:'</span>, rot.<span class="prop">gamma</span>);
+});
+</pre>
+
+  <h3>DeviceOrientation シミュレーターデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#744210; margin:0 0 12px;">
+      スライダーでデバイスの傾きをシミュレートします。
+    </p>
+    <div class="slider-row">
+      <label>alpha（方位 Z軸回転）</label>
+      <input type="range" id="do-alpha" min="0" max="360" value="0" oninput="updateDO()">
+      <span class="val-display" id="do-alpha-val">0°</span>
+    </div>
+    <div class="slider-row">
+      <label>beta（前後傾き X軸）</label>
+      <input type="range" id="do-beta" min="-180" max="180" value="0" oninput="updateDO()">
+      <span class="val-display" id="do-beta-val">0°</span>
+    </div>
+    <div class="slider-row">
+      <label>gamma（左右傾き Y軸）</label>
+      <input type="range" id="do-gamma" min="-90" max="90" value="0" oninput="updateDO()">
+      <span class="val-display" id="do-gamma-val">0°</span>
+    </div>
+    <div class="device-sim">
+      <div class="device-frame" id="do-device">
+        <div class="device-screen" id="do-screen">
+          <div id="do-alpha-disp">α: 0°</div>
+          <div id="do-beta-disp">β: 0°</div>
+          <div id="do-gamma-disp">γ: 0°</div>
+        </div>
+      </div>
+    </div>
+    <div class="color-code-display" id="do-code">event.alpha  = 0°  （方位：北）
+event.beta   = 0°  （前後傾き：水平）
+event.gamma  = 0°  （左右傾き：水平）</div>
+  </div>
+  <script>
+    function updateDO() {
+      const alpha = document.getElementById('do-alpha').value;
+      const beta  = document.getElementById('do-beta').value;
+      const gamma = document.getElementById('do-gamma').value;
+      document.getElementById('do-alpha-val').textContent = alpha + '°';
+      document.getElementById('do-beta-val').textContent  = beta  + '°';
+      document.getElementById('do-gamma-val').textContent = gamma + '°';
+      document.getElementById('do-alpha-disp').textContent = 'α: ' + alpha + '°';
+      document.getElementById('do-beta-disp').textContent  = 'β: ' + beta  + '°';
+      document.getElementById('do-gamma-disp').textContent = 'γ: ' + gamma + '°';
+      // デバイスフレームを傾ける
+      document.getElementById('do-device').style.transform =
+        `rotateZ(${-alpha}deg) rotateX(${beta}deg) rotateY(${gamma}deg)`;
+      const dirs = ['北','北東','東','南東','南','南西','西','北西'];
+      const dirLabel = dirs[Math.round(alpha / 45) % 8];
+      document.getElementById('do-code').textContent =
+        `event.alpha  = ${alpha}°  （方位：${dirLabel}）\n` +
+        `event.beta   = ${beta}°  （前後傾き：${beta > 0 ? '前傾き' : beta < 0 ? '後傾き' : '水平'}）\n` +
+        `event.gamma  = ${gamma}°  （左右傾き：${gamma > 0 ? '右傾き' : gamma < 0 ? '左傾き' : '水平'}）`;
+    }
+    updateDO();
+  </script>
+
+  <div class="warn">
+    <strong>⚠️ DeviceOrientation / DeviceMotion の注意点</strong><br>
+    ・iOS 13 以降では <strong>ユーザーの許可が必要</strong>です
+    （<code>DeviceOrientationEvent.requestPermission()</code> を呼ぶ必要があります）<br>
+    ・<strong>HTTPS（セキュアコンテキスト）</strong>でのみ動作します<br>
+    ・デスクトップPCではセンサーがないため値が取得できない場合があります
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 3：Touch Events -->
+<!-- ============================================================ -->
+<h2>③ Touch Events</h2>
+<div class="note">
+  <strong>重要ポイント③：イベントで扱える入力デバイスにタッチ・ペン・マウスがある</strong><br>
+  Touch Events はタッチスクリーンへの指・スタイラスによる操作を扱うAPIです。
+  マルチタッチ（複数の指による同時操作）に対応しており、
+  各タッチ点の座標・識別子・対象要素などを取得できます。
+</div>
+<div class="demo-box">
+
+  <h3>Touch Events の種類</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>イベント</th><th>発生タイミング</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>touchstart</code></td><td>指がタッチスクリーンに触れた時</td></tr>
+      <tr><td><code>touchmove</code></td><td>指がタッチスクリーン上を移動している時（連続発火）</td></tr>
+      <tr><td><code>touchend</code></td><td>指がタッチスクリーンから離れた時</td></tr>
+      <tr><td><code>touchcancel</code></td><td>タッチが中断された時（電話着信など）</td></tr>
+    </tbody>
+  </table>
+
+  <h3>TouchEvent のプロパティ</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>プロパティ</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>touches</code></td><td>現在画面に触れているすべてのタッチ点のリスト</td></tr>
+      <tr><td><code>targetTouches</code></td><td>イベント対象要素上のタッチ点のリスト</td></tr>
+      <tr><td><code>changedTouches</code></td><td>今回のイベントで変化したタッチ点のリスト</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Touch オブジェクトの主なプロパティ</h3>
+  <div class="api-grid">
+    <div class="api-card">
+      <div class="api-card-title">identifier</div>
+      <div class="api-card-desc">タッチ点を識別するID。マルチタッチで各指を区別するために使う</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">clientX / clientY</div>
+      <div class="api-card-desc">ビューポート（表示領域）基準の座標</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">pageX / pageY</div>
+      <div class="api-card-desc">ページ全体基準の座標（スクロール量を含む）</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">screenX / screenY</div>
+      <div class="api-card-desc">画面（スクリーン）基準の座標</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">target</div>
+      <div class="api-card-desc">タッチが開始された要素</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">radiusX / radiusY</div>
+      <div class="api-card-desc">タッチ領域の半径（楕円形）。対応デバイスのみ</div>
+    </div>
+  </div>
+
+<pre>
+<span class="keyword">const</span> area = document.<span class="func">getElementById</span>(<span class="val">'touchArea'</span>);
+
+<span class="comment">/* touchstart：タッチ開始 */</span>
+area.<span class="func">addEventListener</span>(<span class="val">'touchstart'</span>, (e) => {
+  e.<span class="func">preventDefault</span>(); <span class="comment">/* スクロールなどのデフォルト動作を抑制 */</span>
+
+  <span class="comment">/* changedTouches：今回変化したタッチ点 */</span>
+  [...e.<span class="prop">changedTouches</span>].<span class="func">forEach</span>(touch => {
+    console.<span class="func">log</span>(<span class="val">'ID:'</span>,      touch.<span class="prop">identifier</span>); <span class="comment">/* タッチ点のID */</span>
+    console.<span class="func">log</span>(<span class="val">'X座標:'</span>,  touch.<span class="prop">clientX</span>);
+    console.<span class="func">log</span>(<span class="val">'Y座標:'</span>,  touch.<span class="prop">clientY</span>);
+  });
+});
+
+<span class="comment">/* touchmove：タッチ移動 */</span>
+area.<span class="func">addEventListener</span>(<span class="val">'touchmove'</span>, (e) => {
+  e.<span class="func">preventDefault</span>();
+  console.<span class="func">log</span>(<span class="val">'タッチ数:'</span>, e.<span class="prop">touches</span>.<span class="prop">length</span>); <span class="comment">/* 現在の指の数 */</span>
+});
+
+<span class="comment">/* touchend：タッチ終了 */</span>
+area.<span class="func">addEventListener</span>(<span class="val">'touchend'</span>, (e) => {
+  console.<span class="func">log</span>(<span class="val">'離れた指:'</span>, e.<span class="prop">changedTouches</span>.<span class="prop">length</span>);
+});
+</pre>
+
+  <h3>Touch Events インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#744210; margin:0 0 10px;">
+      タッチデバイスでは指でタッチ、PCではマウスクリックで操作できます。
+    </p>
+    <div class="touch-area" id="touchDemo">
+      <span id="touchMsg">タッチ（またはクリック）してみてください</span>
+    </div>
+    <div class="color-code-display" id="touch-log">タッチイベントのログがここに表示されます</div>
+  </div>
+  <script>
+    (function() {
+      const area = document.getElementById('touchDemo');
+      const msg  = document.getElementById('touchMsg');
+      const log  = document.getElementById('touch-log');
+      const dots = [];
+
+      function addDot(x, y, id) {
+        const rect = area.getBoundingClientRect();
+        const dot  = document.createElement('div');
+        dot.className   = 'touch-dot';
+        dot.dataset.id  = id;
+        dot.style.left  = (x - rect.left) + 'px';
+        dot.style.top   = (y - rect.top)  + 'px';
+        area.appendChild(dot);
+        dots.push(dot);
+      }
+      function removeDots() {
+        dots.forEach(d => { d.style.opacity = '0'; setTimeout(() => d.remove(), 300); });
+        dots.length = 0;
+      }
+
+      // タッチイベント
+      area.addEventListener('touchstart', e => {
+        e.preventDefault();
+        msg.style.display = 'none';
+        removeDots();
+        [...e.changedTouches].forEach(t => addDot(t.clientX, t.clientY, t.identifier));
+        log.textContent =
+          `touchstart\nchangedTouches.length = ${e.changedTouches.length}\n` +
+          `touches.length = ${e.touches.length}\n` +
+          `clientX = ${Math.round(e.changedTouches[0].clientX)}, clientY = ${Math.round(e.changedTouches[0].clientY)}`;
+      }, { passive: false });
+
+      area.addEventListener('touchmove', e => {
+        e.preventDefault();
+        removeDots();
+        [...e.touches].forEach(t => addDot(t.clientX, t.clientY, t.identifier));
+        log.textContent =
+          `touchmove\ntouches.length = ${e.touches.length}\n` +
+          `clientX = ${Math.round(e.touches[0].clientX)}, clientY = ${Math.round(e.touches[0].clientY)}`;
+      }, { passive: false });
+
+      area.addEventListener('touchend', e => {
+        removeDots();
+        log.textContent =
+          `touchend\nchangedTouches.length = ${e.changedTouches.length}\n` +
+          `残りのタッチ数 (touches.length) = ${e.touches.length}`;
+        setTimeout(() => { msg.style.display = ''; }, 1000);
+      });
+
+      // マウスフォールバック
+      area.addEventListener('mousedown', e => {
+        msg.style.display = 'none';
+        addDot(e.clientX, e.clientY, 'mouse');
+        log.textContent =
+          `mousedown（マウス操作）\nclientX = ${e.clientX}, clientY = ${e.clientY}`;
+      });
+      area.addEventListener('mouseup', () => {
+        removeDots();
+        setTimeout(() => { msg.style.display = ''; }, 800);
+        log.textContent += '\nmouseup';
+      });
+    })();
+  </script>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 4：Pointer Events -->
+<!-- ============================================================ -->
+<h2>④ Pointer Events</h2>
+<div class="note">
+  <strong>重要ポイント：Pointer Eventsはタッチ・ペン・マウスを統一的に扱うイベントモデルである</strong><br>
+  Pointer Events は <strong>マウス・タッチ・スタイラスペン</strong> という
+  異なる入力デバイスを<strong>統一されたイベントモデル</strong>で扱えるAPIです。
+  <code>pointerType</code> プロパティで入力デバイスの種類を判別できます。
+  Touch Events と Mouse Events を個別に実装する必要がなくなります。
+</div>
+<div class="demo-box">
+
+  <h3>Pointer Events の種類</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>イベント</th><th>説明</th><th>対応するマウスイベント</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>pointerdown</code></td><td>ポインターが押された時</td><td>mousedown / touchstart</td></tr>
+      <tr><td><code>pointermove</code></td><td>ポインターが移動した時</td><td>mousemove / touchmove</td></tr>
+      <tr><td><code>pointerup</code></td><td>ポインターが離された時</td><td>mouseup / touchend</td></tr>
+      <tr><td><code>pointerenter</code></td><td>ポインターが要素に入った時</td><td>mouseenter</td></tr>
+      <tr><td><code>pointerleave</code></td><td>ポインターが要素から出た時</td><td>mouseleave</td></tr>
+      <tr><td><code>pointercancel</code></td><td>ポインター操作が中断された時</td><td>touchcancel</td></tr>
+      <tr><td><code>gotpointercapture</code></td><td>ポインターキャプチャ取得時</td><td>—</td></tr>
+      <tr><td><code>lostpointercapture</code></td><td>ポインターキャプチャ解放時</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h3>PointerEvent の主なプロパティ</h3>
+  <div class="api-grid">
+    <div class="api-card">
+      <div class="api-card-title">pointerType</div>
+      <div class="api-card-desc"><strong>"mouse"</strong>・<strong>"touch"</strong>・<strong>"pen"</strong> の3種類。入力デバイスを判別できる</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">pointerId</div>
+      <div class="api-card-desc">ポインターを識別するID。マルチタッチで各指を区別</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">pressure</div>
+      <div class="api-card-desc">筆圧（0〜1）。ペンタブレットなどで利用</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">tiltX / tiltY</div>
+      <div class="api-card-desc">ペンの傾き角度（度）。スタイラスペン向け</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">width / height</div>
+      <div class="api-card-desc">接触領域の幅・高さ（px）</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">isPrimary</div>
+      <div class="api-card-desc">マルチタッチ時の主ポインターかどうか（boolean）</div>
+    </div>
+  </div>
+
+<pre>
+<span class="keyword">const</span> el = document.<span class="func">getElementById</span>(<span class="val">'myElement'</span>);
+
+<span class="comment">/* Pointer Events：タッチ・ペン・マウスを統一処理 */</span>
+el.<span class="func">addEventListener</span>(<span class="val">'pointerdown'</span>, (e) => {
+  console.<span class="func">log</span>(<span class="val">'入力デバイス:'</span>, e.<span class="prop">pointerType</span>); <span class="comment">/* "mouse" / "touch" / "pen" */</span>
+  console.<span class="func">log</span>(<span class="val">'ポインターID:'</span>, e.<span class="prop">pointerId</span>);
+  console.<span class="func">log</span>(<span class="val">'X座標:'</span>,      e.<span class="prop">clientX</span>);
+  console.<span class="func">log</span>(<span class="val">'Y座標:'</span>,      e.<span class="prop">clientY</span>);
+  console.<span class="func">log</span>(<span class="val">'筆圧:'</span>,       e.<span class="prop">pressure</span>);    <span class="comment">/* 0〜1（ペンタブ向け） */</span>
+  console.<span class="func">log</span>(<span class="val">'主ポインター:'</span>, e.<span class="prop">isPrimary</span>);
+
+  <span class="comment">/* pointerType による分岐処理 */</span>
+  <span class="keyword">if</span> (e.<span class="prop">pointerType</span> === <span class="val">'touch'</span>) {
+    console.<span class="func">log</span>(<span class="val">'タッチ操作'</span>);
+  } <span class="keyword">else if</span> (e.<span class="prop">pointerType</span> === <span class="val">'pen'</span>) {
+    console.<span class="func">log</span>(<span class="val">'ペン操作 筆圧:'</span>, e.<span class="prop">pressure</span>);
+  } <span class="keyword">else</span> {
+    console.<span class="func">log</span>(<span class="val">'マウス操作'</span>);
+  }
+});
+
+el.<span class="func">addEventListener</span>(<span class="val">'pointermove'</span>, (e) => {
+  console.<span class="func">log</span>(<span class="val">'移動:'</span>, e.<span class="prop">clientX</span>, e.<span class="prop">clientY</span>);
+});
+</pre>
+
+  <h3>Pointer Events インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#744210; margin:0 0 10px;">
+      エリア内でマウスを動かしてみてください。タッチデバイスでは指で操作できます。
+    </p>
+    <div class="pointer-area" id="pointerDemo">
+      <div class="pointer-cursor" id="pointerCursor" style="display:none;"></div>
+      <span id="pointerMsg">エリア内でポインターを動かしてください</span>
+    </div>
+    <div class="color-code-display" id="pointer-log">Pointer Events のログがここに表示されます</div>
+  </div>
+  <script>
+    (function() {
+      const area   = document.getElementById('pointerDemo');
+      const cursor = document.getElementById('pointerCursor');
+      const msg    = document.getElementById('pointerMsg');
+      const log    = document.getElementById('pointer-log');
+      const typeColors = { mouse: '#f6ad55', touch: '#68d391', pen: '#9f7aea' };
+
+      area.addEventListener('pointermove', e => {
+        const rect = area.getBoundingClientRect();
+        cursor.style.display = 'block';
+        cursor.style.left    = (e.clientX - rect.left) + 'px';
+        cursor.style.top     = (e.clientY - rect.top)  + 'px';
+        cursor.style.background = typeColors[e.pointerType] || '#f6ad55';
+        msg.style.display = 'none';
+        log.textContent =
+          `pointermove\npointerType = "${e.pointerType}"\n` +
+          `pointerId   = ${e.pointerId}\n` +
+          `clientX     = ${Math.round(e.clientX - rect.left)}, clientY = ${Math.round(e.clientY - rect.top)}\n` +
+          `pressure    = ${e.pressure.toFixed(2)}\n` +
+          `isPrimary   = ${e.isPrimary}`;
+      });
+
+      area.addEventListener('pointerdown', e => {
+        cursor.style.width  = '24px';
+        cursor.style.height = '24px';
+        log.textContent =
+          `pointerdown\npointerType = "${e.pointerType}"\n` +
+          `pointerId   = ${e.pointerId}\n` +
+          `pressure    = ${e.pressure.toFixed(2)}`;
+      });
+
+      area.addEventListener('pointerup', () => {
+        cursor.style.width  = '16px';
+        cursor.style.height = '16px';
+      });
+
+      area.addEventListener('pointerleave', () => {
+        cursor.style.display = 'none';
+        msg.style.display    = '';
+      });
+    })();
+  </script>
+
+  <div class="good">
+    ✅ <strong>Pointer Events の利点</strong><br>
+    ・<strong>タッチ・ペン・マウス</strong>を1つのイベントモデルで統一処理できる<br>
+    ・<code>pointerType</code> で入力デバイスを判別し、デバイスごとの処理を分岐できる<br>
+    ・<code>pressure</code>・<code>tiltX/Y</code> でペンタブレットの筆圧・傾きも取得可能<br>
+    ・Touch Events と Mouse Events を個別に実装する手間が省ける
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 5：DOM3 Events（UI Events） -->
+<!-- ============================================================ -->
+<h2>⑤ DOM3 Events（UI Events）</h2>
+<div class="note">
+  <strong>重要ポイント：DOM3 Eventsはキーボード・マウス・フォーカスなどのUIイベントを定義する仕様である</strong><br>
+  DOM3 Events（現在は UI Events 仕様として管理）は、
+  Webブラウザにおける<strong>キーボード・マウス・フォーカス・入力・ホイール</strong>などの
+  UIイベントの動作を標準化した仕様です。
+  イベントの<strong>伝播（バブリング・キャプチャリング）</strong>モデルも定義しています。
+</div>
+<div class="demo-box">
+
+  <h3>主なUIイベントの種類</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>カテゴリ</th><th>イベント名</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td rowspan="4" style="vertical-align:middle; font-weight:bold; color:#c05621;">マウス</td>
+        <td><code>click</code></td>
+        <td>クリック（mousedown + mouseup）</td>
+      </tr>
+      <tr>
+        <td><code>dblclick</code></td>
+        <td>ダブルクリック</td>
+      </tr>
+      <tr>
+        <td><code>mousemove</code></td>
+        <td>マウスポインターが移動した時</td>
+      </tr>
+      <tr>
+        <td><code>mouseenter / mouseleave</code></td>
+        <td>要素に入った・出た時（バブリングなし）</td>
+      </tr>
+      <tr>
+        <td rowspan="3" style="vertical-align:middle; font-weight:bold; color:#c05621;">キーボード</td>
+        <td><code>keydown</code></td>
+        <td>キーが押された時（最初に発火）</td>
+      </tr>
+      <tr>
+        <td><code>keyup</code></td>
+        <td>キーが離された時</td>
+      </tr>
+      <tr>
+        <td><code>keypress</code></td>
+        <td>文字キーが押された時（<strong>非推奨</strong>。keydown を使うこと）</td>
+      </tr>
+      <tr>
+        <td rowspan="2" style="vertical-align:middle; font-weight:bold; color:#c05621;">フォーカス</td>
+        <td><code>focus / blur</code></td>
+        <td>フォーカスを得た・失った時（バブリングなし）</td>
+      </tr>
+      <tr>
+        <td><code>focusin / focusout</code></td>
+        <td>フォーカスを得た・失った時（<strong>バブリングあり</strong>）</td>
+      </tr>
+      <tr>
+        <td rowspan="2" style="vertical-align:middle; font-weight:bold; color:#c05621;">入力・変更</td>
+        <td><code>input</code></td>
+        <td>入力値が変化した時（リアルタイム）</td>
+      </tr>
+      <tr>
+        <td><code>change</code></td>
+        <td>入力値が確定した時（フォーカスを失った時など）</td>
+      </tr>
+      <tr>
+        <td style="font-weight:bold; color:#c05621;">ホイール</td>
+        <td><code>wheel</code></td>
+        <td>マウスホイールが回転した時</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>イベント伝播（バブリング・キャプチャリング）</h3>
+<pre>
+<span class="comment">/* イベント伝播の3フェーズ */</span>
+<span class="comment">/* 1. キャプチャリングフェーズ：ルートから対象要素へ向かって伝播 */</span>
+<span class="comment">/* 2. ターゲットフェーズ：対象要素でイベント発火 */</span>
+<span class="comment">/* 3. バブリングフェーズ：対象要素からルートへ向かって伝播 */</span>
+
+<span class="comment">/* addEventListener の第3引数でフェーズを指定 */</span>
+el.<span class="func">addEventListener</span>(<span class="val">'click'</span>, handler, <span class="val">false</span>); <span class="comment">/* バブリングフェーズ（デフォルト） */</span>
+el.<span class="func">addEventListener</span>(<span class="val">'click'</span>, handler, <span class="val">true</span>);  <span class="comment">/* キャプチャリングフェーズ */</span>
+
+<span class="comment">/* イベント伝播の停止 */</span>
+el.<span class="func">addEventListener</span>(<span class="val">'click'</span>, (e) => {
+  e.<span class="func">stopPropagation</span>();    <span class="comment">/* 伝播を停止（他のリスナーは実行される） */</span>
+  e.<span class="func">stopImmediatePropagation</span>(); <span class="comment">/* 伝播を即時停止（他のリスナーも実行されない） */</span>
+  e.<span class="func">preventDefault</span>();     <span class="comment">/* デフォルト動作を抑制（リンク遷移など） */</span>
+});
+
+<span class="comment">/* キーボードイベントの例 */</span>
+document.<span class="func">addEventListener</span>(<span class="val">'keydown'</span>, (e) => {
+  console.<span class="func">log</span>(<span class="val">'key:'</span>,     e.<span class="prop">key</span>);      <span class="comment">/* キーの値（'a', 'Enter' など） */</span>
+  console.<span class="func">log</span>(<span class="val">'code:'</span>,    e.<span class="prop">code</span>);     <span class="comment">/* 物理キーコード（'KeyA', 'Enter' など） */</span>
+  console.<span class="func">log</span>(<span class="val">'ctrlKey:'</span>, e.<span class="prop">ctrlKey</span>);  <span class="comment">/* Ctrlキーが押されているか */</span>
+  console.<span class="func">log</span>(<span class="val">'shiftKey:'</span>,e.<span class="prop">shiftKey</span>); <span class="comment">/* Shiftキーが押されているか */</span>
+});
+</pre>
+
+  <h3>DOM3 Events インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#744210; margin:0 0 10px;">
+      テキストボックスに入力・クリック・フォーカス操作をしてイベントを確認しましょう。
+    </p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+      <input type="text" id="uiEventInput"
+             placeholder="ここに入力してください"
+             style="flex:1; min-width:180px; border:2px solid #feebc8; border-radius:6px;
+                    padding:8px 12px; font-size:0.95em; outline:none; font-family:inherit;">
+      <button id="uiEventBtn"
+              style="background:#f6ad55; color:#fff; border:none; border-radius:6px;
+                     padding:8px 18px; font-size:0.9em; font-weight:bold; cursor:pointer;">
+        クリック
+      </button>
+    </div>
+    <div class="color-code-display" id="ui-log">イベントログがここに表示されます</div>
+  </div>
+  <script>
+    (function() {
+      const input = document.getElementById('uiEventInput');
+      const btn   = document.getElementById('uiEventBtn');
+      const log   = document.getElementById('ui-log');
+      const lines = [];
+      function addLog(msg) {
+        lines.unshift(msg);
+        if (lines.length > 6) lines.pop();
+        log.textContent = lines.join('\n');
+      }
+      input.addEventListener('keydown',   e => addLog(`keydown:   key="${e.key}" code="${e.code}"`));
+      input.addEventListener('keyup',     e => addLog(`keyup:     key="${e.key}"`));
+      input.addEventListener('input',     e => addLog(`input:     value="${e.target.value}"`));
+      input.addEventListener('change',    e => addLog(`change:    value="${e.target.value}"`));
+      input.addEventListener('focus',     () => addLog('focus:     フォーカスを取得'));
+      input.addEventListener('blur',      () => addLog('blur:      フォーカスを失った'));
+      btn.addEventListener('click',       () => addLog('click:     ボタンがクリックされました'));
+      btn.addEventListener('dblclick',    () => addLog('dblclick:  ダブルクリック'));
+      btn.addEventListener('mouseenter',  () => addLog('mouseenter: ボタンにマウスが入った'));
+      btn.addEventListener('mouseleave',  () => addLog('mouseleave: ボタンからマウスが出た'));
+    })();
+  </script>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 6：Generic Sensor API -->
+<!-- ============================================================ -->
+<h2>⑥ Generic Sensor API</h2>
+<div class="note">
+  <strong>重要ポイント：Generic Sensor APIは各種センサーを統一されたインターフェースで扱うAPIである</strong><br>
+  Generic Sensor APIは、加速度計・ジャイロスコープ・磁力計などの
+  デバイスセンサーを<strong>統一されたインターフェース（Sensor基底クラス）</strong>で扱うAPIです。
+  <code>DeviceOrientation</code> イベントよりも低レベルで柔軟な制御が可能です。
+  <strong>HTTPS（セキュアコンテキスト）</strong>でのみ利用できます。
+</div>
+<div class="demo-box">
+
+  <h3>Generic Sensor API の主なセンサークラス</h3>
+  <div class="api-grid">
+    <div class="api-card">
+      <div class="api-card-title">Accelerometer</div>
+      <div class="api-card-desc">重力を含む加速度（x / y / z 軸、m/s²）を取得</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">LinearAccelerationSensor</div>
+      <div class="api-card-desc">重力を除いた加速度（x / y / z 軸、m/s²）を取得</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">Gyroscope</div>
+      <div class="api-card-desc">回転速度（x / y / z 軸、rad/s）を取得。ジャイロスコープ</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">Magnetometer</div>
+      <div class="api-card-desc">磁場の強さ（x / y / z 軸、μT）を取得。コンパスに利用</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">AbsoluteOrientationSensor</div>
+      <div class="api-card-desc">地球座標系に対するデバイスの絶対的な向きを四元数で取得</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">RelativeOrientationSensor</div>
+      <div class="api-card-desc">地磁気を考慮しないデバイスの相対的な向きを四元数で取得</div>
+    </div>
+  </div>
+
+  <h3>Sensor 基底クラスの共通インターフェース</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>種別</th><th>名前</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>メソッド</td><td><code>start()</code></td><td>センサーの計測を開始する</td></tr>
+      <tr><td>メソッド</td><td><code>stop()</code></td><td>センサーの計測を停止する</td></tr>
+      <tr><td>プロパティ</td><td><code>activated</code></td><td>センサーが動作中かどうか（boolean）</td></tr>
+      <tr><td>プロパティ</td><td><code>hasReading</code></td><td>最新の読み取り値があるかどうか（boolean）</td></tr>
+      <tr><td>プロパティ</td><td><code>timestamp</code></td><td>最新の読み取り時刻（ms）</td></tr>
+      <tr><td>イベント</td><td><code>reading</code></td><td>新しい値が取得された時に発火</td></tr>
+      <tr><td>イベント</td><td><code>activate</code></td><td>センサーが起動した時に発火</td></tr>
+      <tr><td>イベント</td><td><code>error</code></td><td>エラー発生時に発火</td></tr>
+    </tbody>
+  </table>
+
+<pre>
+<span class="comment">/* Accelerometer（加速度計）の使用例 */</span>
+<span class="keyword">try</span> {
+  <span class="keyword">const</span> sensor = <span class="keyword">new</span> <span class="func">Accelerometer</span>({ <span class="prop">frequency</span>: <span class="val">60</span> }); <span class="comment">/* 60Hz で計測 */</span>
+
+  sensor.<span class="func">addEventListener</span>(<span class="val">'reading'</span>, () => {
+    console.<span class="func">log</span>(<span class="val">'X軸加速度:'</span>, sensor.<span class="prop">x</span>); <span class="comment">/* m/s² */</span>
+    console.<span class="func">log</span>(<span class="val">'Y軸加速度:'</span>, sensor.<span class="prop">y</span>);
+    console.<span class="func">log</span>(<span class="val">'Z軸加速度:'</span>, sensor.<span class="prop">z</span>);
+  });
+
+  sensor.<span class="func">addEventListener</span>(<span class="val">'error'</span>, (e) => {
+    console.<span class="func">log</span>(<span class="val">'エラー:'</span>, e.<span class="prop">error</span>.<span class="prop">name</span>, e.<span class="prop">error</span>.<span class="prop">message</span>);
+  });
+
+  sensor.<span class="func">start</span>(); <span class="comment">/* 計測開始 */</span>
+
+} <span class="keyword">catch</span> (e) {
+  <span class="keyword">if</span> (e.<span class="prop">name</span> === <span class="val">'SecurityError'</span>) {
+    console.<span class="func">log</span>(<span class="val">'センサーへのアクセスが拒否されました'</span>);
+  } <span class="keyword">else if</span> (e.<span class="prop">name</span> === <span class="val">'ReferenceError'</span>) {
+    console.<span class="func">log</span>(<span class="val">'このブラウザはAccelerometerをサポートしていません'</span>);
+  }
+}
+
+<span class="comment">/* Gyroscope（ジャイロスコープ）の使用例 */</span>
+<span class="keyword">const</span> gyro = <span class="keyword">new</span> <span class="func">Gyroscope</span>({ <span class="prop">frequency</span>: <span class="val">30</span> });
+gyro.<span class="func">addEventListener</span>(<span class="val">'reading'</span>, () => {
+  console.<span class="func">log</span>(<span class="val">'回転速度 X:'</span>, gyro.<span class="prop">x</span>); <span class="comment">/* rad/s */</span>
+  console.<span class="func">log</span>(<span class="val">'回転速度 Y:'</span>, gyro.<span class="prop">y</span>);
+  console.<span class="func">log</span>(<span class="val">'回転速度 Z:'</span>, gyro.<span class="prop">z</span>);
+});
+gyro.<span class="func">start</span>();
+</pre>
+
+  <h3>DeviceOrientation イベント vs Generic Sensor API</h3>
+  <table class="summary">
+    <thead>
+      <tr><th>項目</th><th>DeviceOrientation / DeviceMotion</th><th>Generic Sensor API</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>API形式</td><td>イベントリスナー</td><td>クラスベース（Sensorを継承）</td></tr>
+      <tr><td>センサーの種類</td><td>傾き・加速度・回転速度</td><td>加速度・ジャイロ・磁力計・向きなど多種</td></tr>
+      <tr><td>サンプリングレート</td><td>制御不可</td><td><code>frequency</code> オプションで指定可能</td></tr>
+      <tr><td>ブラウザ対応</td><td>広くサポート</td><td>Chrome系が主（Firefox・Safariは限定的）</td></tr>
+      <tr><td>許可モデル</td><td>iOS 13以降で許可必要</td><td>Permissions API で管理</td></tr>
+    </tbody>
+  </table>
+
+  <div class="good">
+    ✅ <strong>試験でのポイント</strong><br>
+    ・Generic Sensor APIはすべてのセンサーが <strong>Sensor 基底クラス</strong>を継承する統一設計<br>
+    ・<code>start()</code> / <code>stop()</code> でセンサーの計測を制御できる<br>
+    ・<code>frequency</code> オプションでサンプリングレートを指定できる<br>
+    ・<strong>HTTPS（セキュアコンテキスト）</strong>でのみ利用可能
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 演習問題 -->
+<!-- ============================================================ -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      Geolocation APIは、ユーザーの許可なしに位置情報を取得できる。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn-quiz" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'Geolocation API はプライバシー保護のため、<strong>ユーザーの許可が必須</strong>です。<br>' +
+            'また HTTPS（セキュアコンテキスト）でのみ動作します。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。Geolocation API はユーザーの許可なしに位置情報を取得できません。' +
+            'ブラウザが許可ダイアログを表示し、ユーザーが許可した場合のみ取得できます。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合うプロパティ名・メソッド名・値を入力してください。</p>
+
+    <label>① Geolocation API で位置の変化を継続的に監視するメソッド名：</label>
+    <input type="text" id="q2a" placeholder="メソッド名()">
+
+    <label>② Geolocation API で取得できる「位置の精度（メートル）」を表すプロパティ名：</label>
+    <input type="text" id="q2b" placeholder="プロパティ名">
+
+    <label>③ deviceorientation イベントで「左右の傾き（Y軸回転）」を表すプロパティ名：</label>
+    <input type="text" id="q2c" placeholder="プロパティ名">
+
+    <label>④ Pointer Events で入力デバイスの種類（マウス/タッチ/ペン）を表すプロパティ名：</label>
+    <input type="text" id="q2d" placeholder="プロパティ名">
+
+    <label>⑤ Pointer Events の pointerType プロパティが取りうる3つの値（スペース区切り）：</label>
+    <input type="text" id="q2e" placeholder="値1 値2 値3">
+
+    <label>⑥ Generic Sensor API でセンサーの計測を開始するメソッド名：</label>
+    <input type="text" id="q2f" placeholder="メソッド名()">
+
+    <br>
+    <button class="btn-quiz" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value.trim().toLowerCase().replace(/[()]/g,'');
+        const b = document.getElementById('q2b').value.trim().toLowerCase();
+        const c = document.getElementById('q2c').value.trim().toLowerCase();
+        const d = document.getElementById('q2d').value.trim().toLowerCase();
+        const e = document.getElementById('q2e').value.trim().toLowerCase().replace(/['"]/g,'');
+        const f = document.getElementById('q2f').value.trim().toLowerCase().replace(/[()]/g,'');
+        const r = document.getElementById('q2-result');
+        const ca = a === 'watchposition';
+        const cb = b === 'accuracy';
+        const cc = c === 'gamma';
+        const cd = d === 'pointertype';
+        const ce = ['mouse','touch','pen'].every(v => e.includes(v));
+        const cf = f === 'start';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！デバイスアクセスAPIを完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `① ${ca?'✅':'❌ watchPosition()'}　` +
+            `② ${cb?'✅':'❌ accuracy'}　` +
+            `③ ${cc?'✅':'❌ gamma'}　` +
+            `④ ${cd?'✅':'❌ pointerType'}　` +
+            `⑤ ${ce?'✅':'❌ "mouse" "touch" "pen"'}　` +
+            `⑥ ${cf?'✅':'❌ start()'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>
+      Geolocation API の <code>getCurrentPosition()</code> で取得できる
+      <code>GeolocationCoordinates</code> のプロパティとして
+      <strong>存在しないもの</strong>はどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">latitude（緯度）</option>
+      <option value="b">accuracy（精度）</option>
+      <option value="c">heading（方角）</option>
+      <option value="d">address（住所）</option>
+    </select>
+    <br>
+    <button class="btn-quiz" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'd') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'Geolocation API が返す GeolocationCoordinates には住所（address）は含まれません。<br><br>' +
+            '取得できるプロパティ：<br>' +
+            '・latitude（緯度）・longitude（経度）・accuracy（精度）<br>' +
+            '・altitude（高度）・altitudeAccuracy（高度精度）<br>' +
+            '・heading（方角）・speed（速度）';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            'latitude・accuracy・heading はすべて GeolocationCoordinates のプロパティです。<br>' +
+            '住所（address）は Geolocation API では取得できません。<br>' +
+            '住所を取得するには緯度・経度を使ったジオコーディングAPIが必要です。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 選択問題</h3>
+    <p>
+      Pointer Events に関する説明として<strong>正しいもの</strong>はどれですか？
+    </p>
+    <select id="q4">
+      <option value="">-- 選択してください --</option>
+      <option value="a">Pointer Events はタッチ操作にのみ対応しており、マウスやペンには使えない</option>
+      <option value="b">pointerType プロパティで "mouse"・"touch"・"pen" の3種類の入力デバイスを判別できる</option>
+      <option value="c">Pointer Events を使うと Touch Events と Mouse Events を個別に実装する必要がある</option>
+      <option value="d">pressure プロパティはマウスの移動速度を表す</option>
+    </select>
+    <br>
+    <button class="btn-quiz" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const v = document.getElementById('q4').value;
+        const r = document.getElementById('q4-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'Pointer Events の <code>pointerType</code> プロパティは<br>' +
+            '<strong>"mouse"・"touch"・"pen"</strong> の3種類の値を返し、<br>' +
+            '入力デバイスの種類を判別できます。<br>' +
+            'これにより Touch Events と Mouse Events を個別に実装する手間が省けます。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            '・Pointer Events はタッチ・マウス・ペンを<strong>統一的に</strong>扱えます<br>' +
+            '・Pointer Events を使うことで Touch Events と Mouse Events を<strong>個別に実装する必要がなくなります</strong><br>' +
+            '・<code>pressure</code> は<strong>筆圧（0〜1）</strong>を表します（ペンタブレット向け）';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5a">
+      ① Geolocation API の <code>coords.heading</code> は方角（度）を表し、真北が 0° で時計回りに増加する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5b">
+      ② <code>deviceorientation</code> イベントの <code>beta</code> は左右の傾きを表す
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5c">
+      ③ <code>deviceorientation</code> イベントの <code>gamma</code> は左右の傾きを表す
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5d">
+      ④ Touch Events の <code>touches</code> プロパティは現在画面に触れているすべてのタッチ点のリストである
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5e">
+      ⑤ Pointer Events の <code>pointerType</code> が取りうる値は "mouse"・"touch"・"pen" の3種類である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5f">
+      ⑥ DOM3 Events の <code>focus</code> イベントはバブリングする
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5g">
+      ⑦ Generic Sensor API では <code>frequency</code> オプションでセンサーのサンプリングレートを指定できる
+    </label>
+    <br>
+    <button class="btn-quiz" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const r = document.getElementById('q5-result');
+        const checks = {
+          a: document.getElementById('q5a').checked,
+          b: document.getElementById('q5b').checked,
+          c: document.getElementById('q5c').checked,
+          d: document.getElementById('q5d').checked,
+          e: document.getElementById('q5e').checked,
+          f: document.getElementById('q5f').checked,
+          g: document.getElementById('q5g').checked,
+        };
+        // 正解：①③④⑤⑦（a, c, d, e, g）
+        // ② beta は前後の傾き → ×
+        // ⑥ focus はバブリングしない（focusin がバブリングする） → ×
+        const correct = { a:true, b:false, c:true, d:true, e:true, f:false, g:true };
+        const allCorrect = Object.keys(correct).every(k => checks[k] === correct[k]);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① heading は真北0°・時計回り ✅<br>' +
+            '・③ gamma は左右の傾き（Y軸回転） ✅<br>' +
+            '・④ touches は現在のすべてのタッチ点 ✅<br>' +
+            '・⑤ pointerType は mouse / touch / pen ✅<br>' +
+            '・⑦ Generic Sensor API は frequency でサンプリングレート指定可 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① heading は真北が 0°、時計回りに増加<br>' +
+            '・③ gamma は<strong>左右の傾き</strong>（Y軸回転、-90°〜90°）<br>' +
+            '・④ touches は現在画面に触れているすべてのタッチ点のリスト<br>' +
+            '・⑤ pointerType は "mouse" / "touch" / "pen" の3種類<br>' +
+            '・⑦ Generic Sensor API は frequency オプションでサンプリングレートを指定可能<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② beta は<strong>前後の傾き</strong>（X軸回転）。左右の傾きは gamma<br>' +
+            '・⑥ focus イベントは<strong>バブリングしない</strong>。バブリングするのは focusin';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. コード穴埋め問題</h3>
+    <p><code>__A__</code> 〜 <code>__F__</code> に適切な値・記述を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+/* A：Geolocation APIで現在位置を1回取得するメソッド */
+navigator.geolocation.__A__(successCallback, errorCallback);
+
+/* B：Geolocation APIで取得できる「方角」のプロパティ名 */
+const direction = position.coords.__B__;
+
+/* C：deviceorientation イベントで「コンパス方位（Z軸回転）」を表すプロパティ */
+window.addEventListener('deviceorientation', (e) => {
+  console.log(e.__C__); // 0〜360°
+});
+
+/* D：Pointer Events でタッチ操作を判別する条件式 */
+element.addEventListener('pointerdown', (e) => {
+  if (e.pointerType === __D__) { /* タッチ操作 */ }
+});
+
+/* E：Touch Events で今回変化したタッチ点のリストを表すプロパティ */
+element.addEventListener('touchstart', (e) => {
+  const touches = e.__E__;
+});
+
+/* F：Generic Sensor API でセンサーの計測を停止するメソッド */
+sensor.__F__();</pre>
+
+    <label>A（1回取得メソッド）：</label>
+    <input type="text" id="q6a" placeholder="メソッド名">
+    <label>B（方角プロパティ）：</label>
+    <input type="text" id="q6b" placeholder="プロパティ名">
+    <label>C（コンパス方位プロパティ）：</label>
+    <input type="text" id="q6c" placeholder="プロパティ名">
+    <label>D（タッチ判別の値）：</label>
+    <input type="text" id="q6d" placeholder="文字列">
+    <label>E（変化したタッチ点のリスト）：</label>
+    <input type="text" id="q6e" placeholder="プロパティ名">
+    <label>F（停止メソッド）：</label>
+    <input type="text" id="q6f" placeholder="メソッド名">
+    <br>
+    <button class="btn-quiz" onclick="checkQ6()">答え合わせ</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const a = document.getElementById('q6a').value.trim().toLowerCase().replace(/[()]/g,'');
+        const b = document.getElementById('q6b').value.trim().toLowerCase();
+        const c = document.getElementById('q6c').value.trim().toLowerCase();
+        const d = document.getElementById('q6d').value.trim().toLowerCase().replace(/['"]/g,'');
+        const e = document.getElementById('q6e').value.trim().toLowerCase();
+        const f = document.getElementById('q6f').value.trim().toLowerCase().replace(/[()]/g,'');
+        const r = document.getElementById('q6-result');
+        const ca = a === 'getcurrentposition';
+        const cb = b === 'heading';
+        const cc = c === 'alpha';
+        const cd = d === 'touch';
+        const ce = e === 'changedtouches';
+        const cf = f === 'stop';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！デバイスアクセスAPIの記述を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca?'✅':'❌ getCurrentPosition()'}　` +
+            `B: ${cb?'✅':'❌ heading'}　` +
+            `C: ${cc?'✅':'❌ alpha'}　` +
+            `D: ${cd?'✅':'❌ "touch"'}　` +
+            `E: ${ce?'✅':'❌ changedTouches'}　` +
+            `F: ${cf?'✅':'❌ stop()'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q7 -->
+  <div class="quiz-block">
+    <h3>Q7. 記述問題</h3>
+    <p>
+      Pointer Events が Touch Events・Mouse Events と比べて優れている点を、
+      「対応デバイス」「pointerType プロパティ」「実装の手間」の
+      3つの観点から説明してください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q7" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn-quiz" onclick="checkQ7()">模範解答を見る</button>
+    <div class="result-msg" id="q7-result"></div>
+    <script>
+      function checkQ7() {
+        const r = document.getElementById('q7-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<table style="border-collapse:collapse; width:100%; font-size:0.88em;">' +
+          '<thead><tr style="background:#c05621; color:#fff;">' +
+          '<th style="padding:8px; border:1px solid #feebc8;">観点</th>' +
+          '<th style="padding:8px; border:1px solid #feebc8;">Touch Events / Mouse Events</th>' +
+          '<th style="padding:8px; border:1px solid #feebc8;">Pointer Events</th>' +
+          '</tr></thead><tbody>' +
+          '<tr><td style="padding:8px; border:1px solid #feebc8;">対応デバイス</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">それぞれタッチ・マウスのみ対応</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;"><strong>タッチ・ペン・マウスを統一</strong>して扱える</td></tr>' +
+          '<tr style="background:#fffaf0;"><td style="padding:8px; border:1px solid #feebc8;">pointerType</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">デバイス種別の判別が困難</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;"><code>pointerType</code> で "mouse" / "touch" / "pen" を判別可能</td></tr>' +
+          '<tr><td style="padding:8px; border:1px solid #feebc8;">実装の手間</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">Touch Events と Mouse Events を個別に実装する必要がある</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">1つのイベントモデルで統一処理できるため実装が簡潔</td></tr>' +
+          '</tbody></table><br>' +
+          '💡 <strong>試験のポイント</strong>：Pointer Events の <code>pointerType</code> が ' +
+          '"mouse" / "touch" / "pen" の3種類を返すことを押さえましょう。';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 デバイスアクセスAPI まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>API</th><th>概要</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Geolocation API</strong></td>
+      <td><code>navigator.geolocation</code> で位置情報を取得</td>
+      <td>緯度・経度・精度・高度・<strong>方角・速度</strong>を取得可能。ユーザー許可・HTTPS必須</td>
+    </tr>
+    <tr>
+      <td><strong>DeviceOrientation</strong></td>
+      <td><code>deviceorientation</code> イベントでデバイスの傾きを取得</td>
+      <td>alpha（方位）・<strong>beta（前後傾き）・gamma（左右傾き）</strong>。iOS 13以降は許可必要</td>
+    </tr>
+    <tr>
+      <td><strong>DeviceMotion</strong></td>
+      <td><code>devicemotion</code> イベントで加速度・回転速度を取得</td>
+      <td><strong>acceleration（加速度）・rotationRate（回転速度）</strong>。ジャイロスコープの値</td>
+    </tr>
+    <tr>
+      <td><strong>Touch Events</strong></td>
+      <td>タッチスクリーンへの操作を扱うイベント</td>
+      <td>touchstart / touchmove / touchend / touchcancel。<strong>マルチタッチ対応</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Pointer Events</strong></td>
+      <td>タッチ・ペン・マウスを統一したイベントモデル</td>
+      <td><code>pointerType</code> で <strong>"mouse" / "touch" / "pen"</strong> を判別。pressure で筆圧取得</td>
+    </tr>
+    <tr>
+      <td><strong>DOM3 Events（UI Events）</strong></td>
+      <td>キーボード・マウス・フォーカスなどのUIイベント仕様</td>
+      <td>イベント伝播（バブリング・キャプチャリング）を定義。focus はバブリングなし</td>
+    </tr>
+    <tr>
+      <td><strong>Generic Sensor API</strong></td>
+      <td>各種センサーを統一インターフェースで扱うAPI</td>
+      <td>Sensor基底クラスを継承。start() / stop()。frequency でサンプリングレート指定可</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
