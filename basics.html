@@ -2,8 +2,8 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HTML5 基本構文・文書構造</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>HTML5 基本構文・文書構造 学習サンプル</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body {
@@ -20,7 +20,7 @@
     h3 { color: #276749; margin-top: 24px; }
 
     code {
-      background: #edf2f7;
+      background: #ebf8ff;
       padding: 2px 6px;
       border-radius: 4px;
       font-size: 0.93em;
@@ -32,7 +32,7 @@
       padding: 18px 20px;
       border-radius: 8px;
       overflow-x: auto;
-      font-size: 0.9em;
+      font-size: 0.88em;
       line-height: 1.7;
       font-family: 'Consolas', 'Monaco', monospace;
     }
@@ -40,9 +40,9 @@
     pre .tag      { color: #90cdf4; }
     pre .attr     { color: #fbd38d; }
     pre .value    { color: #fc8181; }
-    pre .text     { color: #e2e8f0; }
     pre .doctype  { color: #d6bcfa; }
-    pre .label    { color: #f6ad55; font-weight: bold; }
+    pre .prop     { color: #90cdf4; }
+    pre .val      { color: #fc8181; }
 
     .note {
       background: #fff;
@@ -54,7 +54,6 @@
       margin-bottom: 14px;
     }
     .note strong { color: #2b6cb0; }
-
     .warn {
       background: #fffaf0;
       border: 1px solid #f6ad55;
@@ -66,7 +65,6 @@
       margin: 14px 0;
     }
     .warn strong { color: #c05621; }
-
     .good {
       background: #f0fff4;
       border: 1px solid #68d391;
@@ -77,7 +75,6 @@
       color: #276749;
       margin: 14px 0;
     }
-
     .demo-box {
       background: #fff;
       border: 1px solid #bee3f8;
@@ -87,29 +84,83 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.06);
     }
 
-    details.code-toggle {
-      margin-top: 10px;
-      background: #f7fafc;
+    /* インタラクティブデモ共通 */
+    .interactive-demo {
+      background: #ebf8ff;
       border: 1px solid #bee3f8;
-      border-radius: 6px;
-      padding: 10px 14px;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 14px 0;
     }
-    details.code-toggle summary {
-      cursor: pointer;
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .slider-row label {
+      font-size: 0.85em;
       font-weight: bold;
-      color: #3182ce;
+      min-width: 160px;
+      color: #2b6cb0;
+      font-family: 'Consolas', 'Monaco', monospace;
     }
+    .slider-row input[type="text"],
+    .slider-row select {
+      border: 2px solid #bee3f8;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.88em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      flex: 1;
+      min-width: 100px;
+      outline: none;
+      transition: border-color 0.2s;
+      background: #fff;
+      color: #2d3748;
+    }
+    .slider-row input[type="text"]:focus,
+    .slider-row select:focus { border-color: #4299e1; }
+    .color-code-display {
+      background: #1a202c;
+      color: #68d391;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.84em;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      min-height: 48px;
+    }
+
+    /* ボタン */
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+    .btn {
+      display: inline-block;
+      padding: 8px 18px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.88em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.82; }
+    .btn-blue  { background: #4299e1; color: #fff; }
+    .btn-green { background: #68d391; color: #276749; }
+    .btn-gray  { background: #e2e8f0; color: #4a5568; }
 
     /* 名称ラベル付きコード図 */
     .code-diagram {
-      position: relative;
       background: #1a202c;
       color: #e2e8f0;
       border-radius: 10px;
-      padding: 28px 24px;
+      padding: 24px;
       font-family: 'Consolas', 'Monaco', monospace;
       font-size: 1em;
-      line-height: 2.2;
+      line-height: 2.4;
       overflow-x: auto;
     }
     .anno {
@@ -126,8 +177,25 @@
     }
     .anno.blue   { background: #90cdf4; }
     .anno.green  { background: #68d391; }
-    .anno.pink   { background: #fc8181; }
+    .anno.pink   { background: #fc8181; color: #fff; }
     .anno.purple { background: #d6bcfa; }
+
+    /* 要素ビルダー */
+    .element-preview {
+      background: #1a202c;
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.92em;
+      line-height: 1.8;
+      margin-top: 10px;
+      min-height: 56px;
+    }
+    .ep-tag   { color: #90cdf4; }
+    .ep-attr  { color: #fbd38d; }
+    .ep-val   { color: #fc8181; }
+    .ep-text  { color: #e2e8f0; }
+    .ep-empty { color: #68d391; font-style: italic; }
 
     /* 文字参照テーブル */
     table.ref-table {
@@ -143,10 +211,66 @@
       border: 1px solid #bee3f8;
       padding: 10px 14px;
       text-align: left;
-      font-size: 0.93em;
+      font-size: 0.9em;
     }
     table.ref-table thead tr { background: #2b6cb0; color: #fff; }
     table.ref-table tbody tr:nth-child(even) { background: #ebf8ff; }
+
+    /* 文字参照変換ツール */
+    .charref-result {
+      background: #fff;
+      border: 2px solid #bee3f8;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.88em;
+      margin-top: 8px;
+      min-height: 40px;
+      color: #2d3748;
+    }
+
+    /* DOCTYPE 比較カード */
+    .doctype-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .doctype-card {
+      background: #ebf8ff;
+      border: 1px solid #bee3f8;
+      border-radius: 8px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .doctype-card:hover { background: #bee3f8; border-color: #4299e1; }
+    .doctype-card.selected { background: #bee3f8; border: 2px solid #2b6cb0; }
+    .doctype-card-name {
+      font-size: 0.85em;
+      font-weight: bold;
+      color: #2b6cb0;
+      margin-bottom: 4px;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .doctype-card-desc {
+      font-size: 0.78em;
+      color: #4a5568;
+      line-height: 1.5;
+    }
+
+    /* コメント検証 */
+    .comment-check-result {
+      margin-top: 8px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.88em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      min-height: 40px;
+    }
+    .comment-check-result.ok  { background: #c6f6d5; color: #276749; }
+    .comment-check-result.ng  { background: #fed7d7; color: #9b2335; }
+    .comment-check-result.empty { background: #ebf8ff; color: #2b6cb0; }
 
     /* 演習問題 */
     .quiz-section {
@@ -173,7 +297,7 @@
       padding: 8px 12px;
       font-size: 0.95em;
       width: 100%;
-      max-width: 420px;
+      max-width: 440px;
       margin: 6px 0;
       outline: none;
       font-family: 'Consolas', 'Monaco', monospace;
@@ -183,7 +307,16 @@
     .quiz-block select:focus,
     .quiz-block textarea:focus { border-color: #f6ad55; }
     .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
-    .btn {
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn-quiz {
       display: inline-block;
       padding: 9px 20px;
       border-radius: 6px;
@@ -193,9 +326,10 @@
       font-weight: bold;
       transition: opacity 0.2s;
       margin-top: 8px;
+      background: #4299e1;
+      color: #fff;
     }
-    .btn:hover { opacity: 0.85; }
-    .btn-blue  { background: #4299e1; color: #fff; }
+    .btn-quiz:hover { opacity: 0.85; }
     .result-msg {
       margin-top: 10px;
       padding: 10px 14px;
@@ -221,81 +355,34 @@
       border: 1px solid #bee3f8;
       padding: 10px 14px;
       text-align: left;
-      font-size: 0.93em;
+      font-size: 0.9em;
     }
     table.summary thead tr { background: #2b6cb0; color: #fff; }
     table.summary tbody tr:nth-child(even) { background: #ebf8ff; }
-/* ===== レスポンシブ ===== */
 
-/* スマホ縦向き（〜600px） */
-@media (max-width: 600px) {
-  /* 全体フォントサイズを縮小 */
-  body { font-size: 0.82em; }
-
-  header { padding: 28px 14px 22px; }
-  header h1 { font-size: 1.3em; }
-  header p { font-size: 0.88em; }
-  header .badge { font-size: 0.72em; padding: 3px 12px; }
-  .header-meta { font-size: 0.78em; margin-top: 14px; }
-
-  main { padding: 20px 12px 40px; }
-
-  .info-banner {
-    flex-direction: column;
-    gap: 8px;
-    padding: 14px 14px;
-  }
-  .info-banner .icon { font-size: 1.5em; }
-  .info-banner h2 { font-size: 0.9em; }
-  .info-banner p { font-size: 0.8em; }
-
-  .progress-section { padding: 14px 14px; }
-  .progress-section h2 { font-size: 0.88em; }
-  .progress-label { font-size: 0.78em; }
-
-  .section-title { font-size: 0.92em; margin: 28px 0 14px; }
-
-  .card-grid { grid-template-columns: 1fr; gap: 14px; }
-
-  .card, .card-coming { padding: 16px 14px; gap: 7px; }
-  .card-icon { font-size: 1.5em; }
-  .card-title { font-size: 0.92em; }
-  .card-desc { font-size: 0.78em; }
-  .tag { font-size: 0.68em; padding: 1px 8px; }
-  .card-footer { font-size: 0.72em; }
-  .coming-badge { font-size: 0.7em; }
-
-  footer { padding: 20px 14px; font-size: 0.78em; }
-}
-
-/* スマホ横向き（landscape・高さが500px以下） */
-@media (max-height: 500px) and (orientation: landscape) {
-  body { font-size: 0.8em; }
-
-  header { padding: 14px 20px 12px; }
-  header h1 { font-size: 1.1em; margin-bottom: 4px; }
-  header p { font-size: 0.82em; }
-  header .badge { font-size: 0.7em; margin-bottom: 8px; }
-
-  main { padding: 16px 20px 32px; }
-
-  .card-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 12px;
-  }
-  .card, .card-coming { padding: 12px 12px; }
-  .card-title { font-size: 0.88em; }
-  .card-desc { font-size: 0.76em; }
-  .tag { font-size: 0.66em; }
-}
-
-/* タブレット縦向き（601px〜768px） */
-@media (min-width: 601px) and (max-width: 768px) {
-  body { font-size: 0.9em; }
-  .card-grid { grid-template-columns: repeat(2, 1fr); }
-  header h1 { font-size: 1.8em; }
-  main { padding: 36px 20px 56px; }
-}
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px; }
+      .slider-row label { min-width: 110px; }
+      .doctype-grid { grid-template-columns: 1fr; }
+      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.82em; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px; }
+      .quiz-block { padding: 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+    }
   </style>
 </head>
 <body>
@@ -304,17 +391,17 @@
 <p>HTMLの書き方の基本ルール・文書構造・DOCTYPE・文字参照・コメントを学びましょう。</p>
 
 
-<!-- 1. 基本的な書式と各部の名称 -->
+<!-- ============================================================ -->
+<!-- PART 1：基本的な書式と各部の名称 -->
+<!-- ============================================================ -->
 <h2>① 基本的な書式と各部の名称</h2>
-
 <div class="note">
-  <strong>ポイント</strong><br>
-  HTMLは <strong>タグ</strong> を使ってコンテンツに意味を付けます。<br>
+  <strong>重要ポイント①：HTMLはタグを使ってコンテンツに意味を付ける。各部の名称を覚えよう</strong><br>
   タグの構成要素にはそれぞれ名称があり、試験でも問われます。
 </div>
-
 <div class="demo-box">
-  <p>▼ 要素の基本構造（各部の名称）</p>
+
+  <h3>要素の基本構造（各部の名称）</h3>
   <div class="code-diagram">
     <span class="anno pink">開始タグ</span><br>
     <span style="color:#90cdf4;">&lt;</span><span style="color:#fbd38d;">a</span>
@@ -349,58 +436,183 @@
       <tr><td><strong>空要素</strong></td><td>コンテンツを持たない要素（終了タグなし）</td><td><code>&lt;br&gt;</code>, <code>&lt;img&gt;</code>, <code>&lt;hr&gt;</code></td></tr>
     </tbody>
   </table>
+
+  <h3>要素ビルダー インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#2b6cb0; margin:0 0 12px;">
+      各フィールドを入力すると、HTML要素がリアルタイムで生成されます。
+    </p>
+    <div class="slider-row">
+      <label>要素名（タグ名）</label>
+      <select id="eb-tag" onchange="updateElementBuilder()">
+        <option value="a">a（リンク）</option>
+        <option value="p">p（段落）</option>
+        <option value="h1">h1（見出し）</option>
+        <option value="img">img（画像・空要素）</option>
+        <option value="input">input（入力・空要素）</option>
+        <option value="div">div（汎用ブロック）</option>
+        <option value="span">span（汎用インライン）</option>
+      </select>
+    </div>
+    <div class="slider-row">
+      <label>属性名</label>
+      <input type="text" id="eb-attrname" value="href" oninput="updateElementBuilder()" placeholder="例: href, class, id">
+    </div>
+    <div class="slider-row">
+      <label>属性値</label>
+      <input type="text" id="eb-attrval" value="https://example.com" oninput="updateElementBuilder()" placeholder="例: https://example.com">
+    </div>
+    <div class="slider-row">
+      <label>コンテンツ</label>
+      <input type="text" id="eb-content" value="リンクテキスト" oninput="updateElementBuilder()" placeholder="（空要素は不要）">
+    </div>
+    <div class="element-preview" id="eb-preview"></div>
+    <div style="margin-top:8px; font-size:0.82em; color:#4a5568;">
+      各部の名称：
+      <span style="color:#fbd38d; font-family:monospace;">■ 要素名</span>　
+      <span style="color:#68d391; font-family:monospace;">■ 属性名</span>　
+      <span style="color:#fc8181; font-family:monospace;">■ 属性値</span>　
+      <span style="color:#e2e8f0; font-family:monospace;">■ コンテンツ</span>
+    </div>
+  </div>
+  <script>
+    const voidElements = ['area','base','br','col','embed','hr','img','input',
+                          'link','meta','param','source','track','wbr'];
+    function updateElementBuilder() {
+      const tag      = document.getElementById('eb-tag').value;
+      const attrName = document.getElementById('eb-attrname').value.trim();
+      const attrVal  = document.getElementById('eb-attrval').value.trim();
+      const content  = document.getElementById('eb-content').value;
+      const isVoid   = voidElements.includes(tag);
+      const preview  = document.getElementById('eb-preview');
+
+      let html = '';
+      html += `<span class="ep-tag">&lt;</span>`;
+      html += `<span class="ep-attr">${escHtml(tag)}</span>`;
+      if (attrName) {
+        html += ` <span class="ep-attr">${escHtml(attrName)}</span>`;
+        if (attrVal) {
+          html += `<span class="ep-tag">=</span><span class="ep-val">"${escHtml(attrVal)}"</span>`;
+        }
+      }
+      if (isVoid) {
+        html += `<span class="ep-tag">&gt;</span>`;
+        html += `\n<span class="ep-empty">  ← 空要素：コンテンツ・終了タグなし</span>`;
+      } else {
+        html += `<span class="ep-tag">&gt;</span>`;
+        html += `<span class="ep-text">${escHtml(content) || '（コンテンツ）'}</span>`;
+        html += `<span class="ep-tag">&lt;/${escHtml(tag)}&gt;</span>`;
+      }
+      preview.innerHTML = html;
+    }
+    function escHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    updateElementBuilder();
+  </script>
 </div>
 
-<!-- 空要素の書き方 -->
-<h3>空要素の書き方</h3>
+
+<!-- ============================================================ -->
+<!-- PART 2：空要素の書き方 -->
+<!-- ============================================================ -->
+<h2>② 空要素の書き方</h2>
 <div class="note">
-  <strong>ポイント②：空要素は <code>&lt;○○&gt;</code> と書いても <code>&lt;○○/&gt;</code> と書いてもOK</strong>
+  <strong>重要ポイント②：空要素は <code>&lt;○○&gt;</code> と書いても <code>&lt;○○/&gt;</code> と書いてもOK。ただし <code>&lt;○○ /&gt;</code>（空白あり）は不正</strong>
 </div>
 <div class="demo-box">
 <pre>
 <span class="comment">&lt;!-- どちらも正しい書き方 --&gt;</span>
-<span class="tag">&lt;br&gt;</span>          <span class="comment">&lt;!-- HTML5 推奨スタイル --&gt;</span>
-<span class="tag">&lt;br/&gt;</span>         <span class="comment">&lt;!-- XHTMLスタイル（HTML5でも有効） --&gt;</span>
-<span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"photo.jpg"</span> <span class="attr">alt</span>=<span class="value">"写真"</span><span class="tag">&gt;</span>   <span class="comment">&lt;!-- OK --&gt;</span>
-<span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"photo.jpg"</span> <span class="attr">alt</span>=<span class="value">"写真"</span><span class="tag">/&gt;</span>  <span class="comment">&lt;!-- OK --&gt;</span>
-<span class="tag">&lt;hr&gt;</span>          <span class="comment">&lt;!-- OK --&gt;</span>
-<span class="tag">&lt;hr/&gt;</span>         <span class="comment">&lt;!-- OK --&gt;</span>
+<span class="tag">&lt;br&gt;</span>           <span class="comment">&lt;!-- HTML5 推奨スタイル --&gt;</span>
+<span class="tag">&lt;br/&gt;</span>          <span class="comment">&lt;!-- XHTMLスタイル（HTML5でも有効） --&gt;</span>
+
+<span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"photo.jpg"</span> <span class="attr">alt</span>=<span class="value">"写真"</span><span class="tag">&gt;</span>    <span class="comment">&lt;!-- OK --&gt;</span>
+<span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"photo.jpg"</span> <span class="attr">alt</span>=<span class="value">"写真"</span><span class="tag">/&gt;</span>   <span class="comment">&lt;!-- OK --&gt;</span>
 </pre>
+
   <div class="warn">
     <strong>⚠️ 試験重要ポイント：空白文字に注意！</strong><br>
-    HTML5以降、<code>/</code> と <code>&gt;</code> の間に<strong>空白文字を入れることはできません。</strong><br>
-    <br>
+    HTML5以降、<code>/</code> と <code>&gt;</code> の間に<strong>空白文字を入れることはできません。</strong><br><br>
     ✅ <code>&lt;br/&gt;</code>　← 正しい（スラッシュと&gt;の間に空白なし）<br>
-    ❌ <code>&lt;br /&gt;</code>　← HTML5では<strong>不正</strong>（スラッシュと&gt;の間に空白あり）<br>
-    <br>
+    ❌ <code>&lt;br /&gt;</code>　← HTML5では<strong>不正</strong>（スラッシュと&gt;の間に空白あり）<br><br>
     また、空要素には<strong>終了タグ（<code>&lt;/br&gt;</code>など）を指定できません。</strong>
   </div>
+
+  <h3>空要素チェッカー インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#2b6cb0; margin:0 0 10px;">
+      空要素の書き方を入力して、正しいかどうかを確認しましょう。
+    </p>
+    <div class="slider-row">
+      <label>空要素の書き方</label>
+      <input type="text" id="void-input" value="&lt;br&gt;" oninput="checkVoidElement()" placeholder="例: &lt;br&gt; または &lt;br/&gt;">
+    </div>
+    <div class="comment-check-result empty" id="void-result">入力してください</div>
+  </div>
+  <script>
+    function checkVoidElement() {
+      const raw = document.getElementById('void-input').value.trim();
+      const r   = document.getElementById('void-result');
+      if (!raw) { r.className='comment-check-result empty'; r.textContent='入力してください'; return; }
+      // / の後に空白 + > があるパターンを検出
+      if (/\/\s+>/.test(raw)) {
+        r.className = 'comment-check-result ng';
+        r.textContent = '❌ 不正：/ と > の間に空白があります。HTML5では不正です。';
+      } else if (/<\/\w+>/.test(raw)) {
+        r.className = 'comment-check-result ng';
+        r.textContent = '❌ 不正：空要素に終了タグは指定できません。';
+      } else if (/^<\w[^>]*\/?>$/.test(raw)) {
+        r.className = 'comment-check-result ok';
+        r.textContent = '✅ 正しい空要素の書き方です。';
+      } else {
+        r.className = 'comment-check-result empty';
+        r.textContent = '⚠️ タグの形式を確認してください（例：<br> または <br/>）';
+      }
+    }
+    checkVoidElement();
+  </script>
+
+  <h3>主な空要素一覧</h3>
+  <table class="ref-table">
+    <thead>
+      <tr><th>要素</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>&lt;br&gt;</code></td><td>改行</td></tr>
+      <tr><td><code>&lt;hr&gt;</code></td><td>水平線（区切り線）</td></tr>
+      <tr><td><code>&lt;img&gt;</code></td><td>画像</td></tr>
+      <tr><td><code>&lt;input&gt;</code></td><td>入力フィールド</td></tr>
+      <tr><td><code>&lt;meta&gt;</code></td><td>メタ情報</td></tr>
+      <tr><td><code>&lt;link&gt;</code></td><td>外部リソースの参照</td></tr>
+      <tr><td><code>&lt;source&gt;</code></td><td>メディアソース</td></tr>
+      <tr><td><code>&lt;col&gt;</code></td><td>テーブルの列定義</td></tr>
+    </tbody>
+  </table>
 </div>
 
 
-<!-- 2. HTMLの全体構造 -->
-<h2>② HTMLの全体構造</h2>
-
+<!-- ============================================================ -->
+<!-- PART 3：HTMLの全体構造 -->
+<!-- ============================================================ -->
+<h2>③ HTMLの全体構造</h2>
 <div class="note">
-  <strong>ポイント</strong><br>
-  HTML文書は決まった構造を持っています。各要素の役割を理解しましょう。
+  <strong>重要ポイント③：HTML文書は決まった構造を持つ。各要素の役割を理解しよう</strong>
 </div>
-
 <div class="demo-box">
 <pre>
-<span class="doctype">&lt;!DOCTYPE html&gt;</span>                          <span class="comment">&lt;!-- DOCTYPE宣言 --&gt;</span>
-<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="value">"ja"</span><span class="tag">&gt;</span>                        <span class="comment">&lt;!-- ルート要素 --&gt;</span>
+<span class="doctype">&lt;!DOCTYPE html&gt;</span>                           <span class="comment">&lt;!-- DOCTYPE宣言 --&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="value">"ja"</span><span class="tag">&gt;</span>                         <span class="comment">&lt;!-- ルート要素 --&gt;</span>
 
-  <span class="tag">&lt;head&gt;</span>                                 <span class="comment">&lt;!-- メタ情報セクション --&gt;</span>
-    <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="value">"UTF-8"</span><span class="tag">&gt;</span>             <span class="comment">&lt;!-- 文字コード指定 --&gt;</span>
+  <span class="tag">&lt;head&gt;</span>                                  <span class="comment">&lt;!-- メタ情報セクション --&gt;</span>
+    <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="value">"UTF-8"</span><span class="tag">&gt;</span>              <span class="comment">&lt;!-- 文字コード指定 --&gt;</span>
     <span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="value">"viewport"</span>
           <span class="attr">content</span>=<span class="value">"width=device-width,
-          initial-scale=1.0"</span><span class="tag">&gt;</span>            <span class="comment">&lt;!-- レスポンシブ対応 --&gt;</span>
-    <span class="tag">&lt;title&gt;</span>ページタイトル<span class="tag">&lt;/title&gt;</span>          <span class="comment">&lt;!-- タブに表示されるタイトル --&gt;</span>
-    <span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="value">"stylesheet"</span> <span class="attr">href</span>=<span class="value">"style.css"</span><span class="tag">&gt;</span> <span class="comment">&lt;!-- 外部CSS --&gt;</span>
+          initial-scale=1.0"</span><span class="tag">&gt;</span>             <span class="comment">&lt;!-- レスポンシブ対応 --&gt;</span>
+    <span class="tag">&lt;title&gt;</span>ページタイトル<span class="tag">&lt;/title&gt;</span>           <span class="comment">&lt;!-- タブに表示されるタイトル --&gt;</span>
+    <span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="value">"stylesheet"</span> <span class="attr">href</span>=<span class="value">"style.css"</span><span class="tag">&gt;</span>  <span class="comment">&lt;!-- 外部CSS --&gt;</span>
   <span class="tag">&lt;/head&gt;</span>
 
-  <span class="tag">&lt;body&gt;</span>                                 <span class="comment">&lt;!-- 表示コンテンツセクション --&gt;</span>
+  <span class="tag">&lt;body&gt;</span>                                  <span class="comment">&lt;!-- 表示コンテンツセクション --&gt;</span>
     <span class="tag">&lt;h1&gt;</span>見出し<span class="tag">&lt;/h1&gt;</span>
     <span class="tag">&lt;p&gt;</span>本文テキスト<span class="tag">&lt;/p&gt;</span>
   <span class="tag">&lt;/body&gt;</span>
@@ -408,7 +620,6 @@
 <span class="tag">&lt;/html&gt;</span>
 </pre>
 
-  <br>
   <table class="ref-table">
     <thead>
       <tr><th>要素</th><th>役割</th></tr>
@@ -422,115 +633,147 @@
       <tr><td><code>&lt;body&gt;</code></td><td>ブラウザに表示されるコンテンツ全体</td></tr>
     </tbody>
   </table>
-</div>
 
-<!-- タグ省略 -->
-<h3>タグの省略ルール</h3>
-<div class="note">
-  <strong>ポイント①：タグを省略できる要素がある</strong>
-</div>
-<div class="demo-box">
+  <h3>タグ省略ルール</h3>
   <div class="warn">
     <strong>⚠️ 試験重要ポイント：省略できる要素は限られている！</strong><br><br>
-    <strong>開始タグ・終了タグの両方を省略できる要素：</strong><br>
-    <code>html</code>　<code>head</code>　<code>body</code>　<code>colgroup</code>　<code>tbody</code>　のみ<br><br>
+    <strong>開始タグ・終了タグの両方を省略できる要素（5つのみ）：</strong><br>
+    <code>html</code>　<code>head</code>　<code>body</code>　<code>colgroup</code>　<code>tbody</code><br><br>
     <strong>終了タグのみ省略できる要素（例）：</strong><br>
     <code>p</code>　<code>li</code>　<code>dt</code>　<code>dd</code>　<code>tr</code>　<code>th</code>　<code>td</code>　など<br><br>
     <strong>省略できない要素：</strong><br>
     <code>title</code>　<code>script</code>　<code>div</code>　<code>span</code>　など多数
   </div>
-<pre>
-<span class="comment">&lt;!-- タグ省略の例：以下は有効なHTML5 --&gt;</span>
 
-<span class="comment">&lt;!-- html / head / body タグを省略した書き方 --&gt;</span>
-<span class="doctype">&lt;!DOCTYPE html&gt;</span>
-<span class="tag">&lt;title&gt;</span>省略サンプル<span class="tag">&lt;/title&gt;</span>
-<span class="tag">&lt;p&gt;</span>本文（bodyタグなし）
-
-<span class="comment">&lt;!-- p要素は終了タグを省略できる --&gt;</span>
-<span class="tag">&lt;p&gt;</span>段落1    <span class="comment">&lt;!-- &lt;/p&gt; を省略 --&gt;</span>
-<span class="tag">&lt;p&gt;</span>段落2    <span class="comment">&lt;!-- 次の &lt;p&gt; が来たら前の段落は自動的に閉じる --&gt;</span>
-<span class="tag">&lt;p&gt;</span>段落3
-</pre>
-  <div class="good">
-    ✅ ただし、省略できても<strong>明示的に書くことが推奨</strong>されます。<br>
-    可読性・保守性のために、実務では省略しないのが一般的です。
+  <h3>タグ省略シミュレーター インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#2b6cb0; margin:0 0 10px;">
+      要素名を選択して、タグの省略ルールを確認しましょう。
+    </p>
+    <div class="slider-row">
+      <label>要素名</label>
+      <select id="omit-sel" onchange="updateOmitDemo()">
+        <option value="html">html</option>
+        <option value="head">head</option>
+        <option value="body">body</option>
+        <option value="colgroup">colgroup</option>
+        <option value="tbody">tbody</option>
+        <option value="p">p</option>
+        <option value="li">li</option>
+        <option value="tr">tr</option>
+        <option value="td">td</option>
+        <option value="title">title</option>
+        <option value="div">div</option>
+        <option value="span">span</option>
+        <option value="script">script</option>
+      </select>
+    </div>
+    <div class="color-code-display" id="omit-result"></div>
   </div>
+  <script>
+    const omitRules = {
+      html:     { start: true,  end: true,  note: '開始タグ・終了タグの両方を省略できる（5要素のうちの1つ）' },
+      head:     { start: true,  end: true,  note: '開始タグ・終了タグの両方を省略できる（5要素のうちの1つ）' },
+      body:     { start: true,  end: true,  note: '開始タグ・終了タグの両方を省略できる（5要素のうちの1つ）' },
+      colgroup: { start: true,  end: true,  note: '開始タグ・終了タグの両方を省略できる（5要素のうちの1つ）' },
+      tbody:    { start: true,  end: true,  note: '開始タグ・終了タグの両方を省略できる（5要素のうちの1つ）' },
+      p:        { start: false, end: true,  note: '終了タグのみ省略可能。次の<p>や</div>が来ると自動的に閉じる' },
+      li:       { start: false, end: true,  note: '終了タグのみ省略可能。次の<li>や</ul>/<ol>が来ると閉じる' },
+      tr:       { start: false, end: true,  note: '終了タグのみ省略可能' },
+      td:       { start: false, end: true,  note: '終了タグのみ省略可能' },
+      title:    { start: false, end: false, note: '開始タグ・終了タグともに省略不可' },
+      div:      { start: false, end: false, note: '開始タグ・終了タグともに省略不可' },
+      span:     { start: false, end: false, note: '開始タグ・終了タグともに省略不可' },
+      script:   { start: false, end: false, note: '開始タグ・終了タグともに省略不可' },
+    };
+    function updateOmitDemo() {
+      const tag  = document.getElementById('omit-sel').value;
+      const rule = omitRules[tag];
+      const r    = document.getElementById('omit-result');
+      const startMark = rule.start ? '✅ 省略可能' : '❌ 省略不可';
+      const endMark   = rule.end   ? '✅ 省略可能' : '❌ 省略不可';
+      r.textContent =
+        `<${tag}> の省略ルール\n` +
+        `開始タグ（<${tag}>）  : ${startMark}\n` +
+        `終了タグ（</${tag}>） : ${endMark}\n\n` +
+        `📝 ${rule.note}`;
+    }
+    updateOmitDemo();
+  </script>
 </div>
 
 
-<!-- 3. DOCTYPE宣言 -->
-<h2>③ DOCTYPE宣言</h2>
-
+<!-- ============================================================ -->
+<!-- PART 4：DOCTYPE宣言 -->
+<!-- ============================================================ -->
+<h2>④ DOCTYPE宣言</h2>
 <div class="note">
-  <strong>ポイント③：DOCTYPE の基本形は <code>&lt;!DOCTYPE html&gt;</code> だが、これ以外も指定可能</strong>
+  <strong>重要ポイント④：HTML5のDOCTYPEは <code>&lt;!DOCTYPE html&gt;</code>。これ以外のバージョンも指定可能</strong>
 </div>
-
 <div class="demo-box">
-<pre>
-<span class="comment">&lt;!-- HTML5（現在の標準・推奨） --&gt;</span>
-<span class="doctype">&lt;!DOCTYPE html&gt;</span>
 
-<span class="comment">&lt;!-- HTML 4.01 Strict（過去の書き方） --&gt;</span>
-<span class="doctype">&lt;!DOCTYPE HTML PUBLIC
-  "-//W3C//DTD HTML 4.01//EN"
-  "http://www.w3.org/TR/html4/strict.dtd"&gt;</span>
+  <h3>DOCTYPE の種類</h3>
+  <div class="doctype-grid" id="doctype-grid">
+    <div class="doctype-card selected" onclick="selectDoctype('html5')">
+      <div class="doctype-card-name">HTML5（現在の標準）</div>
+      <div class="doctype-card-desc">シンプル・短い・推奨。大文字小文字不問</div>
+    </div>
+    <div class="doctype-card" onclick="selectDoctype('html401s')">
+      <div class="doctype-card-name">HTML 4.01 Strict</div>
+      <div class="doctype-card-desc">DTDのURLを指定する長い書き方</div>
+    </div>
+    <div class="doctype-card" onclick="selectDoctype('html401t')">
+      <div class="doctype-card-name">HTML 4.01 Transitional</div>
+      <div class="doctype-card-desc">廃止要素・属性も使用可能なHTML 4.01</div>
+    </div>
+    <div class="doctype-card" onclick="selectDoctype('xhtml10')">
+      <div class="doctype-card-name">XHTML 1.0 Strict</div>
+      <div class="doctype-card-desc">XMLベースのHTML。厳密な構文が必要</div>
+    </div>
+  </div>
+  <div class="color-code-display" id="doctype-preview">&lt;!DOCTYPE html&gt;</div>
 
-<span class="comment">&lt;!-- HTML 4.01 Transitional（過去の書き方） --&gt;</span>
-<span class="doctype">&lt;!DOCTYPE HTML PUBLIC
-  "-//W3C//DTD HTML 4.01 Transitional//EN"
-  "http://www.w3.org/TR/html4/loose.dtd"&gt;</span>
-
-<span class="comment">&lt;!-- XHTML 1.0 Strict（過去の書き方） --&gt;</span>
-<span class="doctype">&lt;!DOCTYPE html PUBLIC
-  "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"&gt;</span>
-</pre>
-
-  <table class="ref-table">
-    <thead>
-      <tr><th>DOCTYPE</th><th>バージョン</th><th>特徴</th></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><code>&lt;!DOCTYPE html&gt;</code></td>
-        <td>HTML5（現在）</td>
-        <td>シンプル・短い・推奨</td>
-      </tr>
-      <tr>
-        <td><code>&lt;!DOCTYPE HTML PUBLIC "..."&gt;</code></td>
-        <td>HTML 4.01</td>
-        <td>DTDのURLを指定する長い書き方</td>
-      </tr>
-      <tr>
-        <td><code>&lt;!DOCTYPE html PUBLIC "..."&gt;</code></td>
-        <td>XHTML 1.0</td>
-        <td>XMLベースのHTML。厳密な構文が必要</td>
-      </tr>
-    </tbody>
-  </table>
+  <script>
+    const doctypeExamples = {
+      html5:    `<!DOCTYPE html>`,
+      html401s: `<!DOCTYPE HTML PUBLIC\n  "-//W3C//DTD HTML 4.01//EN"\n  "http://www.w3.org/TR/html4/strict.dtd">`,
+      html401t: `<!DOCTYPE HTML PUBLIC\n  "-//W3C//DTD HTML 4.01 Transitional//EN"\n  "http://www.w3.org/TR/html4/loose.dtd">`,
+      xhtml10:  `<!DOCTYPE html PUBLIC\n  "-//W3C//DTD XHTML 1.0 Strict//EN"\n  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">`,
+    };
+    function selectDoctype(key) {
+      document.querySelectorAll('.doctype-card').forEach(c => c.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+      document.getElementById('doctype-preview').textContent = doctypeExamples[key];
+    }
+  </script>
 
   <div class="warn">
     <strong>⚠️ DOCTYPE宣言がない場合</strong><br>
-    ブラウザが「<strong>後方互換モード（Quirks Mode）</strong>」で動作し、<br>
-    CSSのレイアウトが意図しない表示になることがあります。<br>
+    ブラウザが「<strong>後方互換モード（Quirks Mode）</strong>」で動作し、
+    CSSのレイアウトが意図しない表示になることがあります。
     必ず文書の<strong>1行目</strong>に記述してください。
+  </div>
+  <div class="good">
+    ✅ <strong>試験のポイント</strong><br>
+    ・HTML5 の DOCTYPE は <code>&lt;!DOCTYPE html&gt;</code>（大文字小文字不問）<br>
+    ・DOCTYPE は文書の<strong>1行目</strong>に記述する<br>
+    ・HTML5 という文字列は含まない
   </div>
 </div>
 
 
-<!-- 4. 文字参照 -->
-<h2>④ 文字参照</h2>
-
+<!-- ============================================================ -->
+<!-- PART 5：文字参照 -->
+<!-- ============================================================ -->
+<h2>⑤ 文字参照</h2>
 <div class="note">
-  <strong>ポイント</strong><br>
-  HTMLの特殊文字（<code>&lt;</code> や <code>&amp;</code> など）をそのまま書くとタグと混同されます。<br>
-  <strong>文字参照</strong>を使って安全に表示しましょう。<br>
-  書き方は <strong>名前付き文字参照</strong>（<code>&amp;lt;</code>）と
+  <strong>重要ポイント⑤：HTMLの特殊文字は文字参照で表示する。名前付きと数値の2種類がある</strong><br>
+  HTMLの特殊文字（<code>&lt;</code> や <code>&amp;</code> など）をそのまま書くとタグと混同されます。
+  <strong>名前付き文字参照</strong>（<code>&amp;lt;</code>）と
   <strong>数値文字参照</strong>（<code>&amp;#60;</code> / <code>&amp;#x3C;</code>）の2種類があります。
 </div>
-
 <div class="demo-box">
+
   <table class="ref-table">
     <thead>
       <tr>
@@ -594,37 +837,58 @@
     </tbody>
   </table>
 
-<pre>
-<span class="comment">&lt;!-- 文字参照の使用例 --&gt;</span>
-<span class="tag">&lt;p&gt;</span>HTMLでは <span class="value">&amp;lt;</span>p<span class="value">&amp;gt;</span> のようにタグを書きます。<span class="tag">&lt;/p&gt;</span>
-<span class="comment">&lt;!-- 表示結果：HTMLでは &lt;p&gt; のようにタグを書きます。 --&gt;</span>
-
-<span class="tag">&lt;p&gt;</span>著作権 <span class="value">&amp;copy;</span> 2025 Example Corp.<span class="tag">&lt;/p&gt;</span>
-<span class="comment">&lt;!-- 表示結果：著作権 (c) 2025 Example Corp. --&gt;</span>
-
-<span class="tag">&lt;p&gt;</span>価格：1<span class="value">&amp;nbsp;</span>000円（ノーブレークスペース）<span class="tag">&lt;/p&gt;</span>
-<span class="comment">&lt;!-- 「1」と「000円」の間で改行されない --&gt;</span>
-</pre>
-
-  <div class="demo-box" style="margin-top:14px;">
-    <p><strong>▼ 実際の表示確認</strong></p>
-    <p>タグの書き方：<code>&lt;p&gt;本文&lt;/p&gt;</code></p>
-    <p>数式：1 &lt; 2 &lt; 3 &gt; 0</p>
-    <p>著作権：&copy; 2025 Example Corp.</p>
-    <p>引用：&quot;Hello, World!&quot;</p>
+  <h3>文字参照変換ツール インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#2b6cb0; margin:0 0 10px;">
+      変換したい文字参照を選択すると、3種類の表記と実際の表示を確認できます。
+    </p>
+    <div class="slider-row">
+      <label>文字参照を選択</label>
+      <select id="cr-sel" onchange="updateCharRef()">
+        <option value="lt">&lt;（小なり）</option>
+        <option value="gt">&gt;（大なり）</option>
+        <option value="amp">&amp;（アンパサンド）</option>
+        <option value="quot">&quot;（ダブルクォート）</option>
+        <option value="apos">&apos;（シングルクォート）</option>
+        <option value="nbsp">（ノーブレークスペース）</option>
+        <option value="copy">&copy;（著作権）</option>
+      </select>
+    </div>
+    <div class="charref-result" id="cr-result"></div>
+    <div class="color-code-display" id="cr-code"></div>
   </div>
+  <script>
+    const charRefData = {
+      lt:   { named:'&amp;lt;',   dec:'&amp;#60;',  hex:'&amp;#x3C;', display:'&lt;',   desc:'タグの < と混同を避けるために使用' },
+      gt:   { named:'&amp;gt;',   dec:'&amp;#62;',  hex:'&amp;#x3E;', display:'&gt;',   desc:'タグの > と混同を避けるために使用' },
+      amp:  { named:'&amp;amp;',  dec:'&amp;#38;',  hex:'&amp;#x26;', display:'&amp;',  desc:'文字参照の & 自体をエスケープ' },
+      quot: { named:'&amp;quot;', dec:'&amp;#34;',  hex:'&amp;#x22;', display:'&quot;', desc:'属性値内のダブルクォート' },
+      apos: { named:'&amp;apos;', dec:'&amp;#39;',  hex:'&amp;#x27;', display:"'",      desc:'属性値内のシングルクォート' },
+      nbsp: { named:'&amp;nbsp;', dec:'&amp;#160;', hex:'&amp;#xA0;', display:'（スペース）', desc:'改行されないスペース（ノーブレークスペース）' },
+      copy: { named:'&amp;copy;', dec:'&amp;#169;', hex:'&amp;#xA9;', display:'&copy;', desc:'著作権マーク ©' },
+    };
+    function updateCharRef() {
+      const key  = document.getElementById('cr-sel').value;
+      const data = charRefData[key];
+      document.getElementById('cr-result').innerHTML =
+        `実際の表示：<strong style="font-size:1.4em; color:#2b6cb0;">${data.display}</strong>　${data.desc}`;
+      document.getElementById('cr-code').textContent =
+        `名前付き文字参照 : ${data.named}\n10進数値参照     : ${data.dec}\n16進数値参照     : ${data.hex}`;
+    }
+    updateCharRef();
+  </script>
 </div>
 
 
-<!-- ★★★ 修正箇所1：⑤ コメントセクション ★★★ -->
-<h2>⑤ コメント</h2>
-
+<!-- ============================================================ -->
+<!-- PART 6：コメント -->
+<!-- ============================================================ -->
+<h2>⑥ コメント</h2>
 <div class="note">
-  <strong>ポイント</strong><br>
-  コメントはブラウザに表示されない注釈です。<br>
-  <code>&lt;!--</code> で始まり <code>--&gt;</code> で終わります。
+  <strong>重要ポイント⑥：コメントは <code>&lt;!--</code> で始まり <code>--&gt;</code> で終わる。テキストには制約がある</strong><br>
+  コメントはブラウザに表示されない注釈です。ただしHTML5仕様では
+  コメントのテキスト部分に<strong>いくつかの制約</strong>があります。
 </div>
-
 <div class="demo-box">
 <pre>
 <span class="comment">&lt;!-- これはコメントです。ブラウザには表示されません --&gt;</span>
@@ -636,26 +900,67 @@
 <span class="tag">&lt;p&gt;</span>表示されるテキスト<span class="tag">&lt;/p&gt;</span>
 <span class="comment">&lt;!-- &lt;p&gt;コメントアウトされた段落（表示されない）&lt;/p&gt; --&gt;</span>
 
-<span class="comment">&lt;!-- ハイフン2つ「--」はコメント内に含めることができます --&gt;</span>
+<span class="comment">&lt;!-- ハイフン2つ「--」単体はコメント内に含めることができます --&gt;</span>
 <span class="comment">&lt;!-- 例：2024-04-01 -- 修正履歴のメモ --&gt;</span>
 </pre>
 
-  <!-- ★★★ 修正箇所2：コメントの注意点 warn ブロック ★★★ -->
   <div class="warn">
     <strong>⚠️ コメントの注意点（HTML5仕様）</strong><br><br>
     コメントのテキスト部分には以下の制約があります。<br><br>
     <strong>① コメントテキストは次の文字列で開始できない：</strong><br>
-    　❌ <code>&gt;</code> で始まる　（例：<code>&lt;!-- &gt;コメント --&gt;</code>）<br>
-    　❌ <code>-&gt;</code> で始まる　（例：<code>&lt;!-- -&gt;コメント --&gt;</code>）<br><br>
+    　❌ <code>&gt;</code> で始まる<br>
+    　❌ <code>-&gt;</code> で始まる<br><br>
     <strong>② コメントテキストには次の文字列を含めることができない：</strong><br>
-    　❌ <code>&lt;!--</code> を含む　（コメントの開始記号と混同）<br>
-    　❌ <code>--&gt;</code> を含む　（コメントの終了記号と混同）<br>
+    　❌ <code>&lt;!--</code> を含む<br>
+    　❌ <code>--&gt;</code> を含む<br>
     　❌ <code>--!</code> を含む<br><br>
     <strong>③ コメントテキストは次の文字列で終了できない：</strong><br>
-    　❌ <code>&lt;!-</code> で終わる　（例：<code>&lt;!-- コメント&lt;!- --&gt;</code>）<br><br>
+    　❌ <code>&lt;!-</code> で終わる<br><br>
     ✅ <code>--</code>（ハイフン2つ）はそれ単体であれば使用できます。<br>
     ✅ ブラウザの開発者ツールでは<strong>コメントも見えます</strong>（機密情報を書かないこと）
   </div>
+
+  <h3>コメント検証ツール インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#2b6cb0; margin:0 0 10px;">
+      コメントのテキスト部分（<code>&lt;!--</code> と <code>--&gt;</code> の間の内容）を入力して、
+      正しいかどうかを確認しましょう。
+    </p>
+    <div class="slider-row">
+      <label>コメントテキスト</label>
+      <input type="text" id="comment-input" value="これはコメントです" oninput="checkComment()" placeholder="コメントのテキスト部分を入力">
+    </div>
+    <div class="comment-check-result empty" id="comment-result">入力してください</div>
+    <div class="color-code-display" id="comment-preview">&lt;!-- これはコメントです --&gt;</div>
+  </div>
+  <script>
+    function checkComment() {
+      const text = document.getElementById('comment-input').value;
+      const r    = document.getElementById('comment-result');
+      const prev = document.getElementById('comment-preview');
+      prev.textContent = `<!-- ${text} -->`;
+      if (!text) {
+        r.className = 'comment-check-result empty';
+        r.textContent = '入力してください';
+        return;
+      }
+      let errors = [];
+      if (text.startsWith('>'))   errors.push('テキストが ">" で始まっている → 不正');
+      if (text.startsWith('->'))  errors.push('テキストが "->" で始まっている → 不正');
+      if (text.includes('<!--'))  errors.push('"<!--" を含んでいる → 不正');
+      if (text.includes('-->'))   errors.push('"-->" を含んでいる → 不正');
+      if (text.includes('--!'))   errors.push('"--!" を含んでいる → 不正');
+      if (text.endsWith('<!-'))   errors.push('テキストが "<!-" で終わっている → 不正');
+      if (errors.length > 0) {
+        r.className = 'comment-check-result ng';
+        r.innerHTML = '❌ 不正なコメントです：<br>' + errors.map(e => '・' + e).join('<br>');
+      } else {
+        r.className = 'comment-check-result ok';
+        r.textContent = '✅ 正しいコメントです。';
+      }
+    }
+    checkComment();
+  </script>
 
   <div class="good">
     ✅ <strong>コメントの活用例</strong><br>
@@ -666,102 +971,35 @@
 </div>
 
 
+<!-- ============================================================ -->
 <!-- 演習問題 -->
+<!-- ============================================================ -->
 <div class="quiz-section">
   <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
   <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
 
   <!-- Q1 -->
   <div class="quiz-block">
-    <h3>Q1. 各部の名称（選択）</h3>
-    <p>以下のコードの各部分の名称を選んでください。</p>
-    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.95em;">
-&lt;a href="https://example.com"&gt;リンク&lt;/a&gt;</pre>
-
-    <label>① <code>a</code> の部分の名称：</label>
-    <select id="q1a">
-      <option value="">-- 選択 --</option>
-      <option value="要素名">要素名（タグ名）</option>
-      <option value="属性名">属性名</option>
-      <option value="属性値">属性値</option>
-      <option value="コンテンツ">コンテンツ</option>
-    </select>
-
-    <label>② <code>href</code> の部分の名称：</label>
-    <select id="q1b">
-      <option value="">-- 選択 --</option>
-      <option value="要素名">要素名（タグ名）</option>
-      <option value="属性名">属性名</option>
-      <option value="属性値">属性値</option>
-      <option value="コンテンツ">コンテンツ</option>
-    </select>
-
-    <label>③ <code>"https://example.com"</code> の部分の名称：</label>
-    <select id="q1c">
-      <option value="">-- 選択 --</option>
-      <option value="要素名">要素名（タグ名）</option>
-      <option value="属性名">属性名</option>
-      <option value="属性値">属性値</option>
-      <option value="コンテンツ">コンテンツ</option>
-    </select>
-
-    <label>④ <code>リンク</code> の部分の名称：</label>
-    <select id="q1d">
-      <option value="">-- 選択 --</option>
-      <option value="要素名">要素名（タグ名）</option>
-      <option value="属性名">属性名</option>
-      <option value="属性値">属性値</option>
-      <option value="コンテンツ">コンテンツ</option>
-    </select>
-
-    <br>
-    <button class="btn btn-blue" onclick="checkQ1()">答え合わせ</button>
-    <div class="result-msg" id="q1-result"></div>
-    <script>
-      function checkQ1() {
-        const a = document.getElementById('q1a').value;
-        const b = document.getElementById('q1b').value;
-        const c = document.getElementById('q1c').value;
-        const d = document.getElementById('q1d').value;
-        const r = document.getElementById('q1-result');
-        const correct = { a:'要素名', b:'属性名', c:'属性値', d:'コンテンツ' };
-        const score = [a===correct.a, b===correct.b, c===correct.c, d===correct.d];
-        const count = score.filter(Boolean).length;
-        if (count === 4) {
-          r.className = 'result-msg correct';
-          r.textContent = '✅ 全問正解！各部の名称を完璧に理解しています！';
-        } else {
-          r.className = 'result-msg wrong';
-          r.innerHTML =
-            `❌ ${count}/4 問正解。<br>` +
-            `① ${score[0]?'✅':'❌ 要素名（タグ名）'}　` +
-            `② ${score[1]?'✅':'❌ 属性名'}　` +
-            `③ ${score[2]?'✅':'❌ 属性値'}　` +
-            `④ ${score[3]?'✅':'❌ コンテンツ'}`;
-        }
-      }
-    </script>
-  </div>
-
-  <!-- Q2 -->
-  <div class="quiz-block">
-    <h3>Q2. 正誤問題（○か×を入力）</h3>
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
     <p>
-      HTML5では、<code>&lt;br/ &gt;</code>（スラッシュと&gt;の間に空白あり）は
+      HTML5では、<code>&lt;br /&gt;</code>（スラッシュと&gt;の間に空白あり）は
       正しい空要素の書き方である。
     </p>
     <label>○ または × を入力：</label>
-    <input type="text" id="q2" placeholder="○ または ×" style="max-width:120px;">
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
     <br>
-    <button class="btn btn-blue" onclick="checkQ2()">答え合わせ</button>
-    <div class="result-msg" id="q2-result"></div>
+    <button class="btn-quiz" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
     <script>
-      function checkQ2() {
-        const v = document.getElementById('q2').value.trim();
-        const r = document.getElementById('q2-result');
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
         if (v === '×' || v === 'x' || v === 'X') {
           r.className = 'result-msg correct';
-          r.textContent = '✅ 正解！HTML5では / と > の間に空白を入れることはできません。正しくは <br/> です。';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'HTML5では <code>/</code> と <code>&gt;</code> の間に空白を入れることはできません。<br>' +
+            '正しくは <code>&lt;br&gt;</code> または <code>&lt;br/&gt;</code> です。';
         } else if (v === '○' || v === 'o' || v === 'O') {
           r.className = 'result-msg wrong';
           r.textContent = '❌ 不正解。HTML5では <br /> は不正です。/ と > の間に空白は入れられません。';
@@ -773,87 +1011,76 @@
     </script>
   </div>
 
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合う要素名・文字参照を入力してください。</p>
+
+    <label>① 開始タグと終了タグの両方を省略できる要素を5つ（カンマ区切り）：</label>
+    <input type="text" id="q2a" placeholder="例: aaa, bbb, ccc, ddd, eee">
+
+    <label>② <strong>&lt;</strong>（小なり記号）の名前付き文字参照：</label>
+    <input type="text" id="q2b" placeholder="&amp;xxx;">
+
+    <label>③ <strong>&amp;</strong>（アンパサンド）の名前付き文字参照：</label>
+    <input type="text" id="q2c" placeholder="&amp;xxx;">
+
+    <label>④ <strong>&copy;</strong>（著作権マーク）の名前付き文字参照：</label>
+    <input type="text" id="q2d" placeholder="&amp;xxx;">
+
+    <label>⑤ HTML5のDOCTYPE宣言（完全な形で入力）：</label>
+    <input type="text" id="q2e" placeholder="&lt;!DOCTYPE ...&gt;">
+
+    <label>⑥ コメントの開始記号：</label>
+    <input type="text" id="q2f" placeholder="記号">
+
+    <br>
+    <button class="btn-quiz" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value;
+        const b = document.getElementById('q2b').value.trim();
+        const c = document.getElementById('q2c').value.trim();
+        const d = document.getElementById('q2d').value.trim();
+        const e = document.getElementById('q2e').value.trim().toLowerCase().replace(/\s+/g,' ');
+        const f = document.getElementById('q2f').value.trim();
+        const r = document.getElementById('q2-result');
+
+        const answers5 = ['html','head','body','colgroup','tbody'];
+        const inputs5  = a.split(/[,、\s]+/).map(s => s.trim().toLowerCase()).filter(s => s);
+        const ca = answers5.every(x => inputs5.includes(x)) && inputs5.every(x => answers5.includes(x));
+        const cb = b === '&lt;';
+        const cc = c === '&amp;';
+        const cd = d === '&copy;';
+        const ce = e === '<!doctype html>' || e === '<!doctype html >';
+        const cf = f === '<!--';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！HTML基本構文を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `① ${ca?'✅':'❌ html, head, body, colgroup, tbody'}　` +
+            `② ${cb?'✅':'❌ &amp;lt;'}　` +
+            `③ ${cc?'✅':'❌ &amp;amp;'}　` +
+            `④ ${cd?'✅':'❌ &amp;copy;'}　` +
+            `⑤ ${ce?'✅':'❌ &lt;!DOCTYPE html&gt;'}　` +
+            `⑥ ${cf?'✅':'❌ &lt;!--'}`;
+        }
+      }
+    </script>
+  </div>
+
   <!-- Q3 -->
   <div class="quiz-block">
-    <h3>Q3. 穴埋め問題（要素名を入力）</h3>
+    <h3>Q3. 選択問題</h3>
     <p>
-      開始タグと終了タグの<strong>両方を省略できる</strong>要素を
-      5つすべて答えてください。（順不同・カンマ区切りで入力）
+      HTML5の正しいDOCTYPE宣言はどれですか？
     </p>
-    <label>5つの要素名（例：aaa, bbb, ccc, ddd, eee）：</label>
-    <input type="text" id="q3" placeholder="要素名をカンマ区切りで入力">
-    <br>
-    <button class="btn btn-blue" onclick="checkQ3()">答え合わせ</button>
-    <div class="result-msg" id="q3-result"></div>
-    <script>
-      function checkQ3() {
-        const v = document.getElementById('q3').value;
-        const r = document.getElementById('q3-result');
-        const answers = ['html','head','body','colgroup','tbody'];
-        const inputs = v.split(/[,、\s]+/).map(s => s.trim().toLowerCase()).filter(s => s);
-        const matched = answers.filter(a => inputs.includes(a));
-        const wrong   = inputs.filter(i => !answers.includes(i));
-        if (matched.length === 5 && wrong.length === 0) {
-          r.className = 'result-msg correct';
-          r.textContent = '✅ 完璧！5つすべて正解です！ html / head / body / colgroup / tbody';
-        } else {
-          r.className = 'result-msg wrong';
-          r.innerHTML =
-            `❌ ${matched.length}/5 個正解。<br>` +
-            `正解：html, head, body, colgroup, tbody<br>` +
-            (wrong.length ? `⚠️ 誤った回答：${wrong.join(', ')}` : '');
-        }
-      }
-    </script>
-  </div>
-
-  <!-- Q4 -->
-  <div class="quiz-block">
-    <h3>Q4. 文字参照（入力問題）</h3>
-    <p>以下の文字を名前付き文字参照で表してください。（<code>&amp;</code>と<code>;</code>を含めて入力）</p>
-
-    <label>① <strong>&lt;</strong>（小なり記号）：</label>
-    <input type="text" id="q4a" placeholder="例）&amp;xxx;">
-
-    <label>② <strong>&amp;</strong>（アンパサンド）：</label>
-    <input type="text" id="q4b" placeholder="例）&amp;xxx;">
-
-    <label>③ <strong>&copy;</strong>（著作権マーク）：</label>
-    <input type="text" id="q4c" placeholder="例）&amp;xxx;">
-
-    <br>
-    <button class="btn btn-blue" onclick="checkQ4()">答え合わせ</button>
-    <div class="result-msg" id="q4-result"></div>
-    <script>
-      function checkQ4() {
-        const a = document.getElementById('q4a').value.trim();
-        const b = document.getElementById('q4b').value.trim();
-        const c = document.getElementById('q4c').value.trim();
-        const r = document.getElementById('q4-result');
-        const ca = a === '&lt;';
-        const cb = b === '&amp;';
-        const cc = c === '&copy;';
-        const count = [ca, cb, cc].filter(Boolean).length;
-        if (count === 3) {
-          r.className = 'result-msg correct';
-          r.textContent = '✅ 全問正解！文字参照を正確に覚えています！';
-        } else {
-          r.className = 'result-msg wrong';
-          r.innerHTML =
-            `❌ ${count}/3 問正解。<br>` +
-            `① ${ca ? '✅' : '❌ &amp;lt;'}　` +
-            `② ${cb ? '✅' : '❌ &amp;amp;'}　` +
-            `③ ${cc ? '✅' : '❌ &amp;copy;'}`;
-        }
-      }
-    </script>
-  </div>
-
-  <!-- Q5 -->
-  <div class="quiz-block">
-    <h3>Q5. DOCTYPE宣言（選択問題）</h3>
-    <p>HTML5の正しいDOCTYPE宣言はどれですか？</p>
-    <select id="q5">
+    <select id="q3">
       <option value="">-- 選択してください --</option>
       <option value="a">&lt;!DOCTYPE html&gt;</option>
       <option value="b">&lt;!DOCTYPE HTML5&gt;</option>
@@ -861,15 +1088,19 @@
       <option value="d">&lt;!doctype HTML PUBLIC "html5"&gt;</option>
     </select>
     <br>
-    <button class="btn btn-blue" onclick="checkQ5()">答え合わせ</button>
-    <div class="result-msg" id="q5-result"></div>
+    <button class="btn-quiz" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
     <script>
-      function checkQ5() {
-        const v = document.getElementById('q5').value;
-        const r = document.getElementById('q5-result');
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
         if (v === 'a') {
           r.className = 'result-msg correct';
-          r.textContent = '✅ 正解！HTML5のDOCTYPEはシンプルに <!DOCTYPE html> と書きます。';
+          r.innerHTML =
+            '✅ 正解！HTML5のDOCTYPEは <code>&lt;!DOCTYPE html&gt;</code> です。<br>' +
+            '・大文字小文字は問いません（html / HTML どちらでもOK）<br>' +
+            '・"HTML5" という文字列は含みません<br>' +
+            '・<code>!</code> を忘れずに';
         } else if (v === '') {
           r.className = 'result-msg info';
           r.textContent = '⚠️ 選択肢を選んでください。';
@@ -877,64 +1108,106 @@
           r.className = 'result-msg wrong';
           r.innerHTML =
             '❌ 不正解。正解は <code>&lt;!DOCTYPE html&gt;</code> です。<br>' +
-            '・DOCTYPE は大文字小文字を区別しません（html / HTML どちらでもOK）<br>' +
-            '・HTML5 という文字列は含みません<br>' +
-            '・! を忘れずに';
+            '・"HTML5" という文字列は含みません<br>' +
+            '・<code>!</code> が必要です（<code>&lt;DOCTYPE&gt;</code> は不正）<br>' +
+            '・大文字小文字は問いません';
         }
       }
     </script>
   </div>
 
-  <!-- ★★★ 修正箇所3：Q6 コメントの正誤問題 ★★★ -->
+  <!-- Q4 -->
   <div class="quiz-block">
-    <h3>Q6. コメントの正誤（選択問題）</h3>
-    <p>HTMLコメントとして<strong>正しくないもの</strong>をすべて選んでください。</p>
+    <h3>Q4. 選択問題</h3>
+    <p>
+      各部の名称について、<code>&lt;a href="https://example.com"&gt;リンク&lt;/a&gt;</code> の
+      <code>href</code> の部分の名称として正しいものはどれですか？
+    </p>
+    <select id="q4">
+      <option value="">-- 選択してください --</option>
+      <option value="a">要素名（タグ名）</option>
+      <option value="b">属性名</option>
+      <option value="c">属性値</option>
+      <option value="d">コンテンツ</option>
+    </select>
+    <br>
+    <button class="btn-quiz" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const v = document.getElementById('q4').value;
+        const r = document.getElementById('q4-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            '<code>href</code> は<strong>属性名</strong>です。<br>' +
+            '各部の名称：<br>' +
+            '・<code>a</code> → 要素名（タグ名）<br>' +
+            '・<code>href</code> → 属性名<br>' +
+            '・<code>"https://example.com"</code> → 属性値<br>' +
+            '・<code>リンク</code> → コンテンツ';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<code>href</code> は<strong>属性名</strong>です。<br>' +
+            '・要素名は <code>a</code>（タグ名）<br>' +
+            '・属性値は <code>"https://example.com"</code>（= の後の値）<br>' +
+            '・コンテンツは <code>リンク</code>（開始タグと終了タグの間のテキスト）';
+        }
+      }
+    </script>
+  </div>
 
-    <label>
-      <input type="checkbox" id="q6a">
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. 正誤チェックボックス問題</h3>
+    <p>HTMLコメントとして<strong>正しくないもの</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5a">
       ① <code>&lt;!-- これはコメントです --&gt;</code>
     </label>
-    <label>
-      <input type="checkbox" id="q6b">
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5b">
       ② <code>&lt;!-- 修正日時 2024-04-01 -- 担当：山田 --&gt;</code>
     </label>
-    <label>
-      <input type="checkbox" id="q6c">
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5c">
       ③ <code>&lt;!-- &gt; ここから始まるコメント --&gt;</code>
     </label>
-    <label>
-      <input type="checkbox" id="q6d">
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5d">
       ④ <code>&lt;!-- -&gt; ここから始まるコメント --&gt;</code>
     </label>
-    <label>
-      <input type="checkbox" id="q6e">
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5e">
       ⑤ <code>&lt;!-- コメント内に &lt;!-- を含む --&gt;</code>
     </label>
-    <label>
-      <input type="checkbox" id="q6f">
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5f">
       ⑥ <code>&lt;!-- コメント内に --! を含む --&gt;</code>
     </label>
-
     <br>
-    <button class="btn btn-blue" onclick="checkQ6()">答え合わせ</button>
-    <div class="result-msg" id="q6-result"></div>
+    <button class="btn-quiz" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
     <script>
-      function checkQ6() {
-        const r = document.getElementById('q6-result');
+      function checkQ5() {
+        const r = document.getElementById('q5-result');
         const checks = {
-          a: document.getElementById('q6a').checked,
-          b: document.getElementById('q6b').checked,
-          c: document.getElementById('q6c').checked,
-          d: document.getElementById('q6d').checked,
-          e: document.getElementById('q6e').checked,
-          f: document.getElementById('q6f').checked,
+          a: document.getElementById('q5a').checked,
+          b: document.getElementById('q5b').checked,
+          c: document.getElementById('q5c').checked,
+          d: document.getElementById('q5d').checked,
+          e: document.getElementById('q5e').checked,
+          f: document.getElementById('q5f').checked,
         };
         // 正解：不正なのは ③④⑤⑥（c, d, e, f）
         // ①は正しい、②は「--」単体なので正しい
         const correct = { a:false, b:false, c:true, d:true, e:true, f:true };
-        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
-        const allCorrect = results.every(Boolean);
-
+        const allCorrect = Object.keys(correct).every(k => checks[k] === correct[k]);
         if (allCorrect) {
           r.className = 'result-msg correct';
           r.innerHTML =
@@ -961,17 +1234,94 @@
     </script>
   </div>
 
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. コード穴埋め問題</h3>
+    <p><code>__A__</code> 〜 <code>__F__</code> に適切な値・記述を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+&lt;!-- A：HTML5のDOCTYPE宣言 --&gt;
+__A__
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+  &lt;!-- B：文字コードをUTF-8に指定するmeta要素 --&gt;
+  &lt;meta __B__="UTF-8"&gt;
+  &lt;title&gt;サンプル&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;!-- C：小なり記号 &lt; を文字参照で表示 --&gt;
+  &lt;p&gt;比較：1 __C__ 2&lt;/p&gt;
+
+  &lt;!-- D：著作権マークを文字参照で表示 --&gt;
+  &lt;p&gt;__D__ 2025 Example&lt;/p&gt;
+
+  &lt;!-- E：改行を表す空要素（スラッシュなし） --&gt;
+  &lt;p&gt;1行目__E__2行目&lt;/p&gt;
+
+  &lt;!-- F：コメントの終了記号 --&gt;
+  &lt;!-- これはコメントです __F__
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+    <label>A（DOCTYPE宣言）：</label>
+    <input type="text" id="q6a" placeholder="&lt;!DOCTYPE ...&gt;">
+    <label>B（charset属性名）：</label>
+    <input type="text" id="q6b" placeholder="属性名">
+    <label>C（小なり記号の文字参照）：</label>
+    <input type="text" id="q6c" placeholder="&amp;xxx;">
+    <label>D（著作権マークの文字参照）：</label>
+    <input type="text" id="q6d" placeholder="&amp;xxx;">
+    <label>E（改行の空要素）：</label>
+    <input type="text" id="q6e" placeholder="&lt;xxx&gt;">
+    <label>F（コメントの終了記号）：</label>
+    <input type="text" id="q6f" placeholder="記号">
+    <br>
+    <button class="btn-quiz" onclick="checkQ6()">答え合わせ</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const a = document.getElementById('q6a').value.trim().toLowerCase().replace(/\s+/g,' ');
+        const b = document.getElementById('q6b').value.trim().toLowerCase();
+        const c = document.getElementById('q6c').value.trim();
+        const d = document.getElementById('q6d').value.trim();
+        const e = document.getElementById('q6e').value.trim().toLowerCase().replace(/\s/g,'');
+        const f = document.getElementById('q6f').value.trim();
+        const r = document.getElementById('q6-result');
+        const ca = a === '<!doctype html>' || a === '<!doctype html >';
+        const cb = b === 'charset';
+        const cc = c === '&lt;';
+        const cd = d === '&copy;';
+        const ce = e === '<br>' || e === '<br/>';
+        const cf = f === '-->';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！HTML基本構文の記述を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca?'✅':'❌ &lt;!DOCTYPE html&gt;'}　` +
+            `B: ${cb?'✅':'❌ charset'}　` +
+            `C: ${cc?'✅':'❌ &amp;lt;'}　` +
+            `D: ${cd?'✅':'❌ &amp;copy;'}　` +
+            `E: ${ce?'✅':'❌ &lt;br&gt;'}　` +
+            `F: ${cf?'✅':'❌ -->'}`;
+        }
+      }
+    </script>
+  </div>
+
   <!-- Q7 -->
   <div class="quiz-block">
-    <h3>Q7. 総合問題（記述）</h3>
+    <h3>Q7. 記述問題</h3>
     <p>
-      <code>&lt;p&gt;</code> 要素のタグ省略ルールについて説明し、<br>
+      <code>&lt;p&gt;</code> 要素のタグ省略ルールについて説明し、
       <code>&lt;html&gt;</code> 要素との違いを述べてください。
     </p>
     <label>あなたの解答：</label>
     <textarea id="q7" rows="4" placeholder="自由に記述してください..."></textarea>
     <br>
-    <button class="btn btn-blue" onclick="checkQ7()">模範解答を見る</button>
+    <button class="btn-quiz" onclick="checkQ7()">模範解答を見る</button>
     <div class="result-msg" id="q7-result"></div>
     <script>
       function checkQ7() {
@@ -996,7 +1346,6 @@
 
 <!-- まとめ表 -->
 <h2>📌 重要ポイント まとめ</h2>
-<!-- ★★★ 修正箇所4：まとめ表のコメント行 ★★★ -->
 <table class="summary">
   <thead>
     <tr><th>項目</th><th>ルール・ポイント</th></tr>
@@ -1004,7 +1353,7 @@
   <tbody>
     <tr>
       <td><strong>空要素の書き方</strong></td>
-      <td><code>&lt;br&gt;</code> でも <code>&lt;br/&gt;</code> でもOK。ただし <code>&lt;br/ &gt;</code>（空白あり）は不正</td>
+      <td><code>&lt;br&gt;</code> でも <code>&lt;br/&gt;</code> でもOK。ただし <code>&lt;br /&gt;</code>（空白あり）は不正</td>
     </tr>
     <tr>
       <td><strong>空要素の終了タグ</strong></td>
