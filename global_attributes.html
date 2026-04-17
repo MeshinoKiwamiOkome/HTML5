@@ -20,7 +20,7 @@
     h3 { color: #276749; margin-top: 24px; }
 
     code {
-      background: #edf2f7;
+      background: #ebf8ff;
       padding: 2px 6px;
       border-radius: 4px;
       font-size: 0.93em;
@@ -40,6 +40,9 @@
     pre .tag     { color: #90cdf4; }
     pre .attr    { color: #fbd38d; }
     pre .value   { color: #fc8181; }
+    pre .keyword { color: #b794f4; }
+    pre .func    { color: #fbd38d; }
+    pre .prop    { color: #90cdf4; }
 
     .note {
       background: #fff;
@@ -51,7 +54,6 @@
       margin-bottom: 14px;
     }
     .note strong { color: #2b6cb0; }
-
     .warn {
       background: #fffaf0;
       border: 1px solid #f6ad55;
@@ -63,7 +65,6 @@
       margin: 14px 0;
     }
     .warn strong { color: #c05621; }
-
     .good {
       background: #f0fff4;
       border: 1px solid #68d391;
@@ -74,7 +75,6 @@
       color: #276749;
       margin: 14px 0;
     }
-
     .demo-box {
       background: #fff;
       border: 1px solid #bee3f8;
@@ -83,6 +83,80 @@
       margin: 12px 0 28px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.06);
     }
+
+    /* インタラクティブデモ共通 */
+    .interactive-demo {
+      background: #ebf8ff;
+      border: 1px solid #bee3f8;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .slider-row label {
+      font-size: 0.85em;
+      font-weight: bold;
+      min-width: 160px;
+      color: #2b6cb0;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .slider-row input[type="text"] {
+      border: 2px solid #bee3f8;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.88em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      flex: 1; min-width: 100px;
+      outline: none;
+      transition: border-color 0.2s;
+      background: #fff; color: #2d3748;
+    }
+    .slider-row input[type="text"]:focus { border-color: #4299e1; }
+    .slider-row select {
+      border: 2px solid #bee3f8;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.85em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #2d3748; background: #fff;
+      cursor: pointer; flex: 1;
+    }
+    .slider-row select:focus { border-color: #4299e1; outline: none; }
+    .color-code-display {
+      background: #1a202c;
+      color: #68d391;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.84em;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      min-height: 48px;
+    }
+
+    /* ボタン */
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+    .btn {
+      display: inline-block;
+      padding: 8px 18px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.88em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.82; }
+    .btn-blue  { background: #4299e1; color: #fff; }
+    .btn-green { background: #48bb78; color: #fff; }
+    .btn-gray  { background: #e2e8f0; color: #4a5568; }
 
     /* 属性vs要素 比較図 */
     .compare-grid {
@@ -98,11 +172,7 @@
       padding: 14px 16px;
       font-size: 0.9em;
     }
-    .compare-box h4 {
-      margin: 0 0 10px;
-      color: #2b6cb0;
-      font-size: 1em;
-    }
+    .compare-box h4 { margin: 0 0 10px; color: #2b6cb0; font-size: 1em; }
 
     /* グローバル属性一覧カード */
     .attr-grid {
@@ -113,11 +183,14 @@
     }
     .attr-card {
       background: #ebf8ff;
-      border: 1px solid #bee3f8;
+      border: 2px solid #bee3f8;
       border-radius: 8px;
       padding: 12px 14px;
-      font-size: 0.88em;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
     }
+    .attr-card:hover { background: #bee3f8; border-color: #4299e1; }
+    .attr-card.selected { background: #bee3f8; border: 2px solid #2b6cb0; }
     .attr-card .attr-name {
       font-family: 'Consolas', 'Monaco', monospace;
       font-weight: bold;
@@ -125,12 +198,23 @@
       font-size: 1em;
       margin-bottom: 4px;
     }
-    .attr-card .attr-desc {
-      color: #4a5568;
-      font-size: 0.9em;
+    .attr-card .attr-desc { color: #4a5568; font-size: 0.88em; }
+
+    /* class ビルダー */
+    .class-preview {
+      background: #fff;
+      border: 2px dashed #bee3f8;
+      border-radius: 8px;
+      padding: 14px;
+      margin-top: 10px;
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
-    /* tabindexデモ */
+    /* tabindex デモ */
     .tabindex-demo {
       display: flex;
       flex-wrap: wrap;
@@ -155,7 +239,31 @@
       box-shadow: 0 0 0 3px rgba(66,153,225,0.4);
     }
 
-    /* data-*デモ */
+    /* tabindex シミュレーター */
+    .tabindex-sim-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      border: 1px solid #bee3f8;
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      font-size: 0.88em;
+    }
+    .tabindex-sim-item .focus-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.78em;
+      font-weight: bold;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .focus-badge.tab-yes  { background: #c6f6d5; color: #276749; }
+    .focus-badge.tab-no   { background: #fed7d7; color: #9b2335; }
+    .focus-badge.tab-js   { background: #bee3f8; color: #2b6cb0; }
+
+    /* data-* デモ */
     .data-demo {
       display: flex;
       flex-wrap: wrap;
@@ -179,10 +287,25 @@
       color: #68d391;
       border-radius: 6px;
       font-family: 'Consolas', 'Monaco', monospace;
-      font-size: 0.9em;
+      font-size: 0.88em;
       min-height: 48px;
+      white-space: pre-wrap;
     }
 
+    /* data-* 命名チェッカー */
+    .data-check-result {
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.88em;
+      margin-top: 8px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      min-height: 40px;
+    }
+    .data-check-result.ok  { background: #c6f6d5; color: #276749; }
+    .data-check-result.ng  { background: #fed7d7; color: #9b2335; }
+    .data-check-result.empty { background: #ebf8ff; color: #2b6cb0; }
+
+    /* テーブル */
     table.ref-table {
       border-collapse: collapse;
       width: 100%;
@@ -196,7 +319,7 @@
       border: 1px solid #bee3f8;
       padding: 10px 14px;
       text-align: left;
-      font-size: 0.93em;
+      font-size: 0.9em;
     }
     table.ref-table thead tr { background: #2b6cb0; color: #fff; }
     table.ref-table tbody tr:nth-child(even) { background: #ebf8ff; }
@@ -245,7 +368,7 @@
       margin: 6px 0;
     }
     .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
-    .btn {
+    .btn-quiz {
       display: inline-block;
       padding: 9px 20px;
       border-radius: 6px;
@@ -255,9 +378,10 @@
       font-weight: bold;
       transition: opacity 0.2s;
       margin-top: 8px;
+      background: #4299e1;
+      color: #fff;
     }
-    .btn:hover { opacity: 0.85; }
-    .btn-blue { background: #4299e1; color: #fff; }
+    .btn-quiz:hover { opacity: 0.85; }
     .result-msg {
       margin-top: 10px;
       padding: 10px 14px;
@@ -269,6 +393,7 @@
     .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
     .result-msg.info    { background: #bee3f8; color: #2b6cb0; display: block; }
 
+    /* まとめ表 */
     table.summary {
       border-collapse: collapse;
       width: 100%;
@@ -282,42 +407,35 @@
       border: 1px solid #bee3f8;
       padding: 10px 14px;
       text-align: left;
-      font-size: 0.93em;
+      font-size: 0.9em;
     }
     table.summary thead tr { background: #2b6cb0; color: #fff; }
     table.summary tbody tr:nth-child(even) { background: #ebf8ff; }
 
     /* ===== レスポンシブ ===== */
-
-    /* スマホ縦向き（〜600px） */
     @media (max-width: 600px) {
       body { font-size: 0.82em; }
       h2 { margin-top: 32px; }
-      .demo-box { padding: 14px 14px; }
+      .demo-box { padding: 14px; }
       .compare-grid { grid-template-columns: 1fr; }
-      .attr-grid { grid-template-columns: 1fr 1fr; }
-      .tabindex-demo { gap: 8px; }
-      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.85em; }
-      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.85em; }
-      .quiz-section { padding: 16px 16px; }
-      .quiz-block { padding: 14px 14px; }
+      .attr-grid { grid-template-columns: repeat(2, 1fr); }
+      .slider-row label { min-width: 110px; }
+      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.82em; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px; }
+      .quiz-block { padding: 14px; }
       .quiz-block input[type="text"],
       .quiz-block select,
       .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
     }
-
-    /* スマホ横向き（landscape・高さが500px以下） */
     @media (max-height: 500px) and (orientation: landscape) {
       body { font-size: 0.8em; }
       h2 { margin-top: 24px; }
       .demo-box { padding: 12px 14px; }
-      .compare-grid { grid-template-columns: 1fr 1fr; }
-      .attr-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
     }
-
-    /* タブレット縦向き（601px〜768px） */
     @media (min-width: 601px) and (max-width: 768px) {
       body { font-size: 0.9em; }
+      .attr-grid { grid-template-columns: repeat(3, 1fr); }
     }
   </style>
 </head>
@@ -327,15 +445,16 @@
 <p>すべてのHTML要素に共通して使えるグローバル属性の役割と使い方を学びましょう。</p>
 
 
-<!-- 0. 属性と要素のおさらい -->
+<!-- ============================================================ -->
+<!-- PART 1：属性と要素のおさらい -->
+<!-- ============================================================ -->
 <h2>① 属性と要素のおさらい</h2>
-
 <div class="note">
-  <strong>重要事項：属性と要素の違い</strong><br>
+  <strong>重要ポイント①：属性は開始タグ内に記述する追加情報。要素はタグ全体のこと</strong><br>
   グローバル属性を学ぶ前に、「要素」と「属性」の違いをしっかり確認しましょう。
 </div>
-
 <div class="demo-box">
+
   <div class="compare-grid">
     <div class="compare-box">
       <h4>🧱 要素（Element）</h4>
@@ -363,8 +482,6 @@
    <span class="attr">target</span>=<span class="value">"_blank"</span><span class="tag">&gt;</span>
   リンクテキスト
 <span class="tag">&lt;/a&gt;</span>
-
-<span class="comment">&lt;!-- ↑ a要素に4つの属性が指定されている --&gt;</span>
 <span class="comment">&lt;!-- href / class / id / target はすべて「属性」 --&gt;</span>
 <span class="comment">&lt;!-- "https://..." / "btn-primary" などは「属性値」 --&gt;</span>
 </pre>
@@ -377,143 +494,259 @@
     ・値を持たない<strong>論理属性</strong>（<code>disabled</code>、<code>checked</code> など）は
     値を省略して属性名だけ書けます
   </div>
-</div>
 
-
-<!-- 1. グローバル属性とは -->
-<h2>② グローバル属性とは</h2>
-
-<div class="note">
-  <strong>ポイント</strong><br>
-  ・<strong>グローバル属性</strong>とは、<strong>すべてのHTML要素に共通して指定できる属性</strong>のことです。<br>
-  ・要素固有の属性（<code>href</code> は <code>a</code> 要素専用など）とは異なります。<br>
-  ・代表的なグローバル属性を以下に示します。
-</div>
-
-<div class="demo-box">
-  <div class="attr-grid">
-    <div class="attr-card">
-      <div class="attr-name">class</div>
-      <div class="attr-desc">種類・分類を示す名前</div>
+  <h3>属性ビルダー インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#2b6cb0; margin:0 0 10px;">
+      要素名と属性を入力して、タグの構造をリアルタイムで確認しましょう。
+    </p>
+    <div class="slider-row">
+      <label>要素名</label>
+      <select id="ab-tag" onchange="updateAttrBuilder()">
+        <option value="a">a（リンク）</option>
+        <option value="p">p（段落）</option>
+        <option value="div">div</option>
+        <option value="button">button</option>
+        <option value="input">input（空要素）</option>
+      </select>
     </div>
-    <div class="attr-card">
-      <div class="attr-name">id</div>
-      <div class="attr-desc">固有の識別名</div>
+    <div class="slider-row">
+      <label>class 属性値</label>
+      <input type="text" id="ab-class" value="btn btn-primary" oninput="updateAttrBuilder()" placeholder="スペース区切りで複数指定可">
     </div>
-    <div class="attr-card">
-      <div class="attr-name">lang</div>
-      <div class="attr-desc">言語コード</div>
+    <div class="slider-row">
+      <label>id 属性値</label>
+      <input type="text" id="ab-id" value="submit-btn" oninput="updateAttrBuilder()" placeholder="文書内で一意な値">
     </div>
-    <div class="attr-card">
-      <div class="attr-name">title</div>
-      <div class="attr-desc">補足情報・ツールチップ</div>
+    <div class="slider-row">
+      <label>コンテンツ</label>
+      <input type="text" id="ab-content" value="送信する" oninput="updateAttrBuilder()" placeholder="（空要素は不要）">
     </div>
-    <div class="attr-card">
-      <div class="attr-name">dir</div>
-      <div class="attr-desc">テキスト方向</div>
-    </div>
-    <div class="attr-card">
-      <div class="attr-name">tabindex</div>
-      <div class="attr-desc">タブ順序</div>
-    </div>
-    <div class="attr-card">
-      <div class="attr-name">style</div>
-      <div class="attr-desc">インラインCSS</div>
-    </div>
-    <div class="attr-card">
-      <div class="attr-name">hidden</div>
-      <div class="attr-desc">要素を非表示にする</div>
-    </div>
-    <div class="attr-card">
-      <div class="attr-name">data-*</div>
-      <div class="attr-desc">カスタムデータ属性</div>
-    </div>
-    <div class="attr-card">
-      <div class="attr-name">contenteditable</div>
-      <div class="attr-desc">編集可能にする</div>
-    </div>
-    <div class="attr-card">
-      <div class="attr-name">draggable</div>
-      <div class="attr-desc">ドラッグ可否</div>
-    </div>
-    <div class="attr-card">
-      <div class="attr-name">accesskey</div>
-      <div class="attr-desc">キーボードショートカット</div>
-    </div>
+    <div class="color-code-display" id="ab-preview"></div>
   </div>
+  <script>
+    const voidTags = ['area','base','br','col','embed','hr','img','input','link','meta','param','source','track','wbr'];
+    function updateAttrBuilder() {
+      const tag     = document.getElementById('ab-tag').value;
+      const cls     = document.getElementById('ab-class').value.trim();
+      const id      = document.getElementById('ab-id').value.trim();
+      const content = document.getElementById('ab-content').value;
+      const isVoid  = voidTags.includes(tag);
+      let code = `<${tag}`;
+      if (cls) code += `\n   class="${cls}"`;
+      if (id)  code += `\n   id="${id}"`;
+      if (isVoid) {
+        code += `>`;
+        code += `\n← 空要素：コンテンツ・終了タグなし`;
+      } else {
+        code += `>`;
+        code += content ? content : '（コンテンツ）';
+        code += `</${tag}>`;
+      }
+      if (cls.split(' ').length > 1) {
+        code += `\n\n→ class に ${cls.split(' ').length}個の値をスペース区切りで指定`;
+      }
+      document.getElementById('ab-preview').textContent = code;
+    }
+    updateAttrBuilder();
+  </script>
 </div>
 
 
-<!-- 2. class属性 -->
-<h2>③ class属性</h2>
-
+<!-- ============================================================ -->
+<!-- PART 2：グローバル属性一覧 -->
+<!-- ============================================================ -->
+<h2>② グローバル属性とは</h2>
 <div class="note">
-  <strong>ポイント①：class属性の値には「種類や分類を示す名前」を指定する</strong><br>
-  ・<code>class</code> 属性はCSSのスタイル適用やJavaScriptの操作対象を指定するために使います。<br>
-  ・<strong>複数の要素に同じclass名を指定できます</strong>（id属性との大きな違い）。<br>
-  ・1つの要素に<strong>複数のclass名をスペース区切りで指定できます</strong>。
+  <strong>重要ポイント②：グローバル属性はすべてのHTML要素に共通して指定できる属性</strong><br>
+  ・<strong>グローバル属性</strong>とは、<strong>すべてのHTML要素に共通して指定できる属性</strong>のことです<br>
+  ・要素固有の属性（<code>href</code> は <code>a</code> 要素専用など）とは異なります
+</div>
+<div class="demo-box">
+
+  <h3>グローバル属性セレクター インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#2b6cb0; margin:0 0 10px;">
+      カードをクリックして各グローバル属性の詳細を確認しましょう。
+    </p>
+    <div class="attr-grid" id="attr-grid">
+      <div class="attr-card selected" onclick="selectAttr('class')">
+        <div class="attr-name">class</div>
+        <div class="attr-desc">種類・分類を示す名前</div>
+      </div>
+      <div class="attr-card" onclick="selectAttr('id')">
+        <div class="attr-name">id</div>
+        <div class="attr-desc">固有の識別名</div>
+      </div>
+      <div class="attr-card" onclick="selectAttr('lang')">
+        <div class="attr-name">lang</div>
+        <div class="attr-desc">言語コード</div>
+      </div>
+      <div class="attr-card" onclick="selectAttr('title')">
+        <div class="attr-name">title</div>
+        <div class="attr-desc">補足情報・ツールチップ</div>
+      </div>
+      <div class="attr-card" onclick="selectAttr('dir')">
+        <div class="attr-name">dir</div>
+        <div class="attr-desc">テキスト方向</div>
+      </div>
+      <div class="attr-card" onclick="selectAttr('tabindex')">
+        <div class="attr-name">tabindex</div>
+        <div class="attr-desc">タブ順序</div>
+      </div>
+      <div class="attr-card" onclick="selectAttr('style')">
+        <div class="attr-name">style</div>
+        <div class="attr-desc">インラインCSS</div>
+      </div>
+      <div class="attr-card" onclick="selectAttr('hidden')">
+        <div class="attr-name">hidden</div>
+        <div class="attr-desc">要素を非表示にする</div>
+      </div>
+      <div class="attr-card" onclick="selectAttr('data')">
+        <div class="attr-name">data-*</div>
+        <div class="attr-desc">カスタムデータ属性</div>
+      </div>
+      <div class="attr-card" onclick="selectAttr('contenteditable')">
+        <div class="attr-name">contenteditable</div>
+        <div class="attr-desc">編集可能にする</div>
+      </div>
+      <div class="attr-card" onclick="selectAttr('draggable')">
+        <div class="attr-name">draggable</div>
+        <div class="attr-desc">ドラッグ可否</div>
+      </div>
+      <div class="attr-card" onclick="selectAttr('accesskey')">
+        <div class="attr-name">accesskey</div>
+        <div class="attr-desc">キーボードショートカット</div>
+      </div>
+    </div>
+    <div class="color-code-display" id="attr-info"></div>
+  </div>
+  <script>
+    const attrData = {
+      class:          { ex: `<p class="highlight">テキスト</p>\n<button class="btn btn-primary btn-large">送信</button>`, note: '複数要素に同じ値OK。スペース区切りで複数値指定可。CSSは .クラス名' },
+      id:             { ex: `<h2 id="section-intro">はじめに</h2>\n<a href="#section-intro">「はじめに」へ移動</a>`, note: '文書内で一意（重複不可）。ページ内リンクのターゲット。CSSは #id名' },
+      lang:           { ex: `<html lang="ja">\n<span lang="en">English text</span>`, note: 'BCP 47言語タグ（ja / en / zh-CN など）。スクリーンリーダー・SEOに影響' },
+      title:          { ex: `<abbr title="HyperText Markup Language">HTML</abbr>\n<a href="/" title="ホームページへ戻る">ホーム</a>`, note: 'マウスオーバーでツールチップ表示。スマホでは表示されない' },
+      dir:            { ex: `<p dir="ltr">Left to Right</p>\n<p dir="rtl">مرحبا بالعالم</p>\n<p dir="auto">自動判定</p>`, note: 'ltr（左→右）/ rtl（右→左）/ auto（自動判定）' },
+      tabindex:       { ex: `<div tabindex="0">Tabキーでフォーカス可能</div>\n<div tabindex="-1" id="modal">JSでのみフォーカス可</div>`, note: '0：通常順序に追加 / -1：TabキーNG・JSでフォーカス可 / 正の値：非推奨' },
+      style:          { ex: `<p style="color: #2b6cb0; font-weight: bold;">インラインスタイル</p>`, note: 'インラインCSSを直接記述。外部CSSより優先度が高い。保守性の観点から多用は避ける' },
+      hidden:         { ex: `<div hidden>この要素は表示されない</div>\n<p>この段落は表示される</p>`, note: '論理属性。要素を非表示にする。display:noneと同等。JSで動的に表示/非表示を切り替えられる' },
+      data:           { ex: `<button data-user-id="123" data-action="delete">削除</button>\n// JS: btn.dataset.userId → "123"`, note: 'data-で始まる任意名。大文字不可。ハイフンはキャメルケースに変換される' },
+      contenteditable:{ ex: `<div contenteditable="true">クリックして編集できます</div>`, note: '"true"で編集可能、"false"で編集不可。リッチテキストエディタの実装に使われる' },
+      draggable:      { ex: `<div draggable="true">ドラッグできます</div>\n<div draggable="false">ドラッグできません</div>`, note: '"true"でドラッグ可能。Drag and Drop APIと組み合わせて使う' },
+      accesskey:      { ex: `<button accesskey="s">保存（Alt+S）</button>`, note: 'キーボードショートカットキーを指定。ブラウザ・OSによって動作が異なる' },
+    };
+    function selectAttr(key) {
+      document.querySelectorAll('.attr-card').forEach(c => c.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+      const d = attrData[key];
+      document.getElementById('attr-info').textContent =
+        `使用例:\n${d.ex}\n\nポイント: ${d.note}`;
+    }
+    selectAttr('class');
+  </script>
 </div>
 
-<div class="demo-box">
-<pre>
-<span class="comment">&lt;!-- 基本的な使い方 --&gt;</span>
-<span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="value">"highlight"</span><span class="tag">&gt;</span>強調テキスト<span class="tag">&lt;/p&gt;</span>
-<span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="value">"highlight"</span><span class="tag">&gt;</span>同じclassを複数要素に指定できる<span class="tag">&lt;/p&gt;</span>
 
-<span class="comment">&lt;!-- 複数のclass名をスペース区切りで指定 --&gt;</span>
+<!-- ============================================================ -->
+<!-- PART 3：class 属性 -->
+<!-- ============================================================ -->
+<h2>③ class 属性</h2>
+<div class="note">
+  <strong>重要ポイント③：class 属性の値には「種類や分類を示す名前」を指定する。複数要素に同じ値OK</strong><br>
+  ・<code>class</code> 属性はCSSのスタイル適用やJavaScriptの操作対象を指定するために使います<br>
+  ・<strong>複数の要素に同じclass名を指定できます</strong>（id属性との大きな違い）<br>
+  ・1つの要素に<strong>複数のclass名をスペース区切りで指定できます</strong>
+</div>
+<div class="demo-box">
+
+<pre>
+<span class="comment">&lt;!-- 複数要素に同じclass名を指定できる --&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="value">"highlight"</span><span class="tag">&gt;</span>強調テキスト1<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="value">"highlight"</span><span class="tag">&gt;</span>強調テキスト2<span class="tag">&lt;/p&gt;</span>
+
+<span class="comment">&lt;!-- スペース区切りで複数のclass名を指定 --&gt;</span>
 <span class="tag">&lt;button</span> <span class="attr">class</span>=<span class="value">"btn btn-primary btn-large"</span><span class="tag">&gt;</span>
   送信する
 <span class="tag">&lt;/button&gt;</span>
 
 <span class="comment">&lt;!-- CSSでの参照（.クラス名） --&gt;</span>
-<span class="comment">&lt;!-- .highlight { background: yellow; } --&gt;</span>
-<span class="comment">&lt;!-- .btn-primary { background: #4299e1; color: #fff; } --&gt;</span>
+<span class="comment">/* .highlight { background: yellow; } */</span>
+<span class="comment">/* .btn-primary { background: #4299e1; color: #fff; } */</span>
 
 <span class="comment">&lt;!-- JavaScriptでの参照 --&gt;</span>
-<span class="comment">&lt;!-- document.querySelectorAll('.highlight') --&gt;</span>
+<span class="comment">/* document.querySelectorAll('.highlight') */</span>
+<span class="comment">/* el.classList.add('active') */</span>
+<span class="comment">/* el.classList.remove('hidden') */</span>
 </pre>
 
+  <h3>class 属性ビルダー インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#2b6cb0; margin:0 0 10px;">
+      class 名を入力してスペース区切りで複数指定できることを確認しましょう。
+    </p>
+    <div class="slider-row">
+      <label>class 属性値</label>
+      <input type="text" id="class-input" value="btn btn-primary btn-large"
+             oninput="updateClassBuilder()" placeholder="スペース区切りで複数指定">
+    </div>
+    <div class="class-preview" id="class-preview"></div>
+    <div class="color-code-display" id="class-code"></div>
+  </div>
+  <script>
+    function updateClassBuilder() {
+      const val     = document.getElementById('class-input').value;
+      const classes = val.trim().split(/\s+/).filter(s => s);
+      const preview = document.getElementById('class-preview');
+      const code    = document.getElementById('class-code');
+      preview.innerHTML = classes.length
+        ? classes.map(c =>
+            `<span style="background:#ebf8ff; border:1px solid #bee3f8; border-radius:4px; padding:3px 10px; font-family:monospace; font-size:0.85em; color:#2b6cb0;">${c}</span>`
+          ).join('')
+        : '<span style="color:#718096; font-size:0.85em;">（class名を入力してください）</span>';
+      code.textContent =
+        `<button class="${val}">\n  送信する\n</button>\n\n` +
+        `→ class名の数: ${classes.length}個\n` +
+        `→ CSSセレクタ: ${classes.map(c => '.'+c).join(', ')}`;
+    }
+    updateClassBuilder();
+  </script>
+
   <div class="warn">
-    <strong>⚠️ class属性の命名ルール</strong><br>
+    <strong>⚠️ class 属性の命名ルール</strong><br>
     ・<strong>見た目</strong>ではなく<strong>役割・種類・分類</strong>を示す名前にする<br>
     ❌ <code>class="red-text"</code>　← 見た目（色）を表す名前（避けるべき）<br>
     ✅ <code>class="error-message"</code>　← 役割を表す名前（推奨）<br><br>
     ・数字で始めることはできません（<code>class="1st"</code> は不正）<br>
     ・スペースは区切り文字として使われるため、class名にスペースは含められません
   </div>
-
-  <div class="good">
-    ✅ <strong>class属性の主な用途</strong><br>
-    ・CSSでスタイルを適用する（最も一般的）<br>
-    ・JavaScriptで複数要素をまとめて操作する<br>
-    ・コンポーネントの種類・状態を表す（<code>is-active</code>、<code>is-hidden</code> など）
-  </div>
 </div>
 
 
-<!-- 3. id属性 -->
-<h2>④ id属性</h2>
-
+<!-- ============================================================ -->
+<!-- PART 4：id 属性 -->
+<!-- ============================================================ -->
+<h2>④ id 属性</h2>
 <div class="note">
-  <strong>ポイント②：id属性の値には「ほかの要素と重複しない固有の名前」を指定する</strong><br>
-  ・<code>id</code> 属性は<strong>文書内で一意（ユニーク）な識別子</strong>を指定します。<br>
-  ・同じid値を複数の要素に指定することは<strong>できません</strong>。<br>
-  ・ページ内リンク（アンカーリンク）のターゲットとして使えます。
+  <strong>重要ポイント④：id 属性の値には「ほかの要素と重複しない固有の名前」を指定する</strong><br>
+  ・<code>id</code> 属性は<strong>文書内で一意（ユニーク）な識別子</strong>を指定します<br>
+  ・同じid値を複数の要素に指定することは<strong>できません</strong><br>
+  ・ページ内リンク（アンカーリンク）のターゲットとして使えます
 </div>
-
 <div class="demo-box">
+
 <pre>
 <span class="comment">&lt;!-- 基本的な使い方 --&gt;</span>
 <span class="tag">&lt;h2</span> <span class="attr">id</span>=<span class="value">"section-intro"</span><span class="tag">&gt;</span>はじめに<span class="tag">&lt;/h2&gt;</span>
 
-<span class="comment">&lt;!-- ページ内リンク（アンカーリンク）のターゲット --&gt;</span>
+<span class="comment">&lt;!-- ページ内リンクのターゲット --&gt;</span>
 <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"#section-intro"</span><span class="tag">&gt;</span>「はじめに」へ移動<span class="tag">&lt;/a&gt;</span>
 
 <span class="comment">&lt;!-- CSSでの参照（#id名） --&gt;</span>
-<span class="comment">&lt;!-- #section-intro { color: #2b6cb0; } --&gt;</span>
+<span class="comment">/* #section-intro { color: #2b6cb0; } */</span>
 
 <span class="comment">&lt;!-- JavaScriptでの参照 --&gt;</span>
-<span class="comment">&lt;!-- document.getElementById('section-intro') --&gt;</span>
+<span class="comment">/* document.getElementById('section-intro') */</span>
 
 <span class="comment">&lt;!-- ❌ 同じid値を複数の要素に指定してはいけない --&gt;</span>
 <span class="tag">&lt;p</span> <span class="attr">id</span>=<span class="value">"intro"</span><span class="tag">&gt;</span>段落1<span class="tag">&lt;/p&gt;</span>
@@ -522,7 +755,7 @@
 
   <table class="ref-table">
     <thead>
-      <tr><th>比較項目</th><th>class属性</th><th>id属性</th></tr>
+      <tr><th>比較項目</th><th>class 属性</th><th>id 属性</th></tr>
     </thead>
     <tbody>
       <tr>
@@ -555,84 +788,82 @@
 </div>
 
 
-<!-- 4. lang属性 -->
-<h2>⑤ lang属性</h2>
-
+<!-- ============================================================ -->
+<!-- PART 5：lang / title / dir 属性 -->
+<!-- ============================================================ -->
+<h2>⑤ lang / title / dir 属性</h2>
 <div class="note">
-  <strong>ポイント</strong><br>
-  ・<code>lang</code> 属性は要素内のコンテンツの<strong>言語</strong>を指定します。<br>
-  ・<code>&lt;html&gt;</code> 要素に指定すると文書全体の言語になります。<br>
-  ・スクリーンリーダーの読み上げ言語・検索エンジンの言語判定に影響します。<br>
-  ・値は <strong>BCP 47言語タグ</strong>（ISO 639-1言語コード）を使います。
+  <strong>重要ポイント⑤：lang は言語指定、title はツールチップ、dir はテキスト方向</strong>
 </div>
-
 <div class="demo-box">
+
 <pre>
-<span class="comment">&lt;!-- 文書全体の言語指定 --&gt;</span>
+<span class="comment">&lt;!-- lang：言語コードの指定 --&gt;</span>
 <span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="value">"ja"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;p&gt;</span>日本語の中に<span class="tag">&lt;span</span> <span class="attr">lang</span>=<span class="value">"en"</span><span class="tag">&gt;</span>English<span class="tag">&lt;/span&gt;</span>が含まれる<span class="tag">&lt;/p&gt;</span>
 
-<span class="comment">&lt;!-- 部分的に異なる言語を指定 --&gt;</span>
-<span class="tag">&lt;p&gt;</span>日本語のテキストの中に
-  <span class="tag">&lt;span</span> <span class="attr">lang</span>=<span class="value">"en"</span><span class="tag">&gt;</span>English text<span class="tag">&lt;/span&gt;</span>
-が含まれる場合。
-<span class="tag">&lt;/p&gt;</span>
+<span class="comment">&lt;!-- title：ツールチップ --&gt;</span>
+<span class="tag">&lt;abbr</span> <span class="attr">title</span>=<span class="value">"HyperText Markup Language"</span><span class="tag">&gt;</span>HTML<span class="tag">&lt;/abbr&gt;</span>
 
-<span class="comment">&lt;!-- 引用文の言語指定 --&gt;</span>
-<span class="tag">&lt;blockquote</span> <span class="attr">lang</span>=<span class="value">"fr"</span><span class="tag">&gt;</span>
-  Je pense, donc je suis.
-<span class="tag">&lt;/blockquote&gt;</span>
+<span class="comment">&lt;!-- dir：テキスト方向 --&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">dir</span>=<span class="value">"ltr"</span><span class="tag">&gt;</span>Left to Right<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">dir</span>=<span class="value">"rtl"</span><span class="tag">&gt;</span>مرحبا بالعالم<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">dir</span>=<span class="value">"auto"</span><span class="tag">&gt;</span>自動判定<span class="tag">&lt;/p&gt;</span>
 </pre>
 
-  <table class="ref-table">
-    <thead>
-      <tr><th>言語コード</th><th>言語</th></tr>
-    </thead>
-    <tbody>
-      <tr><td><code>ja</code></td><td>日本語</td></tr>
-      <tr><td><code>en</code></td><td>英語</td></tr>
-      <tr><td><code>zh-CN</code></td><td>中国語（簡体字）</td></tr>
-      <tr><td><code>zh-TW</code></td><td>中国語（繁体字）</td></tr>
-      <tr><td><code>ko</code></td><td>韓国語</td></tr>
-      <tr><td><code>fr</code></td><td>フランス語</td></tr>
-      <tr><td><code>de</code></td><td>ドイツ語</td></tr>
-      <tr><td><code>ar</code></td><td>アラビア語</td></tr>
-    </tbody>
-  </table>
-</div>
-
-
-<!-- 5. title属性 -->
-<h2>⑥ title属性</h2>
-
-<div class="note">
-  <strong>ポイント</strong><br>
-  ・<code>title</code> 属性は要素に関する<strong>補足情報</strong>を指定します。<br>
-  ・多くのブラウザではマウスオーバー時に<strong>ツールチップ</strong>として表示されます。<br>
-  ・<code>&lt;abbr&gt;</code> 要素と組み合わせて略語の正式名称を示すのが代表的な用途です。
-</div>
-
-<div class="demo-box">
-<pre>
-<span class="comment">&lt;!-- ツールチップとして表示 --&gt;</span>
-<span class="tag">&lt;p</span> <span class="attr">title</span>=<span class="value">"クリックして詳細を表示"</span><span class="tag">&gt;</span>
-  この段落にマウスを乗せてください。
-<span class="tag">&lt;/p&gt;</span>
-
-<span class="comment">&lt;!-- abbr要素と組み合わせた略語の説明 --&gt;</span>
-<span class="tag">&lt;p&gt;</span>
-  <span class="tag">&lt;abbr</span> <span class="attr">title</span>=<span class="value">"HyperText Markup Language"</span><span class="tag">&gt;</span>HTML<span class="tag">&lt;/abbr&gt;</span>
-  は文書構造を定義するマークアップ言語です。
-<span class="tag">&lt;/p&gt;</span>
-
-<span class="comment">&lt;!-- リンクの補足説明 --&gt;</span>
-<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"https://html5exam.jp/"</span>
-   <span class="attr">title</span>=<span class="value">"HTML5プロフェッショナル認定試験の公式サイトへ"</span><span class="tag">&gt;</span>
-  試験公式サイト
-<span class="tag">&lt;/a&gt;</span>
-</pre>
+  <h3>lang / dir インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#2b6cb0; margin:0 0 10px;">
+      言語と方向を選択して、テキストの表示変化を確認しましょう。
+    </p>
+    <div class="slider-row">
+      <label>lang の値</label>
+      <select id="lang-sel" onchange="updateLangDir()">
+        <option value="ja">ja（日本語）</option>
+        <option value="en">en（英語）</option>
+        <option value="ar">ar（アラビア語）</option>
+        <option value="zh-CN">zh-CN（中国語）</option>
+        <option value="fr">fr（フランス語）</option>
+      </select>
+    </div>
+    <div class="slider-row">
+      <label>dir の値</label>
+      <select id="dir-sel" onchange="updateLangDir()">
+        <option value="ltr">ltr（左→右）</option>
+        <option value="rtl">rtl（右→左）</option>
+        <option value="auto">auto（自動）</option>
+      </select>
+    </div>
+    <div style="background:#fff; border:1px solid #bee3f8; border-radius:6px; padding:12px 16px; margin-top:8px;">
+      <p id="lang-dir-preview" style="margin:0; font-size:1em; padding:8px; border-radius:4px; background:#f7fafc;"></p>
+    </div>
+    <div class="color-code-display" id="lang-dir-code"></div>
+  </div>
+  <script>
+    const langSamples = {
+      'ja':    { text: 'こんにちは、世界！HTML5学習中です。', note: 'スクリーンリーダーが日本語で読み上げます' },
+      'en':    { text: 'Hello, World! Learning HTML5.',      note: 'スクリーンリーダーが英語で読み上げます' },
+      'ar':    { text: 'مرحبا بالعالم! تعلم HTML5.',          note: 'アラビア語はRTL（右から左）が自然です' },
+      'zh-CN': { text: '你好，世界！正在学习HTML5。',            note: 'スクリーンリーダーが中国語で読み上げます' },
+      'fr':    { text: 'Bonjour le monde! Apprentissage HTML5.', note: 'スクリーンリーダーがフランス語で読み上げます' },
+    };
+    function updateLangDir() {
+      const lang = document.getElementById('lang-sel').value;
+      const dir  = document.getElementById('dir-sel').value;
+      const d    = langSamples[lang];
+      const p    = document.getElementById('lang-dir-preview');
+      p.setAttribute('lang', lang);
+      p.setAttribute('dir', dir);
+      p.textContent = d.text;
+      p.style.textAlign = dir === 'rtl' ? 'right' : 'left';
+      document.getElementById('lang-dir-code').textContent =
+        `<p lang="${lang}" dir="${dir}">\n  ${d.text}\n</p>\n\n→ ${d.note}`;
+    }
+    updateLangDir();
+  </script>
 
   <div class="demo-box" style="margin-top:14px;">
-    <p><strong>▼ 実際の表示（マウスを乗せるとツールチップが表示されます）</strong></p>
+    <p><strong>▼ title 属性のツールチップ（マウスを乗せてください）</strong></p>
     <p>
       <abbr title="HyperText Markup Language" style="border-bottom:1px dashed #4299e1; cursor:help;">HTML</abbr>
       は文書構造を定義するマークアップ言語です。
@@ -643,68 +874,25 @@
   </div>
 
   <div class="warn">
-    <strong>⚠️ title属性の注意点</strong><br>
+    <strong>⚠️ title 属性の注意点</strong><br>
     ・スマートフォンではツールチップが表示されません<br>
     ・スクリーンリーダーによっては読み上げない場合があります<br>
-    ・重要な情報はtitle属性だけに頼らず、本文にも記載しましょう
+    ・重要な情報は title 属性だけに頼らず、本文にも記載しましょう
   </div>
 </div>
 
 
-<!-- 6. dir属性 -->
-<h2>⑦ dir属性</h2>
-
+<!-- ============================================================ -->
+<!-- PART 6：tabindex 属性 -->
+<!-- ============================================================ -->
+<h2>⑥ tabindex 属性</h2>
 <div class="note">
-  <strong>ポイント</strong><br>
-  ・<code>dir</code> 属性はテキストの<strong>書字方向（左→右 / 右→左）</strong>を指定します。<br>
-  ・アラビア語・ヘブライ語など右から左に書く言語に対応するために使います。
+  <strong>重要ポイント⑥：tabindex でタブキーのフォーカス順序を制御する。-1 はJSでのみフォーカス可</strong><br>
+  ・<code>tabindex</code> 属性はキーボードの <kbd>Tab</kbd> キーによる<strong>フォーカス順序</strong>を制御します<br>
+  ・通常フォーカスできない要素（<code>div</code>、<code>span</code> など）にもフォーカス可能にできます
 </div>
-
 <div class="demo-box">
-<pre>
-<span class="comment">&lt;!-- 左から右（デフォルト） --&gt;</span>
-<span class="tag">&lt;p</span> <span class="attr">dir</span>=<span class="value">"ltr"</span><span class="tag">&gt;</span>Left to Right: Hello, World!<span class="tag">&lt;/p&gt;</span>
 
-<span class="comment">&lt;!-- 右から左（アラビア語・ヘブライ語など） --&gt;</span>
-<span class="tag">&lt;p</span> <span class="attr">dir</span>=<span class="value">"rtl"</span><span class="tag">&gt;</span>Right to Left: مرحبا بالعالم<span class="tag">&lt;/p&gt;</span>
-
-<span class="comment">&lt;!-- 自動判定 --&gt;</span>
-<span class="tag">&lt;p</span> <span class="attr">dir</span>=<span class="value">"auto"</span><span class="tag">&gt;</span>ブラウザが自動で方向を判定します<span class="tag">&lt;/p&gt;</span>
-</pre>
-
-  <div class="demo-box" style="margin-top:14px;">
-    <p><strong>▼ 実際の表示</strong></p>
-    <p dir="ltr" style="background:#ebf8ff; padding:8px 12px; border-radius:6px;">
-      ltr（左→右）: Hello, World! HTML5学習中
-    </p>
-    <p dir="rtl" style="background:#fef3c7; padding:8px 12px; border-radius:6px;">
-      rtl（右→左）: Hello, World! HTML5学習中
-    </p>
-  </div>
-
-  <table class="ref-table">
-    <thead>
-      <tr><th>値</th><th>説明</th></tr>
-    </thead>
-    <tbody>
-      <tr><td><code>ltr</code></td><td>Left to Right（左から右）。日本語・英語など</td></tr>
-      <tr><td><code>rtl</code></td><td>Right to Left（右から左）。アラビア語・ヘブライ語など</td></tr>
-      <tr><td><code>auto</code></td><td>コンテンツに基づいてブラウザが自動判定</td></tr>
-    </tbody>
-  </table>
-</div>
-
-
-<!-- 7. tabindex属性 -->
-<h2>⑧ tabindex属性</h2>
-
-<div class="note">
-  <strong>ポイント</strong><br>
-  ・<code>tabindex</code> 属性はキーボードの <kbd>Tab</kbd> キーによる<strong>フォーカス順序</strong>を制御します。<br>
-  ・通常フォーカスできない要素（<code>div</code>、<code>span</code> など）にもフォーカス可能にできます。
-</div>
-
-<div class="demo-box">
 <pre>
 <span class="comment">&lt;!-- tabindex="0"：通常のタブ順序に追加 --&gt;</span>
 <span class="tag">&lt;div</span> <span class="attr">tabindex</span>=<span class="value">"0"</span><span class="tag">&gt;</span>Tabキーでフォーカス可能なdiv<span class="tag">&lt;/div&gt;</span>
@@ -713,12 +901,12 @@
 <span class="tag">&lt;div</span> <span class="attr">tabindex</span>=<span class="value">"-1"</span> <span class="attr">id</span>=<span class="value">"modal"</span><span class="tag">&gt;</span>モーダルダイアログ<span class="tag">&lt;/div&gt;</span>
 
 <span class="comment">&lt;!-- tabindex="1以上"：明示的な順序指定（非推奨） --&gt;</span>
-<span class="tag">&lt;input</span> <span class="attr">tabindex</span>=<span class="value">"3"</span> <span class="attr">type</span>=<span class="value">"text"</span><span class="tag">&gt;</span>  <span class="comment">&lt;!-- 3番目にフォーカス --&gt;</span>
-<span class="tag">&lt;input</span> <span class="attr">tabindex</span>=<span class="value">"1"</span> <span class="attr">type</span>=<span class="value">"text"</span><span class="tag">&gt;</span>  <span class="comment">&lt;!-- 1番目にフォーカス --&gt;</span>
-<span class="tag">&lt;input</span> <span class="attr">tabindex</span>=<span class="value">"2"</span> <span class="attr">type</span>=<span class="value">"text"</span><span class="tag">&gt;</span>  <span class="comment">&lt;!-- 2番目にフォーカス --&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">tabindex</span>=<span class="value">"3"</span> <span class="attr">type</span>=<span class="value">"text"</span><span class="tag">&gt;</span>  <span class="comment">&lt;!-- 3番目 --&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">tabindex</span>=<span class="value">"1"</span> <span class="attr">type</span>=<span class="value">"text"</span><span class="tag">&gt;</span>  <span class="comment">&lt;!-- 1番目 --&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">tabindex</span>=<span class="value">"2"</span> <span class="attr">type</span>=<span class="value">"text"</span><span class="tag">&gt;</span>  <span class="comment">&lt;!-- 2番目 --&gt;</span>
 </pre>
 
-  <p><strong>▼ Tabキーでフォーカスを移動してみてください</strong></p>
+  <p><strong>▼ Tab キーでフォーカスを移動してみてください</strong></p>
   <div class="tabindex-demo">
     <div class="tab-item" tabindex="0">Tab順①</div>
     <div class="tab-item" tabindex="0">Tab順②</div>
@@ -726,50 +914,78 @@
     <div class="tab-item" tabindex="0">Tab順④</div>
   </div>
 
+  <h3>tabindex シミュレーター インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#2b6cb0; margin:0 0 10px;">
+      tabindex の値を選択して、Tab キーでのフォーカス動作を確認しましょう。
+    </p>
+    <div class="slider-row">
+      <label>tabindex の値</label>
+      <select id="tabindex-sel" onchange="updateTabindexDemo()">
+        <option value="0">0（通常のタブ順序に追加）</option>
+        <option value="-1">-1（TabキーNG・JSでフォーカス可）</option>
+        <option value="1">1以上（明示的な順序・非推奨）</option>
+      </select>
+    </div>
+    <div id="tabindex-sim-list"></div>
+    <div class="color-code-display" id="tabindex-code"></div>
+  </div>
+  <script>
+    function updateTabindexDemo() {
+      const v   = document.getElementById('tabindex-sel').value;
+      const sim = document.getElementById('tabindex-sim-list');
+      const code = document.getElementById('tabindex-code');
+      const items = [
+        { label: 'button（デフォルトでフォーカス可）', tabFocus: true,  jsFocus: true  },
+        { label: 'input（デフォルトでフォーカス可）',  tabFocus: true,  jsFocus: true  },
+        { label: `div tabindex="${v}"`,
+          tabFocus: v === '0' || parseInt(v) > 0,
+          jsFocus:  true },
+        { label: 'div（tabindexなし）',               tabFocus: false, jsFocus: false },
+      ];
+      sim.innerHTML = items.map(item => {
+        const badge = item.tabFocus
+          ? `<span class="focus-badge tab-yes">Tab: ✅ フォーカス可</span>`
+          : (item.jsFocus && v === '-1'
+              ? `<span class="focus-badge tab-js">Tab: ❌ / JS: ✅</span>`
+              : `<span class="focus-badge tab-no">Tab: ❌ フォーカス不可</span>`);
+        return `<div class="tabindex-sim-item">${badge}<span>${item.label}</span></div>`;
+      }).join('');
+      const descMap = {
+        '0':  `<div tabindex="0">Tabキーでフォーカス可能</div>\n\n→ 通常のタブ順序に追加される\n→ div・span などをフォーカス可能にする`,
+        '-1': `<div tabindex="-1" id="modal">モーダル</div>\n// JS: document.getElementById('modal').focus();\n\n→ Tabキーでは到達しない\n→ JavaScriptでプログラム的にフォーカスできる\n→ モーダルダイアログなどに使用`,
+        '1':  `<input tabindex="3">\n<input tabindex="1">  ← 1番目\n<input tabindex="2">  ← 2番目\n\n→ 正の値は非推奨\n→ DOM順序と異なるタブ順はアクセシビリティを損なう\n→ tabindex="0" + DOM順序での管理が推奨`,
+      };
+      code.textContent = descMap[v];
+    }
+    updateTabindexDemo();
+  </script>
+
   <table class="ref-table" style="margin-top:16px;">
     <thead>
       <tr><th>値</th><th>動作</th><th>用途</th></tr>
     </thead>
     <tbody>
-      <tr>
-        <td><code>0</code></td>
-        <td>通常のタブ順序に追加</td>
-        <td>div・spanなどをフォーカス可能にする</td>
-      </tr>
-      <tr>
-        <td><code>-1</code></td>
-        <td>Tabキーでは到達しない</td>
-        <td>JavaScriptで動的にフォーカスするモーダルなど</td>
-      </tr>
-      <tr>
-        <td><code>1以上</code></td>
-        <td>指定した数値順にフォーカス</td>
-        <td>非推奨（DOM順序での管理が推奨）</td>
-      </tr>
+      <tr><td><code>0</code></td><td>通常のタブ順序に追加</td><td>div・span などをフォーカス可能にする</td></tr>
+      <tr><td><code>-1</code></td><td>Tab キーでは到達しない</td><td>JavaScript で動的にフォーカスするモーダルなど</td></tr>
+      <tr><td><code>1以上</code></td><td>指定した数値順にフォーカス</td><td>非推奨（DOM順序での管理が推奨）</td></tr>
     </tbody>
   </table>
-
-  <div class="warn">
-    <strong>⚠️ tabindexの注意点</strong><br>
-    ・<code>tabindex="1"</code> 以上の正の値は<strong>非推奨</strong>です<br>
-    　（DOM順序と異なるタブ順序はアクセシビリティを損なう場合があります）<br>
-    ・<code>tabindex="0"</code> を使い、DOM順序でタブ順を管理するのが推奨です
-  </div>
 </div>
 
 
-<!-- 8. カスタムデータ属性 -->
-<h2>⑨ カスタムデータ（data-*）属性</h2>
-
+<!-- ============================================================ -->
+<!-- PART 7：data-* カスタムデータ属性 -->
+<!-- ============================================================ -->
+<h2>⑦ カスタムデータ（data-*）属性</h2>
 <div class="note">
-  <strong>ポイント③：HTML5以降では data-〇〇〇 の書式で独自の属性を追加できる</strong><br>
-  ・<code>data-*</code> 属性は<strong>HTML要素に独自のデータを埋め込む</strong>ための仕組みです。<br>
-  ・<code>data-</code> の後に任意の名前を付けて使います。<br>
-  ・JavaScriptから <code>dataset</code> プロパティで簡単にアクセスできます。<br>
-  ・HTMLの標準属性を汚染せずに独自データを持てます。
+  <strong>重要ポイント⑦：HTML5以降では data-〇〇〇 の書式で独自の属性を追加できる</strong><br>
+  ・<code>data-*</code> 属性は<strong>HTML要素に独自のデータを埋め込む</strong>ための仕組みです<br>
+  ・<code>data-</code> の後に任意の名前を付けて使います<br>
+  ・JavaScriptから <code>dataset</code> プロパティで簡単にアクセスできます
 </div>
-
 <div class="demo-box">
+
 <pre>
 <span class="comment">&lt;!-- data-*属性の基本 --&gt;</span>
 <span class="tag">&lt;button</span> <span class="attr">data-user-id</span>=<span class="value">"12345"</span>
@@ -778,63 +994,90 @@
   削除する
 <span class="tag">&lt;/button&gt;</span>
 
-<span class="comment">&lt;!-- 商品カードへの適用例 --&gt;</span>
-<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="value">"product-card"</span>
-     <span class="attr">data-product-id</span>=<span class="value">"P-001"</span>
-     <span class="attr">data-category</span>=<span class="value">"electronics"</span>
-     <span class="attr">data-price</span>=<span class="value">"29800"</span>
-     <span class="attr">data-in-stock</span>=<span class="value">"true"</span><span class="tag">&gt;</span>
-  <span class="tag">&lt;h3&gt;</span>商品名<span class="tag">&lt;/h3&gt;</span>
-  <span class="tag">&lt;p&gt;</span>29,800円<span class="tag">&lt;/p&gt;</span>
-<span class="tag">&lt;/div&gt;</span>
-
 <span class="comment">&lt;!-- JavaScriptからのアクセス --&gt;</span>
-<span class="comment">&lt;!-- const card = document.querySelector('.product-card'); --&gt;</span>
-<span class="comment">&lt;!-- card.dataset.productId  → "P-001" --&gt;</span>
-<span class="comment">&lt;!-- card.dataset.category   → "electronics" --&gt;</span>
-<span class="comment">&lt;!-- card.dataset.price      → "29800" --&gt;</span>
-<span class="comment">&lt;!-- card.dataset.inStock    → "true" --&gt;</span>
-<span class="comment">&lt;!-- ※ ハイフンはキャメルケースに変換される --&gt;</span>
-<span class="comment">&lt;!-- data-product-id → dataset.productId --&gt;</span>
+<span class="keyword">const</span> btn = document.<span class="func">querySelector</span>(<span class="value">'button'</span>);
+btn.<span class="prop">dataset</span>.<span class="prop">userId</span>     <span class="comment">// → "12345"（data-user-id）</span>
+btn.<span class="prop">dataset</span>.<span class="prop">action</span>     <span class="comment">// → "delete"</span>
+btn.<span class="prop">dataset</span>.<span class="prop">confirmMsg</span> <span class="comment">// → "本当に削除しますか？"（data-confirm-msg）</span>
+<span class="comment">// ※ ハイフンはキャメルケースに変換される</span>
+<span class="comment">// data-user-id → dataset.userId</span>
+<span class="comment">// data-confirm-msg → dataset.confirmMsg</span>
 </pre>
 
-  <p><strong>▼ data-*属性のデモ（ボタンをクリックしてください）</strong></p>
+  <p><strong>▼ data-* 属性のデモ（ボタンをクリックしてください）</strong></p>
   <div class="data-demo">
     <button style="background:#4299e1; color:#fff;"
             data-product-id="P-001"
             data-name="ノートPC"
             data-price="89800"
-            onclick="showData(this)">
-      ノートPC
-    </button>
+            onclick="showData(this)">ノートPC</button>
     <button style="background:#48bb78; color:#fff;"
             data-product-id="P-002"
             data-name="スマートフォン"
             data-price="59800"
-            onclick="showData(this)">
-      スマートフォン
-    </button>
+            onclick="showData(this)">スマートフォン</button>
     <button style="background:#ed8936; color:#fff;"
             data-product-id="P-003"
             data-name="タブレット"
             data-price="44800"
-            onclick="showData(this)">
-      タブレット
-    </button>
+            onclick="showData(this)">タブレット</button>
   </div>
-  <div id="data-output">← ボタンをクリックするとdata-*属性の値を表示します</div>
+  <div id="data-output">← ボタンをクリックすると dataset の値を表示します</div>
   <script>
     function showData(btn) {
       const d = btn.dataset;
       document.getElementById('data-output').textContent =
-        `dataset.productId = "${d.productId}"\n` +
-        `dataset.name      = "${d.name}"\n` +
-        `dataset.price     = "${d.price}"`;
+        `btn.dataset.productId = "${d.productId}"\n` +
+        `btn.dataset.name      = "${d.name}"\n` +
+        `btn.dataset.price     = "${d.price}"\n\n` +
+        `→ data-product-id → dataset.productId（ハイフン→キャメルケース変換）`;
     }
   </script>
 
+  <h3>data-* 命名チェッカー インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#2b6cb0; margin:0 0 10px;">
+      data-* 属性名を入力して、命名ルールに従っているか確認しましょう。
+    </p>
+    <div class="slider-row">
+      <label>属性名</label>
+      <input type="text" id="data-name-input" value="data-user-id"
+             oninput="checkDataName()" placeholder="例: data-user-id">
+    </div>
+    <div class="data-check-result empty" id="data-check-result">入力してください</div>
+    <div class="color-code-display" id="data-check-code"></div>
+  </div>
+  <script>
+    function checkDataName() {
+      const raw = document.getElementById('data-name-input').value.trim();
+      const r   = document.getElementById('data-check-result');
+      const c   = document.getElementById('data-check-code');
+      if (!raw) {
+        r.className = 'data-check-result empty'; r.textContent = '入力してください';
+        c.textContent = ''; return;
+      }
+      let errors = [];
+      if (!raw.startsWith('data-'))      errors.push('data- で始まっていない');
+      if (raw === 'data-')               errors.push('data- の後に名前がない（1文字以上必要）');
+      if (/[A-Z]/.test(raw))             errors.push('大文字が含まれている（data-* 属性名に大文字は使えない）');
+      if (/\s/.test(raw))                errors.push('スペースが含まれている');
+      if (/^data-[0-9]/.test(raw))       errors.push('data- の直後に数字がある（不正）');
+      if (errors.length > 0) {
+        r.className = 'data-check-result ng';
+        r.innerHTML = '❌ 不正：' + errors.join(' / ');
+        c.textContent = `${raw}\n→ NG: ${errors.join('\n→ NG: ')}`;
+      } else {
+        const jsKey = raw.replace(/^data-/, '').replace(/-([a-z])/g, (_, l) => l.toUpperCase());
+        r.className = 'data-check-result ok';
+        r.textContent = `✅ 正しい data-* 属性名です`;
+        c.textContent = `HTML属性名: ${raw}\nJS dataset: dataset.${jsKey}\n\n→ ハイフン区切り → キャメルケースに変換される`;
+      }
+    }
+    checkDataName();
+  </script>
+
   <div class="warn">
-    <strong>⚠️ data-*属性の命名ルール</strong><br>
+    <strong>⚠️ data-* 属性の命名ルール</strong><br>
     ・必ず <code>data-</code> で始める<br>
     ・<code>data-</code> の後に<strong>少なくとも1文字以上</strong>の名前が必要<br>
     ・名前に<strong>大文字は使えません</strong>（<code>data-userId</code> は不正）<br>
@@ -845,7 +1088,9 @@
 </div>
 
 
+<!-- ============================================================ -->
 <!-- 演習問題 -->
+<!-- ============================================================ -->
 <div class="quiz-section">
   <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
   <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
@@ -860,7 +1105,7 @@
     <label>○ または × を入力：</label>
     <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
     <br>
-    <button class="btn btn-blue" onclick="checkQ1()">答え合わせ</button>
+    <button class="btn-quiz" onclick="checkQ1()">答え合わせ</button>
     <div class="result-msg" id="q1-result"></div>
     <script>
       function checkQ1() {
@@ -868,7 +1113,11 @@
         const r = document.getElementById('q1-result');
         if (v === '×' || v === 'x' || v === 'X') {
           r.className = 'result-msg correct';
-          r.textContent = '✅ 正解！id属性の値は文書内で一意（ユニーク）でなければなりません。同じid値を複数の要素に指定することはできません。';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            '<code>id</code> 属性の値は文書内で<strong>一意（ユニーク）</strong>でなければなりません。<br>' +
+            '同じid値を複数の要素に指定することはできません。<br>' +
+            '複数要素に同じ値を指定できるのは <code>class</code> 属性です。';
         } else if (v === '○' || v === 'o' || v === 'O') {
           r.className = 'result-msg wrong';
           r.textContent = '❌ 不正解。id属性の値は文書内で重複できません。複数要素に同じ値を指定できるのはclass属性です。';
@@ -897,8 +1146,14 @@
     <label>④ テキストの書字方向（左右）を指定するグローバル属性：</label>
     <input type="text" id="q2d" placeholder="属性名">
 
+    <label>⑤ キーボードの Tab キーによるフォーカス順序を制御する属性：</label>
+    <input type="text" id="q2e" placeholder="属性名">
+
+    <label>⑥ 要素に補足情報を指定し、マウスオーバーでツールチップとして表示される属性：</label>
+    <input type="text" id="q2f" placeholder="属性名">
+
     <br>
-    <button class="btn btn-blue" onclick="checkQ2()">答え合わせ</button>
+    <button class="btn-quiz" onclick="checkQ2()">答え合わせ</button>
     <div class="result-msg" id="q2-result"></div>
     <script>
       function checkQ2() {
@@ -906,23 +1161,29 @@
         const b = document.getElementById('q2b').value.trim().toLowerCase();
         const c = document.getElementById('q2c').value.trim().toLowerCase();
         const d = document.getElementById('q2d').value.trim().toLowerCase();
+        const e = document.getElementById('q2e').value.trim().toLowerCase();
+        const f = document.getElementById('q2f').value.trim().toLowerCase();
         const r = document.getElementById('q2-result');
         const ca = a === 'class';
         const cb = b === 'id';
         const cc = c === 'data' || c === 'data-';
         const cd = d === 'dir';
-        const count = [ca, cb, cc, cd].filter(Boolean).length;
-        if (count === 4) {
+        const ce = e === 'tabindex';
+        const cf = f === 'title';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
           r.className = 'result-msg correct';
-          r.textContent = '✅ 全問正解！グローバル属性をしっかり理解しています！';
+          r.textContent = '✅ 全問正解！グローバル属性を完璧に理解しています！';
         } else {
           r.className = 'result-msg wrong';
           r.innerHTML =
-            `❌ ${count}/4 問正解。<br>` +
-            `① ${ca ? '✅' : '❌ class'}　` +
-            `② ${cb ? '✅' : '❌ id'}　` +
-            `③ ${cc ? '✅' : '❌ data'}　` +
-            `④ ${cd ? '✅' : '❌ dir'}`;
+            `❌ ${count}/6 問正解。<br>` +
+            `① ${ca?'✅':'❌ class'}　` +
+            `② ${cb?'✅':'❌ id'}　` +
+            `③ ${cc?'✅':'❌ data'}　` +
+            `④ ${cd?'✅':'❌ dir'}　` +
+            `⑤ ${ce?'✅':'❌ tabindex'}　` +
+            `⑥ ${cf?'✅':'❌ title'}`;
         }
       }
     </script>
@@ -937,13 +1198,13 @@
     </p>
     <select id="q3">
       <option value="">-- 選択してください --</option>
-      <option value="a">Tabキーで最初にフォーカスされる</option>
-      <option value="b">Tabキーでのフォーカス対象から除外されるが、JavaScriptでフォーカスできる</option>
+      <option value="a">Tab キーで最初にフォーカスされる</option>
+      <option value="b">Tab キーでのフォーカス対象から除外されるが、JavaScript でフォーカスできる</option>
       <option value="c">要素が完全に無効化され、クリックもできなくなる</option>
-      <option value="d">Tabキーで最後にフォーカスされる</option>
+      <option value="d">Tab キーで最後にフォーカスされる</option>
     </select>
     <br>
-    <button class="btn btn-blue" onclick="checkQ3()">答え合わせ</button>
+    <button class="btn-quiz" onclick="checkQ3()">答え合わせ</button>
     <div class="result-msg" id="q3-result"></div>
     <script>
       function checkQ3() {
@@ -953,8 +1214,8 @@
           r.className = 'result-msg correct';
           r.innerHTML =
             '✅ 正解！<br>' +
-            'tabindex="-1" はTabキーによるフォーカス対象から除外されますが、<br>' +
-            'JavaScriptの focus() メソッドでプログラム的にフォーカスできます。<br>' +
+            '<code>tabindex="-1"</code> は Tab キーによるフォーカス対象から除外されますが、<br>' +
+            'JavaScript の <code>focus()</code> メソッドでプログラム的にフォーカスできます。<br>' +
             'モーダルダイアログなど、動的に表示される要素に使われます。';
         } else if (v === '') {
           r.className = 'result-msg info';
@@ -969,71 +1230,42 @@
 
   <!-- Q4 -->
   <div class="quiz-block">
-    <h3>Q4. 正誤チェックボックス問題</h3>
-    <p><strong>正しい記述</strong>をすべて選んでください。</p>
-    <label class="checkbox-label">
-      <input type="checkbox" id="q4a">
-      ① <code>class</code> 属性には、スペース区切りで複数の値を指定できる
-    </label>
-    <label class="checkbox-label">
-      <input type="checkbox" id="q4b">
-      ② <code>data-userName</code> のように大文字を含むカスタムデータ属性名は正しい
-    </label>
-    <label class="checkbox-label">
-      <input type="checkbox" id="q4c">
-      ③ <code>title</code> 属性の内容はスマートフォンでもツールチップとして表示される
-    </label>
-    <label class="checkbox-label">
-      <input type="checkbox" id="q4d">
-      ④ グローバル属性はすべてのHTML要素に指定できる
-    </label>
-    <label class="checkbox-label">
-      <input type="checkbox" id="q4e">
-      ⑤ <code>data-product-id</code> はJavaScriptの <code>dataset</code> では <code>productId</code> としてアクセスできる
-    </label>
-    <label class="checkbox-label">
-      <input type="checkbox" id="q4f">
-      ⑥ <code>id</code> 属性の値はページ内リンクの <code>href="#id名"</code> で参照できる
-    </label>
+    <h3>Q4. 選択問題</h3>
+    <p>
+      <code>data-product-id="P-001"</code> という属性を JavaScript の
+      <code>dataset</code> プロパティでアクセスする場合、正しいコードはどれですか？
+    </p>
+    <select id="q4">
+      <option value="">-- 選択してください --</option>
+      <option value="a">element.dataset['data-product-id']</option>
+      <option value="b">element.dataset.productId</option>
+      <option value="c">element.dataset['product-id']</option>
+      <option value="d">element.getAttribute('product-id')</option>
+    </select>
     <br>
-    <button class="btn btn-blue" onclick="checkQ4()">答え合わせ</button>
+    <button class="btn-quiz" onclick="checkQ4()">答え合わせ</button>
     <div class="result-msg" id="q4-result"></div>
     <script>
       function checkQ4() {
+        const v = document.getElementById('q4').value;
         const r = document.getElementById('q4-result');
-        const checks = {
-          a: document.getElementById('q4a').checked,
-          b: document.getElementById('q4b').checked,
-          c: document.getElementById('q4c').checked,
-          d: document.getElementById('q4d').checked,
-          e: document.getElementById('q4e').checked,
-          f: document.getElementById('q4f').checked,
-        };
-        // 正解：①④⑤⑥（a, d, e, f）
-        // ②data-*に大文字不可 ③スマホではツールチップ表示されない
-        const correct = { a:true, b:false, c:false, d:true, e:true, f:true };
-        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
-        const allCorrect = results.every(Boolean);
-        if (allCorrect) {
+        if (v === 'b') {
           r.className = 'result-msg correct';
           r.innerHTML =
-            '✅ 全問正解！完璧です！<br><br>' +
-            '・① class属性はスペース区切りで複数値指定可 ✅<br>' +
-            '・④ グローバル属性はすべての要素に指定可 ✅<br>' +
-            '・⑤ data-product-id → dataset.productId（キャメルケース変換）✅<br>' +
-            '・⑥ id属性はページ内リンクで参照可 ✅';
+            '✅ 正解！<br>' +
+            '<code>data-product-id</code> は <code>dataset.productId</code> でアクセスします。<br>' +
+            'ハイフン区切りの名前はキャメルケースに変換されます：<br>' +
+            '・<code>data-user-id</code> → <code>dataset.userId</code><br>' +
+            '・<code>data-confirm-msg</code> → <code>dataset.confirmMsg</code>';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
         } else {
           r.className = 'result-msg wrong';
           r.innerHTML =
-            '❌ 不正解の項目があります。<br><br>' +
-            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
-            '・① class属性はスペース区切りで複数値指定可<br>' +
-            '・④ グローバル属性はすべての要素に指定可<br>' +
-            '・⑤ data-product-id → dataset.productId（ハイフンはキャメルケースに変換）<br>' +
-            '・⑥ id属性はページ内リンクで参照可<br><br>' +
-            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
-            '・② data-*属性名に大文字は使えない（data-user-name が正しい）<br>' +
-            '・③ title属性のツールチップはスマートフォンでは表示されない';
+            '❌ 不正解。<br>' +
+            '<code>data-product-id</code> → <code>dataset.productId</code>（ハイフンをキャメルケースに変換）<br>' +
+            '・<code>getAttribute(\'data-product-id\')</code> でもアクセスできますが、dataset の方が推奨';
         }
       }
     </script>
@@ -1041,8 +1273,87 @@
 
   <!-- Q5 -->
   <div class="quiz-block">
-    <h3>Q5. コード穴埋め問題</h3>
-    <p>以下のコードの <code>__A__</code> 〜 <code>__E__</code> に適切な属性名を入力してください。</p>
+    <h3>Q5. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5a">
+      ① <code>class</code> 属性には、スペース区切りで複数の値を指定できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5b">
+      ② <code>data-userName</code> のように大文字を含むカスタムデータ属性名は正しい
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5c">
+      ③ <code>title</code> 属性の内容はスマートフォンでもツールチップとして表示される
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5d">
+      ④ グローバル属性はすべてのHTML要素に指定できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5e">
+      ⑤ <code>data-product-id</code> はJavaScriptの <code>dataset</code> では <code>productId</code> としてアクセスできる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5f">
+      ⑥ <code>id</code> 属性の値はページ内リンクの <code>href="#id名"</code> で参照できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5g">
+      ⑦ <code>tabindex="0"</code> を指定すると、通常フォーカスできない div 要素も Tab キーでフォーカスできるようになる
+    </label>
+    <br>
+    <button class="btn-quiz" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const r = document.getElementById('q5-result');
+        const checks = {
+          a: document.getElementById('q5a').checked,
+          b: document.getElementById('q5b').checked,
+          c: document.getElementById('q5c').checked,
+          d: document.getElementById('q5d').checked,
+          e: document.getElementById('q5e').checked,
+          f: document.getElementById('q5f').checked,
+          g: document.getElementById('q5g').checked,
+        };
+        // 正解：①④⑤⑥⑦（a, d, e, f, g）
+        // ② data-*に大文字不可 → ×
+        // ③ スマホではツールチップ表示されない → ×
+        const correct = { a:true, b:false, c:false, d:true, e:true, f:true, g:true };
+        const allCorrect = Object.keys(correct).every(k => checks[k] === correct[k]);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① class はスペース区切りで複数値指定可 ✅<br>' +
+            '・④ グローバル属性はすべての要素に指定可 ✅<br>' +
+            '・⑤ data-product-id → dataset.productId ✅<br>' +
+            '・⑥ id はページ内リンクで参照可 ✅<br>' +
+            '・⑦ tabindex="0" で div もフォーカス可能 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① class はスペース区切りで複数値指定可<br>' +
+            '・④ グローバル属性はすべての要素に指定可<br>' +
+            '・⑤ data-product-id → dataset.productId（ハイフンはキャメルケースに変換）<br>' +
+            '・⑥ id はページ内リンクで参照可<br>' +
+            '・⑦ tabindex="0" で div などもフォーカス可能<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② data-* 属性名に大文字は使えない（data-user-name が正しい）<br>' +
+            '・③ title 属性のツールチップはスマートフォンでは表示されない';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. コード穴埋め問題</h3>
+    <p><code>__A__</code> 〜 <code>__F__</code> に適切な属性名を入力してください。</p>
     <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
 &lt;nav __A__="global-nav"&gt;          &lt;!-- 固有の識別子 --&gt;
   &lt;ul&gt;
@@ -1054,69 +1365,74 @@
 &lt;button __C__="btn btn-primary"    &lt;!-- 種類・分類を示す名前 --&gt;
         __D__="0"                  &lt;!-- タブ順序に追加 --&gt;
         __E__-product-id="P-001"  &lt;!-- 独自データ属性 --&gt;
-        title="商品を購入する"&gt;
+        __F__="商品を購入する"&gt;    &lt;!-- ツールチップ --&gt;
   購入する
 &lt;/button&gt;</pre>
 
     <label>A（固有の識別子を指定する属性）：</label>
-    <input type="text" id="q5a" placeholder="属性名">
+    <input type="text" id="q6a" placeholder="属性名">
     <label>B（言語コードを指定する属性）：</label>
-    <input type="text" id="q5b" placeholder="属性名">
+    <input type="text" id="q6b" placeholder="属性名">
     <label>C（種類・分類を示す名前を指定する属性）：</label>
-    <input type="text" id="q5c" placeholder="属性名">
+    <input type="text" id="q6c" placeholder="属性名">
     <label>D（タブ順序を制御する属性）：</label>
-    <input type="text" id="q5d" placeholder="属性名">
+    <input type="text" id="q6d" placeholder="属性名">
     <label>E（独自データ属性のプレフィックス）：</label>
-    <input type="text" id="q5e" placeholder="data-* の前半部分">
+    <input type="text" id="q6e" placeholder="data-* の前半部分">
+    <label>F（ツールチップを指定する属性）：</label>
+    <input type="text" id="q6f" placeholder="属性名">
     <br>
-    <button class="btn btn-blue" onclick="checkQ5()">答え合わせ</button>
-    <div class="result-msg" id="q5-result"></div>
+    <button class="btn-quiz" onclick="checkQ6()">答え合わせ</button>
+    <div class="result-msg" id="q6-result"></div>
     <script>
-      function checkQ5() {
-        const a = document.getElementById('q5a').value.trim().toLowerCase();
-        const b = document.getElementById('q5b').value.trim().toLowerCase();
-        const c = document.getElementById('q5c').value.trim().toLowerCase();
-        const d = document.getElementById('q5d').value.trim().toLowerCase();
-        const e = document.getElementById('q5e').value.trim().toLowerCase();
-        const r = document.getElementById('q5-result');
+      function checkQ6() {
+        const a = document.getElementById('q6a').value.trim().toLowerCase();
+        const b = document.getElementById('q6b').value.trim().toLowerCase();
+        const c = document.getElementById('q6c').value.trim().toLowerCase();
+        const d = document.getElementById('q6d').value.trim().toLowerCase();
+        const e = document.getElementById('q6e').value.trim().toLowerCase();
+        const f = document.getElementById('q6f').value.trim().toLowerCase();
+        const r = document.getElementById('q6-result');
         const ca = a === 'id';
         const cb = b === 'lang';
         const cc = c === 'class';
         const cd = d === 'tabindex';
         const ce = e === 'data' || e === 'data-';
-        const count = [ca, cb, cc, cd, ce].filter(Boolean).length;
-        if (count === 5) {
+        const cf = f === 'title';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
           r.className = 'result-msg correct';
-          r.textContent = '✅ 全問正解！グローバル属性を完璧に理解しています！';
+          r.textContent = '✅ 全問正解！グローバル属性の記述を完璧に理解しています！';
         } else {
           r.className = 'result-msg wrong';
           r.innerHTML =
-            `❌ ${count}/5 問正解。<br>` +
-            `A: ${ca ? '✅' : '❌ id'}　` +
-            `B: ${cb ? '✅' : '❌ lang'}　` +
-            `C: ${cc ? '✅' : '❌ class'}　` +
-            `D: ${cd ? '✅' : '❌ tabindex'}　` +
-            `E: ${ce ? '✅' : '❌ data'}`;
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca?'✅':'❌ id'}　` +
+            `B: ${cb?'✅':'❌ lang'}　` +
+            `C: ${cc?'✅':'❌ class'}　` +
+            `D: ${cd?'✅':'❌ tabindex'}　` +
+            `E: ${ce?'✅':'❌ data'}　` +
+            `F: ${cf?'✅':'❌ title'}`;
         }
       }
     </script>
   </div>
 
-  <!-- Q6 -->
+  <!-- Q7 -->
   <div class="quiz-block">
-    <h3>Q6. 記述問題</h3>
+    <h3>Q7. 記述問題</h3>
     <p>
       <code>class</code> 属性と <code>id</code> 属性の違いを、
       「重複の可否」「複数指定の可否」「主な用途」の観点から説明してください。
     </p>
     <label>あなたの解答：</label>
-    <textarea id="q6" rows="5" placeholder="自由に記述してください..."></textarea>
+    <textarea id="q7" rows="5" placeholder="自由に記述してください..."></textarea>
     <br>
-    <button class="btn btn-blue" onclick="checkQ6()">模範解答を見る</button>
-    <div class="result-msg" id="q6-result"></div>
+    <button class="btn-quiz" onclick="checkQ7()">模範解答を見る</button>
+    <div class="result-msg" id="q7-result"></div>
     <script>
-      function checkQ6() {
-        const r = document.getElementById('q6-result');
+      function checkQ7() {
+        const r = document.getElementById('q7-result');
         r.className = 'result-msg info';
         r.innerHTML =
           '📝 模範解答：<br><br>' +
@@ -1163,7 +1479,7 @@
     <tr>
       <td><code>title</code></td>
       <td>補足情報・ツールチップ</td>
-      <td>マウスオーバーでツールチップ表示。スマホでは表示されない</td>
+      <td>マウスオーバーでツールチップ表示。<strong>スマホでは表示されない</strong></td>
     </tr>
     <tr>
       <td><code>dir</code></td>
@@ -1178,7 +1494,7 @@
     <tr>
       <td><code>data-*</code></td>
       <td>カスタムデータ属性</td>
-      <td>HTML5以降。data-で始まる任意名。大文字不可。datasetでJSアクセス可</td>
+      <td>HTML5以降。data-で始まる任意名。<strong>大文字不可</strong>。datasetでJSアクセス可。ハイフン→キャメルケース変換</td>
     </tr>
   </tbody>
 </table>
