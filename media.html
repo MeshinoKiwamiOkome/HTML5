@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>HTML5 画像・動画・音声</title>
+  <title>HTML5 画像・動画・音声 学習サンプル</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body {
@@ -20,7 +20,7 @@
     h3 { color: #276749; margin-top: 24px; }
 
     code {
-      background: #edf2f7;
+      background: #ebf8ff;
       padding: 2px 6px;
       border-radius: 4px;
       font-size: 0.93em;
@@ -40,6 +40,8 @@
     pre .tag     { color: #90cdf4; }
     pre .attr    { color: #fbd38d; }
     pre .value   { color: #fc8181; }
+    pre .keyword { color: #b794f4; }
+    pre .func    { color: #fbd38d; }
 
     .note {
       background: #fff;
@@ -51,7 +53,6 @@
       margin-bottom: 14px;
     }
     .note strong { color: #2b6cb0; }
-
     .warn {
       background: #fffaf0;
       border: 1px solid #f6ad55;
@@ -63,7 +64,6 @@
       margin: 14px 0;
     }
     .warn strong { color: #c05621; }
-
     .good {
       background: #f0fff4;
       border: 1px solid #68d391;
@@ -74,7 +74,6 @@
       color: #276749;
       margin: 14px 0;
     }
-
     .demo-box {
       background: #fff;
       border: 1px solid #bee3f8;
@@ -84,6 +83,159 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.06);
     }
 
+    /* インタラクティブデモ共通 */
+    .interactive-demo {
+      background: #ebf8ff;
+      border: 1px solid #bee3f8;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .slider-row label {
+      font-size: 0.85em;
+      font-weight: bold;
+      min-width: 160px;
+      color: #2b6cb0;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .slider-row input[type="text"] {
+      border: 2px solid #bee3f8;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.88em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      flex: 1; min-width: 100px;
+      outline: none;
+      transition: border-color 0.2s;
+      background: #fff; color: #2d3748;
+    }
+    .slider-row input[type="text"]:focus { border-color: #4299e1; }
+    .slider-row input[type="range"] { flex: 1; min-width: 100px; accent-color: #4299e1; }
+    .slider-row select {
+      border: 2px solid #bee3f8;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.85em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #2d3748; background: #fff;
+      cursor: pointer; flex: 1;
+    }
+    .slider-row select:focus { border-color: #4299e1; outline: none; }
+    .val-display {
+      min-width: 56px; text-align: right;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.85em; color: #2d3748;
+    }
+    .color-code-display {
+      background: #1a202c;
+      color: #68d391;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.84em;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      min-height: 48px;
+    }
+
+    /* ボタン */
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+    .btn {
+      display: inline-block;
+      padding: 8px 18px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.88em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.82; }
+    .btn-blue  { background: #4299e1; color: #fff; }
+    .btn-green { background: #48bb78; color: #fff; }
+    .btn-gray  { background: #e2e8f0; color: #4a5568; }
+
+    /* source 比較ボックス */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 14px 0;
+    }
+    .compare-box {
+      background: #f7fafc;
+      border: 1px solid #bee3f8;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 0.88em;
+    }
+    .compare-box h4 { margin: 0 0 8px; color: #2b6cb0; font-size: 0.95em; }
+
+    /* img ビルダー プレビュー */
+    .img-preview-box {
+      background: #f7fafc;
+      border: 2px dashed #bee3f8;
+      border-radius: 8px;
+      padding: 14px;
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+      font-size: 0.85em;
+      color: #4a5568;
+    }
+    .img-placeholder {
+      background: linear-gradient(135deg, #bee3f8, #90cdf4);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2b6cb0;
+      font-weight: bold;
+      font-size: 0.9em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    /* picture 出し分けデモ */
+    .picture-demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .picture-demo-card {
+      background: #ebf8ff;
+      border: 2px solid #bee3f8;
+      border-radius: 8px;
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      text-align: center;
+    }
+    .picture-demo-card:hover { background: #bee3f8; border-color: #4299e1; }
+    .picture-demo-card.selected { background: #bee3f8; border: 2px solid #2b6cb0; }
+    .picture-demo-card-name { font-size: 0.85em; font-weight: bold; color: #2b6cb0; font-family: 'Consolas', 'Monaco', monospace; }
+    .picture-demo-card-desc { font-size: 0.75em; color: #4a5568; margin-top: 2px; }
+
+    /* area shape デモ */
+    .area-demo-canvas {
+      background: #ebf8ff;
+      border: 2px solid #bee3f8;
+      border-radius: 8px;
+      display: block;
+      max-width: 100%;
+    }
+
+    /* テーブル */
     table.ref-table {
       border-collapse: collapse;
       width: 100%;
@@ -97,7 +249,7 @@
       border: 1px solid #bee3f8;
       padding: 10px 14px;
       text-align: left;
-      font-size: 0.93em;
+      font-size: 0.9em;
     }
     table.ref-table thead tr { background: #2b6cb0; color: #fff; }
     table.ref-table tbody tr:nth-child(even) { background: #ebf8ff; }
@@ -146,7 +298,7 @@
       margin: 6px 0;
     }
     .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
-    .btn {
+    .btn-quiz {
       display: inline-block;
       padding: 9px 20px;
       border-radius: 6px;
@@ -156,9 +308,10 @@
       font-weight: bold;
       transition: opacity 0.2s;
       margin-top: 8px;
+      background: #4299e1;
+      color: #fff;
     }
-    .btn:hover { opacity: 0.85; }
-    .btn-blue { background: #4299e1; color: #fff; }
+    .btn-quiz:hover { opacity: 0.85; }
     .result-msg {
       margin-top: 10px;
       padding: 10px 14px;
@@ -170,6 +323,7 @@
     .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
     .result-msg.info    { background: #bee3f8; color: #2b6cb0; display: block; }
 
+    /* まとめ表 */
     table.summary {
       border-collapse: collapse;
       width: 100%;
@@ -183,59 +337,36 @@
       border: 1px solid #bee3f8;
       padding: 10px 14px;
       text-align: left;
-      font-size: 0.93em;
+      font-size: 0.9em;
     }
     table.summary thead tr { background: #2b6cb0; color: #fff; }
     table.summary tbody tr:nth-child(even) { background: #ebf8ff; }
 
-    /* source比較ボックス */
-    .compare-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin: 14px 0;
-    }
-    .compare-box {
-      background: #f7fafc;
-      border: 1px solid #bee3f8;
-      border-radius: 8px;
-      padding: 14px 16px;
-      font-size: 0.88em;
-    }
-    .compare-box h4 {
-      margin: 0 0 8px;
-      color: #2b6cb0;
-      font-size: 0.95em;
-    }
-
     /* ===== レスポンシブ ===== */
-
-    /* スマホ縦向き（〜600px） */
     @media (max-width: 600px) {
       body { font-size: 0.82em; }
       h2 { margin-top: 32px; }
-      .demo-box { padding: 14px 14px; }
+      .demo-box { padding: 14px; }
       .compare-grid { grid-template-columns: 1fr; }
-      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.85em; }
-      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.85em; }
-      .quiz-section { padding: 16px 16px; }
-      .quiz-block { padding: 14px 14px; }
+      .slider-row label { min-width: 110px; }
+      .picture-demo-grid { grid-template-columns: repeat(2, 1fr); }
+      table.ref-table th, table.ref-table td { padding: 8px 10px; font-size: 0.82em; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px; }
+      .quiz-block { padding: 14px; }
       .quiz-block input[type="text"],
       .quiz-block select,
       .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
     }
-
-    /* スマホ横向き（landscape・高さが500px以下） */
     @media (max-height: 500px) and (orientation: landscape) {
       body { font-size: 0.8em; }
       h2 { margin-top: 24px; }
       .demo-box { padding: 12px 14px; }
       .compare-grid { grid-template-columns: 1fr 1fr; }
     }
-
-    /* タブレット縦向き（601px〜768px） */
     @media (min-width: 601px) and (max-width: 768px) {
       body { font-size: 0.9em; }
+      .picture-demo-grid { grid-template-columns: repeat(3, 1fr); }
     }
   </style>
 </head>
@@ -246,43 +377,40 @@
 の役割と使い方を学びましょう。</p>
 
 
-<!-- 1. img要素 -->
-<h2>① img要素</h2>
-
+<!-- ============================================================ -->
+<!-- PART 1：img 要素 -->
+<!-- ============================================================ -->
+<h2>① img 要素</h2>
 <div class="note">
-  <strong>ポイント</strong><br>
-  ・<code>&lt;img&gt;</code> は画像を埋め込む<strong>空要素</strong>です。<br>
-  ・<code>src</code> 属性（画像URL）と <code>alt</code> 属性（代替テキスト）が基本セットです。<br>
+  <strong>重要ポイント①：img は画像を埋め込む空要素。alt は特別なケースを除き必須。width/height はピクセル整数値のみ</strong><br>
+  ・<code>&lt;img&gt;</code> は画像を埋め込む<strong>空要素</strong>です<br>
+  ・<code>src</code> 属性（画像URL）と <code>alt</code> 属性（代替テキスト）が基本セットです<br>
   ・<code>width</code> / <code>height</code> 属性でサイズを指定できますが、
-  <strong>パーセント値は指定できません</strong>（ピクセル値のみ）。
+  <strong>パーセント値は指定できません</strong>（ピクセル整数値のみ）
 </div>
-
 <div class="demo-box">
 
   <div class="warn">
-    <strong>⚠️ 試験重要ポイント①：alt属性の省略</strong><br><br>
+    <strong>⚠️ 試験重要ポイント①：alt 属性の省略</strong><br><br>
     通常、<code>alt</code> 属性は<strong>必須</strong>ですが、以下の特別なケースでは省略できます。<br><br>
     ✅ <strong>省略できるケース：</strong><br>
     　・画像がキャプション（<code>&lt;figcaption&gt;</code> など）によって説明されている場合<br>
-    　・純粋に装飾目的の画像で、コンテンツ上の意味を持たない場合
-    　（この場合は <code>alt=""</code> と空文字を指定するのが推奨）<br><br>
+    　・純粋に装飾目的の画像（この場合は <code>alt=""</code> と空文字を指定するのが推奨）<br><br>
     ❌ <strong>省略してはいけないケース：</strong><br>
     　・画像がコンテンツとして意味を持つ場合<br>
-    　・画像がリンクになっている場合（リンク先の説明をaltに書く）<br><br>
-    ⚠️ <code>alt</code> 属性を<strong>省略する</strong>（属性自体を書かない）のと、
-    <strong>空文字を指定する</strong>（<code>alt=""</code>）は意味が異なります。<br>
+    　・画像がリンクになっている場合<br><br>
+    ⚠️ <code>alt</code> 属性を<strong>省略する</strong>のと <strong><code>alt=""</code>（空文字）</strong>は意味が異なります。<br>
     　・省略：スクリーンリーダーがファイル名を読み上げる場合がある<br>
     　・空文字：スクリーンリーダーがその画像をスキップする
   </div>
 
   <div class="warn">
-    <strong>⚠️ 試験重要ポイント③：width / height 属性の値</strong><br><br>
-    <code>width</code> 属性と <code>height</code> 属性に指定できる値は
+    <strong>⚠️ 試験重要ポイント②：width / height 属性の値</strong><br><br>
+    <code>width</code> / <code>height</code> 属性に指定できる値は
     <strong>ピクセル値（整数）のみ</strong>です。<br><br>
     ✅ <code>&lt;img width="300" height="200"&gt;</code>　← 正しい（単位なし整数）<br>
     ❌ <code>&lt;img width="300px" height="200px"&gt;</code>　← 不正（px単位は書かない）<br>
-    ❌ <code>&lt;img width="50%" height="50%"&gt;</code>　← 不正（パーセント値は指定不可）<br><br>
-    レスポンシブなサイズ調整は CSS の <code>width / max-width</code> で行います。
+    ❌ <code>&lt;img width="50%" height="50%"&gt;</code>　← 不正（パーセント値は指定不可）
   </div>
 
 <pre>
@@ -301,9 +429,70 @@
   <span class="tag">&lt;figcaption&gt;</span>2025年度 売上グラフ<span class="tag">&lt;/figcaption&gt;</span>
 <span class="tag">&lt;/figure&gt;</span>
 
-<span class="comment">&lt;!-- loading属性：遅延読み込み（パフォーマンス最適化） --&gt;</span>
+<span class="comment">&lt;!-- loading属性：遅延読み込み --&gt;</span>
 <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"photo.jpg"</span> <span class="attr">alt</span>=<span class="value">"写真"</span> <span class="attr">loading</span>=<span class="value">"lazy"</span><span class="tag">&gt;</span>
 </pre>
+
+  <h3>img タグビルダー インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#2b6cb0; margin:0 0 10px;">
+      各フィールドを入力すると img タグがリアルタイムで生成されます。
+    </p>
+    <div class="slider-row">
+      <label>alt 属性</label>
+      <select id="img-alt-type" onchange="updateImgBuilder()">
+        <option value="text">テキストあり（通常）</option>
+        <option value="empty">空文字（装飾目的）</option>
+        <option value="omit">省略（figcaptionあり）</option>
+      </select>
+    </div>
+    <div class="slider-row">
+      <label>alt テキスト</label>
+      <input type="text" id="img-alt-text" value="富士山の写真" oninput="updateImgBuilder()">
+    </div>
+    <div class="slider-row">
+      <label>width（整数値）</label>
+      <input type="range" id="img-width" min="100" max="800" value="400" oninput="updateImgBuilder()">
+      <span class="val-display" id="img-width-val">400</span>
+    </div>
+    <div class="slider-row">
+      <label>loading</label>
+      <select id="img-loading" onchange="updateImgBuilder()">
+        <option value="">（省略）</option>
+        <option value="lazy">lazy（遅延読み込み）</option>
+        <option value="eager">eager（即時読み込み）</option>
+      </select>
+    </div>
+    <div class="img-preview-box" id="img-preview-box">
+      <div class="img-placeholder" id="img-placeholder" style="width:200px; height:80px;">🖼️ 画像プレビュー</div>
+    </div>
+    <div class="color-code-display" id="img-code"></div>
+  </div>
+  <script>
+    function updateImgBuilder() {
+      const altType  = document.getElementById('img-alt-type').value;
+      const altText  = document.getElementById('img-alt-text').value;
+      const width    = document.getElementById('img-width').value;
+      const loading  = document.getElementById('img-loading').value;
+      document.getElementById('img-width-val').textContent = width;
+      const ph = document.getElementById('img-placeholder');
+      ph.style.width  = Math.min(parseInt(width), 320) + 'px';
+      ph.style.height = Math.round(parseInt(width) * 0.6) + 'px';
+      ph.textContent  = `🖼️ ${width}px`;
+      let altAttr = '';
+      if (altType === 'text')  altAttr = ` alt="${altText}"`;
+      if (altType === 'empty') altAttr = ` alt=""`;
+      // omit: no alt
+      const loadAttr = loading ? ` loading="${loading}"` : '';
+      const code = `<img src="photo.jpg"${altAttr}\n     width="${width}"${loadAttr}>`;
+      let note = '';
+      if (altType === 'empty') note = '\n→ alt="" : スクリーンリーダーがスキップする（装飾目的）';
+      if (altType === 'omit')  note = '\n→ alt省略 : figcaptionなどで説明されている場合のみ可';
+      if (loading === 'lazy')  note += '\n→ loading="lazy" : 遅延読み込みでパフォーマンス向上';
+      document.getElementById('img-code').textContent = code + note;
+    }
+    updateImgBuilder();
+  </script>
 
   <table class="ref-table">
     <thead>
@@ -314,8 +503,8 @@
       <tr><td><code>alt</code></td><td>代替テキスト</td><td>特別なケースを除き必須</td></tr>
       <tr><td><code>width</code></td><td>表示幅（ピクセル整数値のみ）</td><td>パーセント値不可</td></tr>
       <tr><td><code>height</code></td><td>表示高さ（ピクセル整数値のみ）</td><td>パーセント値不可</td></tr>
-      <tr><td><code>srcset</code></td><td>解像度・幅に応じた複数画像候補</td><td>pictureと組み合わせ可</td></tr>
-      <tr><td><code>sizes</code></td><td>表示サイズのヒント</td><td>srcsetと併用</td></tr>
+      <tr><td><code>srcset</code></td><td>解像度・幅に応じた複数画像候補</td><td>picture と組み合わせ可</td></tr>
+      <tr><td><code>sizes</code></td><td>表示サイズのヒント</td><td>srcset と併用</td></tr>
       <tr><td><code>loading</code></td><td>読み込みタイミング（lazy / eager）</td><td>遅延読み込み対応</td></tr>
       <tr><td><code>decoding</code></td><td>デコードタイミング（async / sync / auto）</td><td>パフォーマンス調整</td></tr>
     </tbody>
@@ -323,91 +512,151 @@
 </div>
 
 
-<!-- 2. picture / source要素（画像） -->
-<h2>② picture要素 / source要素（画像）</h2>
-
+<!-- ============================================================ -->
+<!-- PART 2：picture / source 要素（画像） -->
+<!-- ============================================================ -->
+<h2>② picture 要素 / source 要素（画像）</h2>
 <div class="note">
-  <strong>ポイント②：複数の候補画像の中から最適なものを表示させる機能</strong><br>
-  ・<code>&lt;picture&gt;</code> は<strong>複数の画像候補を定義</strong>し、
-  ブラウザが最適なものを選んで表示する要素です。<br>
-  ・画面サイズ・解像度・対応フォーマットに応じた画像の出し分けができます。<br>
-  ・必ず最後に <code>&lt;img&gt;</code> 要素（フォールバック）を含める必要があります。
+  <strong>重要ポイント②：picture 内の source 要素は srcset が必須。video/audio 内の source は src が必須</strong><br>
+  ・<code>&lt;picture&gt;</code> は<strong>複数の画像候補を定義</strong>し、ブラウザが最適なものを選んで表示する要素です<br>
+  ・必ず最後に <code>&lt;img&gt;</code> 要素（フォールバック）を含める必要があります
 </div>
-
 <div class="demo-box">
 
   <div class="warn">
-    <strong>⚠️ 試験重要ポイント：picture内のsource要素の必須属性</strong><br><br>
+    <strong>⚠️ 試験重要ポイント：picture 内の source 要素の必須属性</strong><br><br>
     <code>&lt;picture&gt;</code> 内の <code>&lt;source&gt;</code> 要素には
-    <strong><code>srcset</code> 属性が必須</strong>です。<br>
-    また、<code>media</code> 属性または <code>type</code> 属性の
-    <strong>いずれかが指定されていれば問題ありません</strong>。<br><br>
+    <strong><code>srcset</code> 属性が必須</strong>です。<br><br>
     ✅ <code>srcset</code> + <code>media</code> 属性の組み合わせ<br>
     ✅ <code>srcset</code> + <code>type</code> 属性の組み合わせ<br>
-    ✅ <code>srcset</code> のみでも動作する（media/typeは任意）<br><br>
-    ※ <code>video</code> / <code>audio</code> 内の <code>source</code> 要素とは
-    必須属性が異なる点に注意！
+    ✅ <code>srcset</code> のみでも動作する（media / type は任意）<br><br>
+    ※ <code>video</code> / <code>audio</code> 内の <code>source</code> 要素は
+    <strong><code>src</code> 属性が必須</strong>（srcset は使わない）
   </div>
 
-<pre>
-<span class="comment">&lt;!-- メディアクエリによる画像の出し分け --&gt;</span>
-<span class="tag">&lt;picture&gt;</span>
-  <span class="comment">&lt;!-- 幅768px以上ではPC用画像 --&gt;</span>
-  <span class="tag">&lt;source</span> <span class="attr">media</span>=<span class="value">"(min-width: 768px)"</span>
-          <span class="attr">srcset</span>=<span class="value">"photo-large.jpg"</span><span class="tag">&gt;</span>
-  <span class="comment">&lt;!-- 幅480px以上ではタブレット用画像 --&gt;</span>
-  <span class="tag">&lt;source</span> <span class="attr">media</span>=<span class="value">"(min-width: 480px)"</span>
-          <span class="attr">srcset</span>=<span class="value">"photo-medium.jpg"</span><span class="tag">&gt;</span>
-  <span class="comment">&lt;!-- フォールバック（必須） --&gt;</span>
-  <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"photo-small.jpg"</span> <span class="attr">alt</span>=<span class="value">"風景写真"</span><span class="tag">&gt;</span>
-<span class="tag">&lt;/picture&gt;</span>
+  <h3>picture 出し分けパターン インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#2b6cb0; margin:0 0 10px;">
+      出し分けパターンを選択して、picture 要素の書き方を確認しましょう。
+    </p>
+    <div class="picture-demo-grid" id="picture-grid">
+      <div class="picture-demo-card selected" onclick="selectPicture('media')">
+        <div class="picture-demo-card-name">media</div>
+        <div class="picture-demo-card-desc">画面サイズで出し分け</div>
+      </div>
+      <div class="picture-demo-card" onclick="selectPicture('type')">
+        <div class="picture-demo-card-name">type</div>
+        <div class="picture-demo-card-desc">フォーマットで出し分け</div>
+      </div>
+      <div class="picture-demo-card" onclick="selectPicture('srcset')">
+        <div class="picture-demo-card-name">srcset（解像度）</div>
+        <div class="picture-demo-card-desc">DPRで出し分け</div>
+      </div>
+      <div class="picture-demo-card" onclick="selectPicture('combined')">
+        <div class="picture-demo-card-name">組み合わせ</div>
+        <div class="picture-demo-card-desc">media + type</div>
+      </div>
+    </div>
+    <div class="color-code-display" id="picture-code"></div>
+  </div>
+  <script>
+    const pictureExamples = {
+      media: `<!-- media属性：画面サイズによる出し分け -->
+<picture>
+  <!-- 768px以上: PC用画像 -->
+  <source media="(min-width: 768px)"
+          srcset="photo-large.jpg">
+  <!-- 480px以上: タブレット用画像 -->
+  <source media="(min-width: 480px)"
+          srcset="photo-medium.jpg">
+  <!-- フォールバック（必須） -->
+  <img src="photo-small.jpg" alt="風景写真">
+</picture>
 
-<span class="comment">&lt;!-- フォーマットによる出し分け（type属性） --&gt;</span>
-<span class="tag">&lt;picture&gt;</span>
-  <span class="comment">&lt;!-- WebPに対応していればWebPを使用 --&gt;</span>
-  <span class="tag">&lt;source</span> <span class="attr">type</span>=<span class="value">"image/webp"</span>
-          <span class="attr">srcset</span>=<span class="value">"photo.webp"</span><span class="tag">&gt;</span>
-  <span class="comment">&lt;!-- AVIFに対応していればAVIFを使用 --&gt;</span>
-  <span class="tag">&lt;source</span> <span class="attr">type</span>=<span class="value">"image/avif"</span>
-          <span class="attr">srcset</span>=<span class="value">"photo.avif"</span><span class="tag">&gt;</span>
-  <span class="comment">&lt;!-- フォールバック --&gt;</span>
-  <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"photo.jpg"</span> <span class="attr">alt</span>=<span class="value">"風景写真"</span><span class="tag">&gt;</span>
-<span class="tag">&lt;/picture&gt;</span>
+→ picture内のsource: srcset属性が必須
+→ media属性は任意（出し分け条件を指定）`,
+      type: `<!-- type属性：フォーマットによる出し分け -->
+<picture>
+  <!-- AVIFに対応していればAVIFを使用 -->
+  <source type="image/avif"
+          srcset="photo.avif">
+  <!-- WebPに対応していればWebPを使用 -->
+  <source type="image/webp"
+          srcset="photo.webp">
+  <!-- フォールバック（必須） -->
+  <img src="photo.jpg" alt="風景写真">
+</picture>
 
-<span class="comment">&lt;!-- srcsetによる解像度対応（img単体でも可） --&gt;</span>
-<span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"photo.jpg"</span>
-     <span class="attr">srcset</span>=<span class="value">"photo.jpg 1x, photo@2x.jpg 2x, photo@3x.jpg 3x"</span>
-     <span class="attr">alt</span>=<span class="value">"風景写真"</span><span class="tag">&gt;</span>
-</pre>
+→ type属性でMIMEタイプを指定
+→ ブラウザが対応フォーマットを自動選択`,
+      srcset: `<!-- srcset：解像度（DPR）による出し分け -->
+<!-- img単体でも使用可能 -->
+<img src="photo.jpg"
+     srcset="photo.jpg 1x,
+             photo@2x.jpg 2x,
+             photo@3x.jpg 3x"
+     alt="風景写真">
+
+<!-- 幅記述子（w）を使う場合 -->
+<img src="photo-400.jpg"
+     srcset="photo-400.jpg 400w,
+             photo-800.jpg 800w,
+             photo-1200.jpg 1200w"
+     sizes="(min-width: 768px) 800px, 400px"
+     alt="風景写真">`,
+      combined: `<!-- media + type の組み合わせ -->
+<picture>
+  <!-- 768px以上でAVIF対応ならPC用AVIF -->
+  <source media="(min-width: 768px)"
+          type="image/avif"
+          srcset="photo-large.avif">
+  <!-- 768px以上でWebP対応ならPC用WebP -->
+  <source media="(min-width: 768px)"
+          type="image/webp"
+          srcset="photo-large.webp">
+  <!-- フォールバック -->
+  <img src="photo-small.jpg" alt="風景写真">
+</picture>
+
+→ mediaとtypeを組み合わせて細かく制御`,
+    };
+    function selectPicture(key) {
+      document.querySelectorAll('.picture-demo-card').forEach(c => c.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+      document.getElementById('picture-code').textContent = pictureExamples[key];
+    }
+    selectPicture('media');
+  </script>
 
   <div class="compare-grid">
     <div class="compare-box">
-      <h4>📌 picture内のsource</h4>
+      <h4>📌 picture 内の source</h4>
       必須属性：<code>srcset</code><br>
       任意属性：<code>media</code> または <code>type</code><br>
       （どちらか一方でもOK・両方でもOK・なくてもOK）
     </div>
     <div class="compare-box">
-      <h4>📌 video/audio内のsource</h4>
+      <h4>📌 video / audio 内の source</h4>
       必須属性：<code>src</code><br>
       任意属性：<code>type</code><br>
-      （srcsetは使わない）
+      （srcset は使わない）
     </div>
   </div>
 </div>
 
 
-<!-- 3. video要素 -->
-<h2>③ video要素</h2>
-
+<!-- ============================================================ -->
+<!-- PART 3：video 要素 -->
+<!-- ============================================================ -->
+<h2>③ video 要素</h2>
 <div class="note">
-  <strong>ポイント</strong><br>
-  ・<code>&lt;video&gt;</code> は動画を埋め込む要素です。<br>
-  ・<code>src</code> 属性で直接指定するか、子要素の <code>&lt;source&gt;</code> で複数フォーマットを指定します。<br>
-  ・ブラウザが対応していない場合のフォールバックテキストを内部に書けます。
+  <strong>重要ポイント③：video は動画を埋め込む要素。controls / poster / autoplay / muted などの属性を持つ</strong><br>
+  ・<code>&lt;video&gt;</code> は動画を埋め込む要素です<br>
+  ・<code>src</code> 属性で直接指定するか、子要素の <code>&lt;source&gt;</code> で複数フォーマットを指定します<br>
+  ・ブラウザが対応していない場合のフォールバックテキストを内部に書けます
 </div>
-
 <div class="demo-box">
+
 <pre>
 <span class="comment">&lt;!-- 基本的な書き方 --&gt;</span>
 <span class="tag">&lt;video</span> <span class="attr">src</span>=<span class="value">"movie.mp4"</span>
@@ -417,25 +666,87 @@
   お使いのブラウザは動画再生に対応していません。
 <span class="tag">&lt;/video&gt;</span>
 
-<span class="comment">&lt;!-- 複数フォーマットの指定（source要素） --&gt;</span>
+<span class="comment">&lt;!-- 複数フォーマット + poster（source要素） --&gt;</span>
 <span class="tag">&lt;video</span> <span class="attr">controls</span> <span class="attr">width</span>=<span class="value">"640"</span> <span class="attr">height</span>=<span class="value">"360"</span>
        <span class="attr">poster</span>=<span class="value">"thumbnail.jpg"</span><span class="tag">&gt;</span>
   <span class="comment">&lt;!-- video内のsource要素はsrc属性が必須 --&gt;</span>
   <span class="tag">&lt;source</span> <span class="attr">src</span>=<span class="value">"movie.mp4"</span>  <span class="attr">type</span>=<span class="value">"video/mp4"</span><span class="tag">&gt;</span>
   <span class="tag">&lt;source</span> <span class="attr">src</span>=<span class="value">"movie.webm"</span> <span class="attr">type</span>=<span class="value">"video/webm"</span><span class="tag">&gt;</span>
-  <span class="tag">&lt;source</span> <span class="attr">src</span>=<span class="value">"movie.ogv"</span>  <span class="attr">type</span>=<span class="value">"video/ogg"</span><span class="tag">&gt;</span>
   お使いのブラウザは動画再生に対応していません。
 <span class="tag">&lt;/video&gt;</span>
 </pre>
+
+  <h3>video 属性ビルダー インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#2b6cb0; margin:0 0 10px;">
+      チェックボックスで属性を選択して video タグの書き方を確認しましょう。
+    </p>
+    <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+      <label style="display:flex; align-items:center; gap:6px; font-size:0.85em; cursor:pointer; background:#fff; border:1px solid #bee3f8; border-radius:6px; padding:4px 10px;">
+        <input type="checkbox" id="v-controls" checked onchange="updateVideoBuilder()"> controls
+      </label>
+      <label style="display:flex; align-items:center; gap:6px; font-size:0.85em; cursor:pointer; background:#fff; border:1px solid #bee3f8; border-radius:6px; padding:4px 10px;">
+        <input type="checkbox" id="v-autoplay" onchange="updateVideoBuilder()"> autoplay
+      </label>
+      <label style="display:flex; align-items:center; gap:6px; font-size:0.85em; cursor:pointer; background:#fff; border:1px solid #bee3f8; border-radius:6px; padding:4px 10px;">
+        <input type="checkbox" id="v-muted" onchange="updateVideoBuilder()"> muted
+      </label>
+      <label style="display:flex; align-items:center; gap:6px; font-size:0.85em; cursor:pointer; background:#fff; border:1px solid #bee3f8; border-radius:6px; padding:4px 10px;">
+        <input type="checkbox" id="v-loop" onchange="updateVideoBuilder()"> loop
+      </label>
+      <label style="display:flex; align-items:center; gap:6px; font-size:0.85em; cursor:pointer; background:#fff; border:1px solid #bee3f8; border-radius:6px; padding:4px 10px;">
+        <input type="checkbox" id="v-poster" onchange="updateVideoBuilder()"> poster
+      </label>
+      <label style="display:flex; align-items:center; gap:6px; font-size:0.85em; cursor:pointer; background:#fff; border:1px solid #bee3f8; border-radius:6px; padding:4px 10px;">
+        <input type="checkbox" id="v-playsinline" onchange="updateVideoBuilder()"> playsinline
+      </label>
+      <label style="display:flex; align-items:center; gap:6px; font-size:0.85em; cursor:pointer; background:#fff; border:1px solid #bee3f8; border-radius:6px; padding:4px 10px;">
+        <input type="checkbox" id="v-source" onchange="updateVideoBuilder()"> source要素
+      </label>
+    </div>
+    <div class="color-code-display" id="video-code"></div>
+  </div>
+  <script>
+    function updateVideoBuilder() {
+      const controls    = document.getElementById('v-controls').checked;
+      const autoplay    = document.getElementById('v-autoplay').checked;
+      const muted       = document.getElementById('v-muted').checked;
+      const loop        = document.getElementById('v-loop').checked;
+      const poster      = document.getElementById('v-poster').checked;
+      const playsinline = document.getElementById('v-playsinline').checked;
+      const useSource   = document.getElementById('v-source').checked;
+      let attrs = '';
+      if (controls)    attrs += '\n       controls';
+      if (autoplay)    attrs += '\n       autoplay';
+      if (muted)       attrs += '\n       muted';
+      if (loop)        attrs += '\n       loop';
+      if (poster)      attrs += '\n       poster="thumbnail.jpg"';
+      if (playsinline) attrs += '\n       playsinline';
+      let inner = '';
+      if (useSource) {
+        inner = '\n  <source src="movie.mp4"  type="video/mp4">\n  <source src="movie.webm" type="video/webm">';
+      } else {
+        attrs = '\n       src="movie.mp4"' + attrs;
+      }
+      inner += '\n  お使いのブラウザは動画再生に対応していません。';
+      let notes = [];
+      if (autoplay && !muted) notes.push('⚠️ autoplay は多くのブラウザで muted が必要');
+      if (playsinline) notes.push('→ playsinline: iOSでインライン再生（全画面にならない）');
+      const code = `<video width="640" height="360"${attrs}>${inner}\n</video>`;
+      document.getElementById('video-code').textContent =
+        code + (notes.length ? '\n\n' + notes.join('\n') : '');
+    }
+    updateVideoBuilder();
+  </script>
 
   <table class="ref-table">
     <thead>
       <tr><th>属性</th><th>説明</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>src</code></td><td>動画ファイルのURL（source要素を使う場合は不要）</td></tr>
+      <tr><td><code>src</code></td><td>動画ファイルのURL（source 要素を使う場合は不要）</td></tr>
       <tr><td><code>controls</code></td><td>再生コントロールを表示（論理属性）</td></tr>
-      <tr><td><code>autoplay</code></td><td>自動再生（論理属性・muted必須のブラウザが多い）</td></tr>
+      <tr><td><code>autoplay</code></td><td>自動再生（論理属性・muted 必須のブラウザが多い）</td></tr>
       <tr><td><code>muted</code></td><td>ミュート状態で再生（論理属性）</td></tr>
       <tr><td><code>loop</code></td><td>ループ再生（論理属性）</td></tr>
       <tr><td><code>poster</code></td><td>再生前に表示するサムネイル画像のURL</td></tr>
@@ -447,17 +758,18 @@
 </div>
 
 
-<!-- 4. audio要素 -->
-<h2>④ audio要素</h2>
-
+<!-- ============================================================ -->
+<!-- PART 4：audio 要素 -->
+<!-- ============================================================ -->
+<h2>④ audio 要素</h2>
 <div class="note">
-  <strong>ポイント</strong><br>
-  ・<code>&lt;audio&gt;</code> は音声を埋め込む要素です。<br>
-  ・基本的な構造は <code>video</code> 要素と同じです。<br>
-  ・<code>width</code> / <code>height</code> 属性はありません（音声のみのため）。
+  <strong>重要ポイント④：audio は音声を埋め込む要素。video とほぼ同じ構造だが width/height 属性はない</strong><br>
+  ・<code>&lt;audio&gt;</code> は音声を埋め込む要素です<br>
+  ・基本的な構造は <code>video</code> 要素と同じです<br>
+  ・<code>width</code> / <code>height</code> 属性はありません（音声のみのため）
 </div>
-
 <div class="demo-box">
+
 <pre>
 <span class="comment">&lt;!-- 基本的な書き方 --&gt;</span>
 <span class="tag">&lt;audio</span> <span class="attr">src</span>=<span class="value">"sound.mp3"</span> <span class="attr">controls</span><span class="tag">&gt;</span>
@@ -474,34 +786,39 @@
 <span class="tag">&lt;/audio&gt;</span>
 </pre>
 
+  <h3>video vs audio 比較</h3>
   <table class="ref-table">
     <thead>
-      <tr><th>属性</th><th>説明</th></tr>
+      <tr><th>属性</th><th>video</th><th>audio</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>src</code></td><td>音声ファイルのURL</td></tr>
-      <tr><td><code>controls</code></td><td>再生コントロールを表示（論理属性）</td></tr>
-      <tr><td><code>autoplay</code></td><td>自動再生（論理属性）</td></tr>
-      <tr><td><code>muted</code></td><td>ミュート状態（論理属性）</td></tr>
-      <tr><td><code>loop</code></td><td>ループ再生（論理属性）</td></tr>
-      <tr><td><code>preload</code></td><td>読み込み方法（none / metadata / auto）</td></tr>
+      <tr><td><code>src</code></td><td>✅</td><td>✅</td></tr>
+      <tr><td><code>controls</code></td><td>✅</td><td>✅</td></tr>
+      <tr><td><code>autoplay</code></td><td>✅</td><td>✅</td></tr>
+      <tr><td><code>muted</code></td><td>✅</td><td>✅</td></tr>
+      <tr><td><code>loop</code></td><td>✅</td><td>✅</td></tr>
+      <tr><td><code>preload</code></td><td>✅</td><td>✅</td></tr>
+      <tr><td><code>poster</code></td><td>✅</td><td>❌</td></tr>
+      <tr><td><code>width / height</code></td><td>✅</td><td>❌</td></tr>
+      <tr><td><code>playsinline</code></td><td>✅</td><td>❌</td></tr>
     </tbody>
   </table>
 </div>
 
 
-<!-- 5. track要素 -->
-<h2>⑤ track要素</h2>
-
+<!-- ============================================================ -->
+<!-- PART 5：track 要素 -->
+<!-- ============================================================ -->
+<h2>⑤ track 要素</h2>
 <div class="note">
-  <strong>ポイント</strong><br>
+  <strong>重要ポイント⑤：track は video/audio に字幕・キャプション・チャプターを追加する空要素</strong><br>
   ・<code>&lt;track&gt;</code> は <code>video</code> / <code>audio</code> 要素に
-  <strong>字幕・キャプション・チャプターなどのテキストトラック</strong>を追加する空要素です。<br>
-  ・WebVTT形式（<code>.vtt</code>）のファイルを指定します。<br>
-  ・<code>kind</code> 属性でトラックの種類を指定します。
+  <strong>テキストトラック</strong>を追加する空要素です<br>
+  ・WebVTT 形式（<code>.vtt</code>）のファイルを指定します<br>
+  ・<code>kind</code> 属性でトラックの種類を指定します
 </div>
-
 <div class="demo-box">
+
 <pre>
 <span class="tag">&lt;video</span> <span class="attr">controls</span> <span class="attr">src</span>=<span class="value">"movie.mp4"</span><span class="tag">&gt;</span>
   <span class="comment">&lt;!-- 日本語字幕（デフォルト表示） --&gt;</span>
@@ -522,9 +839,44 @@
 <span class="tag">&lt;/video&gt;</span>
 </pre>
 
+  <h3>track kind 属性 インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#2b6cb0; margin:0 0 10px;">
+      kind 属性の値を選択して、各トラックの用途を確認しましょう。
+    </p>
+    <div class="slider-row">
+      <label>kind の値</label>
+      <select id="track-kind" onchange="updateTrackDemo()">
+        <option value="subtitles">subtitles（字幕）</option>
+        <option value="captions">captions（キャプション）</option>
+        <option value="descriptions">descriptions（音声説明）</option>
+        <option value="chapters">chapters（チャプター）</option>
+        <option value="metadata">metadata（メタデータ）</option>
+      </select>
+    </div>
+    <div class="color-code-display" id="track-code"></div>
+  </div>
+  <script>
+    const trackDesc = {
+      subtitles:    { desc: '字幕（翻訳テキスト）。srclang属性で言語を指定', use: '外国語動画の翻訳字幕' },
+      captions:     { desc: 'キャプション（音声説明・効果音なども含む）', use: '聴覚障害者向け・音声なし視聴' },
+      descriptions: { desc: '映像の音声説明（視覚障害者向け）', use: '視覚障害者向けの映像説明' },
+      chapters:     { desc: 'チャプター情報（ナビゲーション用）', use: '長い動画のチャプター分割' },
+      metadata:     { desc: 'スクリプトから利用するメタデータ（画面には表示されない）', use: 'JavaScriptでの動画解析など' },
+    };
+    function updateTrackDemo() {
+      const k = document.getElementById('track-kind').value;
+      const d = trackDesc[k];
+      document.getElementById('track-code').textContent =
+        `<track kind="${k}"\n       src="track.vtt"\n       srclang="ja"\n       label="日本語">\n\n` +
+        `説明: ${d.desc}\n用途: ${d.use}`;
+    }
+    updateTrackDemo();
+  </script>
+
   <table class="ref-table">
     <thead>
-      <tr><th>kind属性の値</th><th>説明</th></tr>
+      <tr><th>kind 属性の値</th><th>説明</th></tr>
     </thead>
     <tbody>
       <tr><td><code>subtitles</code></td><td>字幕（翻訳テキスト）</td></tr>
@@ -537,57 +889,69 @@
 </div>
 
 
-<!-- 6. embed要素 -->
-<h2>⑥ embed要素</h2>
-
+<!-- ============================================================ -->
+<!-- PART 6：embed / object 要素 -->
+<!-- ============================================================ -->
+<h2>⑥ embed 要素 / object 要素</h2>
 <div class="note">
-  <strong>ポイント</strong><br>
-  ・<code>&lt;embed&gt;</code> はブラウザプラグインなどの<strong>外部コンテンツを埋め込む空要素</strong>です。<br>
-  ・PDFや外部アプリケーションのコンテンツを表示するために使います。<br>
-  ・現在は <code>object</code> 要素や <code>iframe</code> 要素が代替として使われることが多いです。
+  <strong>重要ポイント⑥：embed は空要素でフォールバック不可。object はフォールバックコンテンツを子要素として持てる</strong><br>
+  ・<code>&lt;embed&gt;</code> ― 外部コンテンツを埋め込む<strong>空要素</strong>。フォールバックを持てない<br>
+  ・<code>&lt;object&gt;</code> ― 外部リソースを埋め込む要素。<strong>フォールバックコンテンツを子要素として持てる</strong>
 </div>
-
 <div class="demo-box">
+
 <pre>
-<span class="comment">&lt;!-- PDFの埋め込み --&gt;</span>
+<span class="comment">&lt;!-- embed：空要素（フォールバックなし） --&gt;</span>
 <span class="tag">&lt;embed</span> <span class="attr">src</span>=<span class="value">"document.pdf"</span>
        <span class="attr">type</span>=<span class="value">"application/pdf"</span>
        <span class="attr">width</span>=<span class="value">"800"</span>
        <span class="attr">height</span>=<span class="value">"600"</span><span class="tag">&gt;</span>
 
-<span class="comment">&lt;!-- 外部コンテンツの埋め込み --&gt;</span>
-<span class="tag">&lt;embed</span> <span class="attr">src</span>=<span class="value">"https://example.com/plugin"</span>
-       <span class="attr">type</span>=<span class="value">"application/x-shockwave-flash"</span>
-       <span class="attr">width</span>=<span class="value">"400"</span>
-       <span class="attr">height</span>=<span class="value">"300"</span><span class="tag">&gt;</span>
+<span class="comment">&lt;!-- object：フォールバックコンテンツを持てる --&gt;</span>
+<span class="tag">&lt;object</span> <span class="attr">data</span>=<span class="value">"document.pdf"</span>
+        <span class="attr">type</span>=<span class="value">"application/pdf"</span>
+        <span class="attr">width</span>=<span class="value">"800"</span>
+        <span class="attr">height</span>=<span class="value">"600"</span><span class="tag">&gt;</span>
+  <span class="comment">&lt;!-- 表示できない場合のフォールバック --&gt;</span>
+  <span class="tag">&lt;p&gt;</span>PDFを表示できません。
+    <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"document.pdf"</span><span class="tag">&gt;</span>ダウンロード<span class="tag">&lt;/a&gt;</span>
+  <span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;/object&gt;</span>
 </pre>
+
+  <div class="good">
+    ✅ <strong>embed と object の違い</strong><br>
+    ・<code>embed</code>：空要素。フォールバックコンテンツを持てない。<code>src</code> 属性でURLを指定<br>
+    ・<code>object</code>：フォールバックコンテンツを子要素として持てる。<code>data</code> 属性でURLを指定
+  </div>
 
   <table class="ref-table">
     <thead>
-      <tr><th>属性</th><th>説明</th></tr>
+      <tr><th>属性</th><th>embed</th><th>object</th></tr>
     </thead>
     <tbody>
-      <tr><td><code>src</code></td><td>埋め込むコンテンツのURL</td></tr>
-      <tr><td><code>type</code></td><td>MIMEタイプ</td></tr>
-      <tr><td><code>width</code> / <code>height</code></td><td>表示サイズ（ピクセル整数値のみ）</td></tr>
+      <tr><td>URLの指定</td><td><code>src</code></td><td><code>data</code></td></tr>
+      <tr><td><code>type</code></td><td>✅ MIMEタイプ</td><td>✅ MIMEタイプ</td></tr>
+      <tr><td><code>width / height</code></td><td>✅</td><td>✅</td></tr>
+      <tr><td>フォールバック</td><td>❌ 持てない（空要素）</td><td>✅ 子要素として持てる</td></tr>
     </tbody>
   </table>
 </div>
 
 
-<!-- 7. map / area要素 -->
-<h2>⑦ map要素 / area要素</h2>
-
+<!-- ============================================================ -->
+<!-- PART 7：map / area 要素 -->
+<!-- ============================================================ -->
+<h2>⑦ map 要素 / area 要素</h2>
 <div class="note">
-  <strong>ポイント</strong><br>
-  ・<code>&lt;map&gt;</code> と <code>&lt;area&gt;</code> は<strong>イメージマップ</strong>（画像の特定領域をリンクにする）を定義します。<br>
-  ・<code>&lt;img&gt;</code> の <code>usemap</code> 属性で <code>&lt;map&gt;</code> の <code>name</code> 属性を参照します。<br>
-  ・<code>&lt;area&gt;</code> は空要素で、クリック可能な領域の形状・座標・リンク先を指定します。
+  <strong>重要ポイント⑦：map と area でイメージマップを定義。img の usemap 属性で map の name を参照する</strong><br>
+  ・<code>&lt;map&gt;</code> と <code>&lt;area&gt;</code> は<strong>イメージマップ</strong>（画像の特定領域をリンクにする）を定義します<br>
+  ・<code>&lt;img&gt;</code> の <code>usemap</code> 属性で <code>&lt;map&gt;</code> の <code>name</code> 属性を参照します<br>
+  ・<code>&lt;area&gt;</code> は空要素で、クリック可能な領域の形状・座標・リンク先を指定します
 </div>
-
 <div class="demo-box">
+
 <pre>
-<span class="comment">&lt;!-- イメージマップの例 --&gt;</span>
 <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="value">"japan-map.png"</span>
      <span class="attr">alt</span>=<span class="value">"日本地図"</span>
      <span class="attr">usemap</span>=<span class="value">"#japanmap"</span>
@@ -595,17 +959,17 @@
      <span class="attr">height</span>=<span class="value">"400"</span><span class="tag">&gt;</span>
 
 <span class="tag">&lt;map</span> <span class="attr">name</span>=<span class="value">"japanmap"</span><span class="tag">&gt;</span>
-  <span class="comment">&lt;!-- 矩形領域（左上x,y・右下x,y） --&gt;</span>
+  <span class="comment">&lt;!-- 矩形（左上x,y・右下x,y） --&gt;</span>
   <span class="tag">&lt;area</span> <span class="attr">shape</span>=<span class="value">"rect"</span>
         <span class="attr">coords</span>=<span class="value">"100,50,200,150"</span>
         <span class="attr">href</span>=<span class="value">"tokyo.html"</span>
         <span class="attr">alt</span>=<span class="value">"東京"</span><span class="tag">&gt;</span>
-  <span class="comment">&lt;!-- 円形領域（中心x,y・半径） --&gt;</span>
+  <span class="comment">&lt;!-- 円形（中心x,y・半径） --&gt;</span>
   <span class="tag">&lt;area</span> <span class="attr">shape</span>=<span class="value">"circle"</span>
         <span class="attr">coords</span>=<span class="value">"300,200,50"</span>
         <span class="attr">href</span>=<span class="value">"osaka.html"</span>
         <span class="attr">alt</span>=<span class="value">"大阪"</span><span class="tag">&gt;</span>
-  <span class="comment">&lt;!-- 多角形領域（x1,y1,x2,y2,...） --&gt;</span>
+  <span class="comment">&lt;!-- 多角形（x1,y1,x2,y2,...） --&gt;</span>
   <span class="tag">&lt;area</span> <span class="attr">shape</span>=<span class="value">"poly"</span>
         <span class="attr">coords</span>=<span class="value">"400,100,450,150,420,200"</span>
         <span class="attr">href</span>=<span class="value">"nagoya.html"</span>
@@ -613,9 +977,79 @@
 <span class="tag">&lt;/map&gt;</span>
 </pre>
 
+  <h3>area shape 属性 インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#2b6cb0; margin:0 0 10px;">
+      shape を選択して、coords 属性の形式と描画イメージを確認しましょう。
+    </p>
+    <div class="slider-row">
+      <label>shape の値</label>
+      <select id="area-shape" onchange="updateAreaDemo()">
+        <option value="rect">rect（矩形）</option>
+        <option value="circle">circle（円形）</option>
+        <option value="poly">poly（多角形）</option>
+        <option value="default">default（画像全体）</option>
+      </select>
+    </div>
+    <canvas id="area-canvas" class="area-demo-canvas" width="360" height="160"></canvas>
+    <div class="color-code-display" id="area-code"></div>
+  </div>
+  <script>
+    function updateAreaDemo() {
+      const shape  = document.getElementById('area-shape').value;
+      const canvas = document.getElementById('area-canvas');
+      const ctx    = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#ebf8ff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(66,153,225,0.15)';
+      ctx.strokeStyle = '#4299e1';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([]);
+      const cx = canvas.width / 2, cy = canvas.height / 2;
+      let code = '';
+      if (shape === 'rect') {
+        const x1=80, y1=40, x2=280, y2=120;
+        ctx.fillRect(x1, y1, x2-x1, y2-y1);
+        ctx.strokeRect(x1, y1, x2-x1, y2-y1);
+        ctx.fillStyle = '#2b6cb0'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText(`(${x1},${y1})`, x1+20, y1-6);
+        ctx.fillText(`(${x2},${y2})`, x2-20, y2+14);
+        code = `<area shape="rect"\n      coords="${x1},${y1},${x2},${y2}"\n      href="page.html" alt="矩形領域">\n\n→ coords: 左上x, 左上y, 右下x, 右下y`;
+      } else if (shape === 'circle') {
+        const r = 55;
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2);
+        ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#2b6cb0'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText(`中心(${Math.round(cx)},${Math.round(cy)})`, cx, cy-4);
+        ctx.fillText(`半径${r}`, cx, cy+14);
+        code = `<area shape="circle"\n      coords="${Math.round(cx)},${Math.round(cy)},${r}"\n      href="page.html" alt="円形領域">\n\n→ coords: 中心x, 中心y, 半径`;
+      } else if (shape === 'poly') {
+        const pts = [[80,130],[180,30],[280,130]];
+        ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+        pts.forEach(p => ctx.lineTo(p[0], p[1]));
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#2b6cb0'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+        pts.forEach(p => ctx.fillText(`(${p[0]},${p[1]})`, p[0], p[1]+(p[1]<80?-6:14)));
+        const coordStr = pts.map(p=>p.join(',')).join(',');
+        code = `<area shape="poly"\n      coords="${coordStr}"\n      href="page.html" alt="多角形領域">\n\n→ coords: x1,y1,x2,y2,x3,y3,... (3点以上)`;
+      } else {
+        ctx.setLineDash([8,4]);
+        ctx.strokeRect(4, 4, canvas.width-8, canvas.height-8);
+        ctx.fillStyle = 'rgba(66,153,225,0.08)';
+        ctx.fillRect(4, 4, canvas.width-8, canvas.height-8);
+        ctx.fillStyle = '#2b6cb0'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText('画像全体がクリック領域', cx, cy);
+        code = `<area shape="default"\n      href="page.html" alt="画像全体">\n\n→ coords属性は不要\n→ 画像全体がクリック可能な領域になる`;
+      }
+      document.getElementById('area-code').textContent = code;
+    }
+    updateAreaDemo();
+  </script>
+
   <table class="ref-table">
     <thead>
-      <tr><th>shape属性の値</th><th>coords属性の形式</th><th>説明</th></tr>
+      <tr><th>shape 属性の値</th><th>coords 属性の形式</th><th>説明</th></tr>
     </thead>
     <tbody>
       <tr><td><code>rect</code></td><td>左上x, 左上y, 右下x, 右下y</td><td>矩形（長方形）</td></tr>
@@ -627,60 +1061,9 @@
 </div>
 
 
-<!-- 8. object要素 -->
-<h2>⑧ object要素</h2>
-
-<div class="note">
-  <strong>ポイント</strong><br>
-  ・<code>&lt;object&gt;</code> は<strong>外部リソース（PDF・画像・動画など）を埋め込む</strong>要素です。<br>
-  ・<code>embed</code> 要素と異なり、<strong>フォールバックコンテンツ</strong>を子要素として記述できます。<br>
-  ・<code>data</code> 属性でリソースのURLを、<code>type</code> 属性でMIMEタイプを指定します。
-</div>
-
-<div class="demo-box">
-<pre>
-<span class="comment">&lt;!-- PDFの埋め込み --&gt;</span>
-<span class="tag">&lt;object</span> <span class="attr">data</span>=<span class="value">"document.pdf"</span>
-        <span class="attr">type</span>=<span class="value">"application/pdf"</span>
-        <span class="attr">width</span>=<span class="value">"800"</span>
-        <span class="attr">height</span>=<span class="value">"600"</span><span class="tag">&gt;</span>
-  <span class="comment">&lt;!-- フォールバック：表示できない場合に表示される --&gt;</span>
-  <span class="tag">&lt;p&gt;</span>PDFを表示できません。
-    <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="value">"document.pdf"</span><span class="tag">&gt;</span>こちらからダウンロード<span class="tag">&lt;/a&gt;</span>
-  <span class="tag">&lt;/p&gt;</span>
-<span class="tag">&lt;/object&gt;</span>
-
-<span class="comment">&lt;!-- 画像の埋め込み（imgのフォールバックとして） --&gt;</span>
-<span class="tag">&lt;object</span> <span class="attr">data</span>=<span class="value">"photo.jpg"</span>
-        <span class="attr">type</span>=<span class="value">"image/jpeg"</span>
-        <span class="attr">width</span>=<span class="value">"400"</span>
-        <span class="attr">height</span>=<span class="value">"300"</span><span class="tag">&gt;</span>
-  画像を表示できません。
-<span class="tag">&lt;/object&gt;</span>
-</pre>
-
-  <table class="ref-table">
-    <thead>
-      <tr><th>属性</th><th>説明</th></tr>
-    </thead>
-    <tbody>
-      <tr><td><code>data</code></td><td>埋め込むリソースのURL</td></tr>
-      <tr><td><code>type</code></td><td>MIMEタイプ</td></tr>
-      <tr><td><code>width</code> / <code>height</code></td><td>表示サイズ（ピクセル整数値のみ）</td></tr>
-      <tr><td><code>name</code></td><td>フォーム送信時の名前</td></tr>
-      <tr><td><code>form</code></td><td>関連するフォームのID</td></tr>
-    </tbody>
-  </table>
-
-  <div class="good">
-    ✅ <strong>embed と object の違い</strong><br>
-    ・<code>embed</code>：空要素。フォールバックコンテンツを持てない<br>
-    ・<code>object</code>：フォールバックコンテンツを子要素として持てる
-  </div>
-</div>
-
-
+<!-- ============================================================ -->
 <!-- 演習問題 -->
+<!-- ============================================================ -->
 <div class="quiz-section">
   <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
   <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
@@ -695,7 +1078,7 @@
     <label>○ または × を入力：</label>
     <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
     <br>
-    <button class="btn btn-blue" onclick="checkQ1()">答え合わせ</button>
+    <button class="btn-quiz" onclick="checkQ1()">答え合わせ</button>
     <div class="result-msg" id="q1-result"></div>
     <script>
       function checkQ1() {
@@ -703,7 +1086,10 @@
         const r = document.getElementById('q1-result');
         if (v === '×' || v === 'x' || v === 'X') {
           r.className = 'result-msg correct';
-          r.textContent = '✅ 正解！width / height 属性に指定できるのはピクセル整数値のみです。パーセント値は指定できません。レスポンシブ対応はCSSで行います。';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            '<code>width</code> / <code>height</code> 属性に指定できるのは<strong>ピクセル整数値のみ</strong>です。<br>' +
+            'パーセント値は指定できません。レスポンシブ対応は CSS で行います。';
         } else if (v === '○' || v === 'o' || v === 'O') {
           r.className = 'result-msg wrong';
           r.textContent = '❌ 不正解。width / height 属性はパーセント値を指定できません。ピクセル整数値のみです。';
@@ -717,41 +1103,59 @@
 
   <!-- Q2 -->
   <div class="quiz-block">
-    <h3>Q2. 選択問題</h3>
-    <p>
-      <code>&lt;picture&gt;</code> 要素内の <code>&lt;source&gt;</code> 要素について、
-      正しい説明はどれですか？
-    </p>
-    <select id="q2">
-      <option value="">-- 選択してください --</option>
-      <option value="a">src属性が必須で、media属性とtype属性はどちらも必須である</option>
-      <option value="b">srcset属性が必須で、media属性またはtype属性のいずれかが指定されていれば問題ない</option>
-      <option value="c">src属性が必須で、media属性またはtype属性のいずれかが指定されていれば問題ない</option>
-      <option value="d">srcset属性が必須で、media属性とtype属性は両方必須である</option>
-    </select>
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合う属性名を入力してください。</p>
+
+    <label>① video / audio 内の source 要素で必須となる属性名：</label>
+    <input type="text" id="q2a" placeholder="属性名">
+
+    <label>② picture 内の source 要素で必須となる属性名：</label>
+    <input type="text" id="q2b" placeholder="属性名">
+
+    <label>③ video 要素で再生前に表示するサムネイル画像を指定する属性名：</label>
+    <input type="text" id="q2c" placeholder="属性名">
+
+    <label>④ track 要素でトラックの種類を指定する属性名：</label>
+    <input type="text" id="q2d" placeholder="属性名">
+
+    <label>⑤ object 要素で埋め込むリソースの URL を指定する属性名（embed の src に相当）：</label>
+    <input type="text" id="q2e" placeholder="属性名">
+
+    <label>⑥ img 要素で複数の画像候補を解像度・幅に応じて指定する属性名：</label>
+    <input type="text" id="q2f" placeholder="属性名">
+
     <br>
-    <button class="btn btn-blue" onclick="checkQ2()">答え合わせ</button>
+    <button class="btn-quiz" onclick="checkQ2()">答え合わせ</button>
     <div class="result-msg" id="q2-result"></div>
     <script>
       function checkQ2() {
-        const v = document.getElementById('q2').value;
+        const a = document.getElementById('q2a').value.trim().toLowerCase();
+        const b = document.getElementById('q2b').value.trim().toLowerCase();
+        const c = document.getElementById('q2c').value.trim().toLowerCase();
+        const d = document.getElementById('q2d').value.trim().toLowerCase();
+        const e = document.getElementById('q2e').value.trim().toLowerCase();
+        const f = document.getElementById('q2f').value.trim().toLowerCase();
         const r = document.getElementById('q2-result');
-        if (v === 'b') {
+        const ca = a === 'src';
+        const cb = b === 'srcset';
+        const cc = c === 'poster';
+        const cd = d === 'kind';
+        const ce = e === 'data';
+        const cf = f === 'srcset';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
           r.className = 'result-msg correct';
-          r.innerHTML =
-            '✅ 正解！<br>' +
-            'picture内のsource要素はsrcset属性が必須です。<br>' +
-            'media属性またはtype属性はいずれかが指定されていれば問題ありません（両方でも・なくてもOK）。<br>' +
-            'なお、video/audio内のsource要素はsrc属性が必須である点と区別してください。';
-        } else if (v === '') {
-          r.className = 'result-msg info';
-          r.textContent = '⚠️ 選択肢を選んでください。';
+          r.textContent = '✅ 全問正解！画像・動画・音声要素を完璧に理解しています！';
         } else {
           r.className = 'result-msg wrong';
           r.innerHTML =
-            '❌ 不正解。<br>' +
-            'picture内のsource要素の必須属性は <code>srcset</code> です（srcではありません）。<br>' +
-            'media / type はいずれかがあれば問題なく、両方必須ではありません。';
+            `❌ ${count}/6 問正解。<br>` +
+            `① ${ca?'✅':'❌ src'}　` +
+            `② ${cb?'✅':'❌ srcset'}　` +
+            `③ ${cc?'✅':'❌ poster'}　` +
+            `④ ${cd?'✅':'❌ kind'}　` +
+            `⑤ ${ce?'✅':'❌ data'}　` +
+            `⑥ ${cf?'✅':'❌ srcset'}`;
         }
       }
     </script>
@@ -759,47 +1163,41 @@
 
   <!-- Q3 -->
   <div class="quiz-block">
-    <h3>Q3. 穴埋め問題（入力）</h3>
-    <p>以下の説明に合う属性名または要素名を入力してください。</p>
-
-    <label>① video / audio 内の source 要素で必須となる属性名：</label>
-    <input type="text" id="q3a" placeholder="属性名">
-
-    <label>② picture 内の source 要素で必須となる属性名：</label>
-    <input type="text" id="q3b" placeholder="属性名">
-
-    <label>③ video要素で再生前に表示するサムネイル画像を指定する属性名：</label>
-    <input type="text" id="q3c" placeholder="属性名">
-
-    <label>④ track要素で字幕の種類を指定する属性名：</label>
-    <input type="text" id="q3d" placeholder="属性名">
-
+    <h3>Q3. 選択問題</h3>
+    <p>
+      <code>&lt;picture&gt;</code> 要素内の <code>&lt;source&gt;</code> 要素について、
+      正しい説明はどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">src 属性が必須で、media 属性と type 属性はどちらも必須である</option>
+      <option value="b">srcset 属性が必須で、media 属性または type 属性のいずれかが指定されていれば問題ない（なくてもOK）</option>
+      <option value="c">src 属性が必須で、media 属性または type 属性のいずれかが指定されていれば問題ない</option>
+      <option value="d">srcset 属性が必須で、media 属性と type 属性は両方必須である</option>
+    </select>
     <br>
-    <button class="btn btn-blue" onclick="checkQ3()">答え合わせ</button>
+    <button class="btn-quiz" onclick="checkQ3()">答え合わせ</button>
     <div class="result-msg" id="q3-result"></div>
     <script>
       function checkQ3() {
-        const a = document.getElementById('q3a').value.trim().toLowerCase();
-        const b = document.getElementById('q3b').value.trim().toLowerCase();
-        const c = document.getElementById('q3c').value.trim().toLowerCase();
-        const d = document.getElementById('q3d').value.trim().toLowerCase();
+        const v = document.getElementById('q3').value;
         const r = document.getElementById('q3-result');
-        const ca = a === 'src';
-        const cb = b === 'srcset';
-        const cc = c === 'poster';
-        const cd = d === 'kind';
-        const count = [ca, cb, cc, cd].filter(Boolean).length;
-        if (count === 4) {
+        if (v === 'b') {
           r.className = 'result-msg correct';
-          r.textContent = '✅ 全問正解！完璧です！';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'picture 内の source 要素は <strong>srcset 属性が必須</strong>です。<br>' +
+            'media / type はいずれかが指定されていれば問題なく、両方でも・なくてもOKです。<br><br>' +
+            '⚠️ video / audio 内の source 要素は <strong>src 属性が必須</strong>（srcset は使わない）';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
         } else {
           r.className = 'result-msg wrong';
           r.innerHTML =
-            `❌ ${count}/4 問正解。<br>` +
-            `① ${ca ? '✅' : '❌ src'}　` +
-            `② ${cb ? '✅' : '❌ srcset'}　` +
-            `③ ${cc ? '✅' : '❌ poster'}　` +
-            `④ ${cd ? '✅' : '❌ kind'}`;
+            '❌ 不正解。<br>' +
+            '・picture 内の source の必須属性は <code>srcset</code>（src ではない）<br>' +
+            '・media / type はいずれかがあれば問題なく、両方必須ではない';
         }
       }
     </script>
@@ -807,71 +1205,41 @@
 
   <!-- Q4 -->
   <div class="quiz-block">
-    <h3>Q4. 正誤チェックボックス問題</h3>
-    <p><strong>正しい記述</strong>をすべて選んでください。</p>
-    <label class="checkbox-label">
-      <input type="checkbox" id="q4a">
-      ① <code>alt=""</code>（空文字）を指定した画像は、スクリーンリーダーにスキップされる
-    </label>
-    <label class="checkbox-label">
-      <input type="checkbox" id="q4b">
-      ② <code>&lt;img width="50%"&gt;</code> はHTML仕様として正しい書き方である
-    </label>
-    <label class="checkbox-label">
-      <input type="checkbox" id="q4c">
-      ③ <code>&lt;picture&gt;</code> 要素には必ず <code>&lt;img&gt;</code> 要素（フォールバック）を含める必要がある
-    </label>
-    <label class="checkbox-label">
-      <input type="checkbox" id="q4d">
-      ④ <code>&lt;embed&gt;</code> 要素はフォールバックコンテンツを子要素として持てる
-    </label>
-    <label class="checkbox-label">
-      <input type="checkbox" id="q4e">
-      ⑤ <code>&lt;track&gt;</code> 要素は <code>video</code> 要素と <code>audio</code> 要素の両方で使用できる
-    </label>
-    <label class="checkbox-label">
-      <input type="checkbox" id="q4f">
-      ⑥ <code>&lt;area&gt;</code> 要素の <code>shape="circle"</code> の <code>coords</code> 属性には「中心x, 中心y, 半径」を指定する
-    </label>
+    <h3>Q4. 選択問題</h3>
+    <p>
+      <code>&lt;embed&gt;</code> 要素と <code>&lt;object&gt;</code> 要素の違いとして
+      <strong>正しいもの</strong>はどれですか？
+    </p>
+    <select id="q4">
+      <option value="">-- 選択してください --</option>
+      <option value="a">embed と object はどちらもフォールバックコンテンツを子要素として持てる</option>
+      <option value="b">embed は空要素でフォールバックコンテンツを持てないが、object はフォールバックコンテンツを子要素として持てる</option>
+      <option value="c">object は空要素でフォールバックコンテンツを持てないが、embed はフォールバックコンテンツを子要素として持てる</option>
+      <option value="d">embed と object はどちらも URL を src 属性で指定する</option>
+    </select>
     <br>
-    <button class="btn btn-blue" onclick="checkQ4()">答え合わせ</button>
+    <button class="btn-quiz" onclick="checkQ4()">答え合わせ</button>
     <div class="result-msg" id="q4-result"></div>
     <script>
       function checkQ4() {
+        const v = document.getElementById('q4').value;
         const r = document.getElementById('q4-result');
-        const checks = {
-          a: document.getElementById('q4a').checked,
-          b: document.getElementById('q4b').checked,
-          c: document.getElementById('q4c').checked,
-          d: document.getElementById('q4d').checked,
-          e: document.getElementById('q4e').checked,
-          f: document.getElementById('q4f').checked,
-        };
-        // 正解：①③⑤⑥（a, c, e, f）
-        // ②パーセント値不可 ④embedはフォールバック不可（objectが可）
-        const correct = { a:true, b:false, c:true, d:false, e:true, f:true };
-        const results = Object.keys(correct).map(k => checks[k] === correct[k]);
-        const allCorrect = results.every(Boolean);
-        if (allCorrect) {
+        if (v === 'b') {
           r.className = 'result-msg correct';
           r.innerHTML =
-            '✅ 全問正解！完璧です！<br><br>' +
-            '・① alt="" はスクリーンリーダーにスキップされる ✅<br>' +
-            '・③ picture要素にはimgフォールバックが必須 ✅<br>' +
-            '・⑤ trackはvideoとaudio両方で使用可 ✅<br>' +
-            '・⑥ circle の coords は「中心x, 中心y, 半径」✅';
+            '✅ 正解！<br>' +
+            '・<code>embed</code>：<strong>空要素</strong>。フォールバックコンテンツを持てない。URL は <code>src</code> 属性<br>' +
+            '・<code>object</code>：フォールバックコンテンツを<strong>子要素として持てる</strong>。URL は <code>data</code> 属性';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
         } else {
           r.className = 'result-msg wrong';
           r.innerHTML =
-            '❌ 不正解の項目があります。<br><br>' +
-            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
-            '・① alt="" はスクリーンリーダーにスキップされる<br>' +
-            '・③ picture要素にはimgフォールバックが必須<br>' +
-            '・⑤ trackはvideoとaudio両方で使用可<br>' +
-            '・⑥ circle の coords は「中心x, 中心y, 半径」<br><br>' +
-            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
-            '・② width属性にパーセント値は指定不可（ピクセル整数値のみ）<br>' +
-            '・④ embedはフォールバックコンテンツを持てない（objectが持てる）';
+            '❌ 不正解。<br>' +
+            '・embed は<strong>空要素</strong>でフォールバックを持てない<br>' +
+            '・object はフォールバックを<strong>子要素として持てる</strong><br>' +
+            '・object の URL 指定は <code>data</code> 属性（src ではない）';
         }
       }
     </script>
@@ -879,8 +1247,87 @@
 
   <!-- Q5 -->
   <div class="quiz-block">
-    <h3>Q5. コード穴埋め問題</h3>
-    <p>以下のコードの <code>__A__</code> 〜 <code>__E__</code> に適切な属性名を入力してください。</p>
+    <h3>Q5. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5a">
+      ① <code>alt=""</code>（空文字）を指定した画像は、スクリーンリーダーにスキップされる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5b">
+      ② <code>&lt;img width="50%"&gt;</code> はHTML仕様として正しい書き方である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5c">
+      ③ <code>&lt;picture&gt;</code> 要素には必ず <code>&lt;img&gt;</code> 要素（フォールバック）を含める必要がある
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5d">
+      ④ <code>&lt;embed&gt;</code> 要素はフォールバックコンテンツを子要素として持てる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5e">
+      ⑤ <code>&lt;track&gt;</code> 要素は <code>video</code> 要素と <code>audio</code> 要素の両方で使用できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5f">
+      ⑥ <code>&lt;area&gt;</code> 要素の <code>shape="circle"</code> の <code>coords</code> 属性には「中心x, 中心y, 半径」を指定する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5g">
+      ⑦ <code>audio</code> 要素には <code>width</code> / <code>height</code> 属性がない
+    </label>
+    <br>
+    <button class="btn-quiz" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const r = document.getElementById('q5-result');
+        const checks = {
+          a: document.getElementById('q5a').checked,
+          b: document.getElementById('q5b').checked,
+          c: document.getElementById('q5c').checked,
+          d: document.getElementById('q5d').checked,
+          e: document.getElementById('q5e').checked,
+          f: document.getElementById('q5f').checked,
+          g: document.getElementById('q5g').checked,
+        };
+        // 正解：①③⑤⑥⑦（a, c, e, f, g）
+        // ② パーセント値不可 → ×
+        // ④ embed はフォールバック不可 → ×
+        const correct = { a:true, b:false, c:true, d:false, e:true, f:true, g:true };
+        const allCorrect = Object.keys(correct).every(k => checks[k] === correct[k]);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① alt="" はスクリーンリーダーにスキップされる ✅<br>' +
+            '・③ picture 要素には img フォールバックが必須 ✅<br>' +
+            '・⑤ track は video と audio 両方で使用可 ✅<br>' +
+            '・⑥ circle の coords は「中心x, 中心y, 半径」✅<br>' +
+            '・⑦ audio には width / height 属性がない ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① alt="" はスクリーンリーダーにスキップされる<br>' +
+            '・③ picture 要素には img フォールバックが必須<br>' +
+            '・⑤ track は video と audio 両方で使用可<br>' +
+            '・⑥ circle の coords は「中心x, 中心y, 半径」<br>' +
+            '・⑦ audio には width / height 属性がない<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② width 属性にパーセント値は指定不可（ピクセル整数値のみ）<br>' +
+            '・④ embed はフォールバックコンテンツを持てない（object が持てる）';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. コード穴埋め問題</h3>
+    <p><code>__A__</code> 〜 <code>__F__</code> に適切な属性名を入力してください。</p>
     <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
 &lt;picture&gt;
   &lt;source __A__="(min-width: 768px)"
@@ -890,68 +1337,75 @@
 
 &lt;video controls __D__="thumbnail.jpg"&gt;
   &lt;source __E__="movie.mp4" type="video/mp4"&gt;
+  &lt;track kind="subtitles" __F__="subtitles-ja.vtt"
+         srclang="ja" label="日本語" default&gt;
 &lt;/video&gt;</pre>
 
     <label>A（メディアクエリを指定する属性）：</label>
-    <input type="text" id="q5a" placeholder="属性名">
-    <label>B（picture内sourceの必須属性）：</label>
-    <input type="text" id="q5b" placeholder="属性名">
+    <input type="text" id="q6a" placeholder="属性名">
+    <label>B（picture 内 source の必須属性）：</label>
+    <input type="text" id="q6b" placeholder="属性名">
     <label>C（画像の代替テキスト属性）：</label>
-    <input type="text" id="q5c" placeholder="属性名">
+    <input type="text" id="q6c" placeholder="属性名">
     <label>D（再生前サムネイル画像の属性）：</label>
-    <input type="text" id="q5d" placeholder="属性名">
-    <label>E（video内sourceの必須属性）：</label>
-    <input type="text" id="q5e" placeholder="属性名">
+    <input type="text" id="q6d" placeholder="属性名">
+    <label>E（video 内 source の必須属性）：</label>
+    <input type="text" id="q6e" placeholder="属性名">
+    <label>F（track 要素でファイルを指定する属性）：</label>
+    <input type="text" id="q6f" placeholder="属性名">
     <br>
-    <button class="btn btn-blue" onclick="checkQ5()">答え合わせ</button>
-    <div class="result-msg" id="q5-result"></div>
+    <button class="btn-quiz" onclick="checkQ6()">答え合わせ</button>
+    <div class="result-msg" id="q6-result"></div>
     <script>
-      function checkQ5() {
-        const a = document.getElementById('q5a').value.trim().toLowerCase();
-        const b = document.getElementById('q5b').value.trim().toLowerCase();
-        const c = document.getElementById('q5c').value.trim().toLowerCase();
-        const d = document.getElementById('q5d').value.trim().toLowerCase();
-        const e = document.getElementById('q5e').value.trim().toLowerCase();
-        const r = document.getElementById('q5-result');
+      function checkQ6() {
+        const a = document.getElementById('q6a').value.trim().toLowerCase();
+        const b = document.getElementById('q6b').value.trim().toLowerCase();
+        const c = document.getElementById('q6c').value.trim().toLowerCase();
+        const d = document.getElementById('q6d').value.trim().toLowerCase();
+        const e = document.getElementById('q6e').value.trim().toLowerCase();
+        const f = document.getElementById('q6f').value.trim().toLowerCase();
+        const r = document.getElementById('q6-result');
         const ca = a === 'media';
         const cb = b === 'srcset';
         const cc = c === 'alt';
         const cd = d === 'poster';
         const ce = e === 'src';
-        const count = [ca, cb, cc, cd, ce].filter(Boolean).length;
-        if (count === 5) {
+        const cf = f === 'src';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
           r.className = 'result-msg correct';
-          r.textContent = '✅ 全問正解！各要素の属性をしっかり理解しています！';
+          r.textContent = '✅ 全問正解！各要素の属性を完璧に理解しています！';
         } else {
           r.className = 'result-msg wrong';
           r.innerHTML =
-            `❌ ${count}/5 問正解。<br>` +
-            `A: ${ca ? '✅' : '❌ media'}　` +
-            `B: ${cb ? '✅' : '❌ srcset'}　` +
-            `C: ${cc ? '✅' : '❌ alt'}　` +
-            `D: ${cd ? '✅' : '❌ poster'}　` +
-            `E: ${ce ? '✅' : '❌ src'}`;
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca?'✅':'❌ media'}　` +
+            `B: ${cb?'✅':'❌ srcset'}　` +
+            `C: ${cc?'✅':'❌ alt'}　` +
+            `D: ${cd?'✅':'❌ poster'}　` +
+            `E: ${ce?'✅':'❌ src'}　` +
+            `F: ${cf?'✅':'❌ src'}`;
         }
       }
     </script>
   </div>
 
-  <!-- Q6 -->
+  <!-- Q7 -->
   <div class="quiz-block">
-    <h3>Q6. 記述問題</h3>
+    <h3>Q7. 記述問題</h3>
     <p>
       <code>alt</code> 属性を<strong>省略</strong>することと
       <code>alt=""</code>（空文字）を指定することの違いを説明してください。
       また、<code>alt</code> 属性を省略できる条件を述べてください。
     </p>
     <label>あなたの解答：</label>
-    <textarea id="q6" rows="5" placeholder="自由に記述してください..."></textarea>
+    <textarea id="q7" rows="5" placeholder="自由に記述してください..."></textarea>
     <br>
-    <button class="btn btn-blue" onclick="checkQ6()">模範解答を見る</button>
-    <div class="result-msg" id="q6-result"></div>
+    <button class="btn-quiz" onclick="checkQ7()">模範解答を見る</button>
+    <div class="result-msg" id="q7-result"></div>
     <script>
-      function checkQ6() {
-        const r = document.getElementById('q6-result');
+      function checkQ7() {
+        const r = document.getElementById('q7-result');
         r.className = 'result-msg info';
         r.innerHTML =
           '📝 模範解答：<br><br>' +
@@ -961,7 +1415,7 @@
           '<strong>alt=""（空文字を指定）：</strong><br>' +
           'スクリーンリーダーがその画像を完全にスキップします。<br>' +
           '装飾目的の画像に使うことで、読み上げの邪魔をしません。<br><br>' +
-          '<strong>alt属性を省略できる条件：</strong><br>' +
+          '<strong>alt 属性を省略できる条件：</strong><br>' +
           '・画像が figcaption などのキャプションによって説明されている場合<br>' +
           '・純粋に装飾目的の画像で、コンテンツ上の意味を持たない場合<br>' +
           '（ただしこの場合は省略より alt="" の指定が推奨）';
@@ -982,52 +1436,52 @@
     <tr>
       <td><code>img</code></td>
       <td>画像の埋め込み（空要素）</td>
-      <td>alt省略は特別なケースのみ可。width/heightはピクセル整数値のみ（%不可）</td>
+      <td>alt 省略は特別なケースのみ可。width/height はピクセル整数値のみ（%不可）</td>
     </tr>
     <tr>
       <td><code>picture</code></td>
       <td>複数画像候補から最適なものを表示</td>
-      <td>必ずimgフォールバックを含める。source要素のsrcsetが必須</td>
+      <td>必ず img フォールバックを含める。source 要素の <strong>srcset が必須</strong></td>
     </tr>
     <tr>
       <td><code>source</code></td>
       <td>メディアの候補ソースを指定（空要素）</td>
-      <td>picture内：srcset必須 / video・audio内：src必須</td>
+      <td>picture 内：<strong>srcset 必須</strong> / video・audio 内：<strong>src 必須</strong></td>
     </tr>
     <tr>
       <td><code>video</code></td>
       <td>動画の埋め込み</td>
-      <td>controls / autoplay / muted / loop / poster属性。source要素で複数フォーマット指定可</td>
+      <td>controls / autoplay / muted / loop / poster 属性。source 要素で複数フォーマット指定可</td>
     </tr>
     <tr>
       <td><code>audio</code></td>
       <td>音声の埋め込み</td>
-      <td>videoとほぼ同じ構造。width/height属性なし</td>
+      <td>video とほぼ同じ構造。<strong>width/height 属性なし</strong></td>
     </tr>
     <tr>
       <td><code>track</code></td>
       <td>字幕・キャプション・チャプター追加（空要素）</td>
-      <td>video・audio両方で使用可。kind属性で種類指定。WebVTT形式</td>
+      <td>video・audio 両方で使用可。kind 属性で種類指定。WebVTT 形式</td>
     </tr>
     <tr>
       <td><code>embed</code></td>
       <td>外部コンテンツの埋め込み（空要素）</td>
-      <td>フォールバックコンテンツを持てない</td>
+      <td><strong>フォールバックコンテンツを持てない</strong>。URL は src 属性</td>
     </tr>
     <tr>
       <td><code>map</code></td>
       <td>イメージマップの定義</td>
-      <td>imgのusemap属性でname属性を参照</td>
+      <td>img の usemap 属性で name 属性を参照</td>
     </tr>
     <tr>
       <td><code>area</code></td>
       <td>イメージマップのクリック領域（空要素）</td>
-      <td>shape属性：rect / circle / poly / default</td>
+      <td>shape 属性：rect / circle / poly / default</td>
     </tr>
     <tr>
       <td><code>object</code></td>
       <td>外部リソースの埋め込み</td>
-      <td>フォールバックコンテンツを子要素として持てる（embedとの違い）</td>
+      <td><strong>フォールバックコンテンツを子要素として持てる</strong>。URL は data 属性</td>
     </tr>
   </tbody>
 </table>
