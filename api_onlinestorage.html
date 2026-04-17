@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>オフライン・ストレージAPI 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #f6ad55; padding-bottom: 10px; }
+    h2 { color: #c05621; margin-top: 48px; border-left: 5px solid #f6ad55; padding-left: 12px; }
+    h3 { color: #744210; margin-top: 24px; }
+
+    code {
+      background: #feebc8;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment  { color: #68d391; }
+    pre .prop     { color: #90cdf4; }
+    pre .val      { color: #fc8181; }
+    pre .keyword  { color: #b794f4; }
+    pre .func     { color: #fbd38d; }
+    pre .attr     { color: #fbd38d; }
+    pre .value    { color: #68d391; }
+    pre .selector { color: #f6ad55; }
+    pre .at       { color: #b794f4; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #c05621; }
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+    .demo-box {
+      background: #fff;
+      border: 1px solid #feebc8;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .interactive-demo {
+      background: #fffaf0;
+      border: 1px solid #feebc8;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .slider-row label {
+      font-size: 0.85em;
+      font-weight: bold;
+      min-width: 180px;
+      color: #c05621;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .slider-row input[type="text"],
+    .slider-row input[type="number"] {
+      border: 2px solid #feebc8;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.88em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      flex: 1;
+      min-width: 100px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .slider-row input[type="text"]:focus,
+    .slider-row input[type="number"]:focus { border-color: #f6ad55; }
+    .slider-row select {
+      border: 2px solid #feebc8;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.85em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #2d3748;
+      background: #fff;
+      cursor: pointer;
+      flex: 1;
+    }
+    .slider-row select:focus { border-color: #f6ad55; outline: none; }
+    .val-display {
+      min-width: 72px;
+      text-align: right;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.85em;
+      color: #2d3748;
+    }
+    .color-code-display {
+      background: #1a202c;
+      color: #68d391;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.84em;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      min-height: 48px;
+    }
+
+    /* ボタン */
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+    .btn {
+      display: inline-block;
+      padding: 8px 18px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.88em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.82; }
+    .btn-orange { background: #f6ad55; color: #fff; }
+    .btn-red    { background: #fc8181; color: #fff; }
+    .btn-gray   { background: #e2e8f0; color: #4a5568; }
+    .btn-green  { background: #68d391; color: #276749; }
+
+    /* ストレージ表示 */
+    .storage-list {
+      background: #1a202c;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.84em;
+      color: #e2e8f0;
+      min-height: 60px;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* APIカードグリッド */
+    .api-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin: 14px 0;
+    }
+    .api-card {
+      background: #fffaf0;
+      border: 1px solid #feebc8;
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .api-card-title {
+      font-size: 0.88em;
+      font-weight: bold;
+      color: #c05621;
+      margin-bottom: 6px;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .api-card-desc {
+      font-size: 0.82em;
+      color: #4a5568;
+      line-height: 1.6;
+    }
+
+    /* フロー図 */
+    .flow-diagram {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 14px 0;
+      padding: 14px;
+      background: #fffaf0;
+      border: 1px solid #feebc8;
+      border-radius: 8px;
+    }
+    .flow-box {
+      background: #fff;
+      border: 2px solid #f6ad55;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 0.82em;
+      font-weight: bold;
+      color: #c05621;
+      text-align: center;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .flow-arrow {
+      font-size: 1.2em;
+      color: #f6ad55;
+      font-weight: bold;
+    }
+
+    /* Worker シミュレーター */
+    .worker-sim {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 12px;
+      align-items: center;
+      margin: 14px 0;
+    }
+    .worker-thread {
+      background: #fffaf0;
+      border: 2px solid #feebc8;
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+    }
+    .worker-thread-title {
+      font-size: 0.82em;
+      font-weight: bold;
+      color: #c05621;
+      margin-bottom: 8px;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .worker-msg {
+      font-size: 0.78em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #4a5568;
+      background: #fff;
+      border: 1px solid #feebc8;
+      border-radius: 4px;
+      padding: 4px 8px;
+      margin-top: 6px;
+      min-height: 28px;
+      word-break: break-all;
+    }
+    .worker-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-size: 1.4em;
+      color: #f6ad55;
+    }
+
+    /* テーブル */
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #feebc8;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.summary thead tr { background: #c05621; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #fffaf0; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 { margin-top: 0; color: #c05621; border-left-color: #f6ad55; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #feebc8;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #feebc8;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn-quiz {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+      background: #f6ad55;
+      color: #fff;
+    }
+    .btn-quiz:hover { opacity: 0.85; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #feebc8; color: #744210; display: block; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px; }
+      .slider-row label { min-width: 120px; }
+      .api-grid { grid-template-columns: 1fr; }
+      .worker-sim { grid-template-columns: 1fr; }
+      .worker-arrow { flex-direction: row; }
+      .flow-diagram { flex-direction: column; align-items: flex-start; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px; }
+      .quiz-block { padding: 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+      .api-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<h1>💾 オフライン・ストレージAPI 学習サンプル</h1>
+<p>
+  HTML5で追加されたオフライン対応・データ保存・並列処理・プッシュ通知に関する
+  APIの概要と使い方を学びましょう。
+</p>
+
+
+<!-- ============================================================ -->
+<!-- PART 1：Web Storage -->
+<!-- ============================================================ -->
+<h2>① Web Storage</h2>
+<div class="note">
+  <strong>重要ポイント①：Web StorageやIndexed Databaseを用いて、ブラウザにデータを保存できる</strong><br>
+  Web Storage は <strong>localStorage</strong>（永続的保存）と
+  <strong>sessionStorage</strong>（セッション中のみ保存）の2種類を提供します。
+  どちらも<strong>キーと値のペア</strong>で文字列データを保存します。
+  Cookieと異なり、サーバーには送信されず、より大きな容量（一般的に5MB程度）を利用できます。
+</div>
+<div class="demo-box">
+
+  <h3>localStorage vs sessionStorage vs Cookie の比較</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>項目</th><th>localStorage</th><th>sessionStorage</th><th>Cookie</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>保存期間</td>
+        <td><strong>永続的</strong>（明示的に削除するまで）</td>
+        <td><strong>セッション中のみ</strong>（タブを閉じると消える）</td>
+        <td>有効期限を設定可能</td>
+      </tr>
+      <tr>
+        <td>スコープ</td>
+        <td>同一オリジン内で共有</td>
+        <td>同一タブ・同一オリジンのみ</td>
+        <td>ドメイン・パスで制御</td>
+      </tr>
+      <tr>
+        <td>容量</td>
+        <td>約5MB（ブラウザ依存）</td>
+        <td>約5MB（ブラウザ依存）</td>
+        <td>約4KB</td>
+      </tr>
+      <tr>
+        <td>サーバー送信</td>
+        <td>送信されない</td>
+        <td>送信されない</td>
+        <td><strong>HTTPリクエストに自動付与</strong></td>
+      </tr>
+      <tr>
+        <td>データ型</td>
+        <td>文字列のみ</td>
+        <td>文字列のみ</td>
+        <td>文字列のみ</td>
+      </tr>
+      <tr>
+        <td>JavaScript API</td>
+        <td><code>localStorage</code></td>
+        <td><code>sessionStorage</code></td>
+        <td><code>document.cookie</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Web Storage の主なメソッド・プロパティ</h3>
+  <div class="api-grid">
+    <div class="api-card">
+      <div class="api-card-title">setItem(key, value)</div>
+      <div class="api-card-desc">キーと値を保存する。既存のキーは上書きされる</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">getItem(key)</div>
+      <div class="api-card-desc">キーに対応する値を取得する。存在しない場合は null を返す</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">removeItem(key)</div>
+      <div class="api-card-desc">指定したキーのデータを削除する</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">clear()</div>
+      <div class="api-card-desc">すべてのデータを削除する</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">key(index)</div>
+      <div class="api-card-desc">インデックスに対応するキー名を返す</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">length</div>
+      <div class="api-card-desc">保存されているデータの件数を返す</div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* localStorage：永続的に保存（タブを閉じても残る） */</span>
+localStorage.<span class="func">setItem</span>(<span class="val">'username'</span>, <span class="val">'Alice'</span>);       <span class="comment">/* 保存 */</span>
+<span class="keyword">const</span> name = localStorage.<span class="func">getItem</span>(<span class="val">'username'</span>);    <span class="comment">/* 取得 → 'Alice' */</span>
+localStorage.<span class="func">removeItem</span>(<span class="val">'username'</span>);             <span class="comment">/* 削除 */</span>
+localStorage.<span class="func">clear</span>();                             <span class="comment">/* 全削除 */</span>
+
+<span class="comment">/* オブジェクトを保存する場合はJSON文字列に変換する */</span>
+<span class="keyword">const</span> user = { <span class="prop">name</span>: <span class="val">'Alice'</span>, <span class="prop">age</span>: <span class="val">30</span> };
+localStorage.<span class="func">setItem</span>(<span class="val">'user'</span>, JSON.<span class="func">stringify</span>(user));   <span class="comment">/* 保存 */</span>
+<span class="keyword">const</span> saved = JSON.<span class="func">parse</span>(localStorage.<span class="func">getItem</span>(<span class="val">'user'</span>)); <span class="comment">/* 取得・復元 */</span>
+
+<span class="comment">/* sessionStorage：タブを閉じると消える */</span>
+sessionStorage.<span class="func">setItem</span>(<span class="val">'token'</span>, <span class="val">'abc123'</span>);
+<span class="keyword">const</span> token = sessionStorage.<span class="func">getItem</span>(<span class="val">'token'</span>);
+
+<span class="comment">/* storage イベント：他のタブでの変更を検知（localStorageのみ） */</span>
+window.<span class="func">addEventListener</span>(<span class="val">'storage'</span>, (e) => {
+  console.<span class="func">log</span>(<span class="val">'変更されたキー:'</span>, e.<span class="prop">key</span>);
+  console.<span class="func">log</span>(<span class="val">'変更前の値:'</span>,   e.<span class="prop">oldValue</span>);
+  console.<span class="func">log</span>(<span class="val">'変更後の値:'</span>,   e.<span class="prop">newValue</span>);
+});
+</pre>
+
+  <h3>Web Storage インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#744210; margin:0 0 10px;">
+      実際に localStorage にデータを保存・取得・削除できます。
+    </p>
+    <div class="slider-row">
+      <label>ストレージ種別</label>
+      <select id="ws-type">
+        <option value="local">localStorage</option>
+        <option value="session">sessionStorage</option>
+      </select>
+    </div>
+    <div class="slider-row">
+      <label>キー（key）</label>
+      <input type="text" id="ws-key" placeholder="例: username" value="username">
+    </div>
+    <div class="slider-row">
+      <label>値（value）</label>
+      <input type="text" id="ws-val" placeholder="例: Alice" value="Alice">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-orange" onclick="wsSetItem()">setItem（保存）</button>
+      <button class="btn btn-green"  onclick="wsGetItem()">getItem（取得）</button>
+      <button class="btn btn-red"    onclick="wsRemoveItem()">removeItem（削除）</button>
+      <button class="btn btn-gray"   onclick="wsClear()">clear（全削除）</button>
+      <button class="btn btn-gray"   onclick="wsShowAll()">一覧表示</button>
+    </div>
+    <div class="color-code-display" id="ws-log">操作ログがここに表示されます</div>
+    <div style="font-size:0.82em; color:#744210; margin-top:8px;">現在の保存データ：</div>
+    <div class="storage-list" id="ws-list">（空）</div>
+  </div>
+  <script>
+    function wsStorage() {
+      return document.getElementById('ws-type').value === 'local'
+        ? localStorage : sessionStorage;
+    }
+    function wsTypeName() {
+      return document.getElementById('ws-type').value === 'local'
+        ? 'localStorage' : 'sessionStorage';
+    }
+    function wsRefreshList() {
+      const st = wsStorage();
+      if (st.length === 0) {
+        document.getElementById('ws-list').textContent = '（空）';
+        return;
+      }
+      const lines = [];
+      for (let i = 0; i < st.length; i++) {
+        const k = st.key(i);
+        lines.push(`"${k}" : "${st.getItem(k)}"`);
+      }
+      document.getElementById('ws-list').textContent = lines.join('\n');
+    }
+    function wsSetItem() {
+      const k = document.getElementById('ws-key').value.trim();
+      const v = document.getElementById('ws-val').value.trim();
+      if (!k) { document.getElementById('ws-log').textContent = '⚠️ キーを入力してください'; return; }
+      wsStorage().setItem(k, v);
+      document.getElementById('ws-log').textContent =
+        `${wsTypeName()}.setItem("${k}", "${v}")\n→ 保存しました`;
+      wsRefreshList();
+    }
+    function wsGetItem() {
+      const k = document.getElementById('ws-key').value.trim();
+      if (!k) { document.getElementById('ws-log').textContent = '⚠️ キーを入力してください'; return; }
+      const v = wsStorage().getItem(k);
+      document.getElementById('ws-log').textContent =
+        `${wsTypeName()}.getItem("${k}")\n→ ${v === null ? 'null（キーが存在しません）' : '"' + v + '"'}`;
+    }
+    function wsRemoveItem() {
+      const k = document.getElementById('ws-key').value.trim();
+      if (!k) { document.getElementById('ws-log').textContent = '⚠️ キーを入力してください'; return; }
+      wsStorage().removeItem(k);
+      document.getElementById('ws-log').textContent =
+        `${wsTypeName()}.removeItem("${k}")\n→ 削除しました`;
+      wsRefreshList();
+    }
+    function wsClear() {
+      wsStorage().clear();
+      document.getElementById('ws-log').textContent =
+        `${wsTypeName()}.clear()\n→ すべてのデータを削除しました`;
+      wsRefreshList();
+    }
+    function wsShowAll() {
+      wsRefreshList();
+      const st = wsStorage();
+      document.getElementById('ws-log').textContent =
+        `${wsTypeName()}.length = ${st.length}\n保存データを下に表示しました`;
+    }
+    wsRefreshList();
+  </script>
+
+  <div class="warn">
+    <strong>⚠️ Web Storage の注意点</strong><br>
+    ・保存できるのは<strong>文字列のみ</strong>です。オブジェクトは <code>JSON.stringify()</code> で変換が必要です<br>
+    ・<code>getItem()</code> で存在しないキーを指定すると <code>null</code> が返ります（例外は発生しない）<br>
+    ・<strong>同一オリジン（プロトコル・ホスト・ポートが同じ）</strong>のページ間でのみ共有されます<br>
+    ・<code>storage</code> イベントは<strong>他のタブ・ウィンドウ</strong>での変更を検知します（同一タブでは発火しない）
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 2：Indexed Database API -->
+<!-- ============================================================ -->
+<h2>② Indexed Database API（IndexedDB）</h2>
+<div class="note">
+  <strong>重要ポイント①（続き）：IndexedDatabaseを用いて、ブラウザに大量の構造化データを保存できる</strong><br>
+  IndexedDB はブラウザ内蔵の<strong>NoSQL型データベース</strong>です。
+  Web Storage と異なり、<strong>オブジェクト・バイナリデータ</strong>をそのまま保存でき、
+  インデックスを使った高速な検索も可能です。
+  大容量データ（数百MB以上）の保存に適しています。
+  すべての操作は<strong>非同期（トランザクション）</strong>で行われます。
+</div>
+<div class="demo-box">
+
+  <h3>Web Storage vs IndexedDB の比較</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>項目</th><th>Web Storage</th><th>IndexedDB</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>データ型</td><td>文字列のみ</td><td><strong>オブジェクト・バイナリも可</strong></td></tr>
+      <tr><td>容量</td><td>約5MB</td><td><strong>大容量（数百MB以上）</strong></td></tr>
+      <tr><td>検索</td><td>キーのみ</td><td><strong>インデックスによる高速検索</strong></td></tr>
+      <tr><td>操作方式</td><td>同期（シンプル）</td><td><strong>非同期（トランザクション）</strong></td></tr>
+      <tr><td>構造</td><td>キー・バリューのみ</td><td>データベース → オブジェクトストア → レコード</td></tr>
+      <tr><td>向いている用途</td><td>設定・トークンなど小さなデータ</td><td>大量データ・オフラインアプリ</td></tr>
+    </tbody>
+  </table>
+
+  <h3>IndexedDB の構造</h3>
+  <div class="flow-diagram">
+    <div class="flow-box">Database<br><span style="font-size:0.8em; color:#744210;">（データベース）</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">Object Store<br><span style="font-size:0.8em; color:#744210;">（テーブル相当）</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">Record<br><span style="font-size:0.8em; color:#744210;">（レコード）</span></div>
+    <div class="flow-arrow">+</div>
+    <div class="flow-box">Index<br><span style="font-size:0.8em; color:#744210;">（検索用インデックス）</span></div>
+  </div>
+
+<pre>
+<span class="comment">/* IndexedDB のオープン（バージョン管理あり） */</span>
+<span class="keyword">const</span> request = indexedDB.<span class="func">open</span>(<span class="val">'myDatabase'</span>, <span class="val">1</span>); <span class="comment">/* DB名, バージョン */</span>
+
+<span class="comment">/* onupgradeneeded：DB作成・バージョンアップ時に呼ばれる */</span>
+request.<span class="prop">onupgradeneeded</span> = (event) => {
+  <span class="keyword">const</span> db    = event.<span class="prop">target</span>.<span class="prop">result</span>;
+  <span class="comment">/* オブジェクトストア（テーブル相当）を作成 */</span>
+  <span class="keyword">const</span> store = db.<span class="func">createObjectStore</span>(<span class="val">'users'</span>, { <span class="prop">keyPath</span>: <span class="val">'id'</span> });
+  <span class="comment">/* インデックスを作成（nameプロパティで検索可能に） */</span>
+  store.<span class="func">createIndex</span>(<span class="val">'name'</span>, <span class="val">'name'</span>, { <span class="prop">unique</span>: <span class="val">false</span> });
+};
+
+<span class="comment">/* onsuccess：DB接続成功 */</span>
+request.<span class="prop">onsuccess</span> = (event) => {
+  <span class="keyword">const</span> db = event.<span class="prop">target</span>.<span class="prop">result</span>;
+
+  <span class="comment">/* データの追加（readwriteトランザクション） */</span>
+  <span class="keyword">const</span> tx    = db.<span class="func">transaction</span>(<span class="val">'users'</span>, <span class="val">'readwrite'</span>);
+  <span class="keyword">const</span> store = tx.<span class="func">objectStore</span>(<span class="val">'users'</span>);
+  store.<span class="func">add</span>({ <span class="prop">id</span>: <span class="val">1</span>, <span class="prop">name</span>: <span class="val">'Alice'</span>, <span class="prop">age</span>: <span class="val">30</span> });
+
+  <span class="comment">/* データの取得（readトランザクション） */</span>
+  <span class="keyword">const</span> tx2    = db.<span class="func">transaction</span>(<span class="val">'users'</span>, <span class="val">'readonly'</span>);
+  <span class="keyword">const</span> store2 = tx2.<span class="func">objectStore</span>(<span class="val">'users'</span>);
+  <span class="keyword">const</span> getReq = store2.<span class="func">get</span>(<span class="val">1</span>); <span class="comment">/* id=1 のレコードを取得 */</span>
+  getReq.<span class="prop">onsuccess</span> = () => console.<span class="func">log</span>(getReq.<span class="prop">result</span>);
+
+  <span class="comment">/* インデックスを使った検索 */</span>
+  <span class="keyword">const</span> index   = store2.<span class="func">index</span>(<span class="val">'name'</span>);
+  <span class="keyword">const</span> idxReq  = index.<span class="func">get</span>(<span class="val">'Alice'</span>);
+  idxReq.<span class="prop">onsuccess</span> = () => console.<span class="func">log</span>(idxReq.<span class="prop">result</span>);
+};
+
+request.<span class="prop">onerror</span> = (event) => console.<span class="func">log</span>(<span class="val">'エラー:'</span>, event.<span class="prop">target</span>.<span class="prop">error</span>);
+</pre>
+
+  <h3>IndexedDB インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#744210; margin:0 0 10px;">
+      ブラウザ内蔵のIndexedDBにユーザーデータを保存・取得・削除できます。
+    </p>
+    <div class="slider-row">
+      <label>ID（数値）</label>
+      <input type="number" id="idb-id" value="1" min="1" style="max-width:100px;">
+    </div>
+    <div class="slider-row">
+      <label>名前（name）</label>
+      <input type="text" id="idb-name" placeholder="例: Alice" value="Alice">
+    </div>
+    <div class="slider-row">
+      <label>年齢（age）</label>
+      <input type="number" id="idb-age" value="30" min="0" style="max-width:100px;">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-orange" onclick="idbAdd()">add（追加）</button>
+      <button class="btn btn-green"  onclick="idbGet()">get（取得）</button>
+      <button class="btn btn-red"    onclick="idbDelete()">delete（削除）</button>
+      <button class="btn btn-gray"   onclick="idbGetAll()">getAll（全件取得）</button>
+    </div>
+    <div class="color-code-display" id="idb-log">操作ログがここに表示されます</div>
+  </div>
+  <script>
+    (function() {
+      let db = null;
+      const req = indexedDB.open('learnDB', 1);
+      req.onupgradeneeded = e => {
+        const d = e.target.result;
+        if (!d.objectStoreNames.contains('users')) {
+          d.createObjectStore('users', { keyPath: 'id' });
+        }
+      };
+      req.onsuccess = e => { db = e.target.result; };
+      req.onerror   = e => { document.getElementById('idb-log').textContent = 'IndexedDB 初期化エラー: ' + e.target.error; };
+
+      window.idbAdd = function() {
+        if (!db) return;
+        const id   = parseInt(document.getElementById('idb-id').value);
+        const name = document.getElementById('idb-name').value.trim();
+        const age  = parseInt(document.getElementById('idb-age').value);
+        const tx   = db.transaction('users', 'readwrite');
+        const r    = tx.objectStore('users').put({ id, name, age });
+        r.onsuccess = () => {
+          document.getElementById('idb-log').textContent =
+            `store.add({ id: ${id}, name: "${name}", age: ${age} })\n→ 保存しました（id=${id}）`;
+        };
+        r.onerror = e => {
+          document.getElementById('idb-log').textContent = 'エラー: ' + e.target.error;
+        };
+      };
+      window.idbGet = function() {
+        if (!db) return;
+        const id  = parseInt(document.getElementById('idb-id').value);
+        const tx  = db.transaction('users', 'readonly');
+        const r   = tx.objectStore('users').get(id);
+        r.onsuccess = () => {
+          document.getElementById('idb-log').textContent = r.result
+            ? `store.get(${id})\n→ { id: ${r.result.id}, name: "${r.result.name}", age: ${r.result.age} }`
+            : `store.get(${id})\n→ undefined（id=${id} は存在しません）`;
+        };
+      };
+      window.idbDelete = function() {
+        if (!db) return;
+        const id = parseInt(document.getElementById('idb-id').value);
+        const tx = db.transaction('users', 'readwrite');
+        const r  = tx.objectStore('users').delete(id);
+        r.onsuccess = () => {
+          document.getElementById('idb-log').textContent =
+            `store.delete(${id})\n→ 削除しました（id=${id}）`;
+        };
+      };
+      window.idbGetAll = function() {
+        if (!db) return;
+        const tx = db.transaction('users', 'readonly');
+        const r  = tx.objectStore('users').getAll();
+        r.onsuccess = () => {
+          const results = r.result;
+          document.getElementById('idb-log').textContent = results.length === 0
+            ? 'store.getAll()\n→ （データなし）'
+            : 'store.getAll()\n→ [\n' +
+              results.map(u => `  { id: ${u.id}, name: "${u.name}", age: ${u.age} }`).join(',\n') +
+              '\n]';
+        };
+      };
+    })();
+  </script>
+
+  <div class="warn">
+    <strong>⚠️ IndexedDB の注意点</strong><br>
+    ・すべての操作は<strong>非同期</strong>です。結果は <code>onsuccess</code> / <code>onerror</code> コールバックで受け取ります<br>
+    ・データの変更は必ず<strong>トランザクション</strong>内で行います（<code>'readwrite'</code> または <code>'readonly'</code>）<br>
+    ・スキーマ変更（オブジェクトストアの追加・削除）は <code>onupgradeneeded</code> 内でのみ行えます<br>
+    ・<strong>同一オリジン</strong>のページ間でのみ共有されます
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 3：Web Workers -->
+<!-- ============================================================ -->
+<h2>③ Web Workers</h2>
+<div class="note">
+  <strong>重要ポイント②：Web Workerを用いて、JavaScriptで並列処理を行える</strong><br>
+  JavaScriptはシングルスレッドで動作するため、重い処理を実行するとUIがフリーズします。
+  Web Workers を使うと、<strong>メインスレッドとは別のバックグラウンドスレッド</strong>で
+  JavaScriptを実行でき、UIをブロックせずに並列処理が可能になります。
+  メインスレッドとWorkerは <code>postMessage()</code> と <code>onmessage</code> で通信します。
+</div>
+<div class="demo-box">
+
+  <h3>Web Workers の通信モデル</h3>
+  <div class="worker-sim">
+    <div class="worker-thread">
+      <div class="worker-thread-title">メインスレッド（UI）</div>
+      <div style="font-size:0.78em; color:#4a5568; margin-bottom:6px;">
+        DOM操作・イベント処理を担当
+      </div>
+      <div class="worker-msg" id="main-msg">待機中...</div>
+    </div>
+    <div class="worker-arrow">
+      <span style="font-size:0.7em; color:#c05621;">postMessage()</span>
+      <span>→</span>
+      <span>←</span>
+      <span style="font-size:0.7em; color:#c05621;">onmessage</span>
+    </div>
+    <div class="worker-thread">
+      <div class="worker-thread-title">Worker スレッド</div>
+      <div style="font-size:0.78em; color:#4a5568; margin-bottom:6px;">
+        重い処理をバックグラウンドで実行
+      </div>
+      <div class="worker-msg" id="worker-msg">待機中...</div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* ===== メインスレッド側（main.js） ===== */</span>
+
+<span class="comment">/* Workerの作成（別ファイルを指定） */</span>
+<span class="keyword">const</span> worker = <span class="keyword">new</span> <span class="func">Worker</span>(<span class="val">'worker.js'</span>);
+
+<span class="comment">/* Workerにメッセージを送信 */</span>
+worker.<span class="func">postMessage</span>({ <span class="prop">type</span>: <span class="val">'calc'</span>, <span class="prop">data</span>: <span class="val">1000000</span> });
+
+<span class="comment">/* Workerからのメッセージを受信 */</span>
+worker.<span class="prop">onmessage</span> = (event) => {
+  console.<span class="func">log</span>(<span class="val">'Worker結果:'</span>, event.<span class="prop">data</span>);
+};
+
+<span class="comment">/* エラーハンドリング */</span>
+worker.<span class="prop">onerror</span> = (error) => {
+  console.<span class="func">log</span>(<span class="val">'Workerエラー:'</span>, error.<span class="prop">message</span>);
+};
+
+<span class="comment">/* Workerの終了 */</span>
+worker.<span class="func">terminate</span>();
+
+
+<span class="comment">/* ===== Workerスレッド側（worker.js） ===== */</span>
+
+<span class="comment">/* メインスレッドからのメッセージを受信 */</span>
+<span class="prop">self</span>.<span class="prop">onmessage</span> = (event) => {
+  <span class="keyword">const</span> { type, data } = event.<span class="prop">data</span>;
+
+  <span class="keyword">if</span> (type === <span class="val">'calc'</span>) {
+    <span class="comment">/* 重い処理（例：大量の計算） */</span>
+    <span class="keyword">let</span> result = <span class="val">0</span>;
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="val">0</span>; i < data; i++) result += i;
+
+    <span class="comment">/* 結果をメインスレッドに返す */</span>
+    <span class="prop">self</span>.<span class="func">postMessage</span>({ <span class="prop">type</span>: <span class="val">'result'</span>, <span class="prop">result</span> });
+  }
+};
+</pre>
+
+  <h3>Web Workers インタラクティブデモ（Inline Worker）</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#744210; margin:0 0 10px;">
+      メインスレッドをブロックせずにバックグラウンドで計算処理を実行します。
+    </p>
+    <div class="slider-row">
+      <label>計算回数（ループ数）</label>
+      <select id="worker-count">
+        <option value="10000000">1,000万回</option>
+        <option value="50000000">5,000万回</option>
+        <option value="100000000">1億回</option>
+      </select>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-orange" onclick="runWorker()">▶ Workerで計算（並列）</button>
+      <button class="btn btn-gray"   onclick="runMain()">⚠️ メインスレッドで計算（UI停止）</button>
+    </div>
+    <div class="color-code-display" id="worker-demo-log">ボタンを押して処理を開始してください</div>
+    <div style="margin-top:10px;">
+      <span style="font-size:0.85em; color:#744210;">UIブロック確認：</span>
+      <input type="text" id="worker-ui-test"
+             placeholder="Workerで計算中でも入力できます"
+             style="border:2px solid #feebc8; border-radius:6px; padding:6px 10px;
+                    font-size:0.85em; width:100%; max-width:320px; margin-top:4px; outline:none;">
+    </div>
+  </div>
+  <script>
+    function runWorker() {
+      const count = parseInt(document.getElementById('worker-count').value);
+      const log   = document.getElementById('worker-demo-log');
+      log.textContent = `Worker起動中... ${count.toLocaleString()}回のループ計算を開始`;
+
+      const code = `
+        self.onmessage = function(e) {
+          var n = e.data, sum = 0;
+          for (var i = 0; i < n; i++) sum += i;
+          self.postMessage({ result: sum, count: n });
+        };
+      `;
+      const blob   = new Blob([code], { type: 'application/javascript' });
+      const url    = URL.createObjectURL(blob);
+      const worker = new Worker(url);
+      const start  = performance.now();
+
+      worker.onmessage = e => {
+        const elapsed = (performance.now() - start).toFixed(1);
+        log.textContent =
+          `✅ Worker完了！\n` +
+          `計算回数: ${e.data.count.toLocaleString()} 回\n` +
+          `結果: ${e.data.result.toLocaleString()}\n` +
+          `処理時間: ${elapsed} ms\n` +
+          `→ UIはブロックされませんでした（入力欄に入力できましたか？）`;
+        worker.terminate();
+        URL.revokeObjectURL(url);
+      };
+      worker.postMessage(count);
+    }
+
+    function runMain() {
+      const count = parseInt(document.getElementById('worker-count').value);
+      const log   = document.getElementById('worker-demo-log');
+      log.textContent = `メインスレッドで計算中... UIがフリーズします`;
+      setTimeout(() => {
+        const start = performance.now();
+        let sum = 0;
+        for (let i = 0; i < count; i++) sum += i;
+        const elapsed = (performance.now() - start).toFixed(1);
+        log.textContent =
+          `⚠️ メインスレッド完了\n` +
+          `計算回数: ${count.toLocaleString()} 回\n` +
+          `結果: ${sum.toLocaleString()}\n` +
+          `処理時間: ${elapsed} ms\n` +
+          `→ 処理中はUIがフリーズしていました`;
+      }, 50);
+    }
+  </script>
+
+  <h3>Web Workers の種類</h3>
+  <table class="summary">
+    <thead>
+      <tr><th>種類</th><th>説明</th><th>特徴</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Dedicated Worker</strong></td>
+        <td>特定のスクリプトに紐付いた専用Worker</td>
+        <td>最も一般的。<code>new Worker('worker.js')</code> で作成</td>
+      </tr>
+      <tr>
+        <td><strong>Shared Worker</strong></td>
+        <td>複数のタブ・ウィンドウで共有できるWorker</td>
+        <td><code>new SharedWorker('worker.js')</code> で作成。<code>port</code> 経由で通信</td>
+      </tr>
+      <tr>
+        <td><strong>Service Worker</strong></td>
+        <td>ブラウザとサーバーの間に立つプロキシ的なWorker</td>
+        <td>オフライン対応・プッシュ通知に使用（次セクションで詳説）</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warn">
+    <strong>⚠️ Web Workers の制約</strong><br>
+    ・<strong>DOMへのアクセスは不可</strong>です（<code>document</code>・<code>window</code> は使えない）<br>
+    ・メインスレッドとのデータのやり取りは <code>postMessage()</code> / <code>onmessage</code> を通じて行います<br>
+    ・渡されるデータは<strong>コピー（構造化クローン）</strong>されます（参照は共有されない）<br>
+    ・<code>XMLHttpRequest</code>・<code>fetch</code>・<code>setTimeout</code> などは利用可能です
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 4：Service Workers -->
+<!-- ============================================================ -->
+<h2>④ Service Workers</h2>
+<div class="note">
+  <strong>重要ポイント③（前半）：Service Workersはブラウザとネットワークの間に立つプロキシとして動作する</strong><br>
+  Service Worker はブラウザのバックグラウンドで動作する特殊なWorkerです。
+  Webページとは独立して動作し、<strong>ネットワークリクエストの傍受・キャッシュ制御・
+  オフライン対応・プッシュ通知</strong>などを実現します。
+  <strong>HTTPS（セキュアコンテキスト）</strong>でのみ動作します。
+</div>
+<div class="demo-box">
+
+  <h3>Service Worker のライフサイクル</h3>
+  <div class="flow-diagram">
+    <div class="flow-box">register()<br><span style="font-size:0.8em; color:#744210;">登録</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">install<br><span style="font-size:0.8em; color:#744210;">インストール</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">activate<br><span style="font-size:0.8em; color:#744210;">有効化</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">fetch / push<br><span style="font-size:0.8em; color:#744210;">リクエスト傍受・通知</span></div>
+  </div>
+
+  <h3>Service Worker の主なイベント</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>イベント</th><th>発生タイミング</th><th>主な用途</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>install</code></td><td>Service Worker のインストール時</td><td>静的リソースのキャッシュ</td></tr>
+      <tr><td><code>activate</code></td><td>Service Worker の有効化時</td><td>古いキャッシュの削除</td></tr>
+      <tr><td><code>fetch</code></td><td>ネットワークリクエスト発生時</td><td>キャッシュからの応答・オフライン対応</td></tr>
+      <tr><td><code>push</code></td><td>プッシュ通知受信時</td><td>通知の表示（Push API と連携）</td></tr>
+      <tr><td><code>sync</code></td><td>バックグラウンド同期時</td><td>オフライン中の操作を後で送信</td></tr>
+      <tr><td><code>message</code></td><td>メインスレッドからのメッセージ受信時</td><td>双方向通信</td></tr>
+    </tbody>
+  </table>
+
+<pre>
+<span class="comment">/* ===== メインスレッド：Service Worker の登録 ===== */</span>
+<span class="keyword">if</span> (<span class="val">'serviceWorker'</span> <span class="keyword">in</span> navigator) {
+  navigator.<span class="prop">serviceWorker</span>.<span class="func">register</span>(<span class="val">'/sw.js'</span>)
+    .<span class="func">then</span>(reg => console.<span class="func">log</span>(<span class="val">'SW登録成功:'</span>, reg.<span class="prop">scope</span>))
+    .<span class="func">catch</span>(err => console.<span class="func">log</span>(<span class="val">'SW登録失敗:'</span>, err));
+}
+
+
+<span class="comment">/* ===== sw.js：Service Worker 本体 ===== */</span>
+<span class="keyword">const</span> CACHE_NAME = <span class="val">'my-cache-v1'</span>;
+<span class="keyword">const</span> CACHE_URLS = [<span class="val">'/'</span>, <span class="val">'/index.html'</span>, <span class="val">'/style.css'</span>, <span class="val">'/app.js'</span>];
+
+<span class="comment">/* install：静的リソースをキャッシュ */</span>
+<span class="prop">self</span>.<span class="func">addEventListener</span>(<span class="val">'install'</span>, (event) => {
+  event.<span class="func">waitUntil</span>(
+    caches.<span class="func">open</span>(CACHE_NAME)
+      .<span class="func">then</span>(cache => cache.<span class="func">addAll</span>(CACHE_URLS))
+  );
+});
+
+<span class="comment">/* activate：古いキャッシュを削除 */</span>
+<span class="prop">self</span>.<span class="func">addEventListener</span>(<span class="val">'activate'</span>, (event) => {
+  event.<span class="func">waitUntil</span>(
+    caches.<span class="func">keys</span>().<span class="func">then</span>(keys =>
+      Promise.<span class="func">all</span>(
+        keys.<span class="func">filter</span>(k => k !== CACHE_NAME)
+            .<span class="func">map</span>(k => caches.<span class="func">delete</span>(k))
+      )
+    )
+  );
+});
+
+<span class="comment">/* fetch：キャッシュ優先で応答（オフライン対応） */</span>
+<span class="prop">self</span>.<span class="func">addEventListener</span>(<span class="val">'fetch'</span>, (event) => {
+  event.<span class="func">respondWith</span>(
+    caches.<span class="func">match</span>(event.<span class="prop">request</span>)
+      .<span class="func">then</span>(cached => cached || <span class="func">fetch</span>(event.<span class="prop">request</span>))
+  );
+});
+</pre>
+
+  <div class="good">
+    ✅ <strong>試験でのポイント</strong><br>
+    ・Service Worker は<strong>HTTPS必須</strong>（localhost は例外）<br>
+    ・ライフサイクルは <strong>register → install → activate → fetch/push</strong> の順<br>
+    ・<code>fetch</code> イベントでリクエストを傍受し、キャッシュからの応答でオフライン対応できる<br>
+    ・DOMへのアクセスは不可（Web Workerと同様）
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 5：Push API -->
+<!-- ============================================================ -->
+<h2>⑤ Push API</h2>
+<div class="note">
+  <strong>重要ポイント③：Service WorkersのPush APIとfetchを組み合わせ、ブラウザでプッシュ通知およびメッセージ本体を受信できる</strong><br>
+  Push API は Service Worker と組み合わせて、
+  <strong>ブラウザが閉じていても・Webページを開いていなくても</strong>
+  サーバーからのプッシュ通知を受信できるAPIです。
+  通知の受信は Service Worker の <code>push</code> イベントで処理し、
+  <strong>Fetch API</strong> を使ってメッセージの本文をサーバーから取得します。
+</div>
+<div class="demo-box">
+
+  <h3>Push API の仕組み</h3>
+  <div class="flow-diagram" style="flex-direction:column; align-items:flex-start; gap:10px;">
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <div class="flow-box">① ブラウザ<br><span style="font-size:0.8em;">購読登録</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">② Push Service<br><span style="font-size:0.8em;">（ブラウザ提供）</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">③ エンドポイントURL<br><span style="font-size:0.8em;">をサーバーに送信</span></div>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <div class="flow-box">⑥ 通知を表示<br><span style="font-size:0.8em;">（Service Worker）</span></div>
+      <div class="flow-arrow">←</div>
+      <div class="flow-box">⑤ push イベント発火<br><span style="font-size:0.8em;">+ fetchで本文取得</span></div>
+      <div class="flow-arrow">←</div>
+      <div class="flow-box">④ サーバーが<br><span style="font-size:0.8em;">Push Serviceに送信</span></div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* ===== メインスレッド：プッシュ通知の購読 ===== */</span>
+
+<span class="comment">/* Step 1：通知の許可を要求 */</span>
+<span class="keyword">const</span> permission = <span class="keyword">await</span> Notification.<span class="func">requestPermission</span>();
+<span class="keyword">if</span> (permission !== <span class="val">'granted'</span>) <span class="keyword">return</span>;
+
+<span class="comment">/* Step 2：Service Worker の登録を取得 */</span>
+<span class="keyword">const</span> reg = <span class="keyword">await</span> navigator.<span class="prop">serviceWorker</span>.<span class="prop">ready</span>;
+
+<span class="comment">/* Step 3：プッシュ通知を購読 */</span>
+<span class="keyword">const</span> subscription = <span class="keyword">await</span> reg.<span class="prop">pushManager</span>.<span class="func">subscribe</span>({
+  <span class="prop">userVisibleOnly</span>: <span class="val">true</span>,       <span class="comment">/* 必須：ユーザーに見える通知のみ */</span>
+  <span class="prop">applicationServerKey</span>: vapidPublicKey <span class="comment">/* VAPIDキー（サーバー認証用） */</span>
+});
+
+<span class="comment">/* Step 4：購読情報（エンドポイントURL）をサーバーに送信 */</span>
+<span class="keyword">await</span> <span class="func">fetch</span>(<span class="val">'/subscribe'</span>, {
+  <span class="prop">method</span>: <span class="val">'POST'</span>,
+  <span class="prop">body</span>:   JSON.<span class="func">stringify</span>(subscription),
+  <span class="prop">headers</span>: { <span class="val">'Content-Type'</span>: <span class="val">'application/json'</span> }
+});
+
+
+<span class="comment">/* ===== sw.js：プッシュ通知の受信と表示 ===== */</span>
+
+<span class="comment">/* push イベント：サーバーからプッシュ通知を受信 */</span>
+<span class="prop">self</span>.<span class="func">addEventListener</span>(<span class="val">'push'</span>, (event) => {
+  <span class="comment">/* Fetch APIでメッセージ本文をサーバーから取得 */</span>
+  event.<span class="func">waitUntil</span>(
+    <span class="func">fetch</span>(<span class="val">'/push-message'</span>)
+      .<span class="func">then</span>(res => res.<span class="func">json</span>())
+      .<span class="func">then</span>(data => {
+        <span class="comment">/* 通知を表示 */</span>
+        <span class="keyword">return</span> <span class="prop">self</span>.<span class="prop">registration</span>.<span class="func">showNotification</span>(data.<span class="prop">title</span>, {
+          <span class="prop">body</span>:  data.<span class="prop">body</span>,
+          <span class="prop">icon</span>:  data.<span class="prop">icon</span>,
+          <span class="prop">badge</span>: data.<span class="prop">badge</span>
+        });
+      })
+  );
+});
+
+<span class="comment">/* notificationclick：通知クリック時の処理 */</span>
+<span class="prop">self</span>.<span class="func">addEventListener</span>(<span class="val">'notificationclick'</span>, (event) => {
+  event.<span class="prop">notification</span>.<span class="func">close</span>();
+  event.<span class="func">waitUntil</span>(clients.<span class="func">openWindow</span>(<span class="val">'/'</span>));
+});
+</pre>
+
+  <h3>Push API と Fetch API の連携ポイント</h3>
+  <table class="summary">
+    <thead>
+      <tr><th>役割</th><th>API</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>通知の受信</strong></td>
+        <td>Push API（<code>push</code> イベント）</td>
+        <td>Service Worker がサーバーからのプッシュを受け取る</td>
+      </tr>
+      <tr>
+        <td><strong>本文の取得</strong></td>
+        <td>Fetch API（<code>fetch()</code>）</td>
+        <td>push イベント内で fetch を使い、通知の詳細データをサーバーから取得する</td>
+      </tr>
+      <tr>
+        <td><strong>通知の表示</strong></td>
+        <td>Notifications API（<code>showNotification()</code>）</td>
+        <td>取得したデータをもとに通知を表示する</td>
+      </tr>
+      <tr>
+        <td><strong>購読管理</strong></td>
+        <td>PushManager（<code>pushManager.subscribe()</code>）</td>
+        <td>ブラウザをプッシュ通知に購読登録する</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warn">
+    <strong>⚠️ Push API の注意点</strong><br>
+    ・<strong>HTTPS必須</strong>（Service Worker が必要なため）<br>
+    ・<code>userVisibleOnly: true</code> は必須です（サイレントプッシュは許可されていない）<br>
+    ・<strong>VAPID（Voluntary Application Server Identification）</strong>キーによるサーバー認証が必要です<br>
+    ・<code>push</code> イベント内で <code>event.waitUntil()</code> を使い、処理が完了するまでService Workerを維持します
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 6：Fetch API -->
+<!-- ============================================================ -->
+<h2>⑥ Fetch API</h2>
+<div class="note">
+  <strong>重要ポイント③（続き）：Fetch APIはPromiseベースのHTTPリクエストAPIで、Service Worker内でも利用できる</strong><br>
+  Fetch API は <code>XMLHttpRequest</code>（XHR）の後継となる、
+  <strong>PromiseベースのモダンなネットワークリクエストAPI</strong>です。
+  シンプルな記述でHTTPリクエストを送受信でき、
+  <strong>Service Worker内でも利用可能</strong>なため、
+  Push API との連携でメッセージ本文の取得に使われます。
+</div>
+<div class="demo-box">
+
+  <h3>XHR vs Fetch API の比較</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>項目</th><th>XMLHttpRequest（XHR）</th><th>Fetch API</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>記述スタイル</td><td>コールバックベース</td><td><strong>Promiseベース（async/await対応）</strong></td></tr>
+      <tr><td>可読性</td><td>コールバックが深くなりがち</td><td><strong>シンプルで読みやすい</strong></td></tr>
+      <tr><td>Service Worker</td><td>利用不可</td><td><strong>利用可能</strong></td></tr>
+      <tr><td>ストリーミング</td><td>限定的</td><td><strong>ReadableStream で対応</strong></td></tr>
+      <tr><td>進捗取得</td><td>対応（onprogress）</td><td>限定的（ReadableStreamで可能）</td></tr>
+      <tr><td>エラー処理</td><td>onerror コールバック</td><td><strong>.catch() / try-catch</strong></td></tr>
+    </tbody>
+  </table>
+
+<pre>
+<span class="comment">/* 基本的な GET リクエスト */</span>
+<span class="func">fetch</span>(<span class="val">'https://api.example.com/data'</span>)
+  .<span class="func">then</span>(response => {
+    <span class="comment">/* HTTPステータスの確認 */</span>
+    <span class="keyword">if</span> (!response.<span class="prop">ok</span>) {
+      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="func">Error</span>(<span class="val">`HTTP error: ${response.status}`</span>);
+    }
+    <span class="keyword">return</span> response.<span class="func">json</span>(); <span class="comment">/* JSONとして解析 */</span>
+  })
+  .<span class="func">then</span>(data => console.<span class="func">log</span>(data))
+  .<span class="func">catch</span>(err => console.<span class="func">log</span>(<span class="val">'エラー:'</span>, err));
+
+
+<span class="comment">/* async/await を使った記述（より読みやすい） */</span>
+<span class="keyword">async function</span> <span class="func">fetchData</span>() {
+  <span class="keyword">try</span> {
+    <span class="keyword">const</span> response = <span class="keyword">await</span> <span class="func">fetch</span>(<span class="val">'https://api.example.com/data'</span>);
+    <span class="keyword">if</span> (!response.<span class="prop">ok</span>) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="func">Error</span>(<span class="val">`${response.status}`</span>);
+    <span class="keyword">const</span> data = <span class="keyword">await</span> response.<span class="func">json</span>();
+    console.<span class="func">log</span>(data);
+  } <span class="keyword">catch</span> (err) {
+    console.<span class="func">log</span>(<span class="val">'エラー:'</span>, err);
+  }
+}
+
+
+<span class="comment">/* POST リクエスト（オプション指定） */</span>
+<span class="func">fetch</span>(<span class="val">'https://api.example.com/users'</span>, {
+  <span class="prop">method</span>:  <span class="val">'POST'</span>,
+  <span class="prop">headers</span>: { <span class="val">'Content-Type'</span>: <span class="val">'application/json'</span> },
+  <span class="prop">body</span>:    JSON.<span class="func">stringify</span>({ <span class="prop">name</span>: <span class="val">'Alice'</span>, <span class="prop">age</span>: <span class="val">30</span> })
+});
+
+
+<span class="comment">/* Response オブジェクトの主なメソッド */</span>
+response.<span class="func">json</span>();    <span class="comment">/* JSONとして解析 → Promise&lt;any&gt; */</span>
+response.<span class="func">text</span>();    <span class="comment">/* テキストとして取得 → Promise&lt;string&gt; */</span>
+response.<span class="func">blob</span>();    <span class="comment">/* Blobとして取得（画像など） → Promise&lt;Blob&gt; */</span>
+response.<span class="func">arrayBuffer</span>(); <span class="comment">/* ArrayBufferとして取得 → Promise&lt;ArrayBuffer&gt; */</span>
+response.<span class="prop">ok</span>;        <span class="comment">/* ステータスが200〜299かどうか（boolean） */</span>
+response.<span class="prop">status</span>;    <span class="comment">/* HTTPステータスコード（例: 200, 404） */</span>
+response.<span class="prop">headers</span>;   <span class="comment">/* レスポンスヘッダー（Headers オブジェクト） */</span>
+</pre>
+
+  <h3>Fetch API インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#744210; margin:0 0 10px;">
+      公開APIにGETリクエストを送信して結果を確認します。
+    </p>
+    <div class="slider-row">
+      <label>リクエスト先</label>
+      <select id="fetch-url">
+        <option value="https://jsonplaceholder.typicode.com/todos/1">JSONPlaceholder（TODO #1）</option>
+        <option value="https://jsonplaceholder.typicode.com/users/1">JSONPlaceholder（User #1）</option>
+        <option value="https://jsonplaceholder.typicode.com/posts/1">JSONPlaceholder（Post #1）</option>
+      </select>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-orange" onclick="runFetch()">▶ fetch() を実行</button>
+    </div>
+    <div class="color-code-display" id="fetch-log">ボタンを押してリクエストを送信してください</div>
+  </div>
+  <script>
+    async function runFetch() {
+      const url = document.getElementById('fetch-url').value;
+      const log = document.getElementById('fetch-log');
+      log.textContent = `fetch("${url}")\n送信中...`;
+      try {
+        const start    = performance.now();
+        const response = await fetch(url);
+        const elapsed  = (performance.now() - start).toFixed(0);
+        if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+        const data = await response.json();
+        log.textContent =
+          `✅ 成功！\nURL: ${url}\nステータス: ${response.status} ${response.ok ? '(ok)' : ''}\n` +
+          `応答時間: ${elapsed}ms\n\nレスポンス:\n${JSON.stringify(data, null, 2)}`;
+      } catch (err) {
+        log.textContent = `❌ エラー: ${err.message}`;
+      }
+    }
+  </script>
+
+  <div class="good">
+    ✅ <strong>試験でのポイント</strong><br>
+    ・Fetch API は<strong>Promiseを返す</strong>（コールバックではない）<br>
+    ・<code>response.ok</code> は HTTPステータスが <strong>200〜299</strong> のとき <code>true</code><br>
+    ・ネットワークエラーは <code>.catch()</code> で捕捉できるが、<strong>404・500などのHTTPエラーは ok=false になるだけで例外にはならない</strong><br>
+    ・<strong>Service Worker内でも利用可能</strong>（XHRは不可）
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 演習問題 -->
+<!-- ============================================================ -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      <code>localStorage</code> に保存したデータは、ブラウザのタブを閉じると削除される。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn-quiz" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            '<strong>localStorage</strong> は永続的に保存されます。タブを閉じても、ブラウザを閉じても残ります。<br>' +
+            'タブを閉じると削除されるのは <strong>sessionStorage</strong> です。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。localStorage は永続的に保存されます。' +
+            'タブを閉じると消えるのは sessionStorage です。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合うメソッド名・プロパティ名・値を入力してください。</p>
+
+    <label>① localStorage にデータを保存するメソッド名：</label>
+    <input type="text" id="q2a" placeholder="メソッド名()">
+
+    <label>② localStorage でオブジェクトを保存する前に行う変換メソッド（JSON）：</label>
+    <input type="text" id="q2b" placeholder="JSON.〇〇〇〇〇〇〇〇〇()">
+
+    <label>③ IndexedDB でデータの変更（追加・更新・削除）を行う際のトランザクションモード：</label>
+    <input type="text" id="q2c" placeholder="文字列">
+
+    <label>④ Web Workers でメインスレッドからWorkerにデータを送るメソッド名：</label>
+    <input type="text" id="q2d" placeholder="メソッド名()">
+
+    <label>⑤ Service Worker の登録に使うメソッド（navigator.serviceWorker.〇〇〇〇〇〇〇〇）：</label>
+    <input type="text" id="q2e" placeholder="メソッド名()">
+
+    <label>⑥ Fetch API で HTTPステータスが 200〜299 かどうかを示すプロパティ名：</label>
+    <input type="text" id="q2f" placeholder="プロパティ名">
+
+    <br>
+    <button class="btn-quiz" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value.trim().toLowerCase().replace(/[()]/g,'');
+        const b = document.getElementById('q2b').value.trim().toLowerCase().replace(/[()]/g,'').replace('json.','');
+        const c = document.getElementById('q2c').value.trim().toLowerCase().replace(/['"]/g,'');
+        const d = document.getElementById('q2d').value.trim().toLowerCase().replace(/[()]/g,'');
+        const e = document.getElementById('q2e').value.trim().toLowerCase().replace(/[()]/g,'');
+        const f = document.getElementById('q2f').value.trim().toLowerCase();
+        const r = document.getElementById('q2-result');
+        const ca = a === 'setitem';
+        const cb = b === 'stringify';
+        const cc = c === 'readwrite';
+        const cd = d === 'postmessage';
+        const ce = e === 'register';
+        const cf = f === 'ok';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！オフライン・ストレージAPIを完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `① ${ca?'✅':'❌ setItem()'}　` +
+            `② ${cb?'✅':'❌ JSON.stringify()'}　` +
+            `③ ${cc?'✅':'❌ "readwrite"'}　` +
+            `④ ${cd?'✅':'❌ postMessage()'}　` +
+            `⑤ ${ce?'✅':'❌ register()'}　` +
+            `⑥ ${cf?'✅':'❌ ok'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>
+      Web Workers に関する説明として<strong>正しいもの</strong>はどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">Web Workers はメインスレッドと同じスレッドで動作するため、DOMを直接操作できる</option>
+      <option value="b">Web Workers を使うと、JavaScriptで並列処理を行え、UIをブロックせずに重い処理を実行できる</option>
+      <option value="c">Web Workers とメインスレッドはメモリを共有するため、変数を直接参照し合える</option>
+      <option value="d">Web Workers は fetch() を使うことができない</option>
+    </select>
+    <br>
+    <button class="btn-quiz" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'Web Workers は<strong>メインスレッドとは別のバックグラウンドスレッド</strong>で動作し、<br>' +
+            'UIをブロックせずに重い処理（大量計算・データ処理など）を並列実行できます。<br>' +
+            'メインスレッドとの通信は <code>postMessage()</code> / <code>onmessage</code> で行います。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            '・Web Workers は<strong>別スレッド</strong>で動作し、<strong>DOMへのアクセスは不可</strong>です<br>' +
+            '・データのやり取りは <code>postMessage()</code> を通じて行い、<strong>変数を直接共有することはできません</strong><br>' +
+            '・Web Workers 内でも <code>fetch()</code> は<strong>利用可能</strong>です';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 選択問題</h3>
+    <p>
+      Service Workers の Push API と Fetch API の組み合わせに関する説明として
+      <strong>正しいもの</strong>はどれですか？
+    </p>
+    <select id="q4">
+      <option value="">-- 選択してください --</option>
+      <option value="a">push イベントはメインスレッドで処理され、Service Worker は関与しない</option>
+      <option value="b">Push API だけでプッシュ通知の表示とメッセージ本文の取得をすべて行える</option>
+      <option value="c">Service Worker の push イベントで通知を受信し、Fetch API でメッセージ本文をサーバーから取得して通知を表示できる</option>
+      <option value="d">Push API は HTTP 環境でも利用でき、HTTPS は不要である</option>
+    </select>
+    <br>
+    <button class="btn-quiz" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const v = document.getElementById('q4').value;
+        const r = document.getElementById('q4-result');
+        if (v === 'c') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'Service Worker の <code>push</code> イベントでプッシュ通知を受信し、<br>' +
+            '<strong>Fetch API</strong> を使ってサーバーからメッセージ本文を取得し、<br>' +
+            '<code>showNotification()</code> で通知を表示します。<br>' +
+            'これにより、ブラウザが閉じていてもプッシュ通知を受け取れます。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            '・push イベントは<strong>Service Worker</strong>で処理されます（メインスレッドではない）<br>' +
+            '・メッセージ本文の取得には <strong>Fetch API</strong> を組み合わせる必要があります<br>' +
+            '・Push API は <strong>HTTPS必須</strong>です（Service Worker が必要なため）';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5a">
+      ① <code>localStorage</code> は永続的に保存され、<code>sessionStorage</code> はタブを閉じると消える
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5b">
+      ② Web Storage はオブジェクトをそのまま保存できる（JSON変換は不要）
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5c">
+      ③ IndexedDB は Web Storage より大容量のデータを保存でき、インデックスによる検索も可能である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5d">
+      ④ Web Workers 内から <code>document</code> オブジェクトを使ってDOMを操作できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5e">
+      ⑤ Service Worker は HTTPS（またはlocalhost）でのみ動作する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5f">
+      ⑥ Fetch API は Promise を返し、Service Worker 内でも利用できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5g">
+      ⑦ Fetch API では、404 や 500 などの HTTP エラーレスポンスは <code>.catch()</code> で捕捉される
+    </label>
+    <br>
+    <button class="btn-quiz" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const r = document.getElementById('q5-result');
+        const checks = {
+          a: document.getElementById('q5a').checked,
+          b: document.getElementById('q5b').checked,
+          c: document.getElementById('q5c').checked,
+          d: document.getElementById('q5d').checked,
+          e: document.getElementById('q5e').checked,
+          f: document.getElementById('q5f').checked,
+          g: document.getElementById('q5g').checked,
+        };
+        // 正解：①③⑤⑥（a, c, e, f）
+        // ② Web Storage は文字列のみ → ×
+        // ④ Workers から DOM 操作は不可 → ×
+        // ⑦ 404/500 は ok=false になるだけで catch には入らない → ×
+        const correct = { a:true, b:false, c:true, d:false, e:true, f:true, g:false };
+        const allCorrect = Object.keys(correct).every(k => checks[k] === correct[k]);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① localStorage は永続、sessionStorage はセッション中のみ ✅<br>' +
+            '・③ IndexedDB は大容量・インデックス検索可能 ✅<br>' +
+            '・⑤ Service Worker は HTTPS 必須 ✅<br>' +
+            '・⑥ Fetch API は Promise を返し、Service Worker 内でも利用可能 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① localStorage は永続的、sessionStorage はタブを閉じると消える<br>' +
+            '・③ IndexedDB は大容量・インデックス検索可能<br>' +
+            '・⑤ Service Worker は HTTPS（またはlocalhost）でのみ動作<br>' +
+            '・⑥ Fetch API は Promise を返し、Service Worker 内でも利用可能<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② Web Storage は<strong>文字列のみ</strong>保存可能。オブジェクトは JSON.stringify() が必要<br>' +
+            '・④ Web Workers から DOM への<strong>アクセスは不可</strong>（document・window は使えない）<br>' +
+            '・⑦ 404・500 などの HTTP エラーは <code>response.ok === false</code> になるだけで、<strong>.catch() には入らない</strong>（ネットワークエラーのみ catch される）';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. コード穴埋め問題</h3>
+    <p><code>__A__</code> 〜 <code>__F__</code> に適切な値・記述を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+/* A：localStorage にキー"name"・値"Alice"を保存する */
+localStorage.__A__('name', 'Alice');
+
+/* B：sessionStorage からキー"token"の値を取得する */
+const token = sessionStorage.__B__('token');
+
+/* C：IndexedDB でデータ変更用トランザクションのモード */
+const tx = db.transaction('users', __C__);
+
+/* D：Web Worker にデータを送信するメソッド */
+worker.__D__({ type: 'calc', data: 1000000 });
+
+/* E：Service Worker を登録するメソッド */
+navigator.serviceWorker.__E__('/sw.js');
+
+/* F：Fetch API でレスポンスをJSONとして解析するメソッド */
+const data = await response.__F__();</pre>
+
+    <label>A（保存メソッド）：</label>
+    <input type="text" id="q6a" placeholder="メソッド名">
+    <label>B（取得メソッド）：</label>
+    <input type="text" id="q6b" placeholder="メソッド名">
+    <label>C（トランザクションモード）：</label>
+    <input type="text" id="q6c" placeholder="文字列">
+    <label>D（送信メソッド）：</label>
+    <input type="text" id="q6d" placeholder="メソッド名">
+    <label>E（登録メソッド）：</label>
+    <input type="text" id="q6e" placeholder="メソッド名">
+    <label>F（JSON解析メソッド）：</label>
+    <input type="text" id="q6f" placeholder="メソッド名">
+    <br>
+    <button class="btn-quiz" onclick="checkQ6()">答え合わせ</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const a = document.getElementById('q6a').value.trim().toLowerCase().replace(/[()]/g,'');
+        const b = document.getElementById('q6b').value.trim().toLowerCase().replace(/[()]/g,'');
+        const c = document.getElementById('q6c').value.trim().toLowerCase().replace(/['"]/g,'');
+        const d = document.getElementById('q6d').value.trim().toLowerCase().replace(/[()]/g,'');
+        const e = document.getElementById('q6e').value.trim().toLowerCase().replace(/[()]/g,'');
+        const f = document.getElementById('q6f').value.trim().toLowerCase().replace(/[()]/g,'');
+        const r = document.getElementById('q6-result');
+        const ca = a === 'setitem';
+        const cb = b === 'getitem';
+        const cc = c === 'readwrite';
+        const cd = d === 'postmessage';
+        const ce = e === 'register';
+        const cf = f === 'json';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！オフライン・ストレージAPIの記述を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca?'✅':'❌ setItem()'}　` +
+            `B: ${cb?'✅':'❌ getItem()'}　` +
+            `C: ${cc?'✅':'❌ "readwrite"'}　` +
+            `D: ${cd?'✅':'❌ postMessage()'}　` +
+            `E: ${ce?'✅':'❌ register()'}　` +
+            `F: ${cf?'✅':'❌ json()'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q7 -->
+  <div class="quiz-block">
+    <h3>Q7. 記述問題</h3>
+    <p>
+      Service Workers の Push API と Fetch API を組み合わせてプッシュ通知を実現する流れを、
+      「購読登録」「push イベント」「Fetch API」「通知表示」の4つのキーワードを使って説明してください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q7" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn-quiz" onclick="checkQ7()">模範解答を見る</button>
+    <div class="result-msg" id="q7-result"></div>
+    <script>
+      function checkQ7() {
+        const r = document.getElementById('q7-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<table style="border-collapse:collapse; width:100%; font-size:0.88em;">' +
+          '<thead><tr style="background:#c05621; color:#fff;">' +
+          '<th style="padding:8px; border:1px solid #feebc8;">ステップ</th>' +
+          '<th style="padding:8px; border:1px solid #feebc8;">処理</th>' +
+          '<th style="padding:8px; border:1px solid #feebc8;">使用API</th>' +
+          '</tr></thead><tbody>' +
+          '<tr><td style="padding:8px; border:1px solid #feebc8;">① 購読登録</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">ブラウザが Push Service に購読登録し、エンドポイントURLをサーバーに送信する</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">PushManager.subscribe() + Fetch API</td></tr>' +
+          '<tr style="background:#fffaf0;"><td style="padding:8px; border:1px solid #feebc8;">② push イベント</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">サーバーが Push Service 経由でブラウザに通知を送信。Service Worker の push イベントが発火する</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">Push API（push イベント）</td></tr>' +
+          '<tr><td style="padding:8px; border:1px solid #feebc8;">③ Fetch API</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">push イベント内で Fetch API を使い、通知のタイトル・本文などをサーバーから取得する</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">Fetch API（fetch()）</td></tr>' +
+          '<tr style="background:#fffaf0;"><td style="padding:8px; border:1px solid #feebc8;">④ 通知表示</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">取得したデータをもとに showNotification() でブラウザ通知を表示する</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">Notifications API（showNotification()）</td></tr>' +
+          '</tbody></table><br>' +
+          '💡 <strong>試験のポイント</strong>：<strong>push イベント（受信）→ Fetch API（本文取得）→ showNotification（表示）</strong> の流れを押さえましょう。';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 オフライン・ストレージAPI まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>API</th><th>概要</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>localStorage</strong></td>
+      <td>永続的なキー・バリューストレージ</td>
+      <td><strong>永続保存</strong>。文字列のみ。同一オリジン共有。約5MB</td>
+    </tr>
+    <tr>
+      <td><strong>sessionStorage</strong></td>
+      <td>セッション中のみのキー・バリューストレージ</td>
+      <td><strong>タブを閉じると消える</strong>。同一タブ・同一オリジンのみ</td>
+    </tr>
+    <tr>
+      <td><strong>IndexedDB</strong></td>
+      <td>ブラウザ内蔵のNoSQL型データベース</td>
+      <td><strong>大容量・オブジェクト保存可・インデックス検索</strong>。非同期・トランザクション</td>
+    </tr>
+    <tr>
+      <td><strong>Web Workers</strong></td>
+      <td>バックグラウンドスレッドでJSを並列実行</td>
+      <td><strong>UIをブロックせず並列処理</strong>。DOM操作不可。postMessage で通信</td>
+    </tr>
+    <tr>
+      <td><strong>Service Workers</strong></td>
+      <td>ブラウザとネットワークの間に立つプロキシ</td>
+      <td>HTTPS必須。install → activate → fetch/push のライフサイクル</td>
+    </tr>
+    <tr>
+      <td><strong>Push API</strong></td>
+      <td>サーバーからブラウザへのプッシュ通知</td>
+      <td><strong>push イベント + Fetch API</strong> でメッセージ本文を取得して通知表示</td>
+    </tr>
+    <tr>
+      <td><strong>Fetch API</strong></td>
+      <td>Promiseベースのネットワークリクエスト</td>
+      <td><strong>Promise を返す</strong>。response.ok で成否確認。Service Worker 内でも利用可能</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
