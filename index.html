@@ -78,6 +78,8 @@
     }
     .section-title.css  { color: #553c9a; border-left-color: #9f7aea; }
     .section-title.resp { color: #276749; border-left-color: #38a169; }
+    .section-title.api  { color: #c05621; border-left-color: #f6ad55; }
+    .section-title.web  { color: #086f83; border-left-color: #00b5d8; }
 
     /* ===== カードグリッド ===== */
     .card-grid {
@@ -119,6 +121,24 @@
     .card.resp-card .tag { background: #f0fff4; color: #276749; border-color: #c6f6d5; }
     .card.resp-card .card-footer { border-top-color: #f0fff4; }
 
+    /* ===== カード（第4編：API概要） ===== */
+    .card.api-card { border-color: #feebc8; }
+    .card.api-card:hover { box-shadow: 0 8px 24px rgba(192,86,33,0.15); }
+    .card.api-card .card-title { color: #c05621; }
+    .card.api-card .tag { background: #fffaf0; color: #c05621; border-color: #feebc8; }
+    .card.api-card .card-footer { border-top-color: #fffaf0; }
+
+    /* ===== カード（第5編：作成中） ===== */
+    .card.web-card {
+      border-color: #b2f5ea;
+      opacity: 0.72;
+      cursor: default;
+      pointer-events: none;
+    }
+    .card.web-card .card-title { color: #086f83; }
+    .card.web-card .tag { background: #e6fffa; color: #086f83; border-color: #b2f5ea; }
+    .card.web-card .card-footer { border-top-color: #e6fffa; }
+
     .card-icon { font-size: 2em; line-height: 1; }
     .card-title { font-size: 1.08em; font-weight: bold; color: #2b6cb0; }
     .card-desc  { font-size: 0.9em; color: #4a5568; flex: 1; }
@@ -138,6 +158,21 @@
       border-top: 1px solid #ebf8ff;
       padding-top: 10px;
       margin-top: 4px;
+    }
+
+    /* ===== 作成中バッジ ===== */
+    .wip-badge {
+      display: inline-block;
+      background: #e6fffa;
+      color: #086f83;
+      border: 1px solid #b2f5ea;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 0.75em;
+      font-weight: bold;
+      margin-left: 8px;
+      vertical-align: middle;
+      letter-spacing: 0.04em;
     }
 
     /* ===== 進捗バー ===== */
@@ -167,6 +202,10 @@
     .progress-bar.css       { background: linear-gradient(90deg, #9f7aea, #ed64a6); }
     .progress-bar-wrap.resp { background: #f0fff4; margin-top: 12px; }
     .progress-bar.resp      { background: linear-gradient(90deg, #38a169, #68d391); }
+    .progress-bar-wrap.api  { background: #fffaf0; margin-top: 12px; }
+    .progress-bar.api       { background: linear-gradient(90deg, #f6ad55, #c05621); }
+    .progress-bar-wrap.web  { background: #e6fffa; margin-top: 12px; }
+    .progress-bar.web       { background: linear-gradient(90deg, #00b5d8, #086f83); }
     .progress-label { font-size: 0.85em; color: #718096; text-align: right; }
 
     /* ===== 試験情報バナー ===== */
@@ -225,6 +264,7 @@
       .tag { font-size: 0.68em; padding: 1px 8px; }
       .card-footer { font-size: 0.72em; }
       footer { padding: 20px 14px; font-size: 0.78em; }
+      .wip-badge { font-size: 0.68em; }
     }
     @media (max-height: 500px) and (orientation: landscape) {
       body { font-size: 0.8em; }
@@ -301,10 +341,28 @@
       🟩 レスポンシブWebデザイン編
     </div>
     <div class="progress-bar-wrap resp">
-      <!-- ✅ 更新：4/4 = 100% -->
       <div class="progress-bar resp" style="width:100%;"></div>
     </div>
     <div class="progress-label">レスポンシブ編 4 / 4 ページ完了 🎉</div>
+
+    <!-- 第4編 -->
+    <div style="font-size:0.85em; color:#c05621; font-weight:bold; margin:14px 0 4px;">
+      🟧 API概要編
+    </div>
+    <div class="progress-bar-wrap api">
+      <div class="progress-bar api" style="width:25%;"></div>
+    </div>
+    <div class="progress-label">API概要編 1 / 4 ページ完了</div>
+
+    <!-- 第5編 -->
+    <div style="font-size:0.85em; color:#086f83; font-weight:bold; margin:14px 0 4px;">
+      🟦 Web関連の規格と技術編
+      <span class="wip-badge">✏️ 作成中</span>
+    </div>
+    <div class="progress-bar-wrap web">
+      <div class="progress-bar web" style="width:0%;"></div>
+    </div>
+    <div class="progress-label">Web関連の規格と技術編 0 / 2 ページ</div>
 
   </div><!-- /progress-section -->
 
@@ -724,11 +782,9 @@
 
 
   <!-- ===== 第3編 ===== -->
-  <!-- ✅ 更新：全4ページ完了 -->
   <div class="section-title resp">✅ レスポンシブWebデザイン編 ― 公開済み（全4ページ）</div>
   <div class="card-grid">
 
-    <!-- resp_web_techs.html -->
     <a class="card resp-card" href="resp_web_techs.html">
       <div class="card-icon">📱</div>
       <div class="card-title">レスポンシブWebデザインと関連技術</div>
@@ -749,7 +805,6 @@
       <div class="card-footer">📁 resp_web_techs.html</div>
     </a>
 
-    <!-- ✅ 新規追加：media_queries.htm -->
     <a class="card resp-card" href="media_queries.htm">
       <div class="card-icon">📡</div>
       <div class="card-title">メディアクエリ（Media Queries）</div>
@@ -771,7 +826,6 @@
       <div class="card-footer">📁 media_queries.htm</div>
     </a>
 
-    <!-- ✅ 新規追加：resp_other_techs.html -->
     <a class="card resp-card" href="resp_other_techs.html">
       <div class="card-icon">🔧</div>
       <div class="card-title">その他のレスポンシブWebデザイン関連技術</div>
@@ -792,7 +846,6 @@
       <div class="card-footer">📁 resp_other_techs.html</div>
     </a>
 
-    <!-- ✅ 新規追加：multi_device.html -->
     <a class="card resp-card" href="multi_device.html">
       <div class="card-icon">📲</div>
       <div class="card-title">その他マルチデバイス対応関連技術</div>
@@ -815,6 +868,128 @@
     </a>
 
   </div><!-- /card-grid 第3編 -->
+
+
+  <!-- ===== 第4編：API概要 ===== -->
+  <div class="section-title api">🔶 API概要編 ― 公開済み（1 / 4ページ）</div>
+  <div class="card-grid">
+
+    <a class="card api-card" href="api_multimedia.html">
+      <div class="card-icon">🎨</div>
+      <div class="card-title">マルチメディア・グラフィックスAPI</div>
+      <div class="card-desc">
+        HTMLMediaElement API（video / audio のJS制御）・ストリーミング（MSE / HLS / DASH）・
+        Canvas API（ビットマップ形式の2D描画）・SVG（インライン記述可能なベクター形式）・
+        WebGL（3Dグラフィックス）を学びます。
+        インタラクティブデモ多数収録。
+      </div>
+      <div class="card-tags">
+        <span class="tag">HTMLMediaElement</span>
+        <span class="tag">Canvas 2D</span>
+        <span class="tag">SVG</span>
+        <span class="tag">ストリーミング</span>
+        <span class="tag">MSE</span>
+        <span class="tag">WebGL</span>
+      </div>
+      <div class="card-footer">📁 api_multimedia.html</div>
+    </a>
+
+    <!-- 作成予定カード：api_deviceaccess.html -->
+    <div class="card api-card" style="opacity:0.55; cursor:default; pointer-events:none;">
+      <div class="card-icon">📡</div>
+      <div class="card-title">デバイスアクセスAPI <span class="wip-badge">✏️ 作成中</span></div>
+      <div class="card-desc">
+        Geolocation API・DeviceOrientation / DeviceMotion・
+        getUserMedia（カメラ・マイク）・Vibration API などを学びます。
+      </div>
+      <div class="card-tags">
+        <span class="tag">Geolocation</span>
+        <span class="tag">DeviceOrientation</span>
+        <span class="tag">getUserMedia</span>
+        <span class="tag">Vibration</span>
+      </div>
+      <div class="card-footer">📁 api_deviceaccess.html</div>
+    </div>
+
+    <!-- 作成予定カード：api_onlinestorage.html -->
+    <div class="card api-card" style="opacity:0.55; cursor:default; pointer-events:none;">
+      <div class="card-icon">💾</div>
+      <div class="card-title">オンラインストレージAPI <span class="wip-badge">✏️ 作成中</span></div>
+      <div class="card-desc">
+        Web Storage（localStorage / sessionStorage）・
+        IndexedDB・Cookie との違い・
+        ストレージの容量・スコープを学びます。
+      </div>
+      <div class="card-tags">
+        <span class="tag">localStorage</span>
+        <span class="tag">sessionStorage</span>
+        <span class="tag">IndexedDB</span>
+        <span class="tag">Cookie</span>
+      </div>
+      <div class="card-footer">📁 api_onlinestorage.html</div>
+    </div>
+
+    <!-- 作成予定カード：api_communications.html -->
+    <div class="card api-card" style="opacity:0.55; cursor:default; pointer-events:none;">
+      <div class="card-icon">🔌</div>
+      <div class="card-title">通信系API <span class="wip-badge">✏️ 作成中</span></div>
+      <div class="card-desc">
+        XMLHttpRequest・Fetch API・WebSocket・
+        Server-Sent Events・Cross-Origin Resource Sharing（CORS）を学びます。
+      </div>
+      <div class="card-tags">
+        <span class="tag">Fetch API</span>
+        <span class="tag">WebSocket</span>
+        <span class="tag">SSE</span>
+        <span class="tag">CORS</span>
+        <span class="tag">XHR</span>
+      </div>
+      <div class="card-footer">📁 api_communications.html</div>
+    </div>
+
+  </div><!-- /card-grid 第4編 -->
+
+
+  <!-- ===== 第5編：Web関連の規格と技術（作成中） ===== -->
+  <div class="section-title web">
+    ✏️ Web関連の規格と技術編 ― 作成中（全2ページ予定）
+    <span class="wip-badge">✏️ 作成中</span>
+  </div>
+  <div class="card-grid">
+
+    <div class="card web-card">
+      <div class="card-icon">🌐</div>
+      <div class="card-title">Web関連の規格・標準化団体 <span class="wip-badge">✏️ 作成中</span></div>
+      <div class="card-desc">
+        W3C・WHATWG・IETF・ECMAScript（TC39）など
+        Webの標準化に関わる団体と規格の概要を学びます。
+      </div>
+      <div class="card-tags">
+        <span class="tag">W3C</span>
+        <span class="tag">WHATWG</span>
+        <span class="tag">IETF</span>
+        <span class="tag">ECMAScript</span>
+      </div>
+      <div class="card-footer">📁 web_standards.html（予定）</div>
+    </div>
+
+    <div class="card web-card">
+      <div class="card-icon">🔒</div>
+      <div class="card-title">セキュリティ・アクセシビリティ <span class="wip-badge">✏️ 作成中</span></div>
+      <div class="card-desc">
+        XSS・CSRF・HTTPS・WAI-ARIA・
+        アクセシビリティの基本概念と対策を学びます。
+      </div>
+      <div class="card-tags">
+        <span class="tag">XSS</span>
+        <span class="tag">CSRF</span>
+        <span class="tag">HTTPS</span>
+        <span class="tag">WAI-ARIA</span>
+      </div>
+      <div class="card-footer">📁 web_security.html（予定）</div>
+    </div>
+
+  </div><!-- /card-grid 第5編 -->
 
 </main>
 

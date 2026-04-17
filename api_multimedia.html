@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>マルチメディア・グラフィックスAPI 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #f6ad55; padding-bottom: 10px; }
+    h2 { color: #c05621; margin-top: 48px; border-left: 5px solid #f6ad55; padding-left: 12px; }
+    h3 { color: #744210; margin-top: 24px; }
+
+    code {
+      background: #feebc8;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment  { color: #68d391; }
+    pre .prop     { color: #90cdf4; }
+    pre .val      { color: #fc8181; }
+    pre .keyword  { color: #b794f4; }
+    pre .func     { color: #fbd38d; }
+    pre .selector { color: #f6ad55; }
+    pre .at       { color: #b794f4; }
+    pre .attr     { color: #fbd38d; }
+    pre .value    { color: #68d391; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #c05621; }
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+    .demo-box {
+      background: #fff;
+      border: 1px solid #feebc8;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* インタラクティブデモ共通 */
+    .interactive-demo {
+      background: #fffaf0;
+      border: 1px solid #feebc8;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .slider-row label {
+      font-size: 0.85em;
+      font-weight: bold;
+      min-width: 180px;
+      color: #c05621;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .slider-row input[type="range"] {
+      flex: 1;
+      min-width: 100px;
+      accent-color: #f6ad55;
+    }
+    .slider-row input[type="color"] {
+      width: 44px;
+      height: 32px;
+      border: 2px solid #feebc8;
+      border-radius: 6px;
+      cursor: pointer;
+      padding: 2px;
+    }
+    .slider-row select {
+      border: 2px solid #feebc8;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.85em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #2d3748;
+      background: #fff;
+      cursor: pointer;
+      flex: 1;
+    }
+    .slider-row select:focus { border-color: #f6ad55; outline: none; }
+    .val-display {
+      min-width: 64px;
+      text-align: right;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.85em;
+      color: #2d3748;
+    }
+    .color-code-display {
+      background: #1a202c;
+      color: #68d391;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.84em;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* メディア制御デモ */
+    .media-ctrl {
+      background: #fffaf0;
+      border: 1px solid #feebc8;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+    .media-ctrl-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .media-ctrl-row label {
+      font-size: 0.85em;
+      font-weight: bold;
+      color: #c05621;
+      font-family: 'Consolas', 'Monaco', monospace;
+      min-width: 160px;
+    }
+    .media-ctrl-row input[type="range"] {
+      flex: 1;
+      min-width: 100px;
+      accent-color: #f6ad55;
+    }
+    .media-ctrl-row .val-display {
+      min-width: 50px;
+    }
+
+    /* Canvasデモ */
+    canvas {
+      display: block;
+      border-radius: 8px;
+      border: 2px solid #feebc8;
+      background: #fff;
+      max-width: 100%;
+    }
+    .canvas-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 12px 0;
+    }
+
+    /* SVGデモ */
+    .svg-demo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px 0;
+    }
+
+    /* ボタン */
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 8px 0;
+    }
+    .btn {
+      display: inline-block;
+      padding: 8px 18px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.82; }
+    .btn-orange { background: #f6ad55; color: #fff; }
+    .btn-gray   { background: #e2e8f0; color: #4a5568; }
+
+    /* APIカード */
+    .api-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin: 14px 0;
+    }
+    .api-card {
+      background: #fffaf0;
+      border: 1px solid #feebc8;
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .api-card-title {
+      font-size: 0.88em;
+      font-weight: bold;
+      color: #c05621;
+      margin-bottom: 6px;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .api-card-desc {
+      font-size: 0.82em;
+      color: #4a5568;
+      line-height: 1.6;
+    }
+
+    /* ストリーミング比較 */
+    .stream-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 14px 0;
+    }
+    .stream-card {
+      background: #fffaf0;
+      border: 1px solid #feebc8;
+      border-left: 4px solid #f6ad55;
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .stream-card-title {
+      font-size: 0.9em;
+      font-weight: bold;
+      color: #c05621;
+      margin-bottom: 6px;
+    }
+    .stream-card-desc {
+      font-size: 0.82em;
+      color: #4a5568;
+      line-height: 1.65;
+    }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 { margin-top: 0; color: #c05621; border-left-color: #f6ad55; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #feebc8;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #feebc8;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn-quiz {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+      background: #f6ad55;
+      color: #fff;
+    }
+    .btn-quiz:hover { opacity: 0.85; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #feebc8; color: #744210; display: block; }
+
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #feebc8;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.summary thead tr { background: #c05621; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #fffaf0; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px; }
+      .slider-row label { min-width: 120px; }
+      .api-grid { grid-template-columns: 1fr; }
+      .stream-grid { grid-template-columns: 1fr; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px; }
+      .quiz-block { padding: 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+      .api-grid { grid-template-columns: repeat(2, 1fr); }
+      .stream-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<h1>🎨 マルチメディア・グラフィックスAPI 学習サンプル</h1>
+<p>
+  HTML5で強化されたマルチメディア制御・ストリーミング・グラフィックスに関するAPIの
+  概要と使い方を学びましょう。
+</p>
+
+
+<!-- ============================================================ -->
+<!-- PART 1：マルチメディア — HTMLMediaElement API -->
+<!-- ============================================================ -->
+<h2>① マルチメディア — HTMLMediaElement API</h2>
+<div class="note">
+  <strong>重要ポイント①：audio要素・video要素で埋め込んだマルチメディアコンテンツの再生を、JavaScriptで制御できる</strong><br>
+  <code>&lt;audio&gt;</code>・<code>&lt;video&gt;</code> 要素は
+  <strong>HTMLMediaElement</strong> インターフェースを実装しており、
+  JavaScriptから<strong>再生・停止・音量・再生位置・再生速度</strong>などを
+  プログラムで制御できます。
+  ユーザー操作なしに自動制御したり、カスタムUIを実装したりする際に使います。
+</div>
+<div class="demo-box">
+
+  <h3>HTMLMediaElement の主なプロパティ・メソッド・イベント</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>種別</th><th>名前</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td rowspan="3" style="vertical-align:middle; font-weight:bold; color:#c05621;">メソッド</td>
+        <td><code>play()</code></td>
+        <td>再生開始（Promiseを返す）</td>
+      </tr>
+      <tr>
+        <td><code>pause()</code></td>
+        <td>一時停止</td>
+      </tr>
+      <tr>
+        <td><code>load()</code></td>
+        <td>メディアを再読み込み（src変更後に呼ぶ）</td>
+      </tr>
+      <tr>
+        <td rowspan="7" style="vertical-align:middle; font-weight:bold; color:#c05621;">プロパティ</td>
+        <td><code>currentTime</code></td>
+        <td>現在の再生位置（秒）。<strong>書き込みでシーク可能</strong></td>
+      </tr>
+      <tr>
+        <td><code>duration</code></td>
+        <td>メディアの総再生時間（秒）。読み取り専用</td>
+      </tr>
+      <tr>
+        <td><code>volume</code></td>
+        <td>音量（0.0〜1.0）</td>
+      </tr>
+      <tr>
+        <td><code>muted</code></td>
+        <td>ミュート状態（true/false）</td>
+      </tr>
+      <tr>
+        <td><code>paused</code></td>
+        <td>一時停止中かどうか（読み取り専用）</td>
+      </tr>
+      <tr>
+        <td><code>playbackRate</code></td>
+        <td>再生速度（1.0が通常速度、2.0で2倍速）</td>
+      </tr>
+      <tr>
+        <td><code>loop</code></td>
+        <td>ループ再生（true/false）</td>
+      </tr>
+      <tr>
+        <td rowspan="4" style="vertical-align:middle; font-weight:bold; color:#c05621;">イベント</td>
+        <td><code>play</code></td>
+        <td>再生開始時に発火</td>
+      </tr>
+      <tr>
+        <td><code>pause</code></td>
+        <td>一時停止時に発火</td>
+      </tr>
+      <tr>
+        <td><code>ended</code></td>
+        <td>再生終了時に発火</td>
+      </tr>
+      <tr>
+        <td><code>timeupdate</code></td>
+        <td>再生位置が変化するたびに発火（進捗バー更新などに利用）</td>
+      </tr>
+    </tbody>
+  </table>
+
+<pre>
+<span class="comment">/* video / audio 要素を取得 */</span>
+<span class="keyword">const</span> video = document.<span class="func">getElementById</span>(<span class="val">'myVideo'</span>);
+<span class="keyword">const</span> audio = document.<span class="func">getElementById</span>(<span class="val">'myAudio'</span>);
+
+<span class="comment">/* 再生・停止 */</span>
+video.<span class="func">play</span>();    <span class="comment">/* 再生（Promiseを返す） */</span>
+video.<span class="func">pause</span>();   <span class="comment">/* 一時停止 */</span>
+
+<span class="comment">/* 音量・ミュート */</span>
+video.<span class="prop">volume</span> = <span class="val">0.5</span>;    <span class="comment">/* 50%の音量（0.0〜1.0） */</span>
+video.<span class="prop">muted</span>  = <span class="val">true</span>;   <span class="comment">/* ミュート */</span>
+
+<span class="comment">/* 再生位置・速度 */</span>
+video.<span class="prop">currentTime</span>  = <span class="val">30</span>;  <span class="comment">/* 30秒の位置にシーク */</span>
+video.<span class="prop">playbackRate</span> = <span class="val">1.5</span>; <span class="comment">/* 1.5倍速で再生 */</span>
+
+<span class="comment">/* 再生状態の確認 */</span>
+<span class="keyword">if</span> (video.<span class="prop">paused</span>) {
+  video.<span class="func">play</span>();
+} <span class="keyword">else</span> {
+  video.<span class="func">pause</span>();
+}
+
+<span class="comment">/* イベントリスナー */</span>
+video.<span class="func">addEventListener</span>(<span class="val">'ended'</span>, () => {
+  console.<span class="func">log</span>(<span class="val">'再生終了'</span>);
+});
+video.<span class="func">addEventListener</span>(<span class="val">'timeupdate'</span>, () => {
+  <span class="comment">/* 再生位置が変わるたびに呼ばれる（進捗バー更新など） */</span>
+  console.<span class="func">log</span>(video.<span class="prop">currentTime</span> + <span class="val">' / '</span> + video.<span class="prop">duration</span>);
+});
+</pre>
+
+  <h3>HTMLMediaElement インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#744210; margin:0 0 12px;">
+      スライダーを動かして各プロパティの値を確認しましょう。
+      実際の video / audio 要素に同じコードで適用できます。
+    </p>
+    <div class="media-ctrl">
+      <div class="media-ctrl-row">
+        <label>volume（音量）</label>
+        <input type="range" id="me-vol" min="0" max="100" value="80" oninput="updateME()">
+        <span class="val-display" id="me-vol-val">0.80</span>
+      </div>
+      <div class="media-ctrl-row">
+        <label>playbackRate（再生速度）</label>
+        <input type="range" id="me-rate" min="25" max="300" value="100" oninput="updateME()">
+        <span class="val-display" id="me-rate-val">1.00</span>
+      </div>
+      <div class="media-ctrl-row">
+        <label>currentTime（再生位置）</label>
+        <input type="range" id="me-time" min="0" max="300" value="0" oninput="updateME()">
+        <span class="val-display" id="me-time-val">0 秒</span>
+      </div>
+      <div class="media-ctrl-row">
+        <label>muted（ミュート）</label>
+        <select id="me-muted" onchange="updateME()">
+          <option value="false">false（音あり）</option>
+          <option value="true">true（ミュート）</option>
+        </select>
+        <span class="val-display"></span>
+      </div>
+    </div>
+    <div class="color-code-display" id="me-code">video.volume = 0.80;
+video.playbackRate = 1.00;
+video.currentTime = 0;
+video.muted = false;</div>
+  </div>
+  <script>
+    function updateME() {
+      const vol    = (document.getElementById('me-vol').value / 100).toFixed(2);
+      const rate   = (document.getElementById('me-rate').value / 100).toFixed(2);
+      const time   = document.getElementById('me-time').value;
+      const muted  = document.getElementById('me-muted').value;
+      document.getElementById('me-vol-val').textContent  = vol;
+      document.getElementById('me-rate-val').textContent = rate;
+      document.getElementById('me-time-val').textContent = time + ' 秒';
+      document.getElementById('me-code').textContent =
+        `video.volume = ${vol};\nvideo.playbackRate = ${rate};\nvideo.currentTime = ${time};\nvideo.muted = ${muted};`;
+    }
+    updateME();
+  </script>
+
+  <div class="warn">
+    <strong>⚠️ play() はPromiseを返す</strong><br>
+    モダンブラウザでは <code>play()</code> は Promise を返します。
+    オートプレイポリシーにより再生が拒否される場合があるため、
+    <code>.catch()</code> でエラーハンドリングすることが推奨されます。<br>
+    <code style="font-size:0.9em;">video.play().catch(err => console.log('再生できません:', err));</code>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 2：ストリーミング -->
+<!-- ============================================================ -->
+<h2>② ストリーミング</h2>
+<div class="note">
+  <strong>重要ポイント：ストリーミングはメディアデータを分割して順次受信・再生する技術である</strong><br>
+  ストリーミングとは、動画・音声データをすべてダウンロードしてから再生するのではなく、
+  <strong>データを小さなチャンクに分割して順次受信しながら再生</strong>する技術です。
+  待ち時間を短縮し、長時間コンテンツでも即座に再生を開始できます。
+</div>
+<div class="demo-box">
+
+  <h3>プログレッシブダウンロード vs ストリーミング</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>方式</th><th>仕組み</th><th>特徴</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>プログレッシブダウンロード</strong></td>
+        <td>ファイルを先頭から順にダウンロードしながら再生</td>
+        <td>シンプル。ダウンロード済みの範囲のみシーク可能</td>
+      </tr>
+      <tr>
+        <td><strong>ストリーミング</strong></td>
+        <td>データを細かく分割して順次配信・再生</td>
+        <td>即時再生・ライブ配信・画質の自動切替（アダプティブ）が可能</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>主なストリーミング技術</h3>
+  <div class="stream-grid">
+    <div class="stream-card">
+      <div class="stream-card-title">HLS（HTTP Live Streaming）</div>
+      <div class="stream-card-desc">
+        Appleが開発。動画を小さなセグメント（.ts / .m4s）に分割し、
+        プレイリストファイル（.m3u8）で管理。
+        iOSでネイティブサポート。
+      </div>
+    </div>
+    <div class="stream-card">
+      <div class="stream-card-title">MPEG-DASH</div>
+      <div class="stream-card-desc">
+        ISO標準のアダプティブストリーミング規格。
+        MPDファイル（XML）でセグメントを管理。
+        YouTubeなどで採用。
+      </div>
+    </div>
+    <div class="stream-card">
+      <div class="stream-card-title">MSE（Media Source Extensions）</div>
+      <div class="stream-card-desc">
+        JavaScriptからメディアデータを動的に <code>&lt;video&gt;</code> 要素に
+        供給できるAPI。HLS・DASHのブラウザ実装の基盤となる。
+      </div>
+    </div>
+    <div class="stream-card">
+      <div class="stream-card-title">WebRTC</div>
+      <div class="stream-card-desc">
+        ブラウザ間でリアルタイムの音声・映像・データを
+        P2Pで通信するAPI。
+        ビデオ通話・画面共有などに利用。
+      </div>
+    </div>
+  </div>
+
+  <h3>Media Source Extensions（MSE）の概要</h3>
+<pre>
+<span class="comment">/* MSE：JavaScriptからvideo要素にメディアデータを動的に供給する */</span>
+<span class="keyword">const</span> video = document.<span class="func">getElementById</span>(<span class="val">'myVideo'</span>);
+<span class="keyword">const</span> ms    = <span class="keyword">new</span> <span class="func">MediaSource</span>();
+
+<span class="comment">/* MediaSourceオブジェクトをvideo要素のsrcに設定 */</span>
+video.<span class="prop">src</span> = URL.<span class="func">createObjectURL</span>(ms);
+
+<span class="comment">/* sourceopen イベント：SourceBufferを追加してデータを供給 */</span>
+ms.<span class="func">addEventListener</span>(<span class="val">'sourceopen'</span>, () => {
+  <span class="keyword">const</span> sb = ms.<span class="func">addSourceBuffer</span>(<span class="val">'video/mp4; codecs="avc1.42E01E,mp4a.40.2"'</span>);
+
+  <span class="comment">/* fetchでセグメントデータを取得してSourceBufferに追加 */</span>
+  <span class="func">fetch</span>(<span class="val">'segment1.mp4'</span>)
+    .<span class="func">then</span>(res => res.<span class="func">arrayBuffer</span>())
+    .<span class="func">then</span>(buf => sb.<span class="func">appendBuffer</span>(buf));
+});
+</pre>
+
+  <h3>video 要素でのストリーミング再生（HLS の例）</h3>
+<pre>
+<span class="comment">&lt;!-- iOSはHLSをネイティブサポート --&gt;</span>
+&lt;<span class="prop">video</span> <span class="attr">src</span>=<span class="value">"stream.m3u8"</span> <span class="attr">controls</span>&gt;&lt;/<span class="prop">video</span>&gt;
+
+<span class="comment">&lt;!-- PCブラウザではhls.jsなどのライブラリを使う --&gt;</span>
+&lt;<span class="prop">script</span> <span class="attr">src</span>=<span class="value">"hls.js"</span>&gt;&lt;/<span class="prop">script</span>&gt;
+&lt;<span class="prop">script</span>&gt;
+  <span class="keyword">if</span> (<span class="func">Hls</span>.<span class="func">isSupported</span>()) {
+    <span class="keyword">const</span> hls = <span class="keyword">new</span> <span class="func">Hls</span>();
+    hls.<span class="func">loadSource</span>(<span class="val">'stream.m3u8'</span>);
+    hls.<span class="func">attachMedia</span>(video);
+  }
+&lt;/<span class="prop">script</span>&gt;
+</pre>
+
+  <div class="good">
+    ✅ <strong>試験でのポイント</strong><br>
+    ・ストリーミングはデータを<strong>分割して順次受信しながら再生</strong>する技術<br>
+    ・<strong>MSE（Media Source Extensions）</strong>はJavaScriptからメディアデータを
+    動的に <code>&lt;video&gt;</code> 要素に供給するAPIで、HLS・DASHのブラウザ実装の基盤<br>
+    ・<code>&lt;video&gt;</code>・<code>&lt;audio&gt;</code> 要素はストリーミングコンテンツも再生できる
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 3：Canvas API（グラフィックス） -->
+<!-- ============================================================ -->
+<h2>③ Canvas API（グラフィックス）</h2>
+<div class="note">
+  <strong>重要ポイント②：Canvas(2D)はJavaScriptでビットマップ形式の画像を描画する</strong><br>
+  <code>&lt;canvas&gt;</code> 要素はピクセルベースの描画領域を提供します。
+  JavaScriptで <code>getContext('2d')</code> を呼び出して取得した
+  <strong>2Dレンダリングコンテキスト</strong>を通じて、図形・テキスト・画像などを描画します。
+  描画結果は<strong>ビットマップ（ラスター）形式</strong>として扱われ、
+  拡大すると粗くなります。
+</div>
+<div class="demo-box">
+
+  <h3>Canvas APIの基本メソッド</h3>
+  <div class="api-grid">
+    <div class="api-card">
+      <div class="api-card-title">fillRect(x,y,w,h)</div>
+      <div class="api-card-desc">塗りつぶした矩形を描画。fillStyle で色を指定</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">strokeRect(x,y,w,h)</div>
+      <div class="api-card-desc">枠線のみの矩形を描画。strokeStyle で色を指定</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">arc(x,y,r,start,end)</div>
+      <div class="api-card-desc">円弧を描画。beginPath()・fill()/stroke() と組み合わせる</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">moveTo / lineTo</div>
+      <div class="api-card-desc">パスの移動・直線の追加。stroke() で描画確定</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">fillText(text,x,y)</div>
+      <div class="api-card-desc">テキストを塗りつぶして描画。font プロパティで書体指定</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">drawImage(img,x,y)</div>
+      <div class="api-card-desc">画像・video・他のcanvasを描画。サイズ変更も可能</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">clearRect(x,y,w,h)</div>
+      <div class="api-card-desc">指定範囲を消去（透明にする）</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">save() / restore()</div>
+      <div class="api-card-desc">描画状態（色・変換行列など）の保存・復元</div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">&lt;!-- HTMLでcanvas要素を定義 --&gt;</span>
+&lt;<span class="prop">canvas</span> <span class="attr">id</span>=<span class="value">"myCanvas"</span> <span class="attr">width</span>=<span class="value">"400"</span> <span class="attr">height</span>=<span class="value">"200"</span>&gt;&lt;/<span class="prop">canvas</span>&gt;
+
+<span class="comment">/* JavaScriptで2Dコンテキストを取得して描画 */</span>
+<span class="keyword">const</span> canvas = document.<span class="func">getElementById</span>(<span class="val">'myCanvas'</span>);
+<span class="keyword">const</span> ctx    = canvas.<span class="func">getContext</span>(<span class="val">'2d'</span>);  <span class="comment">/* 2Dレンダリングコンテキスト取得 */</span>
+
+<span class="comment">/* 矩形の描画 */</span>
+ctx.<span class="prop">fillStyle</span> = <span class="val">'#f6ad55'</span>;
+ctx.<span class="func">fillRect</span>(<span class="val">20, 20, 100, 60</span>);          <span class="comment">/* 塗りつぶし矩形 */</span>
+ctx.<span class="prop">strokeStyle</span> = <span class="val">'#c05621'</span>;
+ctx.<span class="prop">lineWidth</span>   = <span class="val">3</span>;
+ctx.<span class="func">strokeRect</span>(<span class="val">140, 20, 100, 60</span>);       <span class="comment">/* 枠線矩形 */</span>
+
+<span class="comment">/* 円の描画 */</span>
+ctx.<span class="func">beginPath</span>();
+ctx.<span class="func">arc</span>(<span class="val">300, 50, 40, 0, Math.PI * 2</span>);  <span class="comment">/* x, y, 半径, 開始角, 終了角 */</span>
+ctx.<span class="prop">fillStyle</span> = <span class="val">'#68d391'</span>;
+ctx.<span class="func">fill</span>();
+
+<span class="comment">/* テキストの描画 */</span>
+ctx.<span class="prop">font</span>      = <span class="val">'bold 20px sans-serif'</span>;
+ctx.<span class="prop">fillStyle</span> = <span class="val">'#2d3748'</span>;
+ctx.<span class="func">fillText</span>(<span class="val">'Canvas!'</span>, <span class="val">20, 120</span>);
+
+<span class="comment">/* パス（直線）の描画 */</span>
+ctx.<span class="func">beginPath</span>();
+ctx.<span class="func">moveTo</span>(<span class="val">20, 150</span>);
+ctx.<span class="func">lineTo</span>(<span class="val">380, 150</span>);
+ctx.<span class="prop">strokeStyle</span> = <span class="val">'#9f7aea'</span>;
+ctx.<span class="prop">lineWidth</span>   = <span class="val">2</span>;
+ctx.<span class="func">stroke</span>();
+</pre>
+
+  <h3>Canvas インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <div class="slider-row">
+      <label>図形の種類</label>
+      <select id="cv-shape" onchange="drawCanvas()">
+        <option value="rect">矩形（fillRect）</option>
+        <option value="circle">円（arc）</option>
+        <option value="line">直線（lineTo）</option>
+        <option value="text">テキスト（fillText）</option>
+        <option value="all">すべて組み合わせ</option>
+      </select>
+      <span class="val-display"></span>
+    </div>
+    <div class="slider-row">
+      <label>fillStyle（色）</label>
+      <input type="color" id="cv-color" value="#f6ad55" oninput="drawCanvas()">
+      <span class="val-display" id="cv-color-val">#f6ad55</span>
+    </div>
+    <div class="slider-row">
+      <label>サイズ</label>
+      <input type="range" id="cv-size" min="20" max="120" value="60" oninput="drawCanvas()">
+      <span class="val-display" id="cv-size-val">60</span>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="demoCanvas" width="480" height="180"></canvas>
+    </div>
+    <div class="color-code-display" id="cv-code">ctx.fillRect(210, 60, 60, 60);</div>
+  </div>
+  <script>
+    function drawCanvas() {
+      const canvas = document.getElementById('demoCanvas');
+      const ctx    = canvas.getContext('2d');
+      const shape  = document.getElementById('cv-shape').value;
+      const color  = document.getElementById('cv-color').value;
+      const size   = parseInt(document.getElementById('cv-size').value);
+      document.getElementById('cv-color-val').textContent = color;
+      document.getElementById('cv-size-val').textContent  = size;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+
+      if (shape === 'rect' || shape === 'all') {
+        ctx.fillStyle = color;
+        ctx.fillRect(cx - size/2, cy - size/2, size, size);
+      }
+      if (shape === 'circle' || shape === 'all') {
+        const r  = shape === 'all' ? size * 0.35 : size / 2;
+        const ox = shape === 'all' ? cx - size * 0.6 : cx;
+        ctx.beginPath();
+        ctx.arc(ox, cy, r, 0, Math.PI * 2);
+        ctx.fillStyle = shape === 'all' ? '#9f7aea' : color;
+        ctx.fill();
+      }
+      if (shape === 'line' || shape === 'all') {
+        ctx.beginPath();
+        ctx.moveTo(cx - size, cy + (shape === 'all' ? size*0.4 : 0));
+        ctx.lineTo(cx + size, cy - (shape === 'all' ? size*0.4 : 0));
+        ctx.strokeStyle = shape === 'all' ? '#68d391' : color;
+        ctx.lineWidth   = Math.max(2, size / 20);
+        ctx.stroke();
+      }
+      if (shape === 'text' || shape === 'all') {
+        const fs = Math.max(14, Math.round(size * 0.5));
+        ctx.font          = `bold ${fs}px sans-serif`;
+        ctx.fillStyle     = shape === 'all' ? '#c05621' : color;
+        ctx.textAlign     = 'center';
+        ctx.textBaseline  = 'middle';
+        ctx.fillText('Canvas!', shape === 'all' ? cx + size*0.5 : cx,
+                                shape === 'all' ? cy - size*0.35 : cy);
+      }
+
+      // コード表示
+      const codeMap = {
+        rect:   `ctx.fillStyle = '${color}';\nctx.fillRect(${Math.round(cx-size/2)}, ${Math.round(cy-size/2)}, ${size}, ${size});`,
+        circle: `ctx.beginPath();\nctx.arc(${Math.round(cx)}, ${Math.round(cy)}, ${Math.round(size/2)}, 0, Math.PI * 2);\nctx.fillStyle = '${color}';\nctx.fill();`,
+        line:   `ctx.beginPath();\nctx.moveTo(${Math.round(cx-size)}, ${cy});\nctx.lineTo(${Math.round(cx+size)}, ${cy});\nctx.strokeStyle = '${color}';\nctx.lineWidth = ${Math.max(2, Math.round(size/20))};\nctx.stroke();`,
+        text:   `ctx.font = 'bold ${Math.max(14, Math.round(size*0.5))}px sans-serif';\nctx.fillStyle = '${color}';\nctx.textAlign = 'center';\nctx.fillText('Canvas!', ${cx}, ${cy});`,
+        all:    `/* 矩形・円・直線・テキストを組み合わせた描画 */\nctx.fillStyle = '${color}';\nctx.fillRect(...); ctx.arc(...); ctx.lineTo(...); ctx.fillText(...);`
+      };
+      document.getElementById('cv-code').textContent = codeMap[shape];
+    }
+    drawCanvas();
+  </script>
+
+  <div class="warn">
+    <strong>⚠️ Canvas の注意点</strong><br>
+    ・<code>&lt;canvas&gt;</code> の <code>width</code>・<code>height</code> 属性はCSS指定とは別物です。
+    CSSでサイズを変えると描画が引き伸ばされます<br>
+    ・描画結果は<strong>ビットマップ形式</strong>のため、拡大すると粗くなります（SVGと異なる点）<br>
+    ・アクセシビリティのため、<code>&lt;canvas&gt;</code> 内にフォールバックコンテンツを記述できます
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 4：SVG（グラフィックス） -->
+<!-- ============================================================ -->
+<h2>④ SVG（グラフィックス）</h2>
+<div class="note">
+  <strong>重要ポイント③：SVGはHTMLにインライン記述可能なベクター形式の画像フォーマットである</strong><br>
+  SVG（Scalable Vector Graphics）はXMLベースの<strong>ベクター形式</strong>の画像フォーマットです。
+  HTMLに直接インラインで埋め込むことができ（インラインSVG）、
+  数式で図形を定義するため<strong>どんなサイズに拡大しても鮮明</strong>に表示されます。
+  CSSでスタイルを適用でき、JavaScriptでDOMとして操作することも可能です。
+</div>
+<div class="demo-box">
+
+  <h3>Canvas vs SVG の比較</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>項目</th><th>Canvas（2D）</th><th>SVG</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>形式</td><td><strong>ビットマップ（ラスター）</strong></td><td><strong>ベクター</strong></td></tr>
+      <tr><td>拡大時</td><td>粗くなる</td><td>劣化しない</td></tr>
+      <tr><td>HTMLへの記述</td><td><code>&lt;canvas&gt;</code> 要素</td><td><strong>インライン記述可能</strong>（<code>&lt;svg&gt;〜&lt;/svg&gt;</code>）</td></tr>
+      <tr><td>DOM操作</td><td>不可（ピクセル単位）</td><td>可能（要素として操作）</td></tr>
+      <tr><td>イベント</td><td>座標で判定が必要</td><td>要素に直接付与可能</td></tr>
+      <tr><td>向いている用途</td><td>ゲーム・動画処理・複雑な描画</td><td>アイコン・チャート・ロゴ</td></tr>
+    </tbody>
+  </table>
+
+  <h3>SVGのインライン記述とHTMLへの組み込み方法</h3>
+<pre>
+<span class="comment">&lt;!-- ① インラインSVG：HTMLに直接埋め込む（最も柔軟） --&gt;</span>
+&lt;<span class="prop">svg</span> <span class="attr">width</span>=<span class="value">"200"</span> <span class="attr">height</span>=<span class="value">"100"</span> <span class="attr">xmlns</span>=<span class="value">"http://www.w3.org/2000/svg"</span>&gt;
+  &lt;<span class="prop">rect</span>    <span class="attr">x</span>=<span class="value">"10"</span>  <span class="attr">y</span>=<span class="value">"10"</span>  <span class="attr">width</span>=<span class="value">"80"</span>  <span class="attr">height</span>=<span class="value">"50"</span>  <span class="attr">fill</span>=<span class="value">"#f6ad55"</span> /&gt;
+  &lt;<span class="prop">circle</span>  <span class="attr">cx</span>=<span class="value">"150"</span> <span class="attr">cy</span>=<span class="value">"35"</span> <span class="attr">r</span>=<span class="value">"30"</span>                  <span class="attr">fill</span>=<span class="value">"#9f7aea"</span> /&gt;
+  &lt;<span class="prop">line</span>    <span class="attr">x1</span>=<span class="value">"10"</span> <span class="attr">y1</span>=<span class="value">"80"</span> <span class="attr">x2</span>=<span class="value">"190"</span> <span class="attr">y2</span>=<span class="value">"80"</span>     <span class="attr">stroke</span>=<span class="value">"#68d391"</span> <span class="attr">stroke-width</span>=<span class="value">"3"</span> /&gt;
+  &lt;<span class="prop">text</span>    <span class="attr">x</span>=<span class="value">"10"</span>  <span class="attr">y</span>=<span class="value">"95"</span>  <span class="attr">font-size</span>=<span class="value">"14"</span>              <span class="attr">fill</span>=<span class="value">"#2d3748"</span>&gt;SVG Text&lt;/<span class="prop">text</span>&gt;
+&lt;/<span class="prop">svg</span>&gt;
+
+<span class="comment">&lt;!-- ② img要素で外部SVGファイルを読み込む --&gt;</span>
+&lt;<span class="prop">img</span> <span class="attr">src</span>=<span class="value">"logo.svg"</span> <span class="attr">alt</span>=<span class="value">"ロゴ"</span>&gt;
+
+<span class="comment">&lt;!-- ③ CSSのbackground-imageで使う --&gt;</span>
+<span class="selector">.icon</span> { <span class="prop">background-image</span>: <span class="func">url</span>(<span class="val">'icon.svg'</span>); }
+
+<span class="comment">/* インラインSVGはCSSやJavaScriptで操作可能 */</span>
+<span class="keyword">const</span> circle = document.<span class="func">querySelector</span>(<span class="val">'circle'</span>);
+circle.<span class="func">setAttribute</span>(<span class="val">'fill'</span>, <span class="val">'#f6ad55'</span>); <span class="comment">/* 色をJSで変更 */</span>
+</pre>
+
+  <h3>SVG インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <div class="slider-row">
+      <label>図形の種類</label>
+      <select id="svg-shape" onchange="updateSVG()">
+        <option value="rect">rect（矩形）</option>
+        <option value="circle">circle（円）</option>
+        <option value="ellipse">ellipse（楕円）</option>
+        <option value="polygon">polygon（多角形）</option>
+      </select>
+      <span class="val-display"></span>
+    </div>
+    <div class="slider-row">
+      <label>fill（塗りつぶし色）</label>
+      <input type="color" id="svg-color" value="#f6ad55" oninput="updateSVG()">
+      <span class="val-display" id="svg-color-val">#f6ad55</span>
+    </div>
+    <div class="slider-row">
+      <label>opacity</label>
+      <input type="range" id="svg-opacity" min="10" max="100" value="90" oninput="updateSVG()">
+      <span class="val-display" id="svg-opacity-val">0.9</span>
+    </div>
+    <div class="svg-demo">
+      <svg id="demoSVG" width="300" height="160"
+           xmlns="http://www.w3.org/2000/svg"
+           style="border:2px solid #feebc8; border-radius:8px; background:#fff;">
+        <rect id="svg-el" x="100" y="40" width="100" height="80"
+              fill="#f6ad55" stroke="#c05621" stroke-width="2" opacity="0.9"/>
+      </svg>
+    </div>
+    <div class="color-code-display" id="svg-code">&lt;rect x="100" y="40" width="100" height="80"
+  fill="#f6ad55" stroke="#c05621" stroke-width="2" opacity="0.9"/&gt;</div>
+  </div>
+  <script>
+    function updateSVG() {
+      const shape   = document.getElementById('svg-shape').value;
+      const color   = document.getElementById('svg-color').value;
+      const opacity = (document.getElementById('svg-opacity').value / 100).toFixed(2);
+      document.getElementById('svg-color-val').textContent   = color;
+      document.getElementById('svg-opacity-val').textContent = opacity;
+      const svg = document.getElementById('demoSVG');
+      const old = document.getElementById('svg-el');
+      if (old) old.remove();
+      const ns = 'http://www.w3.org/2000/svg';
+      let el, code;
+      if (shape === 'rect') {
+        el = document.createElementNS(ns, 'rect');
+        el.setAttribute('x','100'); el.setAttribute('y','40');
+        el.setAttribute('width','100'); el.setAttribute('height','80');
+        code = `<rect x="100" y="40" width="100" height="80"\n  fill="${color}" stroke="#c05621" stroke-width="2" opacity="${opacity}"/>`;
+      } else if (shape === 'circle') {
+        el = document.createElementNS(ns, 'circle');
+        el.setAttribute('cx','150'); el.setAttribute('cy','80'); el.setAttribute('r','60');
+        code = `<circle cx="150" cy="80" r="60"\n  fill="${color}" stroke="#c05621" stroke-width="2" opacity="${opacity}"/>`;
+      } else if (shape === 'ellipse') {
+        el = document.createElementNS(ns, 'ellipse');
+        el.setAttribute('cx','150'); el.setAttribute('cy','80');
+        el.setAttribute('rx','100'); el.setAttribute('ry','50');
+        code = `<ellipse cx="150" cy="80" rx="100" ry="50"\n  fill="${color}" stroke="#c05621" stroke-width="2" opacity="${opacity}"/>`;
+      } else {
+        el = document.createElementNS(ns, 'polygon');
+        el.setAttribute('points','150,20 260,130 40,130');
+        code = `<polygon points="150,20 260,130 40,130"\n  fill="${color}" stroke="#c05621" stroke-width="2" opacity="${opacity}"/>`;
+      }
+      el.setAttribute('id','svg-el');
+      el.setAttribute('fill', color);
+      el.setAttribute('stroke','#c05621');
+      el.setAttribute('stroke-width','2');
+      el.setAttribute('opacity', opacity);
+      svg.appendChild(el);
+      document.getElementById('svg-code').textContent = code;
+    }
+  </script>
+
+  <div class="good">
+    ✅ <strong>試験でのポイント</strong><br>
+    ・SVGは<strong>HTMLにインライン記述できる</strong>（<code>&lt;svg&gt;〜&lt;/svg&gt;</code> をHTMLに直接書ける）<br>
+    ・SVGは<strong>ベクター形式</strong>のため、拡大・縮小しても画質が劣化しない<br>
+    ・インラインSVGの各要素はDOMノードとして扱われ、CSSやJavaScriptで操作できる<br>
+    ・<code>&lt;img src="logo.svg"&gt;</code> でも読み込めるが、この場合はDOM操作不可
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 5：WebGL（グラフィックス補足） -->
+<!-- ============================================================ -->
+<h2>⑤ WebGL（概要）</h2>
+<div class="note">
+  <strong>重要ポイント：WebGLはcanvas要素上でOpenGL ES 2.0ベースの3Dグラフィックスを描画するAPI</strong><br>
+  WebGLは <code>&lt;canvas&gt;</code> 要素に対して
+  <code>getContext('webgl')</code> または <code>getContext('webgl2')</code> を呼び出すことで利用できます。
+  GPU を活用した高性能な3Dグラフィックスをブラウザ上で実現します。
+</div>
+<div class="demo-box">
+<pre>
+<span class="comment">/* WebGLコンテキストの取得 */</span>
+<span class="keyword">const</span> canvas = document.<span class="func">getElementById</span>(<span class="val">'myCanvas'</span>);
+
+<span class="comment">/* 2Dコンテキスト（Canvas API） */</span>
+<span class="keyword">const</span> ctx = canvas.<span class="func">getContext</span>(<span class="val">'2d'</span>);
+
+<span class="comment">/* WebGL 1.0（3Dグラフィックス） */</span>
+<span class="keyword">const</span> gl  = canvas.<span class="func">getContext</span>(<span class="val">'webgl'</span>);
+
+<span class="comment">/* WebGL 2.0（より多機能） */</span>
+<span class="keyword">const</span> gl2 = canvas.<span class="func">getContext</span>(<span class="val">'webgl2'</span>);
+
+<span class="comment">/* 非対応チェック */</span>
+<span class="keyword">if</span> (!gl) {
+  console.<span class="func">log</span>(<span class="val">'WebGLはこのブラウザでは利用できません'</span>);
+}
+</pre>
+
+  <div class="good">
+    ✅ <strong>試験でのポイント</strong><br>
+    ・WebGLは <code>&lt;canvas&gt;</code> 要素を使う（専用の要素ではない）<br>
+    ・<code>getContext('webgl')</code> でコンテキストを取得する<br>
+    ・OpenGL ES 2.0 をベースにしたAPIである<br>
+    ・2DはCanvas API（<code>'2d'</code>）、3DはWebGL（<code>'webgl'</code>）と使い分ける
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 演習問題 -->
+<!-- ============================================================ -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      <code>&lt;canvas&gt;</code> 要素で描画したグラフィックスはベクター形式のため、
+      拡大しても画質が劣化しない。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn-quiz" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'Canvas はビットマップ（ラスター）形式です。拡大すると画質が粗くなります。<br>' +
+            'ベクター形式で拡大しても劣化しないのは <strong>SVG</strong> です。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。Canvas はビットマップ形式です。拡大すると粗くなります。' +
+            'ベクター形式で劣化しないのは SVG です。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合う値・メソッド名を入力してください。</p>
+
+    <label>① HTMLMediaElement で動画を一時停止するメソッド名：</label>
+    <input type="text" id="q2a" placeholder="メソッド名()">
+
+    <label>② HTMLMediaElement で現在の再生位置（秒）を表すプロパティ名：</label>
+    <input type="text" id="q2b" placeholder="プロパティ名">
+
+    <label>③ Canvas APIで2Dレンダリングコンテキストを取得するメソッド呼び出し：</label>
+    <input type="text" id="q2c" placeholder="canvas.〇〇〇〇〇〇〇〇('〇〇')">
+
+    <label>④ Canvas の描画形式（ビットマップ/ベクターのどちらか）：</label>
+    <input type="text" id="q2d" placeholder="形式名">
+
+    <label>⑤ SVGをHTMLに直接埋め込む方法の名称：</label>
+    <input type="text" id="q2e" placeholder="〇〇〇〇〇SVG">
+
+    <label>⑥ WebGLコンテキストを取得する際に getContext() に渡す文字列（WebGL 1.0）：</label>
+    <input type="text" id="q2f" placeholder="文字列">
+
+    <br>
+    <button class="btn-quiz" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value.trim().toLowerCase().replace(/[()]/g,'');
+        const b = document.getElementById('q2b').value.trim().toLowerCase().replace(/\s/g,'');
+        const c = document.getElementById('q2c').value.trim().toLowerCase().replace(/\s/g,'');
+        const d = document.getElementById('q2d').value.trim().toLowerCase().replace(/\s/g,'');
+        const e = document.getElementById('q2e').value.trim().toLowerCase().replace(/\s/g,'');
+        const f = document.getElementById('q2f').value.trim().toLowerCase().replace(/['"]/g,'');
+        const r = document.getElementById('q2-result');
+        const ca = a === 'pause';
+        const cb = b === 'currenttime';
+        const cc = c.includes('getcontext') && c.includes('2d');
+        const cd = d === 'ビットマップ' || d === 'bitmap' || d === 'ラスター' || d === 'raster';
+        const ce = e.includes('インライン') || e === 'inlinesvg' || e === 'インラインsvg';
+        const cf = f === 'webgl';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！マルチメディア・グラフィックスAPIを完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `① ${ca?'✅':'❌ pause()'}　` +
+            `② ${cb?'✅':'❌ currentTime'}　` +
+            `③ ${cc?'✅':'❌ canvas.getContext(\'2d\')'}　` +
+            `④ ${cd?'✅':'❌ ビットマップ（ラスター）'}　` +
+            `⑤ ${ce?'✅':'❌ インラインSVG'}　` +
+            `⑥ ${cf?'✅':'❌ \'webgl\''}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>
+      Canvas と SVG の違いとして<strong>正しいもの</strong>はどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">Canvas はベクター形式で拡大しても劣化しないが、SVG はビットマップ形式で劣化する</option>
+      <option value="b">Canvas の描画結果はDOMとして操作できるが、SVG はJavaScriptから操作できない</option>
+      <option value="c">Canvas はビットマップ形式で拡大すると粗くなるが、SVG はベクター形式で拡大しても劣化しない</option>
+      <option value="d">Canvas と SVG はどちらも &lt;canvas&gt; 要素を使って描画する</option>
+    </select>
+    <br>
+    <button class="btn-quiz" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'c') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br><br>' +
+            '<strong>Canvas</strong>：ビットマップ（ラスター）形式。拡大すると粗くなる。DOM操作不可。<br>' +
+            '<strong>SVG</strong>：ベクター形式。拡大しても劣化しない。DOMとして操作可能。インライン記述可能。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            'Canvas はビットマップ形式（拡大すると粗くなる）、<br>' +
+            'SVG はベクター形式（拡大しても劣化しない）です。<br>' +
+            'また SVG はDOMとして JavaScript から操作可能で、インライン記述もできます。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 選択問題</h3>
+    <p>
+      ストリーミングに関する説明として<strong>正しいもの</strong>はどれですか？
+    </p>
+    <select id="q4">
+      <option value="">-- 選択してください --</option>
+      <option value="a">ストリーミングはメディアファイル全体をダウンロードしてから再生を開始する技術である</option>
+      <option value="b">MSE（Media Source Extensions）はJavaScriptからメディアデータを動的に video 要素に供給できるAPIである</option>
+      <option value="c">HLS はMicrosoftが開発したストリーミング規格で、拡張子は .mpd である</option>
+      <option value="d">ストリーミングでは video 要素を使うことができない</option>
+    </select>
+    <br>
+    <button class="btn-quiz" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const v = document.getElementById('q4').value;
+        const r = document.getElementById('q4-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'MSE（Media Source Extensions）はJavaScriptからメディアデータを<br>' +
+            '動的に <code>&lt;video&gt;</code> 要素に供給できるAPIで、<br>' +
+            'HLS・DASHのブラウザ実装の基盤となっています。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            '・ストリーミングはデータを<strong>分割して順次受信しながら再生</strong>する技術です<br>' +
+            '・HLS は<strong>Apple</strong>が開発し、プレイリストファイルの拡張子は <strong>.m3u8</strong> です<br>' +
+            '・ストリーミングコンテンツも <code>&lt;video&gt;</code> 要素で再生できます';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5a">
+      ① <code>&lt;video&gt;</code> 要素に埋め込んだ動画は、JavaScriptの <code>play()</code>・<code>pause()</code> メソッドで再生・停止を制御できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5b">
+      ② HTMLMediaElement の <code>currentTime</code> プロパティに値を書き込むことで再生位置をシークできる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5c">
+      ③ Canvas の <code>width</code>・<code>height</code> 属性とCSSのサイズ指定は同じものであり、どちらで指定しても結果は同じである
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5d">
+      ④ SVG はHTMLに直接インラインで埋め込むことができ、CSSやJavaScriptで操作できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5e">
+      ⑤ WebGL は <code>&lt;canvas&gt;</code> 要素に対して <code>getContext('webgl')</code> を呼び出して利用する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5f">
+      ⑥ ストリーミングはメディアデータを分割して順次受信しながら再生する技術である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5g">
+      ⑦ SVG はビットマップ形式のため、拡大すると画質が粗くなる
+    </label>
+    <br>
+    <button class="btn-quiz" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const r = document.getElementById('q5-result');
+        const checks = {
+          a: document.getElementById('q5a').checked,
+          b: document.getElementById('q5b').checked,
+          c: document.getElementById('q5c').checked,
+          d: document.getElementById('q5d').checked,
+          e: document.getElementById('q5e').checked,
+          f: document.getElementById('q5f').checked,
+          g: document.getElementById('q5g').checked,
+        };
+        // 正解：①②④⑤⑥（a, b, d, e, f）
+        // ③ Canvas の width/height 属性とCSSは別物 → ×
+        // ⑦ SVG はベクター形式で劣化しない → ×
+        const correct = { a:true, b:true, c:false, d:true, e:true, f:true, g:false };
+        const allCorrect = Object.keys(correct).every(k => checks[k] === correct[k]);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① video要素はJSで再生・停止制御可能 ✅<br>' +
+            '・② currentTime への書き込みでシーク可能 ✅<br>' +
+            '・④ SVG はインライン記述・CSS/JS操作可能 ✅<br>' +
+            '・⑤ WebGL は getContext(\'webgl\') で利用 ✅<br>' +
+            '・⑥ ストリーミングは分割して順次受信・再生 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① video要素の再生はJavaScriptで制御できる<br>' +
+            '・② currentTime プロパティへの書き込みでシーク可能<br>' +
+            '・④ SVG はインラインHTMLに直接埋め込め、CSS/JSで操作可能<br>' +
+            '・⑤ WebGL は &lt;canvas&gt; に getContext(\'webgl\') で利用<br>' +
+            '・⑥ ストリーミングはデータを分割して順次受信しながら再生する技術<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・③ Canvas の width/height 属性とCSSのサイズ指定は<strong>別物</strong>（CSSで変えると描画が引き伸ばされる）<br>' +
+            '・⑦ SVG は<strong>ベクター形式</strong>のため拡大しても画質が劣化しない（ビットマップはCanvas）';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. コード穴埋め問題</h3>
+    <p><code>__A__</code> 〜 <code>__F__</code> に適切な値・記述を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+/* A：video要素の再生を開始するメソッド */
+video.__A__();
+
+/* B：video要素の音量を50%に設定する */
+video.__B__ = 0.5;
+
+/* C：canvasから2Dコンテキストを取得 */
+const ctx = canvas.getContext(__C__);
+
+/* D：SVGをHTMLに直接埋め込む際の開始タグ */
+__D__ width="200" height="100" xmlns="http://www.w3.org/2000/svg"&gt;
+
+/* E：SVGで円を描く要素名 */
+&lt;__E__ cx="100" cy="100" r="50" fill="#f6ad55"/&gt;
+
+/* F：WebGL 1.0 のコンテキストを取得する */
+const gl = canvas.getContext(__F__);</pre>
+
+    <label>A（再生メソッド）：</label>
+    <input type="text" id="q6a" placeholder="メソッド名">
+    <label>B（音量プロパティ）：</label>
+    <input type="text" id="q6b" placeholder="プロパティ名">
+    <label>C（getContext に渡す文字列）：</label>
+    <input type="text" id="q6c" placeholder="文字列">
+    <label>D（SVGの開始タグ）：</label>
+    <input type="text" id="q6d" placeholder="&lt;〇〇〇">
+    <label>E（SVGの円要素名）：</label>
+    <input type="text" id="q6e" placeholder="要素名">
+    <label>F（WebGL getContext に渡す文字列）：</label>
+    <input type="text" id="q6f" placeholder="文字列">
+    <br>
+    <button class="btn-quiz" onclick="checkQ6()">答え合わせ</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const a = document.getElementById('q6a').value.trim().toLowerCase().replace(/[()]/g,'');
+        const b = document.getElementById('q6b').value.trim().toLowerCase().replace(/\s/g,'');
+        const c = document.getElementById('q6c').value.trim().toLowerCase().replace(/['"]/g,'');
+        const d = document.getElementById('q6d').value.trim().toLowerCase().replace(/[<>\s]/g,'');
+        const e = document.getElementById('q6e').value.trim().toLowerCase();
+        const f = document.getElementById('q6f').value.trim().toLowerCase().replace(/['"]/g,'');
+        const r = document.getElementById('q6-result');
+        const ca = a === 'play';
+        const cb = b === 'volume';
+        const cc = c === '2d';
+        const cd = d === 'svg';
+        const ce = e === 'circle';
+        const cf = f === 'webgl';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！マルチメディア・グラフィックスAPIの記述を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca?'✅':'❌ play()'}　` +
+            `B: ${cb?'✅':'❌ volume'}　` +
+            `C: ${cc?'✅':'❌ \'2d\''}　` +
+            `D: ${cd?'✅':'❌ &lt;svg'}　` +
+            `E: ${ce?'✅':'❌ circle'}　` +
+            `F: ${cf?'✅':'❌ \'webgl\''}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q7 -->
+  <div class="quiz-block">
+    <h3>Q7. 記述問題</h3>
+    <p>
+      Canvas API と SVG の違いを、「形式（ビットマップ/ベクター）」「拡大時の画質」
+      「HTMLへの記述方法」「DOM操作の可否」の4つの観点から説明してください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q7" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn-quiz" onclick="checkQ7()">模範解答を見る</button>
+    <div class="result-msg" id="q7-result"></div>
+    <script>
+      function checkQ7() {
+        const r = document.getElementById('q7-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<table style="border-collapse:collapse; width:100%; font-size:0.88em;">' +
+          '<thead><tr style="background:#c05621; color:#fff;">' +
+          '<th style="padding:8px; border:1px solid #feebc8;">観点</th>' +
+          '<th style="padding:8px; border:1px solid #feebc8;">Canvas（2D）</th>' +
+          '<th style="padding:8px; border:1px solid #feebc8;">SVG</th>' +
+          '</tr></thead><tbody>' +
+          '<tr><td style="padding:8px; border:1px solid #feebc8;">形式</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">ビットマップ（ラスター）</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">ベクター</td></tr>' +
+          '<tr style="background:#fffaf0;"><td style="padding:8px; border:1px solid #feebc8;">拡大時の画質</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">粗くなる</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">劣化しない</td></tr>' +
+          '<tr><td style="padding:8px; border:1px solid #feebc8;">HTMLへの記述</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">&lt;canvas&gt; 要素を使う</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">インライン記述可能（&lt;svg&gt;〜&lt;/svg&gt;）</td></tr>' +
+          '<tr style="background:#fffaf0;"><td style="padding:8px; border:1px solid #feebc8;">DOM操作</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">不可（ピクセル単位）</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">可能（要素として操作）</td></tr>' +
+          '</tbody></table><br>' +
+          '💡 <strong>試験のポイント</strong>：Canvas はビットマップ・DOM操作不可、' +
+          'SVG はベクター・インライン記述可能・DOM操作可能、という対比を押さえましょう。';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 マルチメディア・グラフィックスAPI まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>分類</th><th>技術・API</th><th>概要</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="2" style="vertical-align:middle; font-weight:bold; color:#c05621;">マルチメディア</td>
+      <td><strong>HTMLMediaElement</strong></td>
+      <td>video・audio 要素をJSから制御するAPI</td>
+      <td>play() / pause() / currentTime / volume / playbackRate。<strong>JSで再生制御可能</strong></td>
+    </tr>
+    <tr>
+      <td><strong>ストリーミング</strong></td>
+      <td>データを分割して順次受信しながら再生する技術</td>
+      <td>MSE（Media Source Extensions）がブラウザ実装の基盤。HLS・MPEG-DASHなど</td>
+    </tr>
+    <tr>
+      <td rowspan="3" style="vertical-align:middle; font-weight:bold; color:#c05621;">グラフィックス</td>
+      <td><strong>Canvas API（2D）</strong></td>
+      <td><code>&lt;canvas&gt;</code> + <code>getContext('2d')</code> で2D描画</td>
+      <td><strong>ビットマップ形式</strong>。拡大すると粗くなる。DOM操作不可</td>
+    </tr>
+    <tr>
+      <td><strong>SVG</strong></td>
+      <td>XMLベースのベクターグラフィックス</td>
+      <td><strong>ベクター形式</strong>。拡大しても劣化しない。<strong>インライン記述可能</strong>。DOM操作可能</td>
+    </tr>
+    <tr>
+      <td><strong>WebGL</strong></td>
+      <td><code>&lt;canvas&gt;</code> + <code>getContext('webgl')</code> で3D描画</td>
+      <td>OpenGL ES 2.0 ベース。GPU活用。2DはCanvas API、3DはWebGLと使い分ける</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
