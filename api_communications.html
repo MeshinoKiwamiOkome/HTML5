@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>通信系API 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #f6ad55; padding-bottom: 10px; }
+    h2 { color: #c05621; margin-top: 48px; border-left: 5px solid #f6ad55; padding-left: 12px; }
+    h3 { color: #744210; margin-top: 24px; }
+
+    code {
+      background: #feebc8;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment  { color: #68d391; }
+    pre .prop     { color: #90cdf4; }
+    pre .val      { color: #fc8181; }
+    pre .keyword  { color: #b794f4; }
+    pre .func     { color: #fbd38d; }
+    pre .attr     { color: #fbd38d; }
+    pre .value    { color: #68d391; }
+    pre .selector { color: #f6ad55; }
+    pre .at       { color: #b794f4; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #c05621; }
+    .warn {
+      background: #fffaf0;
+      border: 1px solid #f6ad55;
+      border-left: 5px solid #f6ad55;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #744210;
+      margin: 14px 0;
+    }
+    .warn strong { color: #c05621; }
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+    .demo-box {
+      background: #fff;
+      border: 1px solid #feebc8;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .interactive-demo {
+      background: #fffaf0;
+      border: 1px solid #feebc8;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .slider-row label {
+      font-size: 0.85em;
+      font-weight: bold;
+      min-width: 180px;
+      color: #c05621;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .slider-row input[type="range"] {
+      flex: 1; min-width: 100px;
+      accent-color: #f6ad55;
+    }
+    .slider-row input[type="text"] {
+      border: 2px solid #feebc8;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.88em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      flex: 1; min-width: 100px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .slider-row input[type="text"]:focus { border-color: #f6ad55; }
+    .slider-row select {
+      border: 2px solid #feebc8;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.85em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #2d3748;
+      background: #fff;
+      cursor: pointer;
+      flex: 1;
+    }
+    .slider-row select:focus { border-color: #f6ad55; outline: none; }
+    .val-display {
+      min-width: 64px;
+      text-align: right;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.85em;
+      color: #2d3748;
+    }
+    .color-code-display {
+      background: #1a202c;
+      color: #68d391;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.84em;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      min-height: 48px;
+    }
+
+    /* ボタン */
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+    .btn {
+      display: inline-block;
+      padding: 8px 18px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.88em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.82; }
+    .btn-orange { background: #f6ad55; color: #fff; }
+    .btn-red    { background: #fc8181; color: #fff; }
+    .btn-gray   { background: #e2e8f0; color: #4a5568; }
+    .btn-green  { background: #68d391; color: #276749; }
+    .btn-blue   { background: #63b3ed; color: #fff; }
+
+    /* APIカードグリッド */
+    .api-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin: 14px 0;
+    }
+    .api-card {
+      background: #fffaf0;
+      border: 1px solid #feebc8;
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .api-card-title {
+      font-size: 0.88em;
+      font-weight: bold;
+      color: #c05621;
+      margin-bottom: 6px;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .api-card-desc {
+      font-size: 0.82em;
+      color: #4a5568;
+      line-height: 1.6;
+    }
+
+    /* フロー図 */
+    .flow-diagram {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 14px 0;
+      padding: 14px;
+      background: #fffaf0;
+      border: 1px solid #feebc8;
+      border-radius: 8px;
+    }
+    .flow-box {
+      background: #fff;
+      border: 2px solid #f6ad55;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 0.82em;
+      font-weight: bold;
+      color: #c05621;
+      text-align: center;
+      font-family: 'Consolas', 'Monaco', monospace;
+      white-space: nowrap;
+    }
+    .flow-arrow {
+      font-size: 1.2em;
+      color: #f6ad55;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    /* チャット風デモ */
+    .chat-area {
+      background: #1a202c;
+      border-radius: 8px;
+      padding: 12px 14px;
+      min-height: 120px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.84em;
+      margin: 8px 0;
+    }
+    .chat-msg {
+      padding: 3px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .chat-msg.send    { color: #90cdf4; }
+    .chat-msg.recv    { color: #68d391; }
+    .chat-msg.system  { color: #f6ad55; }
+    .chat-msg.error   { color: #fc8181; }
+
+    /* SSEタイムライン */
+    .sse-timeline {
+      background: #1a202c;
+      border-radius: 8px;
+      padding: 12px 14px;
+      min-height: 100px;
+      max-height: 180px;
+      overflow-y: auto;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.84em;
+      margin: 8px 0;
+    }
+    .sse-event {
+      padding: 3px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .sse-event.data   { color: #68d391; }
+    .sse-event.system { color: #f6ad55; }
+    .sse-event.error  { color: #fc8181; }
+
+    /* ステータスバッジ */
+    .status-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 0.78em;
+      font-weight: bold;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .status-badge.connected    { background: #c6f6d5; color: #276749; }
+    .status-badge.disconnected { background: #fed7d7; color: #9b2335; }
+    .status-badge.connecting   { background: #feebc8; color: #744210; }
+
+    /* XHR 状態遷移 */
+    .xhr-states {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin: 12px 0;
+    }
+    .xhr-state {
+      background: #fffaf0;
+      border: 2px solid #feebc8;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.8em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      text-align: center;
+      flex: 1;
+      min-width: 80px;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .xhr-state.active {
+      background: #feebc8;
+      border-color: #f6ad55;
+      color: #c05621;
+      font-weight: bold;
+    }
+    .xhr-state-num {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #c05621;
+      display: block;
+    }
+
+    /* WebRTC 図 */
+    .webrtc-diagram {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 12px;
+      align-items: center;
+      margin: 14px 0;
+    }
+    .webrtc-peer {
+      background: #fffaf0;
+      border: 2px solid #feebc8;
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+    }
+    .webrtc-peer-title {
+      font-size: 0.85em;
+      font-weight: bold;
+      color: #c05621;
+      margin-bottom: 6px;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .webrtc-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75em;
+      color: #c05621;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    /* テーブル */
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #feebc8;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.summary thead tr { background: #c05621; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #fffaf0; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #fffaf0;
+      border-left: 6px solid #f6ad55;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 { margin-top: 0; color: #c05621; border-left-color: #f6ad55; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #feebc8;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #744210; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #feebc8;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #f6ad55; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn-quiz {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+      background: #f6ad55;
+      color: #fff;
+    }
+    .btn-quiz:hover { opacity: 0.85; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #feebc8; color: #744210; display: block; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px; }
+      .slider-row label { min-width: 120px; }
+      .api-grid { grid-template-columns: 1fr; }
+      .webrtc-diagram { grid-template-columns: 1fr; }
+      .flow-diagram { flex-direction: column; align-items: flex-start; }
+      .xhr-states { flex-direction: column; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px; }
+      .quiz-block { padding: 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+      .api-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<h1>🔌 通信系API 学習サンプル</h1>
+<p>
+  HTML5で追加・強化されたブラウザの通信系APIの概要と使い方を学びましょう。
+  HTTP通信・双方向通信・サーバーからのプッシュ・ブラウザ間のリアルタイム通信を扱います。
+</p>
+
+<!-- 通信方式の全体比較 -->
+<div class="demo-box" style="margin-top:24px;">
+  <h3>通信方式の全体比較</h3>
+  <table class="summary">
+    <thead>
+      <tr><th>API</th><th>通信方向</th><th>接続方式</th><th>主な用途</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>XHR / Fetch</strong></td>
+        <td>クライアント → サーバー（リクエスト/レスポンス）</td>
+        <td>HTTP（都度接続）</td>
+        <td>REST API呼び出し・フォーム送信</td>
+      </tr>
+      <tr>
+        <td><strong>Server-Sent Events</strong></td>
+        <td>サーバー → クライアント（一方向）</td>
+        <td>HTTP（持続接続）</td>
+        <td>通知・株価・ニュースフィード</td>
+      </tr>
+      <tr>
+        <td><strong>WebSocket</strong></td>
+        <td>双方向（全二重）</td>
+        <td>ws:// / wss://（持続接続）</td>
+        <td>チャット・ゲーム・リアルタイム共同編集</td>
+      </tr>
+      <tr>
+        <td><strong>WebRTC</strong></td>
+        <td>ブラウザ間（P2P）</td>
+        <td>P2P（サーバー経由なし）</td>
+        <td>ビデオ通話・音声通話・ファイル共有</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 1：XMLHttpRequest / Fetch API -->
+<!-- ============================================================ -->
+<h2>① XMLHttpRequest（XHR）/ Fetch API</h2>
+<div class="note">
+  <strong>重要ポイント①：XMLHttpRequestでHTTP通信を実現する</strong><br>
+  <code>XMLHttpRequest</code>（XHR）はブラウザからHTTPリクエストを送受信するAPIです。
+  ページ全体を再読み込みせずにサーバーとデータをやり取りする
+  <strong>Ajax（Asynchronous JavaScript and XML）</strong>の基盤技術です。
+  現在はより簡潔な <strong>Fetch API</strong>（Promiseベース）が主流ですが、
+  XHRは進捗取得など一部の場面で今も使われます。
+</div>
+<div class="demo-box">
+
+  <h3>XHR の readyState（状態遷移）</h3>
+  <div class="xhr-states">
+    <div class="xhr-state" id="xs0"><span class="xhr-state-num">0</span>UNSENT<br><span style="font-size:0.8em;">未初期化</span></div>
+    <div class="xhr-state" id="xs1"><span class="xhr-state-num">1</span>OPENED<br><span style="font-size:0.8em;">open()呼出済</span></div>
+    <div class="xhr-state" id="xs2"><span class="xhr-state-num">2</span>HEADERS_RECEIVED<br><span style="font-size:0.8em;">ヘッダー受信済</span></div>
+    <div class="xhr-state" id="xs3"><span class="xhr-state-num">3</span>LOADING<br><span style="font-size:0.8em;">受信中</span></div>
+    <div class="xhr-state" id="xs4"><span class="xhr-state-num">4</span>DONE<br><span style="font-size:0.8em;">完了</span></div>
+  </div>
+
+  <h3>XHR の主なプロパティ・メソッド・イベント</h3>
+  <div class="api-grid">
+    <div class="api-card">
+      <div class="api-card-title">open(method, url)</div>
+      <div class="api-card-desc">リクエストを初期化。メソッド（GET/POST等）とURLを指定</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">send(body)</div>
+      <div class="api-card-desc">リクエストを送信。POSTの場合はbodyにデータを渡す</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">setRequestHeader()</div>
+      <div class="api-card-desc">リクエストヘッダーを設定。open()の後に呼ぶ</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">abort()</div>
+      <div class="api-card-desc">リクエストを中断する</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">readyState</div>
+      <div class="api-card-desc">現在の状態（0〜4）。4（DONE）で完了</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">status / statusText</div>
+      <div class="api-card-desc">HTTPステータスコード（200, 404等）とテキスト</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">responseText / responseXML</div>
+      <div class="api-card-desc">レスポンスをテキスト / XMLとして取得</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">onreadystatechange</div>
+      <div class="api-card-desc">readyState が変化するたびに呼ばれるコールバック</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">onprogress</div>
+      <div class="api-card-desc">受信の進捗を取得できる（Fetchにはない機能）</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">timeout</div>
+      <div class="api-card-desc">タイムアウト時間（ms）を設定できる</div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* ===== XMLHttpRequest（XHR）===== */</span>
+<span class="keyword">const</span> xhr = <span class="keyword">new</span> <span class="func">XMLHttpRequest</span>();
+
+<span class="comment">/* リクエストの初期化 */</span>
+xhr.<span class="func">open</span>(<span class="val">'GET'</span>, <span class="val">'https://api.example.com/data'</span>, <span class="val">true</span>); <span class="comment">/* true=非同期 */</span>
+
+<span class="comment">/* ヘッダーの設定（open()の後に行う） */</span>
+xhr.<span class="func">setRequestHeader</span>(<span class="val">'Content-Type'</span>, <span class="val">'application/json'</span>);
+
+<span class="comment">/* タイムアウト設定 */</span>
+xhr.<span class="prop">timeout</span> = <span class="val">5000</span>; <span class="comment">/* 5秒 */</span>
+
+<span class="comment">/* readyState の変化を監視 */</span>
+xhr.<span class="prop">onreadystatechange</span> = <span class="keyword">function</span>() {
+  <span class="keyword">if</span> (xhr.<span class="prop">readyState</span> === <span class="val">4</span>) {          <span class="comment">/* DONE */</span>
+    <span class="keyword">if</span> (xhr.<span class="prop">status</span> === <span class="val">200</span>) {
+      <span class="keyword">const</span> data = JSON.<span class="func">parse</span>(xhr.<span class="prop">responseText</span>);
+      console.<span class="func">log</span>(data);
+    } <span class="keyword">else</span> {
+      console.<span class="func">log</span>(<span class="val">'エラー:'</span>, xhr.<span class="prop">status</span>);
+    }
+  }
+};
+
+<span class="comment">/* 進捗の取得（Fetch APIにはない機能） */</span>
+xhr.<span class="prop">onprogress</span> = (e) => {
+  <span class="keyword">if</span> (e.<span class="prop">lengthComputable</span>) {
+    console.<span class="func">log</span>(Math.<span class="func">round</span>(e.<span class="prop">loaded</span> / e.<span class="prop">total</span> * <span class="val">100</span>) + <span class="val">'%'</span>);
+  }
+};
+
+<span class="comment">/* リクエスト送信 */</span>
+xhr.<span class="func">send</span>(); <span class="comment">/* GETの場合はnullまたは省略 */</span>
+
+<span class="comment">/* POSTの場合 */</span>
+xhr.<span class="func">open</span>(<span class="val">'POST'</span>, <span class="val">'/api/users'</span>, <span class="val">true</span>);
+xhr.<span class="func">setRequestHeader</span>(<span class="val">'Content-Type'</span>, <span class="val">'application/json'</span>);
+xhr.<span class="func">send</span>(JSON.<span class="func">stringify</span>({ <span class="prop">name</span>: <span class="val">'Alice'</span> }));
+
+
+<span class="comment">/* ===== Fetch API（モダンな書き方）===== */</span>
+<span class="keyword">async function</span> <span class="func">getData</span>() {
+  <span class="keyword">try</span> {
+    <span class="keyword">const</span> res  = <span class="keyword">await</span> <span class="func">fetch</span>(<span class="val">'https://api.example.com/data'</span>);
+    <span class="keyword">if</span> (!res.<span class="prop">ok</span>) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="func">Error</span>(<span class="val">`HTTP ${res.status}`</span>);
+    <span class="keyword">const</span> data = <span class="keyword">await</span> res.<span class="func">json</span>();
+    console.<span class="func">log</span>(data);
+  } <span class="keyword">catch</span> (e) {
+    console.<span class="func">log</span>(<span class="val">'エラー:'</span>, e);
+  }
+}
+</pre>
+
+  <h3>XHR vs Fetch API 比較</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>項目</th><th>XMLHttpRequest</th><th>Fetch API</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>記述スタイル</td><td>コールバックベース</td><td><strong>Promiseベース（async/await対応）</strong></td></tr>
+      <tr><td>進捗取得</td><td><strong>onprogress で対応</strong></td><td>限定的（ReadableStream）</td></tr>
+      <tr><td>タイムアウト</td><td><strong>timeout プロパティで設定可</strong></td><td>AbortController で対応</td></tr>
+      <tr><td>リクエスト中断</td><td>abort() メソッド</td><td>AbortController.abort()</td></tr>
+      <tr><td>Service Worker</td><td>利用不可</td><td><strong>利用可能</strong></td></tr>
+      <tr><td>HTTPエラー</td><td>status で確認</td><td>response.ok で確認（例外にならない）</td></tr>
+      <tr><td>可読性</td><td>コールバックが深くなりがち</td><td><strong>シンプルで読みやすい</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h3>XHR インタラクティブデモ（readyState の遷移を確認）</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#744210; margin:0 0 10px;">
+      ボタンを押すと XHR でリクエストを送信し、readyState の遷移を確認できます。
+    </p>
+    <div class="slider-row">
+      <label>リクエスト先</label>
+      <select id="xhr-url">
+        <option value="https://jsonplaceholder.typicode.com/todos/1">JSONPlaceholder（TODO #1）</option>
+        <option value="https://jsonplaceholder.typicode.com/users/1">JSONPlaceholder（User #1）</option>
+        <option value="https://jsonplaceholder.typicode.com/posts/1">JSONPlaceholder（Post #1）</option>
+      </select>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-orange" onclick="runXHR()">▶ XHR でリクエスト送信</button>
+    </div>
+    <div class="color-code-display" id="xhr-log">ボタンを押してリクエストを送信してください</div>
+  </div>
+  <script>
+    function setXhrState(n) {
+      for (let i = 0; i <= 4; i++) {
+        document.getElementById('xs' + i).classList.toggle('active', i === n);
+      }
+    }
+    function runXHR() {
+      const url = document.getElementById('xhr-url').value;
+      const log = document.getElementById('xhr-log');
+      const xhr = new XMLHttpRequest();
+      setXhrState(0);
+      log.textContent = 'readyState 0: UNSENT（未初期化）';
+      xhr.open('GET', url, true);
+      setXhrState(1);
+      log.textContent += '\nreadyState 1: OPENED（open()呼出済）\n送信中...';
+      xhr.onreadystatechange = function() {
+        const states = ['UNSENT','OPENED','HEADERS_RECEIVED','LOADING','DONE'];
+        setXhrState(xhr.readyState);
+        if (xhr.readyState === 2) {
+          log.textContent += '\nreadyState 2: HEADERS_RECEIVED（ヘッダー受信済）';
+        } else if (xhr.readyState === 3) {
+          log.textContent += '\nreadyState 3: LOADING（受信中）';
+        } else if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            const data = JSON.parse(xhr.responseText);
+            log.textContent +=
+              '\nreadyState 4: DONE（完了）\n' +
+              `status: ${xhr.status}\n\nレスポンス:\n${JSON.stringify(data, null, 2)}`;
+          } else {
+            log.textContent += `\nreadyState 4: DONE　エラー status=${xhr.status}`;
+          }
+        }
+      };
+      xhr.send();
+    }
+  </script>
+
+  <div class="warn">
+    <strong>⚠️ XHR / Fetch の注意点</strong><br>
+    ・<strong>同一オリジンポリシー</strong>により、異なるオリジンへのリクエストは制限されます（CORS設定が必要）<br>
+    ・Fetch API では <strong>404・500 などの HTTP エラーは例外にならず</strong>、<code>response.ok</code> が <code>false</code> になります<br>
+    ・XHR の <code>open()</code> の第3引数 <code>true</code> は非同期モードを意味します（<code>false</code> は同期で非推奨）
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 2：WebSocket API -->
+<!-- ============================================================ -->
+<h2>② WebSocket API</h2>
+<div class="note">
+  <strong>重要ポイント②（前半）：WebSocketでサーバーとブラウザ間の双方向リアルタイム通信を実現する</strong><br>
+  WebSocket は HTTP のハンドシェイクで接続を確立した後、
+  <strong>ws:// または wss://（暗号化）</strong> プロトコルで
+  <strong>全二重（双方向）の持続的な接続</strong>を維持します。
+  HTTPのように都度接続・切断を繰り返さないため、
+  <strong>低遅延・高頻度なリアルタイム通信</strong>に適しています。
+</div>
+<div class="demo-box">
+
+  <h3>WebSocket の接続フロー</h3>
+  <div class="flow-diagram">
+    <div class="flow-box">ブラウザ</div>
+    <div class="flow-arrow">→ HTTP Upgrade →</div>
+    <div class="flow-box">サーバー</div>
+    <div class="flow-arrow">→ 101 Switching →</div>
+    <div class="flow-box">ws:// 接続確立</div>
+    <div class="flow-arrow">↔ 双方向通信 ↔</div>
+    <div class="flow-box">持続的接続</div>
+  </div>
+
+  <h3>WebSocket の主なイベント・メソッド・プロパティ</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>種別</th><th>名前</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td rowspan="2" style="vertical-align:middle; font-weight:bold; color:#c05621;">メソッド</td>
+        <td><code>send(data)</code></td>
+        <td>サーバーにデータを送信（文字列・ArrayBuffer・Blob）</td>
+      </tr>
+      <tr>
+        <td><code>close(code, reason)</code></td>
+        <td>接続を閉じる。コードと理由を指定できる</td>
+      </tr>
+      <tr>
+        <td rowspan="4" style="vertical-align:middle; font-weight:bold; color:#c05621;">イベント</td>
+        <td><code>onopen</code></td>
+        <td>接続確立時に発火</td>
+      </tr>
+      <tr>
+        <td><code>onmessage</code></td>
+        <td>メッセージ受信時に発火。<code>event.data</code> にデータが入る</td>
+      </tr>
+      <tr>
+        <td><code>onerror</code></td>
+        <td>エラー発生時に発火</td>
+      </tr>
+      <tr>
+        <td><code>onclose</code></td>
+        <td>接続が閉じた時に発火。<code>event.code</code> / <code>event.reason</code> で理由を確認</td>
+      </tr>
+      <tr>
+        <td rowspan="2" style="vertical-align:middle; font-weight:bold; color:#c05621;">プロパティ</td>
+        <td><code>readyState</code></td>
+        <td>接続状態（0:CONNECTING / 1:OPEN / 2:CLOSING / 3:CLOSED）</td>
+      </tr>
+      <tr>
+        <td><code>bufferedAmount</code></td>
+        <td>送信待ちのデータ量（バイト）</td>
+      </tr>
+    </tbody>
+  </table>
+
+<pre>
+<span class="comment">/* WebSocket 接続の作成 */</span>
+<span class="keyword">const</span> ws = <span class="keyword">new</span> <span class="func">WebSocket</span>(<span class="val">'wss://echo.websocket.org'</span>);
+<span class="comment">/* wss:// = 暗号化あり（HTTPS相当）、ws:// = 暗号化なし */</span>
+
+<span class="comment">/* 接続確立時 */</span>
+ws.<span class="prop">onopen</span> = (event) => {
+  console.<span class="func">log</span>(<span class="val">'接続確立'</span>);
+  ws.<span class="func">send</span>(<span class="val">'Hello, Server!'</span>); <span class="comment">/* 文字列を送信 */</span>
+};
+
+<span class="comment">/* メッセージ受信時 */</span>
+ws.<span class="prop">onmessage</span> = (event) => {
+  console.<span class="func">log</span>(<span class="val">'受信:'</span>, event.<span class="prop">data</span>); <span class="comment">/* event.data にデータが入る */</span>
+};
+
+<span class="comment">/* エラー発生時 */</span>
+ws.<span class="prop">onerror</span> = (error) => {
+  console.<span class="func">log</span>(<span class="val">'エラー:'</span>, error);
+};
+
+<span class="comment">/* 接続が閉じた時 */</span>
+ws.<span class="prop">onclose</span> = (event) => {
+  console.<span class="func">log</span>(<span class="val">'切断:'</span>, event.<span class="prop">code</span>, event.<span class="prop">reason</span>);
+};
+
+<span class="comment">/* 接続を閉じる */</span>
+ws.<span class="func">close</span>(<span class="val">1000</span>, <span class="val">'正常終了'</span>);
+
+<span class="comment">/* readyState の値 */</span>
+WebSocket.<span class="prop">CONNECTING</span> <span class="comment">/* 0: 接続中 */</span>
+WebSocket.<span class="prop">OPEN</span>        <span class="comment">/* 1: 接続済み（送受信可能） */</span>
+WebSocket.<span class="prop">CLOSING</span>     <span class="comment">/* 2: 切断中 */</span>
+WebSocket.<span class="prop">CLOSED</span>      <span class="comment">/* 3: 切断済み */</span>
+</pre>
+
+  <h3>WebSocket チャット シミュレーターデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#744210; margin:0 0 10px;">
+      WebSocket の動作をシミュレートします。
+      実際の通信ではなくブラウザ内でのデモです。
+    </p>
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
+      <span style="font-size:0.85em; font-weight:bold; color:#744210;">接続状態：</span>
+      <span class="status-badge disconnected" id="ws-status">CLOSED（3）</span>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-green"  id="ws-connect-btn" onclick="wsSimConnect()">接続（new WebSocket）</button>
+      <button class="btn btn-red"    id="ws-close-btn"   onclick="wsSimClose()" disabled>切断（close）</button>
+    </div>
+    <div class="chat-area" id="ws-chat"></div>
+    <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+      <input type="text" id="ws-input" placeholder="送信するメッセージを入力..."
+             style="flex:1; min-width:160px; border:2px solid #feebc8; border-radius:6px;
+                    padding:8px 12px; font-size:0.88em; outline:none; font-family:inherit;"
+             onkeydown="if(event.key==='Enter') wsSimSend()">
+      <button class="btn btn-orange" onclick="wsSimSend()">send()</button>
+    </div>
+  </div>
+  <script>
+    (function() {
+      let wsState = 3;
+      let echoTimer = null;
+      const chat   = document.getElementById('ws-chat');
+      const status = document.getElementById('ws-status');
+      const connectBtn = document.getElementById('ws-connect-btn');
+      const closeBtn   = document.getElementById('ws-close-btn');
+
+      function addMsg(text, type) {
+        const div = document.createElement('div');
+        div.className = 'chat-msg ' + type;
+        const now = new Date().toLocaleTimeString();
+        div.textContent = `[${now}] ${text}`;
+        chat.appendChild(div);
+        chat.scrollTop = chat.scrollHeight;
+      }
+      function setStatus(state) {
+        wsState = state;
+        const labels = ['CONNECTING（0）','OPEN（1）','CLOSING（2）','CLOSED（3）'];
+        const classes = ['connecting','connected','connecting','disconnected'];
+        status.textContent  = labels[state];
+        status.className    = 'status-badge ' + classes[state];
+        connectBtn.disabled = (state === 1 || state === 0);
+        closeBtn.disabled   = (state === 2 || state === 3);
+      }
+
+      window.wsSimConnect = function() {
+        setStatus(0);
+        addMsg('new WebSocket("wss://echo.example.com")', 'system');
+        addMsg('readyState: 0 (CONNECTING)', 'system');
+        setTimeout(() => {
+          setStatus(1);
+          addMsg('onopen: 接続確立！readyState: 1 (OPEN)', 'system');
+          addMsg('サーバー: 接続を受け付けました。メッセージを送ってください。', 'recv');
+        }, 800);
+      };
+
+      window.wsSimClose = function() {
+        setStatus(2);
+        addMsg('ws.close(1000, "正常終了")', 'system');
+        addMsg('readyState: 2 (CLOSING)', 'system');
+        setTimeout(() => {
+          setStatus(3);
+          addMsg('onclose: 切断 code=1000 reason="正常終了"', 'system');
+        }, 500);
+      };
+
+      window.wsSimSend = function() {
+        if (wsState !== 1) {
+          addMsg('⚠️ 接続されていません。先に接続してください。', 'error');
+          return;
+        }
+        const msg = document.getElementById('ws-input').value.trim();
+        if (!msg) return;
+        addMsg(`ws.send("${msg}")`, 'send');
+        document.getElementById('ws-input').value = '';
+        clearTimeout(echoTimer);
+        echoTimer = setTimeout(() => {
+          addMsg(`onmessage: サーバーからのエコー → "${msg}"`, 'recv');
+        }, 400 + Math.random() * 300);
+      };
+
+      setStatus(3);
+    })();
+  </script>
+
+  <div class="warn">
+    <strong>⚠️ WebSocket の注意点</strong><br>
+    ・<code>wss://</code>（WebSocket Secure）は HTTPS 相当の暗号化通信です。本番環境では必ず使用します<br>
+    ・<code>readyState</code> が <code>OPEN（1）</code> の時のみ <code>send()</code> でデータを送信できます<br>
+    ・接続が切れた場合の<strong>再接続処理</strong>は自分で実装する必要があります
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 3：Server-Sent Events（SSE） -->
+<!-- ============================================================ -->
+<h2>③ Server-Sent Events（SSE）</h2>
+<div class="note">
+  <strong>重要ポイント②（後半）：Server-Sent Eventsでサーバーからクライアントへの一方向リアルタイム通信を実現する</strong><br>
+  Server-Sent Events（SSE）は、<strong>サーバーからクライアントへの一方向</strong>のリアルタイム通信を
+  <strong>通常のHTTP接続</strong>上で実現するAPIです。
+  <code>EventSource</code> オブジェクトを使い、サーバーが <code>text/event-stream</code>
+  形式でデータを送り続けます。
+  WebSocketより実装が簡単で、<strong>自動再接続</strong>機能も内蔵しています。
+</div>
+<div class="demo-box">
+
+  <h3>SSE vs WebSocket の比較</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>項目</th><th>Server-Sent Events</th><th>WebSocket</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>通信方向</td><td><strong>サーバー → クライアント（一方向）</strong></td><td>双方向（全二重）</td></tr>
+      <tr><td>プロトコル</td><td>HTTP（text/event-stream）</td><td>ws:// / wss://</td></tr>
+      <tr><td>自動再接続</td><td><strong>内蔵（自動）</strong></td><td>自前実装が必要</td></tr>
+      <tr><td>実装の複雑さ</td><td><strong>シンプル</strong></td><td>やや複雑</td></tr>
+      <tr><td>データ形式</td><td>テキストのみ</td><td>テキスト・バイナリ両対応</td></tr>
+      <tr><td>向いている用途</td><td>通知・株価・ニュースフィード</td><td>チャット・ゲーム・共同編集</td></tr>
+    </tbody>
+  </table>
+
+  <h3>SSE のデータフォーマット（サーバー側）</h3>
+<pre>
+<span class="comment">/* サーバーが送信する text/event-stream 形式 */</span>
+<span class="comment">/* Content-Type: text/event-stream を返す必要がある */</span>
+
+<span class="comment">/* 基本形式：data: フィールドのみ */</span>
+<span class="prop">data</span>: <span class="val">Hello, World!</span>
+                          <span class="comment">← 空行でイベント区切り</span>
+<span class="comment">/* 複数フィールドの指定 */</span>
+<span class="prop">id</span>:    <span class="val">42</span>               <span class="comment">← イベントID（再接続時のLastEventIDに使われる）</span>
+<span class="prop">event</span>: <span class="val">stock-update</span>    <span class="comment">← カスタムイベント名</span>
+<span class="prop">data</span>:  <span class="val">{"price": 1500}</span>  <span class="comment">← データ（JSON文字列も可）</span>
+<span class="prop">retry</span>: <span class="val">3000</span>            <span class="comment">← 再接続間隔（ms）</span>
+</pre>
+
+  <h3>EventSource API の使い方</h3>
+<pre>
+<span class="comment">/* EventSource の作成 */</span>
+<span class="keyword">const</span> es = <span class="keyword">new</span> <span class="func">EventSource</span>(<span class="val">'/events'</span>);
+<span class="comment">/* withCredentials: Cookie を送信する場合 */</span>
+<span class="keyword">const</span> es2 = <span class="keyword">new</span> <span class="func">EventSource</span>(<span class="val">'/events'</span>, { <span class="prop">withCredentials</span>: <span class="val">true</span> });
+
+<span class="comment">/* 接続確立時 */</span>
+es.<span class="prop">onopen</span> = () => console.<span class="func">log</span>(<span class="val">'SSE接続確立'</span>);
+
+<span class="comment">/* デフォルトイベント（event: フィールドなし）の受信 */</span>
+es.<span class="prop">onmessage</span> = (event) => {
+  console.<span class="func">log</span>(<span class="val">'data:'</span>,    event.<span class="prop">data</span>);    <span class="comment">/* データ */</span>
+  console.<span class="func">log</span>(<span class="val">'lastEventId:'</span>, event.<span class="prop">lastEventId</span>); <span class="comment">/* イベントID */</span>
+};
+
+<span class="comment">/* カスタムイベントの受信（event: stock-update） */</span>
+es.<span class="func">addEventListener</span>(<span class="val">'stock-update'</span>, (event) => {
+  <span class="keyword">const</span> data = JSON.<span class="func">parse</span>(event.<span class="prop">data</span>);
+  console.<span class="func">log</span>(<span class="val">'株価更新:'</span>, data.<span class="prop">price</span>);
+});
+
+<span class="comment">/* エラー・切断時（自動再接続される） */</span>
+es.<span class="prop">onerror</span> = (e) => {
+  <span class="keyword">if</span> (es.<span class="prop">readyState</span> === EventSource.<span class="prop">CLOSED</span>) {
+    console.<span class="func">log</span>(<span class="val">'接続が閉じました'</span>);
+  }
+};
+
+<span class="comment">/* 手動で接続を閉じる（自動再接続を止める） */</span>
+es.<span class="func">close</span>();
+
+<span class="comment">/* readyState の値 */</span>
+EventSource.<span class="prop">CONNECTING</span> <span class="comment">/* 0: 接続中（再接続中も含む） */</span>
+EventSource.<span class="prop">OPEN</span>        <span class="comment">/* 1: 接続済み */</span>
+EventSource.<span class="prop">CLOSED</span>      <span class="comment">/* 2: 切断済み */</span>
+</pre>
+
+  <h3>SSE シミュレーターデモ（サーバーからのリアルタイム配信を模擬）</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#744210; margin:0 0 10px;">
+      SSE のサーバーからのイベント受信をシミュレートします。
+    </p>
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
+      <span style="font-size:0.85em; font-weight:bold; color:#744210;">接続状態：</span>
+      <span class="status-badge disconnected" id="sse-status">CLOSED（2）</span>
+    </div>
+    <div class="slider-row">
+      <label>イベント種別</label>
+      <select id="sse-type">
+        <option value="message">message（デフォルト）</option>
+        <option value="stock">stock-update（カスタム）</option>
+        <option value="news">news（カスタム）</option>
+      </select>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-green" id="sse-start-btn" onclick="sseSimStart()">▶ new EventSource（接続）</button>
+      <button class="btn btn-red"   id="sse-stop-btn"  onclick="sseSimStop()" disabled>■ close（切断）</button>
+    </div>
+    <div class="sse-timeline" id="sse-log"></div>
+  </div>
+  <script>
+    (function() {
+      let sseTimer = null;
+      let sseId    = 0;
+      const log    = document.getElementById('sse-log');
+      const status = document.getElementById('sse-status');
+      const startBtn = document.getElementById('sse-start-btn');
+      const stopBtn  = document.getElementById('sse-stop-btn');
+
+      const stockNames  = ['AAPL','GOOG','AMZN','MSFT'];
+      const newsHeads   = ['新製品発表','決算発表','市場動向','技術革新'];
+
+      function addSSE(text, type) {
+        const div = document.createElement('div');
+        div.className = 'sse-event ' + type;
+        const now = new Date().toLocaleTimeString();
+        div.textContent = `[${now}] ${text}`;
+        log.appendChild(div);
+        log.scrollTop = log.scrollHeight;
+      }
+
+      function setSSEStatus(s) {
+        const labels  = ['CONNECTING（0）','OPEN（1）','CLOSED（2）'];
+        const classes = ['connecting','connected','disconnected'];
+        status.textContent = labels[s];
+        status.className   = 'status-badge ' + classes[s];
+        startBtn.disabled  = (s === 0 || s === 1);
+        stopBtn.disabled   = (s === 2);
+      }
+
+      window.sseSimStart = function() {
+        sseId = 0;
+        setSSEStatus(0);
+        addSSE('new EventSource("/events")', 'system');
+        setTimeout(() => {
+          setSSEStatus(1);
+          addSSE('onopen: SSE接続確立（readyState: 1 OPEN）', 'system');
+          const type = document.getElementById('sse-type').value;
+          sseTimer = setInterval(() => {
+            sseId++;
+            if (type === 'message') {
+              addSSE(`onmessage: id=${sseId} data="サーバーからのメッセージ #${sseId}"`, 'data');
+            } else if (type === 'stock') {
+              const name  = stockNames[sseId % stockNames.length];
+              const price = (Math.random() * 500 + 100).toFixed(2);
+              addSSE(`addEventListener('stock-update'): id=${sseId} data={"name":"${name}","price":${price}}`, 'data');
+            } else {
+              const head = newsHeads[sseId % newsHeads.length];
+              addSSE(`addEventListener('news'): id=${sseId} data={"headline":"${head} #${sseId}"}`, 'data');
+            }
+          }, 1500);
+        }, 600);
+      };
+
+      window.sseSimStop = function() {
+        clearInterval(sseTimer);
+        addSSE('es.close(): 手動で接続を閉じました（自動再接続なし）', 'system');
+        setSSEStatus(2);
+      };
+
+      setSSEStatus(2);
+    })();
+  </script>
+
+  <div class="good">
+    ✅ <strong>試験でのポイント</strong><br>
+    ・SSE は<strong>サーバー → クライアントの一方向通信</strong>（クライアントからは送信できない）<br>
+    ・<strong>自動再接続</strong>が内蔵されており、切断後に自動で再接続を試みる<br>
+    ・サーバーは <code>Content-Type: text/event-stream</code> を返す必要がある<br>
+    ・<code>id:</code> フィールドで再接続時に <code>Last-Event-ID</code> ヘッダーを送り、続きから受信できる
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 4：WebRTC -->
+<!-- ============================================================ -->
+<h2>④ WebRTC（Web Real-Time Communication）</h2>
+<div class="note">
+  <strong>重要ポイント③：WebRTCでビデオチャットのようなブラウザ間リアルタイムコミュニケーションを実現する</strong><br>
+  WebRTC は<strong>ブラウザ間（P2P）</strong>でビデオ・音声・データを
+  <strong>サーバーを介さずリアルタイムに通信</strong>するAPIです。
+  ビデオ通話・音声通話・ファイル共有・画面共有などを実現します。
+  ただし接続確立のために<strong>シグナリングサーバー</strong>（SDP・ICE候補の交換）が必要です。
+</div>
+<div class="demo-box">
+
+  <h3>WebRTC の P2P 接続フロー</h3>
+  <div class="webrtc-diagram">
+    <div class="webrtc-peer">
+      <div class="webrtc-peer-title">ブラウザA（発信側）</div>
+      <div style="font-size:0.78em; color:#4a5568; line-height:1.6;">
+        ① getUserMedia()<br>
+        ② RTCPeerConnection作成<br>
+        ③ createOffer()<br>
+        ④ setLocalDescription()<br>
+        ⑦ setRemoteDescription()
+      </div>
+    </div>
+    <div class="webrtc-center">
+      <span>SDP交換</span>
+      <span style="font-size:1.4em; color:#f6ad55;">↔</span>
+      <span>ICE候補</span>
+      <span style="font-size:0.8em; color:#744210;">（シグナリング<br>サーバー経由）</span>
+    </div>
+    <div class="webrtc-peer">
+      <div class="webrtc-peer-title">ブラウザB（受信側）</div>
+      <div style="font-size:0.78em; color:#4a5568; line-height:1.6;">
+        ⑤ setRemoteDescription()<br>
+        ⑥ createAnswer()<br>
+        ⑥ setLocalDescription()<br>
+        ⑧ P2P接続確立！
+      </div>
+    </div>
+  </div>
+
+  <h3>WebRTC の主なAPI</h3>
+  <div class="api-grid">
+    <div class="api-card">
+      <div class="api-card-title">getUserMedia()</div>
+      <div class="api-card-desc">カメラ・マイクへのアクセスを要求し、MediaStream を取得する</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">RTCPeerConnection</div>
+      <div class="api-card-desc">P2P接続を管理するメインのオブジェクト。SDP・ICEの処理を担う</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">createOffer() / createAnswer()</div>
+      <div class="api-card-desc">SDP（Session Description Protocol）の生成。発信側がOffer、受信側がAnswer</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">setLocalDescription()</div>
+      <div class="api-card-desc">自分のSDPをセット。ICE候補の収集が始まる</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">setRemoteDescription()</div>
+      <div class="api-card-desc">相手のSDPをセット</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">RTCDataChannel</div>
+      <div class="api-card-desc">P2Pでテキスト・バイナリデータを送受信するチャンネル</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">ICE（Interactive Connectivity Establishment）</div>
+      <div class="api-card-desc">NAT越えのための接続経路探索プロトコル。STUN/TURNサーバーを使う</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">SDP（Session Description Protocol）</div>
+      <div class="api-card-desc">メディアの種類・コーデック・IPアドレスなどの接続情報を記述するフォーマット</div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* ===== Step 1：カメラ・マイクへのアクセス ===== */</span>
+<span class="keyword">const</span> stream = <span class="keyword">await</span> navigator.<span class="prop">mediaDevices</span>.<span class="func">getUserMedia</span>({
+  <span class="prop">video</span>: <span class="val">true</span>,  <span class="comment">/* カメラを使用 */</span>
+  <span class="prop">audio</span>: <span class="val">true</span>   <span class="comment">/* マイクを使用 */</span>
+});
+<span class="comment">/* video要素に映像を表示 */</span>
+document.<span class="func">getElementById</span>(<span class="val">'localVideo'</span>).<span class="prop">srcObject</span> = stream;
+
+
+<span class="comment">/* ===== Step 2：RTCPeerConnection の作成 ===== */</span>
+<span class="keyword">const</span> pc = <span class="keyword">new</span> <span class="func">RTCPeerConnection</span>({
+  <span class="prop">iceServers</span>: [
+    { <span class="prop">urls</span>: <span class="val">'stun:stun.l.google.com:19302'</span> } <span class="comment">/* STUNサーバー */</span>
+  ]
+});
+
+<span class="comment">/* ストリームのトラックを追加 */</span>
+stream.<span class="func">getTracks</span>().<span class="func">forEach</span>(track => pc.<span class="func">addTrack</span>(track, stream));
+
+<span class="comment">/* ICE候補が見つかったらシグナリングサーバーに送る */</span>
+pc.<span class="prop">onicecandidate</span> = (event) => {
+  <span class="keyword">if</span> (event.<span class="prop">candidate</span>) {
+    signalingServer.<span class="func">send</span>(JSON.<span class="func">stringify</span>({
+      <span class="prop">type</span>: <span class="val">'ice-candidate'</span>,
+      <span class="prop">candidate</span>: event.<span class="prop">candidate</span>
+    }));
+  }
+};
+
+<span class="comment">/* 相手のストリームを受信 */</span>
+pc.<span class="prop">ontrack</span> = (event) => {
+  document.<span class="func">getElementById</span>(<span class="val">'remoteVideo'</span>).<span class="prop">srcObject</span> = event.<span class="prop">streams</span>[<span class="val">0</span>];
+};
+
+
+<span class="comment">/* ===== Step 3：発信側 - Offer の作成と送信 ===== */</span>
+<span class="keyword">const</span> offer = <span class="keyword">await</span> pc.<span class="func">createOffer</span>();
+<span class="keyword">await</span> pc.<span class="func">setLocalDescription</span>(offer);
+signalingServer.<span class="func">send</span>(JSON.<span class="func">stringify</span>({ <span class="prop">type</span>: <span class="val">'offer'</span>, <span class="prop">sdp</span>: offer }));
+
+
+<span class="comment">/* ===== Step 4：受信側 - Answer の作成と送信 ===== */</span>
+<span class="keyword">await</span> pc.<span class="func">setRemoteDescription</span>(offer);  <span class="comment">/* 相手のOfferをセット */</span>
+<span class="keyword">const</span> answer = <span class="keyword">await</span> pc.<span class="func">createAnswer</span>();
+<span class="keyword">await</span> pc.<span class="func">setLocalDescription</span>(answer);
+signalingServer.<span class="func">send</span>(JSON.<span class="func">stringify</span>({ <span class="prop">type</span>: <span class="val">'answer'</span>, <span class="prop">sdp</span>: answer }));
+
+
+<span class="comment">/* ===== RTCDataChannel：P2Pデータ通信 ===== */</span>
+<span class="keyword">const</span> dc = pc.<span class="func">createDataChannel</span>(<span class="val">'chat'</span>);
+dc.<span class="prop">onopen</span>    = () => dc.<span class="func">send</span>(<span class="val">'Hello P2P!'</span>);
+dc.<span class="prop">onmessage</span> = (e) => console.<span class="func">log</span>(<span class="val">'P2P受信:'</span>, e.<span class="prop">data</span>);
+</pre>
+
+  <h3>WebRTC シミュレーターデモ（接続フローの可視化）</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#744210; margin:0 0 10px;">
+      WebRTC の接続確立フローをステップごとに確認します。
+    </p>
+    <div class="btn-row">
+      <button class="btn btn-orange" onclick="webrtcStep()">▶ 次のステップへ</button>
+      <button class="btn btn-gray"   onclick="webrtcReset()">リセット</button>
+    </div>
+    <div class="sse-timeline" id="webrtc-log"></div>
+  </div>
+  <script>
+    (function() {
+      const steps = [
+        { msg: '① getUserMedia(): カメラ・マイクへのアクセスを要求', type: 'system' },
+        { msg: '① MediaStream 取得成功（video: true, audio: true）', type: 'data' },
+        { msg: '② new RTCPeerConnection({ iceServers: [STUN] })', type: 'system' },
+        { msg: '② RTCPeerConnection 作成完了', type: 'data' },
+        { msg: '③ pc.createOffer() → SDP Offer を生成', type: 'system' },
+        { msg: '③ pc.setLocalDescription(offer) → ICE候補の収集開始', type: 'data' },
+        { msg: '④ [シグナリングサーバー経由] Offer SDP を相手に送信', type: 'system' },
+        { msg: '⑤ [受信側] pc.setRemoteDescription(offer)', type: 'data' },
+        { msg: '⑥ [受信側] pc.createAnswer() → SDP Answer を生成', type: 'system' },
+        { msg: '⑥ [受信側] pc.setLocalDescription(answer)', type: 'data' },
+        { msg: '⑦ [シグナリングサーバー経由] Answer SDP を発信側に送信', type: 'system' },
+        { msg: '⑦ [発信側] pc.setRemoteDescription(answer)', type: 'data' },
+        { msg: '⑧ ICE候補の交換完了（STUN/TURNサーバー使用）', type: 'system' },
+        { msg: '✅ P2P接続確立！ビデオ・音声・データ通信開始', type: 'data' },
+      ];
+      let stepIdx = 0;
+      const log = document.getElementById('webrtc-log');
+
+      window.webrtcStep = function() {
+        if (stepIdx >= steps.length) return;
+        const s   = steps[stepIdx++];
+        const div = document.createElement('div');
+        div.className   = 'sse-event ' + s.type;
+        div.textContent = `[Step ${Math.ceil(stepIdx/2)}] ${s.msg}`;
+        log.appendChild(div);
+        log.scrollTop = log.scrollHeight;
+      };
+
+      window.webrtcReset = function() {
+        stepIdx = 0;
+        log.innerHTML = '';
+      };
+    })();
+  </script>
+
+  <h3>getUserMedia() のオプション</h3>
+<pre>
+<span class="comment">/* 映像のみ */</span>
+navigator.<span class="prop">mediaDevices</span>.<span class="func">getUserMedia</span>({ <span class="prop">video</span>: <span class="val">true</span>, <span class="prop">audio</span>: <span class="val">false</span> });
+
+<span class="comment">/* 解像度を指定 */</span>
+navigator.<span class="prop">mediaDevices</span>.<span class="func">getUserMedia</span>({
+  <span class="prop">video</span>: { <span class="prop">width</span>: <span class="val">1280</span>, <span class="prop">height</span>: <span class="val">720</span> },
+  <span class="prop">audio</span>: <span class="val">true</span>
+});
+
+<span class="comment">/* 画面共有 */</span>
+navigator.<span class="prop">mediaDevices</span>.<span class="func">getDisplayMedia</span>({ <span class="prop">video</span>: <span class="val">true</span> });
+</pre>
+
+  <div class="warn">
+    <strong>⚠️ WebRTC の注意点</strong><br>
+    ・<strong>シグナリングサーバー</strong>（WebSocketなどで実装）は自前で用意する必要があります<br>
+    ・NAT越えのために <strong>STUN / TURN サーバー</strong>が必要です<br>
+    ・<code>getUserMedia()</code> は<strong>HTTPS必須</strong>（セキュアコンテキスト）かつユーザーの許可が必要です<br>
+    ・<strong>SDP（Session Description Protocol）</strong>で双方のメディア能力を交換し、
+    <strong>ICE</strong>で最適な接続経路を探索します
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 演習問題 -->
+<!-- ============================================================ -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      Server-Sent Events（SSE）は、クライアントとサーバーの双方向通信を実現するAPIである。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn-quiz" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'SSE は<strong>サーバー → クライアントの一方向通信</strong>です。<br>' +
+            'クライアントからサーバーへのデータ送信はできません。<br>' +
+            '双方向通信が必要な場合は <strong>WebSocket</strong> を使います。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。SSE はサーバー → クライアントの一方向通信です。' +
+            '双方向通信は WebSocket が担います。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合うメソッド名・プロパティ名・値を入力してください。</p>
+
+    <label>① XHR でリクエストを初期化するメソッド名：</label>
+    <input type="text" id="q2a" placeholder="メソッド名()">
+
+    <label>② XHR の readyState が完了を示す値（数値）：</label>
+    <input type="text" id="q2b" placeholder="数値">
+
+    <label>③ WebSocket でサーバーにデータを送信するメソッド名：</label>
+    <input type="text" id="q2c" placeholder="メソッド名()">
+
+    <label>④ WebSocket の readyState で「接続済み（送受信可能）」を示す値（数値）：</label>
+    <input type="text" id="q2d" placeholder="数値">
+
+    <label>⑤ SSE で接続を作成するコンストラクタ名：</label>
+    <input type="text" id="q2e" placeholder="クラス名">
+
+    <label>⑥ WebRTC でカメラ・マイクへのアクセスを要求するメソッド（navigator.mediaDevices.〇〇〇）：</label>
+    <input type="text" id="q2f" placeholder="メソッド名()">
+
+    <br>
+    <button class="btn-quiz" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value.trim().toLowerCase().replace(/[()]/g,'');
+        const b = document.getElementById('q2b').value.trim();
+        const c = document.getElementById('q2c').value.trim().toLowerCase().replace(/[()]/g,'');
+        const d = document.getElementById('q2d').value.trim();
+        const e = document.getElementById('q2e').value.trim().toLowerCase().replace(/\s/g,'');
+        const f = document.getElementById('q2f').value.trim().toLowerCase().replace(/[()]/g,'');
+        const r = document.getElementById('q2-result');
+        const ca = a === 'open';
+        const cb = b === '4';
+        const cc = c === 'send';
+        const cd = d === '1';
+        const ce = e === 'eventsource';
+        const cf = f === 'getusermedia';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！通信系APIを完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `① ${ca?'✅':'❌ open()'}　` +
+            `② ${cb?'✅':'❌ 4（DONE）'}　` +
+            `③ ${cc?'✅':'❌ send()'}　` +
+            `④ ${cd?'✅':'❌ 1（OPEN）'}　` +
+            `⑤ ${ce?'✅':'❌ EventSource'}　` +
+            `⑥ ${cf?'✅':'❌ getUserMedia()'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>
+      WebSocket に関する説明として<strong>正しいもの</strong>はどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">WebSocket は HTTP プロトコルのまま双方向通信を行う</option>
+      <option value="b">WebSocket は接続確立後、ws:// または wss:// プロトコルで全二重の双方向通信を行う</option>
+      <option value="c">WebSocket は自動再接続機能が内蔵されており、切断後に自動で再接続される</option>
+      <option value="d">WebSocket の readyState が 0（CONNECTING）の時に send() でデータを送信できる</option>
+    </select>
+    <br>
+    <button class="btn-quiz" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'WebSocket は HTTP のハンドシェイク（Upgrade）で接続を確立した後、<br>' +
+            '<strong>ws:// または wss://</strong> プロトコルで<strong>全二重（双方向）</strong>の持続的な通信を行います。<br>' +
+            'wss:// は暗号化あり（HTTPS相当）です。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            '・WebSocket は HTTP Upgrade で接続後、<strong>ws:// / wss://</strong> プロトコルに切り替わります<br>' +
+            '・自動再接続は<strong>内蔵されていません</strong>（SSE には内蔵されている）<br>' +
+            '・<code>send()</code> は readyState が <strong>1（OPEN）</strong>の時のみ使用できます';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 選択問題</h3>
+    <p>
+      WebRTC に関する説明として<strong>正しいもの</strong>はどれですか？
+    </p>
+    <select id="q4">
+      <option value="">-- 選択してください --</option>
+      <option value="a">WebRTC はすべての通信がサーバーを経由するため、サーバーの負荷が高い</option>
+      <option value="b">WebRTC の接続確立にはシグナリングサーバーが不要で、ブラウザ同士が直接接続できる</option>
+      <option value="c">WebRTC はブラウザ間（P2P）でビデオ・音声・データをリアルタイムに通信でき、接続確立にはシグナリングサーバーによるSDP・ICE候補の交換が必要である</option>
+      <option value="d">WebRTC の getUserMedia() はユーザーの許可なしにカメラ・マイクにアクセスできる</option>
+    </select>
+    <br>
+    <button class="btn-quiz" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const v = document.getElementById('q4').value;
+        const r = document.getElementById('q4-result');
+        if (v === 'c') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'WebRTC はブラウザ間（P2P）でリアルタイム通信を実現しますが、<br>' +
+            '接続確立のために<strong>シグナリングサーバー</strong>による<br>' +
+            '<strong>SDP（メディア情報）と ICE候補（接続経路）の交換</strong>が必要です。<br>' +
+            'P2P確立後はサーバーを介さずに直接通信します。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            '・WebRTC はP2P接続後はサーバーを介さない（サーバー負荷は低い）<br>' +
+            '・接続確立には<strong>シグナリングサーバー</strong>が必要（SDP・ICE候補の交換のため）<br>' +
+            '・<code>getUserMedia()</code> は<strong>ユーザーの許可が必須</strong>（HTTPS必須）';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5a">
+      ① XHR の <code>readyState</code> が <code>4</code>（DONE）になった時、リクエストが完了したことを示す
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5b">
+      ② Fetch API では 404 エラーのレスポンスが返ってきた場合、<code>.catch()</code> で捕捉される
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5c">
+      ③ WebSocket の <code>wss://</code> は暗号化された WebSocket 接続を意味する
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5d">
+      ④ Server-Sent Events は接続が切れると自動的に再接続を試みる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5e">
+      ⑤ Server-Sent Events はクライアントからサーバーへもデータを送信できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5f">
+      ⑥ WebRTC の P2P 接続確立には SDP と ICE 候補の交換が必要である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5g">
+      ⑦ WebRTC の <code>getUserMedia()</code> はユーザーの許可なしにカメラにアクセスできる
+    </label>
+    <br>
+    <button class="btn-quiz" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const r = document.getElementById('q5-result');
+        const checks = {
+          a: document.getElementById('q5a').checked,
+          b: document.getElementById('q5b').checked,
+          c: document.getElementById('q5c').checked,
+          d: document.getElementById('q5d').checked,
+          e: document.getElementById('q5e').checked,
+          f: document.getElementById('q5f').checked,
+          g: document.getElementById('q5g').checked,
+        };
+        // 正解：①③④⑥（a, c, d, f）
+        // ② Fetch の 404 は catch に入らない → ×
+        // ⑤ SSE はサーバー→クライアントの一方向 → ×
+        // ⑦ getUserMedia はユーザー許可必須 → ×
+        const correct = { a:true, b:false, c:true, d:true, e:false, f:true, g:false };
+        const allCorrect = Object.keys(correct).every(k => checks[k] === correct[k]);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① XHR readyState=4 で完了 ✅<br>' +
+            '・③ wss:// は暗号化WebSocket ✅<br>' +
+            '・④ SSE は自動再接続内蔵 ✅<br>' +
+            '・⑥ WebRTC は SDP + ICE 候補の交換が必要 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① XHR の readyState=4（DONE）でリクエスト完了<br>' +
+            '・③ wss:// は暗号化された WebSocket（HTTPS相当）<br>' +
+            '・④ SSE は切断後に自動再接続を試みる（内蔵機能）<br>' +
+            '・⑥ WebRTC の P2P 接続には SDP と ICE 候補の交換が必要<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・② Fetch API の 404 は <code>response.ok === false</code> になるだけで <strong>.catch() には入らない</strong><br>' +
+            '・⑤ SSE は<strong>サーバー → クライアントの一方向通信</strong>（クライアントからは送信不可）<br>' +
+            '・⑦ <code>getUserMedia()</code> は<strong>ユーザーの許可が必須</strong>（HTTPS必須）';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. コード穴埋め問題</h3>
+    <p><code>__A__</code> 〜 <code>__F__</code> に適切な値・記述を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+/* A：XHR でリクエストを初期化（GETメソッド・非同期） */
+xhr.__A__('GET', 'https://api.example.com/data', true);
+
+/* B：XHR でリクエストが完了したことを示す readyState の値 */
+if (xhr.readyState === __B__) { /* 完了 */ }
+
+/* C：WebSocket でメッセージを受信するイベントハンドラ */
+ws.__C__ = (event) => { console.log(event.data); };
+
+/* D：SSE で接続を作成するコンストラクタ */
+const es = new __D__('/events');
+
+/* E：WebRTC で発信側が SDP Offer を作成するメソッド */
+const offer = await pc.__E__();
+
+/* F：WebRTC でカメラ・マイクにアクセスするメソッド */
+const stream = await navigator.mediaDevices.__F__({ video: true, audio: true });</pre>
+
+    <label>A（初期化メソッド）：</label>
+    <input type="text" id="q6a" placeholder="メソッド名">
+    <label>B（完了を示す readyState の値）：</label>
+    <input type="text" id="q6b" placeholder="数値">
+    <label>C（メッセージ受信ハンドラ）：</label>
+    <input type="text" id="q6c" placeholder="プロパティ名">
+    <label>D（SSEのコンストラクタ）：</label>
+    <input type="text" id="q6d" placeholder="クラス名">
+    <label>E（Offer作成メソッド）：</label>
+    <input type="text" id="q6e" placeholder="メソッド名()">
+    <label>F（カメラ・マイクアクセスメソッド）：</label>
+    <input type="text" id="q6f" placeholder="メソッド名()">
+    <br>
+    <button class="btn-quiz" onclick="checkQ6()">答え合わせ</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const a = document.getElementById('q6a').value.trim().toLowerCase().replace(/[()]/g,'');
+        const b = document.getElementById('q6b').value.trim();
+        const c = document.getElementById('q6c').value.trim().toLowerCase();
+        const d = document.getElementById('q6d').value.trim().toLowerCase().replace(/\s/g,'');
+        const e = document.getElementById('q6e').value.trim().toLowerCase().replace(/[()]/g,'');
+        const f = document.getElementById('q6f').value.trim().toLowerCase().replace(/[()]/g,'');
+        const r = document.getElementById('q6-result');
+        const ca = a === 'open';
+        const cb = b === '4';
+        const cc = c === 'onmessage';
+        const cd = d === 'eventsource';
+        const ce = e === 'createoffer';
+        const cf = f === 'getusermedia';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！通信系APIの記述を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca?'✅':'❌ open()'}　` +
+            `B: ${cb?'✅':'❌ 4'}　` +
+            `C: ${cc?'✅':'❌ onmessage'}　` +
+            `D: ${cd?'✅':'❌ EventSource'}　` +
+            `E: ${ce?'✅':'❌ createOffer()'}　` +
+            `F: ${cf?'✅':'❌ getUserMedia()'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q7 -->
+  <div class="quiz-block">
+    <h3>Q7. 記述問題</h3>
+    <p>
+      XHR・WebSocket・Server-Sent Events・WebRTC の4つの通信APIを、
+      「通信方向」「プロトコル」「主な用途」の観点から比較して説明してください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q7" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn-quiz" onclick="checkQ7()">模範解答を見る</button>
+    <div class="result-msg" id="q7-result"></div>
+    <script>
+      function checkQ7() {
+        const r = document.getElementById('q7-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<table style="border-collapse:collapse; width:100%; font-size:0.85em;">' +
+          '<thead><tr style="background:#c05621; color:#fff;">' +
+          '<th style="padding:8px; border:1px solid #feebc8;">API</th>' +
+          '<th style="padding:8px; border:1px solid #feebc8;">通信方向</th>' +
+          '<th style="padding:8px; border:1px solid #feebc8;">プロトコル</th>' +
+          '<th style="padding:8px; border:1px solid #feebc8;">主な用途</th>' +
+          '</tr></thead><tbody>' +
+          '<tr><td style="padding:8px; border:1px solid #feebc8;"><strong>XHR / Fetch</strong></td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">クライアント→サーバー（都度）</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">HTTP</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">REST API・フォーム送信</td></tr>' +
+          '<tr style="background:#fffaf0;"><td style="padding:8px; border:1px solid #feebc8;"><strong>WebSocket</strong></td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">双方向（全二重・持続）</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">ws:// / wss://</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">チャット・ゲーム・共同編集</td></tr>' +
+          '<tr><td style="padding:8px; border:1px solid #feebc8;"><strong>SSE</strong></td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">サーバー→クライアント（一方向）</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">HTTP（text/event-stream）</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">通知・株価・ニュースフィード</td></tr>' +
+          '<tr style="background:#fffaf0;"><td style="padding:8px; border:1px solid #feebc8;"><strong>WebRTC</strong></td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">ブラウザ間P2P（双方向）</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">P2P（STUN/TURN経由）</td>' +
+          '<td style="padding:8px; border:1px solid #feebc8;">ビデオ通話・音声通話・ファイル共有</td></tr>' +
+          '</tbody></table><br>' +
+          '💡 <strong>試験のポイント</strong>：<br>' +
+          '・<strong>XHR</strong>：HTTPでリクエスト/レスポンス。readyState 4 で完了<br>' +
+          '・<strong>WebSocket</strong>：ws://で全二重。onmessage で受信、send() で送信<br>' +
+          '・<strong>SSE</strong>：一方向。EventSource。自動再接続内蔵<br>' +
+          '・<strong>WebRTC</strong>：P2Pビデオ通話。シグナリング + SDP + ICE が必要';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 通信系API まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>API</th><th>通信方向</th><th>プロトコル</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>XMLHttpRequest</strong></td>
+      <td>クライアント → サーバー</td>
+      <td>HTTP</td>
+      <td>readyState 0〜4。onreadystatechange。<strong>onprogress で進捗取得可</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Fetch API</strong></td>
+      <td>クライアント → サーバー</td>
+      <td>HTTP</td>
+      <td><strong>Promiseベース</strong>。response.ok で成否確認。Service Worker内でも使用可</td>
+    </tr>
+    <tr>
+      <td><strong>WebSocket</strong></td>
+      <td><strong>双方向（全二重）</strong></td>
+      <td>ws:// / wss://</td>
+      <td>HTTP Upgrade で接続。readyState 0〜3。<strong>send() / onmessage</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Server-Sent Events</strong></td>
+      <td><strong>サーバー → クライアント（一方向）</strong></td>
+      <td>HTTP（text/event-stream）</td>
+      <td>EventSource。<strong>自動再接続内蔵</strong>。id: / event: / data: / retry:</td>
+    </tr>
+    <tr>
+      <td><strong>WebRTC</strong></td>
+      <td><strong>ブラウザ間P2P</strong></td>
+      <td>P2P（STUN/TURN）</td>
+      <td>getUserMedia()。RTCPeerConnection。<strong>SDP + ICE候補の交換</strong>が必要</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
