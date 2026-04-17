@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Web関連技術の概要 学習サンプル</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      background: #f0f4f8;
+      color: #2d3748;
+      line-height: 1.8;
+    }
+    h1 { color: #1a202c; border-bottom: 4px solid #00b5d8; padding-bottom: 10px; }
+    h2 { color: #086f83; margin-top: 48px; border-left: 5px solid #00b5d8; padding-left: 12px; }
+    h3 { color: #065666; margin-top: 24px; }
+
+    code {
+      background: #e6fffa;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.93em;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre {
+      background: #1a202c;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.7;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    pre .comment  { color: #68d391; }
+    pre .prop     { color: #90cdf4; }
+    pre .val      { color: #fc8181; }
+    pre .keyword  { color: #b794f4; }
+    pre .func     { color: #fbd38d; }
+    pre .attr     { color: #fbd38d; }
+    pre .value    { color: #68d391; }
+    pre .tag      { color: #f6ad55; }
+    pre .str      { color: #fc8181; }
+
+    .note {
+      background: #fff;
+      border: 1px dashed #00b5d8;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #4a5568;
+      margin-bottom: 14px;
+    }
+    .note strong { color: #086f83; }
+    .warn {
+      background: #e6fffa;
+      border: 1px solid #00b5d8;
+      border-left: 5px solid #00b5d8;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #065666;
+      margin: 14px 0;
+    }
+    .warn strong { color: #086f83; }
+    .good {
+      background: #f0fff4;
+      border: 1px solid #68d391;
+      border-left: 5px solid #48bb78;
+      border-radius: 6px;
+      padding: 14px 18px;
+      font-size: 0.93em;
+      color: #276749;
+      margin: 14px 0;
+    }
+    .demo-box {
+      background: #fff;
+      border: 1px solid #b2f5ea;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 12px 0 28px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .interactive-demo {
+      background: #e6fffa;
+      border: 1px solid #b2f5ea;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .slider-row label {
+      font-size: 0.85em;
+      font-weight: bold;
+      min-width: 180px;
+      color: #086f83;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .slider-row input[type="text"] {
+      border: 2px solid #b2f5ea;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.88em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      flex: 1;
+      min-width: 100px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .slider-row input[type="text"]:focus { border-color: #00b5d8; }
+    .slider-row select {
+      border: 2px solid #b2f5ea;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.85em;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #2d3748;
+      background: #fff;
+      cursor: pointer;
+      flex: 1;
+    }
+    .slider-row select:focus { border-color: #00b5d8; outline: none; }
+    .color-code-display {
+      background: #1a202c;
+      color: #68d391;
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.84em;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      min-height: 48px;
+    }
+
+    /* ボタン */
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+    .btn {
+      display: inline-block;
+      padding: 8px 18px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.88em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.82; }
+    .btn-cyan  { background: #00b5d8; color: #fff; }
+    .btn-green { background: #68d391; color: #276749; }
+    .btn-red   { background: #fc8181; color: #fff; }
+    .btn-gray  { background: #e2e8f0; color: #4a5568; }
+
+    /* DOM ツリー */
+    .dom-tree {
+      background: #1a202c;
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.86em;
+      line-height: 1.9;
+      margin: 12px 0;
+    }
+    .dom-tree .node-elem   { color: #f6ad55; }
+    .dom-tree .node-attr   { color: #90cdf4; }
+    .dom-tree .node-val    { color: #68d391; }
+    .dom-tree .node-text   { color: #e2e8f0; }
+    .dom-tree .node-comment{ color: #4a5568; }
+
+    /* DOM デモ */
+    .dom-demo-area {
+      background: #fffaf0;
+      border: 2px solid #b2f5ea;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 10px 0;
+      min-height: 60px;
+    }
+    #dom-target {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #086f83;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: #e6fffa;
+      display: inline-block;
+      transition: all 0.3s;
+    }
+
+    /* Ajax フロー */
+    .ajax-flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 12px;
+      align-items: center;
+      margin: 14px 0;
+    }
+    .ajax-box {
+      background: #e6fffa;
+      border: 2px solid #b2f5ea;
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+    }
+    .ajax-box-title {
+      font-size: 0.85em;
+      font-weight: bold;
+      color: #086f83;
+      margin-bottom: 6px;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .ajax-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75em;
+      color: #086f83;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    /* APIカードグリッド */
+    .api-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin: 14px 0;
+    }
+    .api-card {
+      background: #e6fffa;
+      border: 1px solid #b2f5ea;
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .api-card-title {
+      font-size: 0.88em;
+      font-weight: bold;
+      color: #086f83;
+      margin-bottom: 6px;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .api-card-desc {
+      font-size: 0.82em;
+      color: #4a5568;
+      line-height: 1.6;
+    }
+
+    /* 攻撃手法カード */
+    .threat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 14px 0;
+    }
+    .threat-card {
+      background: #fff5f5;
+      border: 1px solid #fed7d7;
+      border-left: 4px solid #fc8181;
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .threat-card-title {
+      font-size: 0.9em;
+      font-weight: bold;
+      color: #9b2335;
+      margin-bottom: 6px;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .threat-card-desc {
+      font-size: 0.82em;
+      color: #4a5568;
+      line-height: 1.6;
+    }
+
+    /* 対策カード */
+    .defense-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 14px 0;
+    }
+    .defense-card {
+      background: #f0fff4;
+      border: 1px solid #c6f6d5;
+      border-left: 4px solid #48bb78;
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .defense-card-title {
+      font-size: 0.9em;
+      font-weight: bold;
+      color: #276749;
+      margin-bottom: 6px;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .defense-card-desc {
+      font-size: 0.82em;
+      color: #4a5568;
+      line-height: 1.6;
+    }
+
+    /* 画像フォーマット比較 */
+    .img-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .img-card {
+      background: #e6fffa;
+      border: 1px solid #b2f5ea;
+      border-radius: 8px;
+      padding: 12px 14px;
+      text-align: center;
+    }
+    .img-card-name {
+      font-size: 1em;
+      font-weight: bold;
+      color: #086f83;
+      font-family: 'Consolas', 'Monaco', monospace;
+      margin-bottom: 4px;
+    }
+    .img-card-desc {
+      font-size: 0.78em;
+      color: #4a5568;
+      line-height: 1.5;
+    }
+
+    /* テーブル */
+    table.summary {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-top: 16px;
+    }
+    table.summary th, table.summary td {
+      border: 1px solid #b2f5ea;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.9em;
+    }
+    table.summary thead tr { background: #086f83; color: #fff; }
+    table.summary tbody tr:nth-child(even) { background: #e6fffa; }
+
+    /* 演習問題 */
+    .quiz-section {
+      background: #e6fffa;
+      border-left: 6px solid #00b5d8;
+      border-radius: 0 8px 8px 0;
+      padding: 24px 28px;
+      margin: 48px 0 32px;
+    }
+    .quiz-section > h2 { margin-top: 0; color: #086f83; border-left-color: #00b5d8; }
+    .quiz-block {
+      background: #fff;
+      border: 1px solid #b2f5ea;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .quiz-block h3 { margin-top: 0; color: #065666; }
+    .quiz-block input[type="text"],
+    .quiz-block select,
+    .quiz-block textarea {
+      border: 2px solid #b2f5ea;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.95em;
+      width: 100%;
+      max-width: 440px;
+      margin: 6px 0;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.2s;
+    }
+    .quiz-block input[type="text"]:focus,
+    .quiz-block select:focus,
+    .quiz-block textarea:focus { border-color: #00b5d8; }
+    .quiz-block label { display: block; margin: 8px 0 2px; font-weight: bold; color: #4a5568; }
+    .quiz-block label.checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+    .quiz-block label.checkbox-label input { margin-top: 3px; flex-shrink: 0; }
+    .btn-quiz {
+      display: inline-block;
+      padding: 9px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+      background: #00b5d8;
+      color: #fff;
+    }
+    .btn-quiz:hover { opacity: 0.85; }
+    .result-msg {
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
+    }
+    .result-msg.correct { background: #c6f6d5; color: #276749; display: block; }
+    .result-msg.wrong   { background: #fed7d7; color: #9b2335; display: block; }
+    .result-msg.info    { background: #b2f5ea; color: #065666; display: block; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 600px) {
+      body { font-size: 0.82em; }
+      h2 { margin-top: 32px; }
+      .demo-box { padding: 14px; }
+      .slider-row label { min-width: 120px; }
+      .api-grid { grid-template-columns: 1fr; }
+      .threat-grid { grid-template-columns: 1fr; }
+      .defense-grid { grid-template-columns: 1fr; }
+      .img-grid { grid-template-columns: repeat(2, 1fr); }
+      .ajax-flow { grid-template-columns: 1fr; }
+      table.summary th, table.summary td { padding: 8px 10px; font-size: 0.82em; }
+      .quiz-section { padding: 16px; }
+      .quiz-block { padding: 14px; }
+      .quiz-block input[type="text"],
+      .quiz-block select,
+      .quiz-block textarea { max-width: 100%; font-size: 0.88em; }
+    }
+    @media (max-height: 500px) and (orientation: landscape) {
+      body { font-size: 0.8em; }
+      h2 { margin-top: 24px; }
+      .demo-box { padding: 12px 14px; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      body { font-size: 0.9em; }
+      .api-grid { grid-template-columns: repeat(2, 1fr); }
+      .threat-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<h1>🌐 Web関連技術の概要 学習サンプル</h1>
+<p>
+  Webを構成する文書構造・データ操作・通信・セキュリティ・制作技術・
+  画像・集客など、Web関連技術の全体像を学びましょう。
+</p>
+
+
+<!-- ============================================================ -->
+<!-- PART 1：文書の構造（DOM） -->
+<!-- ============================================================ -->
+<h2>① 文書の構造 — DOM（Document Object Model）</h2>
+<div class="note">
+  <strong>重要ポイント①：DOMをJavaScriptで操作し、文書を取得・変更したり、要素の値を動的に変更することが可能</strong><br>
+  DOM（Document Object Model）は、HTMLやXML文書を
+  <strong>ツリー構造のオブジェクト</strong>として表現する仕様です。
+  JavaScriptから DOM を操作することで、
+  <strong>要素の取得・追加・削除・属性変更・テキスト変更</strong>などを
+  動的に行えます。
+</div>
+<div class="demo-box">
+
+  <h3>DOM ツリーの構造</h3>
+  <div class="dom-tree">
+    <div><span class="node-comment">Document（ルートノード）</span></div>
+    <div>└── <span class="node-elem">&lt;html&gt;</span></div>
+    <div>&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="node-elem">&lt;head&gt;</span></div>
+    <div>&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── <span class="node-elem">&lt;title&gt;</span> <span class="node-text">ページタイトル</span> <span class="node-elem">&lt;/title&gt;</span></div>
+    <div>&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="node-elem">&lt;body&gt;</span></div>
+    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="node-elem">&lt;h1 <span class="node-attr">id</span>=<span class="node-val">"title"</span>&gt;</span> <span class="node-text">見出し</span> <span class="node-elem">&lt;/h1&gt;</span></div>
+    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="node-elem">&lt;p <span class="node-attr">class</span>=<span class="node-val">"text"</span>&gt;</span> <span class="node-text">本文テキスト</span> <span class="node-elem">&lt;/p&gt;</span></div>
+  </div>
+
+  <h3>主な DOM 操作メソッド</h3>
+  <div class="api-grid">
+    <div class="api-card">
+      <div class="api-card-title">getElementById()</div>
+      <div class="api-card-desc">IDで要素を1つ取得する</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">querySelector()</div>
+      <div class="api-card-desc">CSSセレクタで最初の要素を取得する</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">querySelectorAll()</div>
+      <div class="api-card-desc">CSSセレクタで一致するすべての要素を取得する</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">createElement()</div>
+      <div class="api-card-desc">新しい要素ノードを作成する</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">appendChild()</div>
+      <div class="api-card-desc">子要素として末尾に追加する</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">removeChild()</div>
+      <div class="api-card-desc">子要素を削除する</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">setAttribute()</div>
+      <div class="api-card-desc">要素の属性を設定する</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">textContent</div>
+      <div class="api-card-desc">要素のテキスト内容を取得・設定する</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">innerHTML</div>
+      <div class="api-card-desc">要素のHTML内容を取得・設定する（XSSに注意）</div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">classList</div>
+      <div class="api-card-desc">クラスの追加・削除・切り替えを行う</div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* 要素の取得 */</span>
+<span class="keyword">const</span> el1 = document.<span class="func">getElementById</span>(<span class="str">'title'</span>);
+<span class="keyword">const</span> el2 = document.<span class="func">querySelector</span>(<span class="str">'.text'</span>);
+<span class="keyword">const</span> els = document.<span class="func">querySelectorAll</span>(<span class="str">'p'</span>);
+
+<span class="comment">/* テキスト・属性の変更 */</span>
+el1.<span class="prop">textContent</span> = <span class="str">'新しい見出し'</span>;
+el1.<span class="func">setAttribute</span>(<span class="str">'class'</span>, <span class="str">'highlight'</span>);
+el1.<span class="prop">style</span>.<span class="prop">color</span> = <span class="str">'#086f83'</span>;
+
+<span class="comment">/* クラスの操作 */</span>
+el1.<span class="prop">classList</span>.<span class="func">add</span>(<span class="str">'active'</span>);
+el1.<span class="prop">classList</span>.<span class="func">remove</span>(<span class="str">'hidden'</span>);
+el1.<span class="prop">classList</span>.<span class="func">toggle</span>(<span class="str">'open'</span>);
+
+<span class="comment">/* 要素の作成・追加 */</span>
+<span class="keyword">const</span> newEl = document.<span class="func">createElement</span>(<span class="str">'li'</span>);
+newEl.<span class="prop">textContent</span> = <span class="str">'新しいリスト項目'</span>;
+document.<span class="func">querySelector</span>(<span class="str">'ul'</span>).<span class="func">appendChild</span>(newEl);
+
+<span class="comment">/* イベントリスナーの登録 */</span>
+el1.<span class="func">addEventListener</span>(<span class="str">'click'</span>, (e) => {
+  console.<span class="func">log</span>(<span class="str">'クリックされました'</span>, e.<span class="prop">target</span>);
+});
+</pre>
+
+  <h3>DOM インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#065666; margin:0 0 10px;">
+      ボタンで DOM を操作して要素を動的に変更できます。
+    </p>
+    <div class="dom-demo-area">
+      <div id="dom-target">DOM操作のターゲット要素</div>
+    </div>
+    <div class="slider-row" style="margin-top:10px;">
+      <label>textContent</label>
+      <input type="text" id="dom-text" value="DOM操作のターゲット要素" oninput="domSetText()">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-cyan"  onclick="domAddClass()">classList.add('active')</button>
+      <button class="btn btn-gray"  onclick="domRemoveClass()">classList.remove</button>
+      <button class="btn btn-green" onclick="domSetStyle()">style.color 変更</button>
+      <button class="btn btn-red"   onclick="domReset()">リセット</button>
+    </div>
+    <div class="color-code-display" id="dom-log">DOM操作のログがここに表示されます</div>
+  </div>
+  <script>
+    const domColors = ['#086f83','#c05621','#276749','#553c9a','#9b2335'];
+    let domColorIdx = 0;
+    function domSetText() {
+      const t = document.getElementById('dom-text').value;
+      document.getElementById('dom-target').textContent = t;
+      document.getElementById('dom-log').textContent =
+        `document.getElementById('dom-target').textContent = "${t}";`;
+    }
+    function domAddClass() {
+      const el = document.getElementById('dom-target');
+      el.classList.add('active');
+      el.style.background = '#b2f5ea';
+      el.style.border = '2px solid #00b5d8';
+      document.getElementById('dom-log').textContent =
+        `el.classList.add('active');\n→ classList: "${el.className}"`;
+    }
+    function domRemoveClass() {
+      const el = document.getElementById('dom-target');
+      el.classList.remove('active');
+      el.style.background = '#e6fffa';
+      el.style.border = 'none';
+      document.getElementById('dom-log').textContent =
+        `el.classList.remove('active');\n→ classList: "${el.className}"`;
+    }
+    function domSetStyle() {
+      const el = document.getElementById('dom-target');
+      const c = domColors[domColorIdx++ % domColors.length];
+      el.style.color = c;
+      document.getElementById('dom-log').textContent =
+        `el.style.color = '${c}';\n→ 要素の色が変わりました`;
+    }
+    function domReset() {
+      const el = document.getElementById('dom-target');
+      el.textContent = 'DOM操作のターゲット要素';
+      el.className = '';
+      el.style.cssText = '';
+      document.getElementById('dom-text').value = 'DOM操作のターゲット要素';
+      document.getElementById('dom-log').textContent = 'リセットしました';
+    }
+  </script>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 2：JavaScript -->
+<!-- ============================================================ -->
+<h2>② JavaScript</h2>
+<div class="note">
+  <strong>重要ポイント②：JavaScriptはプロトタイプベースのオブジェクト指向型言語で、主要なWebブラウザに実装されている</strong><br>
+  JavaScript は <strong>ECMAScript</strong> 仕様に基づく、
+  <strong>プロトタイプベースのオブジェクト指向型スクリプト言語</strong>です。
+  主要なWebブラウザにJavaScriptエンジンが実装されており、
+  クライアントサイドでの動的なWebページ制作に不可欠です。
+  現在は Node.js によりサーバーサイドでも広く使われています。
+</div>
+<div class="demo-box">
+
+  <h3>JavaScriptの主な特徴</h3>
+  <div class="api-grid">
+    <div class="api-card">
+      <div class="api-card-title">プロトタイプベース</div>
+      <div class="api-card-desc">
+        クラスベースではなく<strong>プロトタイプチェーン</strong>によって
+        オブジェクトが継承を実現する。
+        ES6以降は class 構文も使用可能（内部はプロトタイプ）
+      </div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">動的型付け</div>
+      <div class="api-card-desc">
+        変数の型を宣言する必要がなく、
+        実行時に型が決まる。
+        <code>typeof</code> 演算子で型を確認できる
+      </div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">シングルスレッド</div>
+      <div class="api-card-desc">
+        JavaScriptはシングルスレッドで動作する。
+        非同期処理はイベントループ・Promise・
+        async/await で実現する
+      </div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">ECMAScript</div>
+      <div class="api-card-desc">
+        JavaScriptの仕様は <strong>ECMA International</strong> の
+        TC39 委員会が管理する ECMAScript として標準化されている
+      </div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">ファーストクラス関数</div>
+      <div class="api-card-desc">
+        関数を変数に代入したり、
+        引数として渡したり、
+        戻り値として返すことができる
+      </div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">クロージャ</div>
+      <div class="api-card-desc">
+        関数が定義されたスコープの変数を
+        関数の外からでも参照し続けられる仕組み
+      </div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* プロトタイプベースの継承 */</span>
+<span class="keyword">function</span> <span class="func">Animal</span>(name) {
+  <span class="keyword">this</span>.<span class="prop">name</span> = name;
+}
+Animal.<span class="prop">prototype</span>.<span class="func">speak</span> = <span class="keyword">function</span>() {
+  <span class="keyword">return</span> <span class="str">`${this.name} が鳴きます`</span>;
+};
+
+<span class="comment">/* ES6 class 構文（内部はプロトタイプ） */</span>
+<span class="keyword">class</span> <span class="func">Dog</span> <span class="keyword">extends</span> <span class="func">Animal</span> {
+  <span class="func">speak</span>() {
+    <span class="keyword">return</span> <span class="str">`${this.name}: ワン！`</span>;
+  }
+}
+<span class="keyword">const</span> dog = <span class="keyword">new</span> <span class="func">Dog</span>(<span class="str">'ポチ'</span>);
+console.<span class="func">log</span>(dog.<span class="func">speak</span>()); <span class="comment">// "ポチ: ワン！"</span>
+
+<span class="comment">/* 動的型付け */</span>
+<span class="keyword">let</span> x = <span class="val">42</span>;          <span class="comment">// number</span>
+x = <span class="str">'hello'</span>;         <span class="comment">// string（再代入可能）</span>
+x = <span class="val">true</span>;            <span class="comment">// boolean</span>
+console.<span class="func">log</span>(<span class="keyword">typeof</span> x); <span class="comment">// "boolean"</span>
+
+<span class="comment">/* 非同期処理（Promise / async-await） */</span>
+<span class="keyword">async function</span> <span class="func">fetchData</span>() {
+  <span class="keyword">const</span> res  = <span class="keyword">await</span> <span class="func">fetch</span>(<span class="str">'/api/data'</span>);
+  <span class="keyword">const</span> data = <span class="keyword">await</span> res.<span class="func">json</span>();
+  <span class="keyword">return</span> data;
+}
+</pre>
+
+  <h3>主要なJavaScriptエンジン</h3>
+  <table class="summary">
+    <thead>
+      <tr><th>エンジン名</th><th>搭載ブラウザ / 環境</th><th>開発元</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>V8</strong></td><td>Google Chrome / Node.js / Edge</td><td>Google</td></tr>
+      <tr><td><strong>SpiderMonkey</strong></td><td>Firefox</td><td>Mozilla</td></tr>
+      <tr><td><strong>JavaScriptCore（Nitro）</strong></td><td>Safari / WebKit</td><td>Apple</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 3：データの操作 -->
+<!-- ============================================================ -->
+<h2>③ データの操作</h2>
+<div class="demo-box">
+
+  <h3>主なデータフォーマット</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>形式</th><th>特徴</th><th>主な用途</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>JSON</strong><br>（JavaScript Object Notation）</td>
+        <td>JavaScriptのオブジェクト記法に基づくテキスト形式。軽量・可読性が高い</td>
+        <td>REST APIのデータ交換・設定ファイル</td>
+      </tr>
+      <tr>
+        <td><strong>XML</strong><br>（eXtensible Markup Language）</td>
+        <td>タグで要素を表すマークアップ言語。厳密な構造定義が可能</td>
+        <td>設定ファイル・SOAP API・SVG・RSS</td>
+      </tr>
+      <tr>
+        <td><strong>CSV</strong><br>（Comma-Separated Values）</td>
+        <td>カンマ区切りのテキスト形式。シンプルで表計算ソフトとの互換性が高い</td>
+        <td>表データのエクスポート・インポート</td>
+      </tr>
+    </tbody>
+  </table>
+
+<pre>
+<span class="comment">/* JSON の例 */</span>
+{
+  <span class="prop">"name"</span>: <span class="str">"Alice"</span>,
+  <span class="prop">"age"</span>:  <span class="val">30</span>,
+  <span class="prop">"tags"</span>: [<span class="str">"HTML"</span>, <span class="str">"CSS"</span>, <span class="str">"JavaScript"</span>],
+  <span class="prop">"address"</span>: {
+    <span class="prop">"city"</span>: <span class="str">"Tokyo"</span>,
+    <span class="prop">"zip"</span>:  <span class="str">"100-0001"</span>
+  }
+}
+
+<span class="comment">/* JavaScript での JSON 操作 */</span>
+<span class="keyword">const</span> obj  = { <span class="prop">name</span>: <span class="str">'Alice'</span>, <span class="prop">age</span>: <span class="val">30</span> };
+<span class="keyword">const</span> json = JSON.<span class="func">stringify</span>(obj);   <span class="comment">// オブジェクト → JSON文字列</span>
+<span class="keyword">const</span> back = JSON.<span class="func">parse</span>(json);      <span class="comment">// JSON文字列 → オブジェクト</span>
+
+<span class="comment">/* XML の例 */</span>
+&lt;<span class="tag">user</span>&gt;
+  &lt;<span class="tag">name</span>&gt;Alice&lt;/<span class="tag">name</span>&gt;
+  &lt;<span class="tag">age</span>&gt;30&lt;/<span class="tag">age</span>&gt;
+&lt;/<span class="tag">user</span>&gt;
+</pre>
+
+  <h3>JSON インタラクティブデモ</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#065666; margin:0 0 10px;">
+      JSON.stringify / JSON.parse の動作を確認できます。
+    </p>
+    <div class="slider-row">
+      <label>操作</label>
+      <select id="json-op" onchange="updateJsonDemo()">
+        <option value="stringify">JSON.stringify（オブジェクト → 文字列）</option>
+        <option value="parse">JSON.parse（文字列 → オブジェクト）</option>
+        <option value="pretty">JSON.stringify（整形出力）</option>
+      </select>
+    </div>
+    <div class="color-code-display" id="json-demo"></div>
+  </div>
+  <script>
+    function updateJsonDemo() {
+      const op  = document.getElementById('json-op').value;
+      const obj = { name: 'Alice', age: 30, tags: ['HTML', 'CSS'], active: true };
+      const str = '{"name":"Alice","age":30,"tags":["HTML","CSS"],"active":true}';
+      const log = document.getElementById('json-demo');
+      if (op === 'stringify') {
+        log.textContent =
+          `const obj = { name: 'Alice', age: 30, tags: ['HTML','CSS'], active: true };\n` +
+          `JSON.stringify(obj)\n→ '${JSON.stringify(obj)}'`;
+      } else if (op === 'parse') {
+        const parsed = JSON.parse(str);
+        log.textContent =
+          `const str = '${str}';\n` +
+          `JSON.parse(str)\n→ {\n  name: "${parsed.name}",\n  age: ${parsed.age},\n  tags: [${parsed.tags.map(t=>`"${t}"`).join(', ')}],\n  active: ${parsed.active}\n}`;
+      } else {
+        log.textContent =
+          `JSON.stringify(obj, null, 2)\n→\n${JSON.stringify(obj, null, 2)}`;
+      }
+    }
+    updateJsonDemo();
+  </script>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 4：通信 — Ajax -->
+<!-- ============================================================ -->
+<h2>④ 通信 — Ajax</h2>
+<div class="note">
+  <strong>重要ポイント③：Ajaxにより、非同期通信と動的ページ書き換えを実現する</strong><br>
+  Ajax（Asynchronous JavaScript and XML）は、
+  <strong>ページ全体を再読み込みせずに</strong>
+  サーバーと非同期通信を行い、
+  <strong>DOMを動的に書き換える</strong>技術です。
+  XHR（XMLHttpRequest）または Fetch API を使って実装します。
+  現代の SPA（Single Page Application）の基盤技術です。
+</div>
+<div class="demo-box">
+
+  <h3>従来のWebとAjaxの比較</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>項目</th><th>従来のWeb（ページ遷移）</th><th>Ajax（非同期通信）</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>通信タイミング</td><td>リンクやフォーム送信のたびに全ページ取得</td><td><strong>必要なデータのみ非同期で取得</strong></td></tr>
+      <tr><td>ページ更新</td><td>ページ全体を再読み込み</td><td><strong>必要な部分のみDOMを書き換え</strong></td></tr>
+      <tr><td>ユーザー体験</td><td>画面が白くなる・待ち時間が長い</td><td><strong>スムーズ・レスポンシブな操作感</strong></td></tr>
+      <tr><td>サーバー負荷</td><td>毎回HTML全体を生成・送信</td><td><strong>必要なデータ（JSON等）のみ送受信</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Ajax の仕組み</h3>
+  <div class="ajax-flow">
+    <div class="ajax-box">
+      <div class="ajax-box-title">ブラウザ（クライアント）</div>
+      <div style="font-size:0.78em; color:#4a5568; line-height:1.6;">
+        ① ユーザー操作<br>
+        ② XHR / fetch() でリクエスト<br>
+        ⑤ コールバック実行<br>
+        ⑥ DOM を部分更新
+      </div>
+    </div>
+    <div class="ajax-center">
+      <span>非同期</span>
+      <span style="font-size:1.4em; color:#00b5d8;">↔</span>
+      <span>HTTP</span>
+    </div>
+    <div class="ajax-box">
+      <div class="ajax-box-title">Webサーバー</div>
+      <div style="font-size:0.78em; color:#4a5568; line-height:1.6;">
+        ③ リクエスト受信<br>
+        ④ JSON / XML で<br>
+        &nbsp;&nbsp;&nbsp;データを返す
+      </div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* Ajax の基本（Fetch API を使用） */</span>
+<span class="keyword">async function</span> <span class="func">loadData</span>() {
+  <span class="keyword">try</span> {
+    <span class="comment">/* ① 非同期でサーバーにリクエスト */</span>
+    <span class="keyword">const</span> res  = <span class="keyword">await</span> <span class="func">fetch</span>(<span class="str">'/api/users'</span>);
+    <span class="keyword">const</span> data = <span class="keyword">await</span> res.<span class="func">json</span>();
+
+    <span class="comment">/* ② ページ全体を再読み込みせずにDOMを更新 */</span>
+    <span class="keyword">const</span> list = document.<span class="func">getElementById</span>(<span class="str">'user-list'</span>);
+    list.<span class="prop">innerHTML</span> = <span class="str">''</span>;
+    data.<span class="func">forEach</span>(user => {
+      <span class="keyword">const</span> li = document.<span class="func">createElement</span>(<span class="str">'li'</span>);
+      li.<span class="prop">textContent</span> = user.<span class="prop">name</span>;
+      list.<span class="func">appendChild</span>(li);
+    });
+  } <span class="keyword">catch</span> (e) {
+    console.<span class="func">log</span>(<span class="str">'エラー:'</span>, e);
+  }
+}
+
+<span class="comment">/* ボタンクリックで非同期通信（ページ遷移なし） */</span>
+document.<span class="func">getElementById</span>(<span class="str">'load-btn'</span>)
+  .<span class="func">addEventListener</span>(<span class="str">'click'</span>, <span class="func">loadData</span>);
+</pre>
+
+  <h3>Ajax インタラクティブデモ（公開APIを使用）</h3>
+  <div class="interactive-demo">
+    <p style="font-size:0.88em; color:#065666; margin:0 0 10px;">
+      ボタンを押すとページ全体を再読み込みせずにデータを取得してDOMを更新します。
+    </p>
+    <div class="slider-row">
+      <label>取得するデータ</label>
+      <select id="ajax-target">
+        <option value="https://jsonplaceholder.typicode.com/todos/1">TODO #1</option>
+        <option value="https://jsonplaceholder.typicode.com/users/1">User #1</option>
+        <option value="https://jsonplaceholder.typicode.com/posts/1">Post #1</option>
+      </select>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-cyan" onclick="runAjax()">▶ 非同期通信（DOM更新）</button>
+    </div>
+    <div id="ajax-result" style="background:#fff; border:1px solid #b2f5ea; border-radius:6px;
+         padding:12px 14px; margin-top:8px; font-size:0.85em; color:#4a5568; min-height:40px;">
+      ボタンを押すとここにデータが表示されます（ページは再読み込みされません）
+    </div>
+    <div class="color-code-display" id="ajax-log">fetch() の実行ログがここに表示されます</div>
+  </div>
+  <script>
+    async function runAjax() {
+      const url    = document.getElementById('ajax-target').value;
+      const result = document.getElementById('ajax-result');
+      const log    = document.getElementById('ajax-log');
+      log.textContent  = `fetch("${url}")\n送信中...`;
+      result.textContent = '取得中...';
+      try {
+        const start = performance.now();
+        const res   = await fetch(url);
+        const data  = await res.json();
+        const ms    = (performance.now() - start).toFixed(0);
+        result.innerHTML = Object.entries(data)
+          .map(([k,v]) => `<strong style="color:#086f83;">${k}</strong>: ${JSON.stringify(v)}`)
+          .join('<br>');
+        log.textContent =
+          `✅ 成功！ステータス: ${res.status} / 応答時間: ${ms}ms\n` +
+          `→ DOMを部分的に更新しました（ページ全体の再読み込みなし）`;
+      } catch (e) {
+        result.textContent = 'エラー: ' + e.message;
+        log.textContent = '❌ エラー: ' + e.message;
+      }
+    }
+  </script>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 5：Webサイトへの不正な攻撃手法 -->
+<!-- ============================================================ -->
+<h2>⑤ Webサイトへの不正な攻撃手法</h2>
+<div class="demo-box">
+  <div class="threat-grid">
+    <div class="threat-card">
+      <div class="threat-card-title">XSS（クロスサイトスクリプティング）</div>
+      <div class="threat-card-desc">
+        悪意のあるスクリプトをWebページに埋め込み、
+        閲覧者のブラウザで実行させる攻撃。
+        Cookie窃取・フィッシングなどに悪用される。
+      </div>
+    </div>
+    <div class="threat-card">
+      <div class="threat-card-title">CSRF（クロスサイトリクエストフォージェリ）</div>
+      <div class="threat-card-desc">
+        ユーザーが意図しないリクエストを
+        ログイン済みサイトに送信させる攻撃。
+        パスワード変更・送金などを不正実行。
+      </div>
+    </div>
+    <div class="threat-card">
+      <div class="threat-card-title">SQLインジェクション</div>
+      <div class="threat-card-desc">
+        入力フォームにSQL文を埋め込み、
+        データベースを不正操作する攻撃。
+        データ漏洩・改ざん・削除が発生する。
+      </div>
+    </div>
+    <div class="threat-card">
+      <div class="threat-card-title">クリックジャッキング</div>
+      <div class="threat-card-desc">
+        透明なiframeを重ねて、
+        ユーザーが意図しないボタンを
+        クリックさせる攻撃。
+      </div>
+    </div>
+    <div class="threat-card">
+      <div class="threat-card-title">DDoS攻撃</div>
+      <div class="threat-card-desc">
+        大量のリクエストをサーバーに送り、
+        サービスを停止させる攻撃。
+        分散型（Distributed）で行われる。
+      </div>
+    </div>
+    <div class="threat-card">
+      <div class="threat-card-title">中間者攻撃（MITM）</div>
+      <div class="threat-card-desc">
+        通信経路に割り込み、
+        データを盗聴・改ざんする攻撃。
+        HTTPSで防止できる。
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 6：ネットワーク上の脅威対策 -->
+<!-- ============================================================ -->
+<h2>⑥ ネットワーク上の脅威対策</h2>
+<div class="demo-box">
+  <div class="defense-grid">
+    <div class="defense-card">
+      <div class="defense-card-title">XSS対策</div>
+      <div class="defense-card-desc">
+        ・入力値のエスケープ処理（&lt; → &amp;lt;）<br>
+        ・<strong>Content Security Policy（CSP）</strong>でスクリプト実行を制限<br>
+        ・Cookie に <strong>HttpOnly</strong> 属性を設定<br>
+        ・innerHTML の使用を避け textContent を使う
+      </div>
+    </div>
+    <div class="defense-card">
+      <div class="defense-card-title">CSRF対策</div>
+      <div class="defense-card-desc">
+        ・<strong>CSRFトークン</strong>をフォームに埋め込む<br>
+        ・Cookie に <strong>SameSite=Strict</strong> を設定<br>
+        ・Referer / Origin ヘッダーの検証<br>
+        ・重要操作に再認証を要求
+      </div>
+    </div>
+    <div class="defense-card">
+      <div class="defense-card-title">SQLインジェクション対策</div>
+      <div class="defense-card-desc">
+        ・<strong>プリペアドステートメント</strong>（パラメータ化クエリ）を使用<br>
+        ・入力値のバリデーション・サニタイズ<br>
+        ・DBアカウントの権限を最小化
+      </div>
+    </div>
+    <div class="defense-card">
+      <div class="defense-card-title">HTTPS の使用</div>
+      <div class="defense-card-desc">
+        ・TLS/SSL で通信を暗号化<br>
+        ・中間者攻撃・盗聴・改ざんを防止<br>
+        ・<strong>HSTS</strong>（HTTP Strict Transport Security）で強制HTTPS
+      </div>
+    </div>
+    <div class="defense-card">
+      <div class="defense-card-title">Content Security Policy（CSP）</div>
+      <div class="defense-card-desc">
+        ・HTTPヘッダーで読み込み可能なリソースを制限<br>
+        ・インラインスクリプトの実行を禁止<br>
+        ・XSS攻撃の被害を大幅に軽減
+      </div>
+    </div>
+    <div class="defense-card">
+      <div class="defense-card-title">クリックジャッキング対策</div>
+      <div class="defense-card-desc">
+        ・<strong>X-Frame-Options</strong> ヘッダーで iframe 埋め込みを禁止<br>
+        ・CSP の <code>frame-ancestors</code> ディレクティブを使用
+      </div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">/* Content Security Policy（CSP）の設定例 */</span>
+<span class="comment">/* HTTPレスポンスヘッダーで設定 */</span>
+Content-Security-Policy: <span class="val">default-src 'self'; script-src 'self'; style-src 'self'</span>
+
+<span class="comment">/* HTMLのmetaタグでも設定可能 */</span>
+&lt;<span class="tag">meta</span> <span class="attr">http-equiv</span>=<span class="value">"Content-Security-Policy"</span>
+      <span class="attr">content</span>=<span class="value">"default-src 'self'; script-src 'self'"</span>&gt;
+
+<span class="comment">/* XSS対策：textContent でエスケープ */</span>
+<span class="comment">/* ❌ 危険：innerHTML はXSSの原因になる */</span>
+el.<span class="prop">innerHTML</span> = userInput;
+
+<span class="comment">/* ✅ 安全：textContent はHTMLとして解釈されない */</span>
+el.<span class="prop">textContent</span> = userInput;
+
+<span class="comment">/* CSRF対策：CSRFトークンをフォームに埋め込む */</span>
+&lt;<span class="tag">form</span> <span class="attr">method</span>=<span class="value">"POST"</span>&gt;
+  &lt;<span class="tag">input</span> <span class="attr">type</span>=<span class="value">"hidden"</span> <span class="attr">name</span>=<span class="value">"csrf_token"</span> <span class="attr">value</span>=<span class="value">"ランダムなトークン"</span>&gt;
+  ...
+&lt;/<span class="tag">form</span>&gt;
+</pre>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 7：Webサイト・アプリケーションの制作 -->
+<!-- ============================================================ -->
+<h2>⑦ Webサイト・アプリケーションの制作</h2>
+<div class="demo-box">
+
+  <h3>主な制作技術・フレームワーク</h3>
+  <table class="summary" style="margin-bottom:20px;">
+    <thead>
+      <tr><th>分類</th><th>技術・ツール</th><th>説明</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td rowspan="3" style="vertical-align:middle; font-weight:bold; color:#086f83;">フロントエンド<br>フレームワーク</td>
+        <td><strong>React</strong></td>
+        <td>Meta（Facebook）製。コンポーネントベースのUIライブラリ。仮想DOM</td>
+      </tr>
+      <tr>
+        <td><strong>Vue.js</strong></td>
+        <td>軽量・学習コストが低いプログレッシブフレームワーク</td>
+      </tr>
+      <tr>
+        <td><strong>Angular</strong></td>
+        <td>Google製。TypeScriptベースの大規模SPA向けフレームワーク</td>
+      </tr>
+      <tr>
+        <td rowspan="2" style="vertical-align:middle; font-weight:bold; color:#086f83;">CSSフレームワーク</td>
+        <td><strong>Bootstrap</strong></td>
+        <td>レスポンシブデザイン対応のCSSフレームワーク。グリッドシステム</td>
+      </tr>
+      <tr>
+        <td><strong>Tailwind CSS</strong></td>
+        <td>ユーティリティファーストのCSSフレームワーク</td>
+      </tr>
+      <tr>
+        <td rowspan="2" style="vertical-align:middle; font-weight:bold; color:#086f83;">バックエンド</td>
+        <td><strong>Node.js</strong></td>
+        <td>JavaScriptをサーバーサイドで実行する実行環境。V8エンジン使用</td>
+      </tr>
+      <tr>
+        <td><strong>REST API</strong></td>
+        <td>HTTPメソッドを使ったリソース指向のAPI設計スタイル</td>
+      </tr>
+      <tr>
+        <td rowspan="2" style="vertical-align:middle; font-weight:bold; color:#086f83;">ビルドツール</td>
+        <td><strong>webpack / Vite</strong></td>
+        <td>JavaScriptモジュールのバンドル・最適化ツール</td>
+      </tr>
+      <tr>
+        <td><strong>npm / yarn</strong></td>
+        <td>JavaScriptパッケージ管理ツール</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>SPA（Single Page Application）</h3>
+  <div class="api-grid">
+    <div class="api-card">
+      <div class="api-card-title">SPAとは</div>
+      <div class="api-card-desc">
+        1つのHTMLページで動作し、
+        Ajax でデータを取得しながら
+        DOM を動的に書き換えるWebアプリ。
+        ページ遷移なしで高速な操作感を実現
+      </div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">仮想DOM</div>
+      <div class="api-card-desc">
+        実際のDOMの軽量なコピーをメモリ上に保持し、
+        差分のみを実DOMに反映することで
+        描画パフォーマンスを向上させる技術（React等）
+      </div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">PWA（Progressive Web App）</div>
+      <div class="api-card-desc">
+        Service Worker・Web App Manifest を使い、
+        ネイティブアプリのような体験を
+        Webで実現する技術。オフライン対応・プッシュ通知
+      </div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">WAI-ARIA</div>
+      <div class="api-card-desc">
+        Webアクセシビリティのための属性仕様。
+        スクリーンリーダーなどの支援技術に
+        役割・状態・プロパティを伝える
+        （role / aria-label / aria-hidden 等）
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 8：画像について -->
+<!-- ============================================================ -->
+<h2>⑧ 画像について</h2>
+<div class="demo-box">
+
+  <h3>主な画像フォーマット</h3>
+  <div class="img-grid">
+    <div class="img-card">
+      <div class="img-card-name">JPEG / JPG</div>
+      <div class="img-card-desc">
+        非可逆圧縮。写真に最適。
+        透過・アニメーション不可。
+        ファイルサイズを小さくできる
+      </div>
+    </div>
+    <div class="img-card">
+      <div class="img-card-name">PNG</div>
+      <div class="img-card-desc">
+        可逆圧縮。透過（アルファチャンネル）対応。
+        ロゴ・イラストに最適。
+        JPEGより容量が大きくなりやすい
+      </div>
+    </div>
+    <div class="img-card">
+      <div class="img-card-name">GIF</div>
+      <div class="img-card-desc">
+        256色まで。アニメーション対応。
+        透過可能（1ビット）。
+        シンプルなアニメーションに使用
+      </div>
+    </div>
+    <div class="img-card">
+      <div class="img-card-name">SVG</div>
+      <div class="img-card-desc">
+        ベクター形式。拡大しても劣化しない。
+        CSSやJSで操作可能。
+        アイコン・ロゴに最適
+      </div>
+    </div>
+    <div class="img-card">
+      <div class="img-card-name">WebP</div>
+      <div class="img-card-desc">
+        Google開発。JPEG・PNGより高圧縮。
+        可逆・非可逆・透過・アニメーション対応。
+        モダンブラウザで広くサポート
+      </div>
+    </div>
+    <div class="img-card">
+      <div class="img-card-name">AVIF</div>
+      <div class="img-card-desc">
+        AV1ベースの次世代フォーマット。
+        WebPよりさらに高圧縮。
+        対応ブラウザが増加中
+      </div>
+    </div>
+  </div>
+
+  <h3>画像フォーマットの比較</h3>
+  <table class="summary">
+    <thead>
+      <tr><th>形式</th><th>圧縮</th><th>透過</th><th>アニメーション</th><th>主な用途</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>JPEG</strong></td><td>非可逆</td><td>❌</td><td>❌</td><td>写真・グラデーション</td></tr>
+      <tr><td><strong>PNG</strong></td><td>可逆</td><td>✅（アルファ）</td><td>❌</td><td>ロゴ・イラスト・透過画像</td></tr>
+      <tr><td><strong>GIF</strong></td><td>可逆</td><td>✅（1ビット）</td><td>✅</td><td>シンプルなアニメーション</td></tr>
+      <tr><td><strong>SVG</strong></td><td>ベクター</td><td>✅</td><td>✅（CSS/JS）</td><td>アイコン・ロゴ・図形</td></tr>
+      <tr><td><strong>WebP</strong></td><td>可逆・非可逆</td><td>✅</td><td>✅</td><td>Web全般（高圧縮）</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PART 9：Webサイトの集客・収益 -->
+<!-- ============================================================ -->
+<h2>⑨ Webサイトの集客・収益</h2>
+<div class="demo-box">
+
+  <h3>主な集客・収益化手法</h3>
+  <div class="api-grid">
+    <div class="api-card">
+      <div class="api-card-title">SEO（検索エンジン最適化）</div>
+      <div class="api-card-desc">
+        検索エンジンの検索結果で上位表示されるよう
+        コンテンツ・構造・リンクを最適化する手法。
+        セマンティックなHTMLの使用が重要
+      </div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">SEM（検索エンジンマーケティング）</div>
+      <div class="api-card-desc">
+        検索エンジンを活用したマーケティング全般。
+        SEO（自然検索）と
+        リスティング広告（有料検索）を含む
+      </div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">SNSマーケティング</div>
+      <div class="api-card-desc">
+        Twitter・Instagram・Facebook等の
+        SNSを活用した集客・ブランディング手法。
+        シェアによる拡散効果が高い
+      </div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">アフィリエイト</div>
+      <div class="api-card-desc">
+        Webサイトに広告リンクを掲載し、
+        クリックや購入に応じて報酬を得る
+        成果報酬型の収益化手法
+      </div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">Webアクセス解析</div>
+      <div class="api-card-desc">
+        Google Analytics 等のツールで
+        訪問者数・行動・流入経路などを分析し、
+        サイト改善に活用する
+      </div>
+    </div>
+    <div class="api-card">
+      <div class="api-card-title">OGP（Open Graph Protocol）</div>
+      <div class="api-card-desc">
+        SNSでシェアされた際に
+        タイトル・画像・説明文を
+        正しく表示するためのメタタグ仕様
+      </div>
+    </div>
+  </div>
+
+<pre>
+<span class="comment">&lt;!-- SEO・OGP のためのメタタグ例 --&gt;</span>
+&lt;<span class="tag">head</span>&gt;
+  <span class="comment">&lt;!-- SEO：ページの説明 --&gt;</span>
+  &lt;<span class="tag">meta</span> <span class="attr">name</span>=<span class="value">"description"</span>
+        <span class="attr">content</span>=<span class="value">"HTML5プロフェッショナル認定試験 レベル1 対策サイト"</span>&gt;
+
+  <span class="comment">&lt;!-- OGP：SNSシェア時の表示 --&gt;</span>
+  &lt;<span class="tag">meta</span> <span class="attr">property</span>=<span class="value">"og:title"</span>
+        <span class="attr">content</span>=<span class="value">"HTML5 / CSS 学習ノート"</span>&gt;
+  &lt;<span class="tag">meta</span> <span class="attr">property</span>=<span class="value">"og:description"</span>
+        <span class="attr">content</span>=<span class="value">"試験合格を目指す学習用サンプル集"</span>&gt;
+  &lt;<span class="tag">meta</span> <span class="attr">property</span>=<span class="value">"og:image"</span>
+        <span class="attr">content</span>=<span class="value">"https://example.com/ogp.png"</span>&gt;
+  &lt;<span class="tag">meta</span> <span class="attr">property</span>=<span class="value">"og:url"</span>
+        <span class="attr">content</span>=<span class="value">"https://example.com/"</span>&gt;
+  &lt;<span class="tag">meta</span> <span class="attr">property</span>=<span class="value">"og:type"</span>
+        <span class="attr">content</span>=<span class="value">"website"</span>&gt;
+&lt;/<span class="tag">head</span>&gt;
+</pre>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 演習問題 -->
+<!-- ============================================================ -->
+<div class="quiz-section">
+  <h2>🖊️ 演習問題（入力して答え合わせ）</h2>
+  <p>入力欄に答えを入れて「答え合わせ」ボタンを押してください。</p>
+
+  <!-- Q1 -->
+  <div class="quiz-block">
+    <h3>Q1. 正誤問題（○か×を入力）</h3>
+    <p>
+      JavaScriptはクラスベースのオブジェクト指向言語であり、
+      プロトタイプチェーンは使用しない。
+    </p>
+    <label>○ または × を入力：</label>
+    <input type="text" id="q1" placeholder="○ または ×" style="max-width:120px;">
+    <br>
+    <button class="btn-quiz" onclick="checkQ1()">答え合わせ</button>
+    <div class="result-msg" id="q1-result"></div>
+    <script>
+      function checkQ1() {
+        const v = document.getElementById('q1').value.trim();
+        const r = document.getElementById('q1-result');
+        if (v === '×' || v === 'x' || v === 'X') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'JavaScriptは<strong>プロトタイプベース</strong>のオブジェクト指向言語です。<br>' +
+            'ES6以降で使える <code>class</code> 構文も、内部的にはプロトタイプチェーンで実装されています。<br>' +
+            'クラスベースのオブジェクト指向言語（Java・C++など）とは設計が異なります。';
+        } else if (v === '○' || v === 'o' || v === 'O') {
+          r.className = 'result-msg wrong';
+          r.textContent =
+            '❌ 不正解。JavaScriptはプロトタイプベースのオブジェクト指向言語です。' +
+            'class 構文は ES6 で追加されましたが、内部はプロトタイプチェーンで動作します。';
+        } else {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ ○ または × で入力してください。';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-block">
+    <h3>Q2. 穴埋め問題（入力）</h3>
+    <p>以下の説明に合うメソッド名・用語を入力してください。</p>
+
+    <label>① DOMでCSSセレクタを使って最初の要素を1つ取得するメソッド名：</label>
+    <input type="text" id="q2a" placeholder="メソッド名()">
+
+    <label>② JavaScriptでオブジェクトをJSON文字列に変換するメソッド（JSON.〇〇〇〇〇〇〇〇〇）：</label>
+    <input type="text" id="q2b" placeholder="JSON.メソッド名()">
+
+    <label>③ ページ全体を再読み込みせずにサーバーと非同期通信を行う技術の名称：</label>
+    <input type="text" id="q2c" placeholder="技術名">
+
+    <label>④ 悪意のあるスクリプトをWebページに埋め込む攻撃手法の略称：</label>
+    <input type="text" id="q2d" placeholder="略称">
+
+    <label>⑤ ユーザーが意図しないリクエストをログイン済みサイトに送信させる攻撃の略称：</label>
+    <input type="text" id="q2e" placeholder="略称">
+
+    <label>⑥ SNSシェア時にタイトル・画像・説明文を正しく表示するためのメタタグ仕様の略称：</label>
+    <input type="text" id="q2f" placeholder="略称">
+
+    <br>
+    <button class="btn-quiz" onclick="checkQ2()">答え合わせ</button>
+    <div class="result-msg" id="q2-result"></div>
+    <script>
+      function checkQ2() {
+        const a = document.getElementById('q2a').value.trim().toLowerCase().replace(/[()]/g,'');
+        const b = document.getElementById('q2b').value.trim().toLowerCase().replace(/[()]/g,'').replace('json.','');
+        const c = document.getElementById('q2c').value.trim().toLowerCase().replace(/\s/g,'');
+        const d = document.getElementById('q2d').value.trim().toUpperCase();
+        const e = document.getElementById('q2e').value.trim().toUpperCase();
+        const f = document.getElementById('q2f').value.trim().toUpperCase();
+        const r = document.getElementById('q2-result');
+        const ca = a === 'queryselector';
+        const cb = b === 'stringify';
+        const cc = c === 'ajax';
+        const cd = d === 'XSS';
+        const ce = e === 'CSRF';
+        const cf = f === 'OGP';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！Web関連技術を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `① ${ca?'✅':'❌ querySelector()'}　` +
+            `② ${cb?'✅':'❌ JSON.stringify()'}　` +
+            `③ ${cc?'✅':'❌ Ajax'}　` +
+            `④ ${cd?'✅':'❌ XSS'}　` +
+            `⑤ ${ce?'✅':'❌ CSRF'}　` +
+            `⑥ ${cf?'✅':'❌ OGP'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-block">
+    <h3>Q3. 選択問題</h3>
+    <p>
+      Ajax に関する説明として<strong>正しいもの</strong>はどれですか？
+    </p>
+    <select id="q3">
+      <option value="">-- 選択してください --</option>
+      <option value="a">Ajax はページ全体を再読み込みしてサーバーからデータを取得する技術である</option>
+      <option value="b">Ajax により、非同期通信と動的なページ書き換えを実現でき、ページ全体を再読み込みせずにコンテンツを更新できる</option>
+      <option value="c">Ajax は CSS のみを使って実装でき、JavaScript は不要である</option>
+      <option value="d">Ajax を使うと、サーバーとの通信が同期的になりUIがブロックされる</option>
+    </select>
+    <br>
+    <button class="btn-quiz" onclick="checkQ3()">答え合わせ</button>
+    <div class="result-msg" id="q3-result"></div>
+    <script>
+      function checkQ3() {
+        const v = document.getElementById('q3').value;
+        const r = document.getElementById('q3-result');
+        if (v === 'b') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'Ajax（Asynchronous JavaScript and XML）は、<br>' +
+            '<strong>ページ全体を再読み込みせずに</strong>サーバーと非同期通信を行い、<br>' +
+            '<strong>DOMを動的に書き換える</strong>技術です。<br>' +
+            'XHR（XMLHttpRequest）または Fetch API を使って実装します。';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            '・Ajax は<strong>ページ全体を再読み込みしない</strong>（部分的なDOM更新）<br>' +
+            '・Ajax は<strong>JavaScript</strong>（XHR / Fetch API）で実装する<br>' +
+            '・Ajax は<strong>非同期</strong>通信のためUIはブロックされない';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-block">
+    <h3>Q4. 選択問題</h3>
+    <p>
+      XSS（クロスサイトスクリプティング）対策として<strong>正しいもの</strong>はどれですか？
+    </p>
+    <select id="q4">
+      <option value="">-- 選択してください --</option>
+      <option value="a">ユーザー入力をそのまま innerHTML に代入する</option>
+      <option value="b">Cookie に SameSite=Strict を設定する（これはCSRF対策）</option>
+      <option value="c">ユーザー入力をエスケープ処理し、innerHTML の代わりに textContent を使う。また Cookie に HttpOnly 属性を設定する</option>
+      <option value="d">すべての通信を HTTP（非暗号化）で行う</option>
+    </select>
+    <br>
+    <button class="btn-quiz" onclick="checkQ4()">答え合わせ</button>
+    <div class="result-msg" id="q4-result"></div>
+    <script>
+      function checkQ4() {
+        const v = document.getElementById('q4').value;
+        const r = document.getElementById('q4-result');
+        if (v === 'c') {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 正解！<br>' +
+            'XSS対策の主なポイント：<br>' +
+            '・ユーザー入力を<strong>エスケープ処理</strong>する（&lt; → &amp;lt; 等）<br>' +
+            '・<code>innerHTML</code> の代わりに <code>textContent</code> を使う<br>' +
+            '・Cookie に <strong>HttpOnly</strong> 属性を設定（JSからのCookie窃取を防ぐ）<br>' +
+            '・<strong>Content Security Policy（CSP）</strong>でスクリプト実行を制限';
+        } else if (v === '') {
+          r.className = 'result-msg info';
+          r.textContent = '⚠️ 選択肢を選んでください。';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解。<br>' +
+            '・ユーザー入力を innerHTML に直接代入するのは<strong>XSSの原因</strong>になります<br>' +
+            '・SameSite=Strict は<strong>CSRF対策</strong>です（XSS対策ではない）<br>' +
+            '・HTTPではなく<strong>HTTPS</strong>を使用すべきです';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-block">
+    <h3>Q5. 正誤チェックボックス問題</h3>
+    <p><strong>正しい記述</strong>をすべて選んでください。</p>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5a">
+      ① JavaScriptは主要なWebブラウザに実装されており、プロトタイプベースのオブジェクト指向言語である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5b">
+      ② DOM の <code>querySelector()</code> はCSSセレクタで要素を取得できる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5c">
+      ③ Ajax はページ全体を再読み込みせずにサーバーと非同期通信を行い、DOMを動的に書き換えられる
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5d">
+      ④ PNG形式はアニメーションに対応しており、256色以上の色数を扱える
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5e">
+      ⑤ XSS攻撃の対策として、Cookie に HttpOnly 属性を設定することが有効である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5f">
+      ⑥ CSRF攻撃の対策として、フォームにCSRFトークンを埋め込むことが有効である
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="q5g">
+      ⑦ WebP形式はJPEGやPNGより高い圧縮率を持ち、透過・アニメーションにも対応している
+    </label>
+    <br>
+    <button class="btn-quiz" onclick="checkQ5()">答え合わせ</button>
+    <div class="result-msg" id="q5-result"></div>
+    <script>
+      function checkQ5() {
+        const r = document.getElementById('q5-result');
+        const checks = {
+          a: document.getElementById('q5a').checked,
+          b: document.getElementById('q5b').checked,
+          c: document.getElementById('q5c').checked,
+          d: document.getElementById('q5d').checked,
+          e: document.getElementById('q5e').checked,
+          f: document.getElementById('q5f').checked,
+          g: document.getElementById('q5g').checked,
+        };
+        // 正解：①②③⑤⑥⑦（a, b, c, e, f, g）
+        // ④ PNG はアニメーション不対応・256色以上対応 → アニメーション部分が誤り → ×
+        const correct = { a:true, b:true, c:true, d:false, e:true, f:true, g:true };
+        const allCorrect = Object.keys(correct).every(k => checks[k] === correct[k]);
+        if (allCorrect) {
+          r.className = 'result-msg correct';
+          r.innerHTML =
+            '✅ 全問正解！完璧です！<br><br>' +
+            '・① JS はプロトタイプベース・主要ブラウザに実装 ✅<br>' +
+            '・② querySelector() はCSSセレクタで取得 ✅<br>' +
+            '・③ Ajax は非同期通信・DOM動的更新 ✅<br>' +
+            '・⑤ HttpOnly で Cookie 窃取を防ぐ ✅<br>' +
+            '・⑥ CSRFトークンで CSRF 対策 ✅<br>' +
+            '・⑦ WebP は高圧縮・透過・アニメーション対応 ✅';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            '❌ 不正解の項目があります。<br><br>' +
+            '<strong>正しい記述（チェックすべき項目）：</strong><br>' +
+            '・① JS はプロトタイプベースのオブジェクト指向言語<br>' +
+            '・② querySelector() はCSSセレクタで最初の要素を取得<br>' +
+            '・③ Ajax は非同期通信・ページ全体の再読み込みなしにDOM更新<br>' +
+            '・⑤ HttpOnly 属性で XSS による Cookie 窃取を防ぐ<br>' +
+            '・⑥ CSRFトークンで CSRF 攻撃を防ぐ<br>' +
+            '・⑦ WebP は JPEG・PNG より高圧縮で透過・アニメーション対応<br><br>' +
+            '<strong>誤った記述（チェックすべきでない項目）：</strong><br>' +
+            '・④ PNG は<strong>アニメーション非対応</strong>（アニメーション対応は GIF・WebP・APNG）。' +
+            'ただし色数は256色以上（フルカラー）対応';
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q6 -->
+  <div class="quiz-block">
+    <h3>Q6. コード穴埋め問題</h3>
+    <p><code>__A__</code> 〜 <code>__F__</code> に適切な値・記述を入力してください。</p>
+    <pre style="background:#1a202c; color:#e2e8f0; padding:14px; border-radius:6px; font-size:0.85em; line-height:1.9;">
+/* A：IDで要素を取得するDOMメソッド */
+const el = document.__A__('title');
+
+/* B：要素のテキスト内容を安全に設定するプロパティ（XSS対策） */
+el.__B__ = '新しいタイトル';
+
+/* C：要素にクラスを追加するメソッド */
+el.classList.__C__('active');
+
+/* D：オブジェクトをJSON文字列に変換するメソッド */
+const json = JSON.__D__(obj);
+
+/* E：XSS対策でスクリプト実行を制限するHTTPヘッダー名 */
+__E__: default-src 'self'; script-src 'self'
+
+/* F：SNSシェア時の表示を制御するメタタグのプロパティ属性値（og:title の "og" 部分） */
+&lt;meta property="__F__:title" content="ページタイトル"&gt;</pre>
+
+    <label>A（IDで取得するメソッド）：</label>
+    <input type="text" id="q6a" placeholder="メソッド名">
+    <label>B（テキスト設定プロパティ）：</label>
+    <input type="text" id="q6b" placeholder="プロパティ名">
+    <label>C（クラス追加メソッド）：</label>
+    <input type="text" id="q6c" placeholder="メソッド名">
+    <label>D（JSON変換メソッド）：</label>
+    <input type="text" id="q6d" placeholder="メソッド名">
+    <label>E（CSPのHTTPヘッダー名）：</label>
+    <input type="text" id="q6e" placeholder="ヘッダー名">
+    <label>F（OGPのプロパティプレフィックス）：</label>
+    <input type="text" id="q6f" placeholder="文字列">
+    <br>
+    <button class="btn-quiz" onclick="checkQ6()">答え合わせ</button>
+    <div class="result-msg" id="q6-result"></div>
+    <script>
+      function checkQ6() {
+        const a = document.getElementById('q6a').value.trim().toLowerCase().replace(/[()]/g,'');
+        const b = document.getElementById('q6b').value.trim().toLowerCase();
+        const c = document.getElementById('q6c').value.trim().toLowerCase().replace(/[()]/g,'');
+        const d = document.getElementById('q6d').value.trim().toLowerCase().replace(/[()]/g,'');
+        const e = document.getElementById('q6e').value.trim().toLowerCase().replace(/[\s-]/g,'');
+        const f = document.getElementById('q6f').value.trim().toLowerCase();
+        const r = document.getElementById('q6-result');
+        const ca = a === 'getelementbyid';
+        const cb = b === 'textcontent';
+        const cc = c === 'add';
+        const cd = d === 'stringify';
+        const ce = e === 'contentsecuritypolicy';
+        const cf = f === 'og';
+        const count = [ca,cb,cc,cd,ce,cf].filter(Boolean).length;
+        if (count === 6) {
+          r.className = 'result-msg correct';
+          r.textContent = '✅ 全問正解！Web関連技術の記述を完璧に理解しています！';
+        } else {
+          r.className = 'result-msg wrong';
+          r.innerHTML =
+            `❌ ${count}/6 問正解。<br>` +
+            `A: ${ca?'✅':'❌ getElementById()'}　` +
+            `B: ${cb?'✅':'❌ textContent'}　` +
+            `C: ${cc?'✅':'❌ add()'}　` +
+            `D: ${cd?'✅':'❌ stringify()'}　` +
+            `E: ${ce?'✅':'❌ Content-Security-Policy'}　` +
+            `F: ${cf?'✅':'❌ og'}`;
+        }
+      }
+    </script>
+  </div>
+
+  <!-- Q7 -->
+  <div class="quiz-block">
+    <h3>Q7. 記述問題</h3>
+    <p>
+      XSS（クロスサイトスクリプティング）と CSRF（クロスサイトリクエストフォージェリ）について、
+      「攻撃の仕組み」と「主な対策」の観点からそれぞれ説明してください。
+    </p>
+    <label>あなたの解答：</label>
+    <textarea id="q7" rows="5" placeholder="自由に記述してください..."></textarea>
+    <br>
+    <button class="btn-quiz" onclick="checkQ7()">模範解答を見る</button>
+    <div class="result-msg" id="q7-result"></div>
+    <script>
+      function checkQ7() {
+        const r = document.getElementById('q7-result');
+        r.className = 'result-msg info';
+        r.innerHTML =
+          '📝 模範解答：<br><br>' +
+          '<table style="border-collapse:collapse; width:100%; font-size:0.88em;">' +
+          '<thead><tr style="background:#086f83; color:#fff;">' +
+          '<th style="padding:8px; border:1px solid #b2f5ea;">項目</th>' +
+          '<th style="padding:8px; border:1px solid #b2f5ea;">XSS</th>' +
+          '<th style="padding:8px; border:1px solid #b2f5ea;">CSRF</th>' +
+          '</tr></thead><tbody>' +
+          '<tr><td style="padding:8px; border:1px solid #b2f5ea; font-weight:bold;">攻撃の仕組み</td>' +
+          '<td style="padding:8px; border:1px solid #b2f5ea;">悪意のあるスクリプトをWebページに埋め込み、閲覧者のブラウザで実行させる。Cookie窃取・フィッシングに悪用</td>' +
+          '<td style="padding:8px; border:1px solid #b2f5ea;">ログイン済みユーザーに意図しないリクエストを送信させる。パスワード変更・送金などを不正実行</td></tr>' +
+          '<tr style="background:#e6fffa;"><td style="padding:8px; border:1px solid #b2f5ea; font-weight:bold;">主な対策</td>' +
+          '<td style="padding:8px; border:1px solid #b2f5ea;">・入力値のエスケープ<br>・textContent を使う（innerHTML 回避）<br>・HttpOnly 属性<br>・CSP（Content Security Policy）</td>' +
+          '<td style="padding:8px; border:1px solid #b2f5ea;">・CSRFトークンをフォームに埋め込む<br>・SameSite=Strict Cookie<br>・Referer / Origin ヘッダーの検証</td></tr>' +
+          '</tbody></table><br>' +
+          '💡 <strong>試験のポイント</strong>：<br>' +
+          '・XSS → <strong>HttpOnly / CSP / textContent</strong><br>' +
+          '・CSRF → <strong>CSRFトークン / SameSite Cookie</strong>';
+      }
+    </script>
+  </div>
+
+</div><!-- /quiz-section -->
+
+
+<!-- まとめ表 -->
+<h2>📌 Web関連技術の概要 まとめ一覧</h2>
+<table class="summary">
+  <thead>
+    <tr><th>分野</th><th>技術・概念</th><th>重要ポイント</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>DOM</strong></td>
+      <td>HTML文書をツリー構造のオブジェクトとして表現</td>
+      <td><strong>JavaScriptで取得・変更・追加・削除が可能</strong>。querySelector / textContent / classList</td>
+    </tr>
+    <tr>
+      <td><strong>JavaScript</strong></td>
+      <td>Webブラウザに実装されたスクリプト言語</td>
+      <td><strong>プロトタイプベース</strong>のオブジェクト指向。ECMAScript仕様。動的型付け</td>
+    </tr>
+    <tr>
+      <td><strong>Ajax</strong></td>
+      <td>非同期通信と動的DOM書き換えの技術</td>
+      <td><strong>ページ全体を再読み込みせずに</strong>サーバーと通信・DOM更新。XHR / Fetch API</td>
+    </tr>
+    <tr>
+      <td><strong>XSS対策</strong></td>
+      <td>クロスサイトスクリプティング攻撃への対策</td>
+      <td>エスケープ処理・<strong>textContent</strong>・<strong>HttpOnly</strong>・CSP</td>
+    </tr>
+    <tr>
+      <td><strong>CSRF対策</strong></td>
+      <td>クロスサイトリクエストフォージェリへの対策</td>
+      <td><strong>CSRFトークン</strong>・<strong>SameSite=Strict</strong> Cookie</td>
+    </tr>
+    <tr>
+      <td><strong>画像フォーマット</strong></td>
+      <td>JPEG / PNG / GIF / SVG / WebP</td>
+      <td>JPEG：写真。PNG：透過。GIF：アニメーション。SVG：ベクター。WebP：高圧縮・全対応</td>
+    </tr>
+    <tr>
+      <td><strong>SEO / OGP</strong></td>
+      <td>検索エンジン最適化・SNSシェア最適化</td>
+      <td>セマンティックHTML・meta description・<strong>og:title / og:image</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
