@@ -92,7 +92,6 @@
     .card-wrap {
       display: flex;
       flex-direction: column;
-      gap: 0;
     }
 
     /* ===== カード（HTML編） ===== */
@@ -110,7 +109,6 @@
       gap: 10px;
       flex: 1;
     }
-    /* PDFなしの場合はカード下角も丸める */
     .card.no-pdf {
       border-radius: 12px;
     }
@@ -136,34 +134,15 @@
       background: #ebf8ff;
       color: #2b6cb0;
     }
-    .pdf-btn:hover {
-      opacity: 0.85;
-      background: #bee3f8;
-    }
-    .pdf-btn.css-pdf {
-      background: #faf5ff;
-      color: #553c9a;
-      border-color: #e9d8fd;
-    }
-    .pdf-btn.css-pdf:hover { background: #e9d8fd; }
-    .pdf-btn.resp-pdf {
-      background: #f0fff4;
-      color: #276749;
-      border-color: #c6f6d5;
-    }
+    .pdf-btn:hover { opacity: 0.85; background: #bee3f8; }
+    .pdf-btn.css-pdf  { background: #faf5ff; color: #553c9a; border-color: #e9d8fd; }
+    .pdf-btn.css-pdf:hover  { background: #e9d8fd; }
+    .pdf-btn.resp-pdf { background: #f0fff4; color: #276749; border-color: #c6f6d5; }
     .pdf-btn.resp-pdf:hover { background: #c6f6d5; }
-    .pdf-btn.api-pdf {
-      background: #fffaf0;
-      color: #c05621;
-      border-color: #feebc8;
-    }
-    .pdf-btn.api-pdf:hover { background: #feebc8; }
-    .pdf-btn.web-pdf {
-      background: #e6fffa;
-      color: #086f83;
-      border-color: #b2f5ea;
-    }
-    .pdf-btn.web-pdf:hover { background: #b2f5ea; }
+    .pdf-btn.api-pdf  { background: #fffaf0; color: #c05621; border-color: #feebc8; }
+    .pdf-btn.api-pdf:hover  { background: #feebc8; }
+    .pdf-btn.web-pdf  { background: #e6fffa; color: #086f83; border-color: #b2f5ea; }
+    .pdf-btn.web-pdf:hover  { background: #b2f5ea; }
 
     /* ===== カード（CSS編） ===== */
     .card.css-card { border-color: #e9d8fd; }
@@ -273,16 +252,8 @@
       text-align: center;
     }
     .complete-banner .complete-icon { font-size: 2.4em; margin-bottom: 8px; }
-    .complete-banner h2 {
-      margin: 0 0 8px;
-      font-size: 1.15em;
-      color: #086f83;
-    }
-    .complete-banner p {
-      margin: 0;
-      font-size: 0.9em;
-      color: #4a5568;
-    }
+    .complete-banner h2 { margin: 0 0 8px; font-size: 1.15em; color: #086f83; }
+    .complete-banner p  { margin: 0; font-size: 0.9em; color: #4a5568; }
 
     /* ===== フッター ===== */
     footer {
@@ -571,9 +542,9 @@
       <a class="pdf-btn" href="pdfs/global_attributes.pdf" target="_blank">📄 PDF資料をダウンロード</a>
     </div>
 
-    <!-- text_elements（PDFなし） -->
+    <!-- text_elements -->
     <div class="card-wrap">
-      <a class="card no-pdf" href="text_elements.html">
+      <a class="card" href="text_elements.html">
         <div class="card-icon">📝</div>
         <div class="card-title">テキスト要素</div>
         <div class="card-desc">
@@ -591,11 +562,12 @@
         </div>
         <div class="card-footer">📁 text_elements.html</div>
       </a>
+      <a class="pdf-btn" href="pdfs/text_elements.pdf" target="_blank">📄 PDF資料をダウンロード</a>
     </div>
 
-    <!-- list_elements（PDFなし） -->
+    <!-- list_elements -->
     <div class="card-wrap">
-      <a class="card no-pdf" href="list_elements.html">
+      <a class="card" href="list_elements.html">
         <div class="card-icon">📋</div>
         <div class="card-title">リスト要素</div>
         <div class="card-desc">
@@ -612,11 +584,12 @@
         </div>
         <div class="card-footer">📁 list_elements.html</div>
       </a>
+      <a class="pdf-btn" href="pdfs/list_elements.pdf" target="_blank">📄 PDF資料をダウンロード</a>
     </div>
 
-    <!-- form_elements（PDFなし） -->
+    <!-- form_elements -->
     <div class="card-wrap">
-      <a class="card no-pdf" href="form_elements.html">
+      <a class="card" href="form_elements.html">
         <div class="card-icon">🖊️</div>
         <div class="card-title">フォーム要素</div>
         <div class="card-desc">
@@ -634,11 +607,12 @@
         </div>
         <div class="card-footer">📁 form_elements.html</div>
       </a>
+      <a class="pdf-btn" href="pdfs/form_elements.pdf" target="_blank">📄 PDF資料をダウンロード</a>
     </div>
 
-    <!-- table_elements（PDFなし） -->
+    <!-- table_elements -->
     <div class="card-wrap">
-      <a class="card no-pdf" href="table_elements.html">
+      <a class="card" href="table_elements.html">
         <div class="card-icon">📊</div>
         <div class="card-title">テーブル要素</div>
         <div class="card-desc">
@@ -656,6 +630,7 @@
         </div>
         <div class="card-footer">📁 table_elements.html</div>
       </a>
+      <a class="pdf-btn" href="pdfs/table_elements.pdf" target="_blank">📄 PDF資料をダウンロード</a>
     </div>
 
   </div><!-- /card-grid HTML編 -->
@@ -766,6 +741,7 @@
           text-shadow・text-decoration関連・word-break・hyphens・white-space・
           text-align・vertical-align・line-height・text-indent・
           letter-spacing・word-spacing・text-transform・direction を学びます。
+          インタラクティブデモ付き。
         </div>
         <div class="card-tags">
           <span class="tag">text-shadow</span>
@@ -789,6 +765,7 @@
           background-color / image / clip / repeat / size / origin /
           position / attachment / background（一括指定）を学びます。
           複数背景・cover / contain・background-clip: text など試験頻出ポイントを網羅。
+          インタラクティブデモ付き。
         </div>
         <div class="card-tags">
           <span class="tag">background-image</span>
@@ -803,15 +780,15 @@
       <a class="pdf-btn css-pdf" href="pdfs/css_background.pdf" target="_blank">📄 PDF資料をダウンロード</a>
     </div>
 
-    <!-- css_colors（PDFなし） -->
+    <!-- css_colors -->
     <div class="card-wrap">
-      <a class="card css-card no-pdf" href="css_colors.html">
+      <a class="card css-card" href="css_colors.html">
         <div class="card-icon">🌈</div>
         <div class="card-title">CSS色</div>
         <div class="card-desc">
           16進数・キーワード・rgb() / rgba()・hsl() / hsla()・
           colorプロパティ・opacityプロパティを学びます。
-          HSLスライダーでリアルタイムに色の変化を確認できます。
+          カラーピッカー・HSLスライダー・色変換ツールなどインタラクティブデモ多数収録。
         </div>
         <div class="card-tags">
           <span class="tag">#RRGGBB</span>
@@ -823,6 +800,7 @@
         </div>
         <div class="card-footer">📁 css_colors.html</div>
       </a>
+      <a class="pdf-btn css-pdf" href="pdfs/CSS_colors.pdf" target="_blank">📄 PDF資料をダウンロード</a>
     </div>
 
     <!-- css_box -->
@@ -858,6 +836,7 @@
           column-rule / column-span）と
           フレキシブルボックス（display: flex / justify-content / align-items /
           flex-grow / order）を学びます。
+          インタラクティブデモ多数収録。
         </div>
         <div class="card-tags">
           <span class="tag">column-count</span>
@@ -882,6 +861,7 @@
           transition（property / duration / timing-function / delay）・
           @keyframes・animation（name / duration / iteration-count /
           direction / fill-mode / play-state）を学びます。
+          常時動くデモ・スライダーデモ多数収録。
         </div>
         <div class="card-tags">
           <span class="tag">transform</span>
@@ -906,6 +886,7 @@
           リスト関連（list-style-type / position / image）・
           テーブル関連（border-collapse / border-spacing / caption-side / empty-cells）・
           内容追加（content / quotes / counter）を学びます。
+          インタラクティブデモ付き。
         </div>
         <div class="card-tags">
           <span class="tag">linear-gradient</span>
@@ -936,6 +917,7 @@
           多様なデバイスへの対応が求められる背景・レスポンシブWebデザインの定義・
           メリットとデメリット・Fluid Grid / Flexible Images / メディアクエリの3つの柱・
           モバイルファーストとデスクトップファーストの違いを学びます。
+          ブレークポイントシミュレーターデモ付き。
         </div>
         <div class="card-tags">
           <span class="tag">Fluid Grid</span>
@@ -950,7 +932,7 @@
       <a class="pdf-btn resp-pdf" href="pdfs/resp_web_techs.pdf" target="_blank">📄 PDF資料をダウンロード</a>
     </div>
 
-    <!-- media_queries -->
+    <!-- media_queries（.html に修正） -->
     <div class="card-wrap">
       <a class="card resp-card" href="media_queries.html">
         <div class="card-icon">📡</div>
@@ -960,6 +942,7 @@
           メディア型（screen / print / all）・メディア特性（width / orientation /
           resolution / prefers-color-scheme など）・
           論理演算子（and / not / only / カンマ）を学びます。
+          ブレークポイント別4段階シミュレーター付き。
         </div>
         <div class="card-tags">
           <span class="tag">@media</span>
@@ -983,6 +966,7 @@
           Fluid Grid（可変グリッド・相対単位）・Fluid Image（可変イメージ・
           max-width:100%）・ビューポート（viewport メタタグ・vw / vh）・
           リセットCSS（Eric Meyer's Reset / Normalize.css）を学びます。
+          コンテナ幅・画像サイズのインタラクティブデモ付き。
         </div>
         <div class="card-tags">
           <span class="tag">Fluid Grid</span>
@@ -1038,6 +1022,7 @@
           HTMLMediaElement API（video / audio のJS制御）・ストリーミング（MSE / HLS / DASH）・
           Canvas API（ビットマップ形式の2D描画）・SVG（インライン記述可能なベクター形式）・
           WebGL（3Dグラフィックス）を学びます。
+          インタラクティブデモ多数収録。
         </div>
         <div class="card-tags">
           <span class="tag">HTMLMediaElement</span>
@@ -1076,7 +1061,7 @@
       <a class="pdf-btn api-pdf" href="pdfs/api_deviceaccess.pdf" target="_blank">📄 PDF資料をダウンロード</a>
     </div>
 
-    <!-- api_offlinestorage（旧 api_onlinestorage） -->
+    <!-- api_offlinestorage（ファイル名修正） -->
     <div class="card-wrap">
       <a class="card api-card" href="api_offlinestorage.html">
         <div class="card-icon">💾</div>
@@ -1111,6 +1096,7 @@
           WebSocket（ws:// / wss:// 双方向通信）・
           Server-Sent Events（一方向・自動再接続）・
           WebRTC（P2Pビデオ通話・SDP・ICE）を学びます。
+          各APIの動作シミュレーターデモ付き。
         </div>
         <div class="card-tags">
           <span class="tag">XHR</span>
